@@ -1,0 +1,57 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+  <a class="navbar-brand" routerLink="/">
+    <span class="fa fa-home" aria-hidden="true"></span>
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" (click)="isCollapsed = !isCollapsed" [attr.aria-expanded]="!isCollapsed" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent" [collapse]="isCollapsed">
+    <ul class="navbar-nav mr-auto">
+    </ul>
+    <ul class="navbar-nav">
+        <form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="search" placeholder="{{ 'common.search' | translate }}" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">{{ 'common.search' | translate }}</button>
+          </form>
+          <ul class="navbar-nav my-2 my-lg-0">
+            <li class="nav-item dropdown text-right dropdown-nav-item">
+              <div dropdown>
+                <button dropdownToggle id="langMenu" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  {{ 'language.' + currentLang | translate }}
+                </button>
+                <div *dropdownMenu class="dropdown-menu" aria-labelledby="langMenu">
+                  <ng-container *ngFor="let l of languages">
+                    <button *ngIf="l != currentLang" class="dropdown-item" type="button" (click)="onLanguageChanged(l)">
+                      {{ 'language.' + l | translate }}
+                    </button>
+                  </ng-container>
+                </div>
+              </div>
+            </li>
+            <li class="nav-item dropdown dropdown-nav-item">
+              <div dropdown class="dropdown">
+                <button dropdownToggle id="accountMenu" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  {{ loggedUser.username }}
+                </button>
+                <div *dropdownMenu class="dropdown-menu" aria-labelledby="accountMenu">
+                  <button class="dropdown-item" type="button">{{ 'common.account' | translate }}</button>
+                  <button class="dropdown-item" type="button" (click)="logout()">{{ 'common.sign-out' | translate }}</button>
+                </div>
+              </div>
+          </li>
+        </ul>
+    </ul>
+  </div>
+</nav>
+<div class="container-fluid">
+  <div class="row">
+    <app-side-menu></app-side-menu>
+    <main role="main" class="col-md-10 ml-sm-auto col-lg-10 pt-3 px-4">
+      <app-breadcrumb></app-breadcrumb>
+        <h1 class="h4">{{ titleString }}</h1>
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

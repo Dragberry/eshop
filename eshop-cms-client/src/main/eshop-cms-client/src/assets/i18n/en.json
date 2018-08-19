@@ -1,0 +1,36 @@
+{
+	"login": {
+		"forgot-password": "Forgot password?",
+		"login-page": "Login page",
+		"password": "Password",
+		"remember-me": "Remember me",
+		"sign-in": "Sign in",
+		"username": "Username",
+		"error": {
+			"401": "Username and/or password are invalid!",
+			"general": "An error has occured on the server",
+			"password-is-required": "Password is required!",
+			"username-is-required": "Username is required!"
+		}
+	},
+	"common": {
+		"account": "Account",
+		"search": "Search",
+		"sign-out": "Sign out"
+	},
+	"language": {
+		"en": "English",
+		"ru": "Русский"
+	},
+	"main-menu": {
+		"dashboard": "Dashboard",
+		"products": "Products",
+		"orders": "Orders",
+		"customers": "Customers"
+	},
+	"products": {
+		"product-list": {
+			"title": "Product list"
+		}
+	}
+}
