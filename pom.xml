@@ -21,12 +21,12 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>1.8</java.version>
+		<java.version>10</java.version>
 	</properties>
 
 	<modules>
 		<module>eshop-cms-client</module>
-		<!-- <module>eshop-client</module>  -->
+		<module>eshop-client</module>
 		<module>eshop-backend</module>
 	</modules>
 </project>
