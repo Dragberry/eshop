@@ -2,26 +2,22 @@ package org.dragberry.eshop.model.common;
 
 import java.util.List;
 
+import lombok.Data;
+
 /**
  * This model represents working days
  * @author Drahun Maksim
  *
  */
+@Data
 public class WorkingDays {
 
     private List<WorkingDay> days;
     
-    public WorkingDays(List<WorkingDay> days) {
-        super();
-        this.days = days;
-    }
-
-    public List<WorkingDay> getDays() {
-        return days;
-    }
-
-    public void setDays(List<WorkingDay> days) {
-        this.days = days;
-    }
+    private String description;
     
+    public WorkingDays(List<WorkingDay> days, String description) {
+        this.days = days;
+        this.description = description;
+    }
 }

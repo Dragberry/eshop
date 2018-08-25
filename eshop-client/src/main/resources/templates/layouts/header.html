@@ -7,7 +7,7 @@
 </head>
 <body>
 	<header class="bg-dark">
-		<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+		<nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-dark">
 			<a class="navbar-brand" th:href="${@environment.getProperty('url.home')}" th:text="#{msg.menu.home}">Home</a>
 			<button class="navbar-toggler" type="button" data-toggle="collapse"
 				data-target="#navbarCollapse" aria-controls="navbarCollapse"
@@ -25,7 +25,7 @@
 					<li class="nav-item">
 						<a class="nav-link" th:href="${@environment.getProperty('url.delivery')}" th:text="#{msg.menu.delivery}">Delivery</a>
 					<li class="nav-item">
-						<a class="nav-link" th:href="${@environment.getProperty('url.payment-and-installment')}" th:text="#{msg.menu.paymentAndInsallment}">Payment and Installment</a>
+						<a class="nav-link" th:href="${@environment.getProperty('url.payment-and-installment')}" th:text="#{msg.menu.paymentAndInstallment}">Payment and Installment</a>
 					</li>
 					<li class="nav-item">
 						<a class="nav-link" th:href="${@environment.getProperty('url.contacts')}" th:text="#{msg.menu.contacts}">Contacts</a>
@@ -38,9 +38,12 @@
 					</li>
 				</ul>
 				<form class="form-inline mt-2 mt-md-0">
-					<input class="form-control mr-sm-2" type="text"
-						th:placeholder="#{msg.menu.search}" aria-label="Search">
-					<button class="btn btn-outline-success my-2 my-sm-0" type="submit" th:text="#{msg.menu.search}">Search</button>
+					<div class="input-group">
+					  	<input type="text" class="form-control" th:placeholder="#{msg.menu.search}" aria-describedby="basic-addon2">
+					  	<span class="input-group-btn">
+        					<button class="btn btn-outline-success" id="basic-addon2" th:text="#{msg.menu.search}"></button>
+      					</span>
+					</div>
 				</form>
 			</div>
 		</nav>

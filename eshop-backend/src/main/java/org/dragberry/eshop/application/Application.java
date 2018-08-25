@@ -8,7 +8,7 @@ import org.dragberry.eshop.dal.entity.AbstractEntity;
 import org.dragberry.eshop.dal.repo.Repositories;
 import org.dragberry.eshop.interceptor.AppInfoInterceptor;
 import org.dragberry.eshop.security.Security;
-import org.dragberry.eshop.service.Services;
+import org.dragberry.eshop.service.impl.Services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;

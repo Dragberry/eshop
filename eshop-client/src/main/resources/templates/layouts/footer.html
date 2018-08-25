@@ -5,9 +5,24 @@
 <head>
 </head>
 <body>
-	<footer th:fragment="footer" class="footer">
+	<footer th:fragment="footer" class="footer bg-dark navbar-dark">
 		<div class="container">
-			<p class="text-muted" th:text="'&copy;2018 ' + #{messages.applicationTitle}">&copy; 2018 E-Shop</p>
+			<div class="row">
+				<div class="col-md-4">
+					<div th:each="phone : ${appInfo.phones}">
+        				<img class="img-responsive" th:src="@{|images/${phone.type}.png|}" width="15" height="15">
+        				<strong th:text="${phone.number}"></strong>
+        			</div>
+        			<div>
+        				<img class="img-responsive" th:src="@{images/envelope.png}" width="15" height="15">
+        				<strong th:text="${appInfo.email}"></strong>
+        			</div>
+        			<div th:text="${appInfo.workingDays.description}"></div>
+				</div>
+				<div class="col-md-8">
+					<small>Информация для покупателя: ИП Чуешков Юрий Витальевич | Свидетельство о регистрации № 192176034 выдано 09.12.2013 Мингорисполкомом | Почтовый адрес: 220049, Беларусь, г. Минск, ул. Кнорина, д. 10а, кв. 19 | Дата регистрации в Торговом реестре: 31.05.2017<small>
+				</div>
+			</div>
 		</div>
 	</footer>
 </body>

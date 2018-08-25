@@ -1,4 +1,4 @@
-package org.dragberry.eshop.service;
+package org.dragberry.eshop.service.impl;
 
 import java.text.MessageFormat;
 

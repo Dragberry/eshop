@@ -3,7 +3,7 @@
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
-	<title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE">Task List</title> 
+	<title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE" th:text="${@environment.getProperty('application.title')}">E-Shop</title> 
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" type="text/css" media="all" th:href="@{css/bootstrap.min.css}" />
 	<link rel="stylesheet" type="text/css" media="all" th:href="@{css/theme.css}" />
@@ -16,19 +16,19 @@
     	<div class="jumbotron">
         	<div class="container">
 				<div class="row">
-					<div class="col-md-4">
+					<div class="col-lg-4 col-md-6 text-center">
 	        			<img class="img-responsive" th:src="@{images/logo.jpg}" 
 			        		th:alt="${@environment.getProperty('application.title')}"
 			        		th:title="${@environment.getProperty('application.title')}">
 	        		</div>
-	        		<div class="col-md-4 text-center">
-	        			<div th:each="phone : ${phones}">
+	        		<div class="col-lg-4 col-md-6 text-center">
+	        			<div th:each="phone : ${appInfo.phones}">
 	        				<img class="img-responsive" th:src="@{|images/${phone.type}.png|}" width="15" height="15">
 	        				<strong th:text="${phone.number}"></strong>
 	        			</div>
-	        			<div class="">Работаем: с 9:00 до 21:00 без выходных</div>
+	        			<div th:text="${appInfo.workingDays.description}"></div>
 	        		</div>
-	        		<div class="col-md-4">
+	        		<div class="col-lg-4 hidden-md">
 	        			
 	        		</div>
 				</div>
@@ -47,5 +47,21 @@
 	<script th:src="@{js/jquery.min.js}"></script>
 	<script th:src="@{js/poppers.min.js}"></script>
 	<script th:src="@{js/bootstrap.min.js}"></script>
+	<script>
+		/* Resize margin-bottom if footer's height is changed */
+		$(document).on('pageinit', onPageResize);
+		$(document).ready(function() {
+			onPageResize();
+			$(window).resize(onPageResize);
+		});
+		function onPageResize() {
+			var bodyMargin = $('body').css('margin-bottom');
+			var footerHeight = $('footer').height();
+			if (bodyMargin + 50 != footerHeight) {
+				$("body").css('margin-bottom', footerHeight + 50);
+			}
+		}
+		
+	</script>
 </body>
 </html>
