@@ -1,7 +1,12 @@
- .navbar-nav {
+.navbar-nav {
 	margin: auto;
- }
- 
-.navbar {
-	
+}
+
+.star-rating {
+	line-height: 32px;
+	font-size: 1.25em;
+}
+
+.star-rating .fa-star .active {
+	color: orange;
 }

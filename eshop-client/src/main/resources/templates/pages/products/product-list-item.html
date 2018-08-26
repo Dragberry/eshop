@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+	<title th:text="${product.title}">Product title</title>
+</head>
+<body>
+	<div th:fragment="product-list-item" class="card">
+		<a th:href="@{|${@environment.getProperty('url.product')}/${product.url}|}">
+			<img class="img-fluid" th:src="@{/images/no-image.png}">
+		</a>
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-6">
+					<a th:href="@{|${@environment.getProperty('url.product')}/${product.url}|}">
+						<span th:text="${product.title}">Product title</span>
+					</a>
+				</div>
+				<div class="col-sm-6 text-right">
+					<div><strong th:text="${product.price + ' ' + appInfo.currency}">Product price</strong></div>
+					<div><del class="small" th:text="${product.oldPrice + ' ' + appInfo.currency}">Product price</del></div>
+				</div>
+				
+			</div>
+		</div>
+		
+	</div>
+</body>
+</html>

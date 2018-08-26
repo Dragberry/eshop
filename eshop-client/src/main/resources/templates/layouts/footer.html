@@ -10,11 +10,11 @@
 			<div class="row">
 				<div class="col-md-4">
 					<div th:each="phone : ${appInfo.phones}">
-        				<img class="img-responsive" th:src="@{|images/${phone.type}.png|}" width="15" height="15">
+        				<img class="img-responsive" th:src="@{|/images/${phone.type}.png|}" width="15" height="15">
         				<strong th:text="${phone.number}"></strong>
         			</div>
         			<div>
-        				<img class="img-responsive" th:src="@{images/envelope.png}" width="15" height="15">
+        				<img class="img-responsive" th:src="@{/images/envelope.png}" width="15" height="15">
         				<strong th:text="${appInfo.email}"></strong>
         			</div>
         			<div th:text="${appInfo.workingDays.description}"></div>

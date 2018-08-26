@@ -12,4 +12,6 @@ public class AppInfo {
 	private List<Phone> phones;
 	
 	private String email;
+	
+	private String currency;
 }

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<body>
+	<div th:fragment="rating" class="col-lg-12">
+   		<div class="star-rating">
+	       	<span class="fa fa-star small" data-rating="1"></span>
+	        <span class="fa fa-star small" data-rating="2"></span>
+	        <span class="fa fa-star small" data-rating="3"></span>
+	        <span class="fa fa-star small" data-rating="4"></span>
+	        <span class="fa fa-star small" data-rating="5"></span>
+    		<input type="hidden" th:name="${name}" class="rating-value" value="${value}">
+   		</div>
+	</div>
+</body>
+</html>
+

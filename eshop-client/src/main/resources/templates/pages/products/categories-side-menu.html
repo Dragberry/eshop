@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<title th:text="#{msg.menu.catalog}">Catalog</title>
+</head>
+<body>
+	<nav th:fragment="categories-side-menu" class="navbar bg-dark navbar-dark sticky-top">
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#categoriesNav">
+			<span class="navbar-toggler-icon" ></span>
+		</button>
+		<a class="navbar-brand" href="#" th:text="#{msg.common.categories}">Categories</a>
+		<div class="collapse navbar-collapse show" id="categoriesNav">
+			<ul class="navbar-nav">
+				<li th:each="category : ${categoryList}" class="nav-item">
+					<a class="nav-link" th:classappend="${category.reference == selectedCategory} ? 'active' : ''"
+						th:href="@{|${@environment.getProperty('url.catalog')}/${category.reference}|}" th:text="${category.name}">Category</a>
+				</li>
+			</ul>
+		</div>
+	</nav>
+</body>
+</html>
