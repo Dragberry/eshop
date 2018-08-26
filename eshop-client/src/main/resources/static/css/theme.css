@@ -2,11 +2,11 @@
 	margin: auto;
 }
 
+
 .star-rating {
-	line-height: 32px;
-	font-size: 1.25em;
+	font-size: 0.75rem;
 }
 
-.star-rating .fa-star .active {
+.star-rating .fa-star.active {
 	color: orange;
 }

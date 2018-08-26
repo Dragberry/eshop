@@ -27,7 +27,7 @@ public class ProductController {
 		List<ProductCategory> categoryList = productService.getCategoryList();
 		mv.addObject("categoryList", categoryList);
 		ProductCategory category = categoryList.stream().filter(c -> c.getReference().equals(selectedCategory)).findFirst().orElse(new ProductCategory(0L, "all", "Все товары"));
-		mv.addObject("selectedCategory", category);
+		mv.addObject("category", category);
 		ProductSearchQuery query = new ProductSearchQuery();
 		query.setCategoryName(selectedCategory);
 		mv.addObject("productList", productService.getProductList(query));

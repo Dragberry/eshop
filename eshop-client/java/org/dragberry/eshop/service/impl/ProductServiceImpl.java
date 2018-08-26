@@ -23,10 +23,10 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public List<Product> getProductList(ProductSearchQuery query) {
 		return List.of(
-				new Product(1L,  "U8", "Смарт часы U8", "smart-watch-u8", new BigDecimal(100), new BigDecimal(200), 0, 0),
-				new Product(2L,  "GT08", "Смарт часы GT08", "smart-watch-gt08", new BigDecimal(100), new BigDecimal(200), 0, 0),
-				new Product(3L,  "DZ09", "Смарт часы DZ09", "smart-watch-dz09", new BigDecimal(100), new BigDecimal(200), 0, 0),
-				new Product(4L,  "A1", "Смарт часы A1", "smart-watch-a1", new BigDecimal(100), new BigDecimal(200), 0, 0),
-				new Product(5L,  "GV18", "Смарт часы GV18", "smart-watch-gv18", new BigDecimal(100), new BigDecimal(200), 0, 0));
+				new Product(1L,  "U8", "Смарт часы U8", "smart-watch-u8", new BigDecimal(100), new BigDecimal(200), 3, 4.3),
+				new Product(2L,  "GT08", "Смарт часы GT08", "smart-watch-gt08", new BigDecimal(100), new BigDecimal(200), 5, 3.4),
+				new Product(3L,  "DZ09", "Смарт часы DZ09", "smart-watch-dz09", new BigDecimal(100), new BigDecimal(200), 123, 4.8),
+				new Product(4L,  "A1", "Смарт часы A1", "smart-watch-a1", new BigDecimal(100), new BigDecimal(200), 1023, 1.2),
+				new Product(5L,  "GV18", "Смарт часы GV18", "smart-watch-gv18", new BigDecimal(100), new BigDecimal(200), 0, 2.7));
 	}
 }

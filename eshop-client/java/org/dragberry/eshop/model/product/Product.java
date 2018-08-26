@@ -21,8 +21,8 @@ public class Product {
 	
 	private BigDecimal oldPrice;
 	
-	private int repliesCount;
+	private int commentsCount;
 	
-	private double averageMark;
+	private double rating;
 	
 }
