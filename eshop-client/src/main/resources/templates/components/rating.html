@@ -4,11 +4,11 @@
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <body>
  	<div th:fragment="rating" class="star-rating" th:title="${value}">
-       	<span class="fa fa-star small" data-id="" data-rating="1"></span>
-        <span class="fa fa-star small" data-rating="2"></span>
-        <span class="fa fa-star small" data-rating="3"></span>
-        <span class="fa fa-star small" data-rating="4"></span>
-        <span class="fa fa-star small" data-rating="5"></span>
+       	<span class="fa fa-star fa-xs" data-rating="1"></span>
+        <span class="fa fa-star fa-xs" data-rating="2"></span>
+        <span class="fa fa-star fa-xs" data-rating="3"></span>
+        <span class="fa fa-star fa-xs" data-rating="4"></span>
+        <span class="fa fa-star fa-xs" data-rating="5"></span>
    		<input type="hidden" th:name="${name}" class="rating-value" th:value="${value}">
   	</div>
 </body>

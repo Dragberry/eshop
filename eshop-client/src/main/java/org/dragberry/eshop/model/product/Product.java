@@ -1,6 +1,9 @@
 package org.dragberry.eshop.model.product;
 
 import java.math.BigDecimal;
+import java.util.Map;
+
+import org.dragberry.eshop.model.bootstrap.Modifier;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,4 +28,7 @@ public class Product {
 	
 	private double rating;
 	
+	private Map<String, Modifier> labels;
+	
+	private String mainImage;
 }

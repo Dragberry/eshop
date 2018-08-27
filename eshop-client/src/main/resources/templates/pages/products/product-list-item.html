@@ -7,24 +7,33 @@
 </head>
 <body>
 	<div th:fragment="product-list-item" class="card">
+		<div class="text-right">
+			<span th:each="label : ${product.labels}"  th:text="${label.key}"
+				class="procut-label badge" th:classappend="|badge-${label.value.value}|">Label</span>
+		</div>
 		<a th:href="@{|${@environment.getProperty('url.product')}/${product.url}|}">
-			<img class="img-fluid" th:src="@{/images/no-image.png}">
+			<img class="img-fluid" th:src="${product.mainImage} ? @{${product.mainImage}} : @{/images/no-image.png}"
+				th:title="${product.title}" th:alt="${product.title}">
 		</a>
 		<div class="container">
 			<div class="row">
 				<div class="col-xs-6 col-sm-6">
-					<a th:href="@{|${@environment.getProperty('url.product')}/${product.url}|}">
+					<a th:href="@{|${@environment.getProperty('url.product')}/${product.url}|}" th:title="${product.title}">
 						<span th:text="${product.title}">Product title</span>
 					</a>
 				</div>
 				<div class="col-xs-6 col-sm-6 text-right">
-					<div><strong th:text="${product.price + ' ' + appInfo.currency}">Product price</strong></div>
-					<div><del class="small" th:text="${product.oldPrice + ' ' + appInfo.currency}">Old product price</del></div>
+					<div>
+						<strong th:text="|${product.price} #{|msg.currency.${appInfo.currency}|}|">Product price</strong>
+					</div>
+					<div>
+						<del class="small" th:text="|${product.oldPrice} #{|msg.currency.${appInfo.currency}|}|">Old product price</del>
+					</div>
 				</div>
-				<div class="col-xs-6 col-sm-6">
-					<div th:replace="components/rating :: rating(name = 'product_rating_' + ${product.id}, value = ${product.rating})">Rating</div>
+				<div class="col-xs-6 col-sm-7">
+					<div th:replace="components/rating :: rating(name = |product_rating_ ${product.id}|, value = ${product.rating})">Rating</div>
 				</div>
-				<div class="col-xs-6 col-sm-6  small">
+				<div class="col-xs-6 col-sm-5 text-right small">
 					<span class="product-comments-count" th:data-value="${product.commentsCount}">Comments count</span>
 				</div>
 			</div>

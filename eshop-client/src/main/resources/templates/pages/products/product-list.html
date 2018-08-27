@@ -4,7 +4,7 @@
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{layouts/template}">
 <head>
-<title th:text="#{msg.menu.catalog}">Catalog</title>
+<title th:text="#{msg.menu.catalog} + ' - ' + ${category.name}">Catalog</title>
 </head>
 <body>
 	<div layout:fragment="content">
@@ -15,7 +15,7 @@
 			<div class="col-md-9">
 				<h1 th:text="${category.name}"></h1>
 				<div class="row card-columns">
-					<div th:each="productItem : ${productList}" class="col-sm-6 col-md-6 col-lg-4">
+					<div th:each="productItem : ${productList}" class="col-sm-6 col-md-6 col-lg-4 col-xl-4">
 						<div th:replace="pages/products/product-list-item :: product-list-item(product = ${productItem})">Product item</div>
 					</div>
 				</div>

@@ -6,8 +6,8 @@
 	<title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE" th:text="${@environment.getProperty('application.title')}">E-Shop</title> 
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" type="text/css" media="all" th:href="@{/css/bootstrap.min.css}" />
-	<link rel="stylesheet" type="text/css" media="all" th:href="@{/css/theme.css}" />
-	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" media="all" th:href="@{/css/font-awesome.css}" />
+	<link rel="stylesheet" type="text/css" media="all" th:href="@{/css/main.css}" />
 	<link rel="stylesheet" type="text/css" media="all" th:href="@{/css/sticky-footer-navbar.css}" />
 </head>
 <body>
@@ -48,65 +48,6 @@
 	<script th:src="@{/js/jquery.min.js}"></script>
 	<script th:src="@{/js/poppers.min.js}"></script>
 	<script th:src="@{/js/bootstrap.min.js}"></script>
-	<script>
-		/* Resize margin-bottom if footer's height is changed */
-		$(document).on('pageinit', function() {
-			onPageResize();
-			calculateRatings();
-			updateCommentsCount();
-		});
-		$(document).ready(function() {
-			onPageResize();
-			$(window).resize(onPageResize);
-			calculateRatings();
-			updateCommentsCount();
-		});
-		function onPageResize() {
-			var bodyMargin = $('body').css('margin-bottom');
-			var footerHeight = $('footer').height();
-			if (bodyMargin + 50 != footerHeight) {
-				$("body").css('margin-bottom', footerHeight + 50);
-			}
-		}
-		
-		function calculateRatings() {
-			$('.star-rating').each(function() {
-				$stars = $(this).find('.fa-star');
-				$stars.each(function(){
-					if (Math.round($stars.siblings('input.rating-value').val()) >= parseInt($(this).data('rating'))) {
-				      return $(this).addClass('active');
-				    } else {
-				      return $(this).removeClass('active');
-					}
-				});
-			});
-		}
-		
-		 
-	    $.fn.buildCommentTitle = function(num, suffix) {
-	      return num == 0 ? 'Нет отзывов' : num + ' ' + suffix;
-	    }
-
-	    $.fn.getCommentTitle = function(num) {
-	      var str = '' + num;
-	      if (str.endsWith('10') || str.endsWith('11') || str.endsWith('12') || str.endsWith('14')) {
-	       return $.fn.buildCommentTitle(num, 'отзывов');
-	      }
-	      if (str.endsWith('1')) {
-	       return $.fn.buildCommentTitle(num, 'отзыв');
-	      }
-	      if (str.endsWith('2') || str.endsWith('3') || str.endsWith('4')) {
-	       return $.fn.buildCommentTitle(num, 'отзыва');
-	      }
-	      return $.fn.buildCommentTitle(num, 'отзывов');
-	    }
-	    
-	    function updateCommentsCount() {
-	    	$('.product-comments-count').each(function() {
-	    		$(this).text($.fn.getCommentTitle($(this).data('value')));
-	    	});
-	    }
-		
-	</script>
+	<script th:src="@{/js/main.js}"></script>
 </body>
 </html>
