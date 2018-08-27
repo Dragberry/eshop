@@ -2,10 +2,13 @@ package org.dragberry.eshop.controller;
 
 import java.util.List;
 
+import org.dragberry.eshop.controller.exception.ResourceNotFoundException;
 import org.dragberry.eshop.model.product.ProductCategory;
+import org.dragberry.eshop.model.product.ProductDetails;
 import org.dragberry.eshop.model.product.ProductSearchQuery;
 import org.dragberry.eshop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,4 +37,20 @@ public class ProductController {
 		return mv;
 	}
 
+	/**
+     * Return a product page
+     * @return
+     */
+    @GetMapping({"${url.product}" + "/{productReference}"})
+    public ModelAndView prodcut(@PathVariable String productReference) {
+        if (productReference != null) {
+            ProductDetails product = productService.getProduct(productReference);
+            if (product != null) {
+                ModelAndView mv = new ModelAndView("pages/products/product");
+                mv.addObject("product", productService.getProduct(productReference));
+                return mv;
+            }
+        }
+        throw new ResourceNotFoundException();
+    }
 }

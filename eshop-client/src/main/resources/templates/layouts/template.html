@@ -14,13 +14,15 @@
 	<header th:replace="layouts/header :: header">...</header>
 	 <!-- Begin page content -->
     <main role="main" class="container">
-    	<div class="jumbotron">
+    	<div class="app-info jumbotron">
         	<div class="container">
 				<div class="row">
 					<div class="col-lg-4 col-md-6 text-center">
-	        			<img class="img-responsive" th:src="@{/images/logo.jpg}" 
-			        		th:alt="${@environment.getProperty('application.title')}"
-			        		th:title="${@environment.getProperty('application.title')}">
+	        			<a th:href="${@environment.getProperty('url.home')}">
+		        			<img class="img-responsive" th:src="@{/images/logo.jpg}" 
+				        		th:alt="${@environment.getProperty('application.title')}"
+				        		th:title="${@environment.getProperty('application.title')}">
+			        	</a>
 	        		</div>
 	        		<div class="col-lg-4 col-md-6 text-center">
 	        			<div th:each="phone : ${appInfo.phones}">

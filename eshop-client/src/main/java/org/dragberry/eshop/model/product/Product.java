@@ -18,7 +18,7 @@ public class Product {
 	
 	private String title;
 
-	private String url;
+	private String reference;
 	
 	private BigDecimal price;
 	

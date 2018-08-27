@@ -13,7 +13,20 @@
 				aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
-			<a class="navbar-brand" th:href="${@environment.getProperty('url.home')}" th:text="#{msg.menu.home}">Home</a>
+			<a class="navbar-brand" th:href="${@environment.getProperty('url.home')}" th:title="#{msg.menu.home}">
+				<span class="fa fa-home fa-lg"></span>
+			</a>
+			<a class="navbar-brand d-lg-none" th:href="${@environment.getProperty('url.cart')}" th:title="#{msg.common.cart}">
+	 			<span class="fa fa-shopping-cart fa-lg"></span>
+	 			<span class="badge badge-success">4</span>
+	 		</a>
+			<a class="navbar-brand d-lg-none" th:href="${@environment.getProperty('url.compare')}" th:title="#{msg.common.comparasion}">
+	 			<span class="fa fa-columns fa-lg"></span>
+	 			<span class="badge badge-success">4</span>
+	 		</a>
+	 		<a class="navbar-brand d-lg-none" th:href="${@environment.getProperty('url.account')}" th:title="#{msg.menu.account}">
+	 			<span class="fa fa-user fa-lg"></span>
+	 		</a>
 			<div class="collapse navbar-collapse" id="navbarCollapse">
 				<ul class="navbar-nav mr-auto">
 					<li class="nav-item">
@@ -33,15 +46,25 @@
 					<li class="nav-item">
 						<a class="nav-link" th:href="${@environment.getProperty('url.reviews')}" th:text="#{msg.menu.reviews}">Reviews</a>
 					</li>
-					<li class="nav-item">
-						<a class="nav-link" th:href="${@environment.getProperty('url.account')}" th:text="#{msg.menu.account}">Account</a>
-					</li>
 				</ul>
 				<form class="form-inline mt-2 mt-md-0">
+					<a class="btn btn-secondary d-none d-lg-block" th:href="${@environment.getProperty('url.cart')}" th:title="#{msg.common.cart}">
+			 			<span class="fa fa-shopping-cart fa-lg"></span>
+			 			<span class="badge badge-success">4</span>
+			 		</a>
+					<a class="btn btn-secondary d-none d-lg-block" th:href="${@environment.getProperty('url.compare')}" th:title="#{msg.common.comparasion}">
+			 			<span class="fa fa-columns fa-lg"></span>
+			 			<span class="badge badge-success">4</span>
+			 		</a>
+			 		<a class="btn btn-secondary d-none d-lg-block" th:href="${@environment.getProperty('url.account')}" th:title="#{msg.menu.account}">
+			 			<span class="fa fa-user fa-lg"></span>
+			 		</a>
 					<div class="input-group">
-					  	<input type="text" class="form-control" th:placeholder="#{msg.menu.search}" aria-describedby="basic-addon2">
+					  	<input type="text" class="form-control" th:placeholder="#{msg.common.search}" aria-describedby="basic-addon2">
 					  	<span class="input-group-btn">
-        					<button class="btn btn-outline-success" id="basic-addon2" th:text="#{msg.menu.search}"></button>
+						  	<button type="button" class="btn btn-secondary search" th:title="#{msg.common.search}">
+					 			<span class="fa fa-search fa-lg"></span>
+					 		</button>
       					</span>
 					</div>
 				</form>

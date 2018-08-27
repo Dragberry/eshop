@@ -9,16 +9,16 @@
 	<div th:fragment="product-list-item" class="card">
 		<div class="text-right">
 			<span th:each="label : ${product.labels}"  th:text="${label.key}"
-				class="procut-label badge" th:classappend="|badge-${label.value.value}|">Label</span>
+				class="product-label badge" th:classappend="|badge-${label.value.value}|">Label</span>
 		</div>
-		<a th:href="@{|${@environment.getProperty('url.product')}/${product.url}|}">
+		<a th:href="@{|${@environment.getProperty('url.product')}/${product.reference}|}">
 			<img class="img-fluid" th:src="${product.mainImage} ? @{${product.mainImage}} : @{/images/no-image.png}"
 				th:title="${product.title}" th:alt="${product.title}">
 		</a>
 		<div class="container">
 			<div class="row">
 				<div class="col-xs-6 col-sm-6">
-					<a th:href="@{|${@environment.getProperty('url.product')}/${product.url}|}" th:title="${product.title}">
+					<a th:href="@{|${@environment.getProperty('url.product')}/${product.reference}|}" th:title="${product.title}">
 						<span th:text="${product.title}">Product title</span>
 					</a>
 				</div>

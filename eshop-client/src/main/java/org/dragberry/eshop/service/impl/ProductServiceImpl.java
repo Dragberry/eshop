@@ -7,6 +7,7 @@ import java.util.Map;
 import org.dragberry.eshop.model.bootstrap.Modifier;
 import org.dragberry.eshop.model.product.Product;
 import org.dragberry.eshop.model.product.ProductCategory;
+import org.dragberry.eshop.model.product.ProductDetails;
 import org.dragberry.eshop.model.product.ProductSearchQuery;
 import org.dragberry.eshop.service.ProductService;
 import org.springframework.stereotype.Service;
@@ -31,4 +32,16 @@ public class ProductServiceImpl implements ProductService {
 				new Product(4L,  "A1", "Смарт часы A1", "smart-watch-a1", new BigDecimal(100), new BigDecimal(200), 1023, 1.2, Map.of("Скидка", Modifier.INFO, "10%", Modifier.DANGER), null),
 				new Product(5L,  "GV18", "Смарт часы GV18", "smart-watch-gv18", new BigDecimal(100), new BigDecimal(200), 0, 2.7, Map.of("Скидка", Modifier.INFO, "20%", Modifier.DANGER), null));
 	}
+
+    @Override
+    public ProductDetails getProduct(String productReference) {
+        ProductDetails product = new ProductDetails();
+        product.setTitle("Смарт-часы DZ09");
+        product.setArticle("DZ09");
+        product.setPrice(new BigDecimal(100));
+        product.setOldPrice(new BigDecimal(200));
+        product.setDescription("Интернет-магазин Smartvitrina.by предлагает Вам стильные и многофункциональные смарт-часы DZ09 (Smart watch DZ09) по выгодной цене.");
+        product.setLabels(Map.of("Скидка", Modifier.INFO, "20%", Modifier.DANGER));
+        return product;
+    }
 }
