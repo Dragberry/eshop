@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
-import org.dragberry.eshop.model.bootstrap.Modifier;
+import org.dragberry.eshop.model.common.Modifier;
 import org.dragberry.eshop.model.product.Product;
 import org.dragberry.eshop.model.product.ProductCategory;
 import org.dragberry.eshop.model.product.ProductDetails;

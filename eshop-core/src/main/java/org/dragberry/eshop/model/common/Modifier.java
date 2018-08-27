@@ -1,4 +1,4 @@
-package org.dragberry.eshop.model.bootstrap;
+package org.dragberry.eshop.model.common;
 
 public enum Modifier {
 

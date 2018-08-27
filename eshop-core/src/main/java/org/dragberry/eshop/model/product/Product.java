@@ -3,7 +3,7 @@ package org.dragberry.eshop.model.product;
 import java.math.BigDecimal;
 import java.util.Map;
 
-import org.dragberry.eshop.model.bootstrap.Modifier;
+import org.dragberry.eshop.model.common.Modifier;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
