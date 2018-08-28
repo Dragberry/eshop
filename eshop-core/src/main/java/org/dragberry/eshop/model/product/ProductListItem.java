@@ -7,10 +7,12 @@ import org.dragberry.eshop.model.common.Modifier;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
-public class Product {
+public class ProductListItem {
 	
 	private Long id;
 	
@@ -20,9 +22,9 @@ public class Product {
 
 	private String reference;
 	
-	private BigDecimal price;
+	private BigDecimal actualPrice;
 	
-	private BigDecimal oldPrice;
+	private BigDecimal price;
 	
 	private int commentsCount;
 	

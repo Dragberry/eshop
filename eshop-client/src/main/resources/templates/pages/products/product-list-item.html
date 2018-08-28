@@ -24,10 +24,10 @@
 				</div>
 				<div class="col-xs-6 col-sm-6 text-right">
 					<div>
-						<strong th:text="|${product.price} #{|msg.currency.${appInfo.currency}|}|">Product price</strong>
+						<strong th:text="|${product.actualPrice} #{|msg.currency.${appInfo.currency}|}|">Product price</strong>
 					</div>
 					<div>
-						<del class="small" th:text="|${product.oldPrice} #{|msg.currency.${appInfo.currency}|}|">Old product price</del>
+						<del class="small" th:text="|${product.price} #{|msg.currency.${appInfo.currency}|}|">Old product price</del>
 					</div>
 				</div>
 				<div class="col-xs-6 col-sm-7">

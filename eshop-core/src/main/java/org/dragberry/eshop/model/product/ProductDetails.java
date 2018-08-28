@@ -29,9 +29,9 @@ public class ProductDetails {
 
     private String reference;
     
-    private BigDecimal price;
+    private BigDecimal actualPrice;
     
-    private BigDecimal oldPrice;
+    private BigDecimal price;
     
     private Map<String, Modifier> labels;
     
