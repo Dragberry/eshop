@@ -47,7 +47,7 @@ public class ProductController {
             ProductDetails product = productService.getProduct(productReference);
             if (product != null) {
                 ModelAndView mv = new ModelAndView("pages/products/product");
-                mv.addObject("product", productService.getProduct(productReference));
+                mv.addObject("product", product);
                 return mv;
             }
         }
