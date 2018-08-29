@@ -15,6 +15,7 @@ import org.dragberry.eshop.dal.repo.ProductArticleRepository;
 import org.dragberry.eshop.model.common.ImageModel;
 import org.dragberry.eshop.model.common.Modifier;
 import org.dragberry.eshop.model.product.ProductListItem;
+import org.dragberry.eshop.model.product.ActualPriceHolder;
 import org.dragberry.eshop.model.product.ProductCategory;
 import org.dragberry.eshop.model.product.ProductDetails;
 import org.dragberry.eshop.model.product.ProductSearchQuery;
@@ -58,30 +59,7 @@ public class ProductServiceImpl implements ProductService {
 			product.setArticle(article.getArticle());
 			product.setReference(article.getReference());
 			product.setMainImage(article.getMainImage() != null ? article.getMainImage().getEntityKey() : null);
-			Product lowerPriceProduct = null;
-			BigDecimal lowerPrice = null;
-			BigDecimal lowerActualPrice = null;
-			for (var p : article.getProducts()) {
-			    if (lowerPriceProduct == null && p.getPrice() != null) {
-			        lowerPriceProduct = p;
-			        lowerPrice = p.getPrice();
-			        lowerActualPrice = p.getActualPrice();
-			    } else {
-			        if (lowerPrice.compareTo(p.getPrice()) == -1) {
-			            lowerPrice = p.getPrice();
-			            
-			        }
-			        if (lowerActualPrice != null) {
-			            if (p.getActualPrice() != null && lowerActualPrice.compareTo(p.getActualPrice()) == -1) {
-	                        lowerPrice = p.getActualPrice();
-	                    }
-			        } else {
-			            lowerActualPrice = p.getActualPrice();
-			        }
-			    }
-			}
-			product.setPrice(lowerPrice);
-			product.setActualPrice(lowerActualPrice);
+			setLowestPrice(article, product);
 			
 			// Test data
 			product.setCommentsCount(3);
@@ -90,19 +68,52 @@ public class ProductServiceImpl implements ProductService {
 			return product;
 		}).collect(Collectors.toList());
 	}
+
+    private void setLowestPrice(ProductArticle article, ActualPriceHolder product) {
+        Product lowerPriceProduct = null;
+        BigDecimal lowerPrice = null;
+        BigDecimal lowerActualPrice = null;
+        for (var p : article.getProducts()) {
+            if (lowerPriceProduct == null && p.getPrice() != null) {
+                lowerPriceProduct = p;
+                lowerPrice = p.getPrice();
+                lowerActualPrice = p.getActualPrice();
+            } else {
+                if (lowerPrice.compareTo(p.getPrice()) == -1) {
+                    lowerPrice = p.getPrice();
+                    
+                }
+                if (lowerActualPrice != null) {
+                    if (p.getActualPrice() != null && lowerActualPrice.compareTo(p.getActualPrice()) == -1) {
+                        lowerPrice = p.getActualPrice();
+                    }
+                } else {
+                    lowerActualPrice = p.getActualPrice();
+                }
+            }
+        }
+        product.setPrice(lowerPrice);
+        product.setActualPrice(lowerActualPrice);
+    }
 	
     @Override
     public ProductDetails getProduct(String productReference) {
+        var article = productArticleRepo.findByReference(productReference);
+        if (article == null) {
+            return null;
+        }
         ProductDetails product = new ProductDetails();
-        product.setTitle("Смарт-часы DZ09");
-        product.setArticle("DZ09");
-        product.setActualPrice(new BigDecimal(100));
-        product.setPrice(new BigDecimal(200));
-        product.setDescription("Интернет-магазин Smartvitrina.by предлагает Вам стильные и многофункциональные смарт-часы DZ09 (Smart watch DZ09) по выгодной цене.");
+        product.setId(article.getEntityKey());
+        product.setArticle(article.getArticle());
+        product.setTitle(article.getTitle());
+        product.setDescription(article.getDescription());
+        product.setMainImage(article.getMainImage() != null ? article.getMainImage().getEntityKey() : null);
+        setLowestPrice(article, product);
+        // test data
         product.setLabels(Map.of("Скидка", Modifier.INFO, "20%", Modifier.DANGER));
         return product;
     }
-
+    
     @Override
     public ImageModel getProductImage(Long productKey, Long imageKey) {
         var image = imageRepo.findById(imageKey).get();

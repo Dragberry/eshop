@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductDetails {
+public class ProductDetails implements ActualPriceHolder {
 
     private Long id;
     
@@ -35,7 +35,7 @@ public class ProductDetails {
     
     private Map<String, Modifier> labels;
     
-    private String mainImage;
+    private Long mainImage;
     
     private List<String> images;
 }

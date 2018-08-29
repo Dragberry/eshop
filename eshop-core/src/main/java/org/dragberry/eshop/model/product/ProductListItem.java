@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductListItem {
+public class ProductListItem implements ActualPriceHolder {
 	
 	private Long id;
 	

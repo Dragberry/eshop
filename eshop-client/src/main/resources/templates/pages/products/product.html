@@ -18,18 +18,11 @@
 					<div id="productCarouselIndicators" class="carousel slide" data-ride="carousel">
 						<ol class="carousel-indicators">
 						    <li data-target="#productCarouselIndicators" data-slide-to="0" class="active"></li>
-						    <li data-target="#productCarouselIndicators" data-slide-to="1"></li>
-						    <li data-target="#productCarouselIndicators" data-slide-to="2"></li>
 					  	</ol>
 					  	<div class="carousel-inner">
 						    <div class="carousel-item active">
-						    	<img class="d-block w-100" th:src="${product.mainImage} ? @{${product.mainImage}} : @{/images/no-image.png}" alt="First slide">
-						    </div>
-						    <div class="carousel-item">
-						    	<img class="d-block w-100" th:src="${product.mainImage} ? @{${product.mainImage}} : @{/images/no-image.png}" alt="Second slide">
-						    </div>
-						    <div class="carousel-item">
-						    	<img class="d-block w-100" th:src="${product.mainImage} ? @{${product.mainImage}} : @{/images/no-image.png}" alt="Third slide">
+						    	<img class="d-block w-100" th:title="${product.title}" th:alt="${product.title}"
+						    		th:src="${product.mainImage} ? @{|${@environment.getProperty('url.products-images')}/${product.id}/${product.mainImage}/${product.article}|} : ${@environment.getProperty('url.no-image')}">
 						    </div>
 						</div>
 						<a class="carousel-control-prev" href="#productCarouselIndicators" role="button" data-slide="prev">
@@ -50,19 +43,19 @@
 				</div>
 				<p class="text-justify" th:text="${product.description}">Description</p>
 				<div class="row">
-					<th:block th:if="${product.oldPrice}">
+					<th:block th:if="${product.actualPrice}">
 						<div class="col-md-6">
 							<div class="h5 alert alert-danger">
-								<span>[[#{msg.common.priceAction}]]: [[${product.price}]] [[#{|msg.currency.${appInfo.currency}|}]]</span>
+								<span>[[#{msg.common.priceAction}]]: [[${product.actualPrice}]] [[#{|msg.currency.${appInfo.currency}|}]]</span>
 							</div>
 						</div>
 						<div class="col-md-6">
 							<div class="h6 alert alert-secondary">
-								<span>[[#{msg.common.priceOld}]]: <del>[[${product.oldPrice}]] [[#{|msg.currency.${appInfo.currency}|}]]</del></span>
+								<span>[[#{msg.common.priceOld}]]: <del>[[${product.price}]] [[#{|msg.currency.${appInfo.currency}|}]]</del></span>
 							</div>
 						</div>
 					</th:block>
-					<th:block th:unless="${product.oldPrice}">
+					<th:block th:unless="${product.actualPrice}">
 						<div class="col-md-12">
 							<div class="alert alert-danger">
 								<span>[[#{msg.common.price}]]: [[${product.price}]] [[#{|msg.currency.${appInfo.currency}|}]]</span>

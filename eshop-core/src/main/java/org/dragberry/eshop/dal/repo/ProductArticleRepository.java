@@ -25,4 +25,11 @@ public interface ProductArticleRepository extends JpaRepository<ProductArticle, 
 	@Query("select pa from ProductArticle pa join pa.categories c where c.reference = :categoryReference")
     List<ProductArticle> findByCategoryReference(String categoryReference);
 
+	/**
+	 * Find an entity by reference
+	 * @param productReference
+	 * @return
+	 */
+    ProductArticle findByReference(String productReference);
+
 }
