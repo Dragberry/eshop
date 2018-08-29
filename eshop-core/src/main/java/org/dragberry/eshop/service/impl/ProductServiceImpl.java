@@ -114,7 +114,7 @@ public class ProductServiceImpl implements ProductService {
         product.setMainImage(article.getMainImage() != null ? article.getMainImage().getEntityKey() : null);
        
         Map<String, Set<KeyValue>> optionValues = new HashMap<>();
-        Map<Set<KeyValue>, Long> productOptions = new HashMap<>();
+        Map<Long, List<KeyValue>> productOptions = new HashMap<>();
         
         article.getProducts().forEach(p -> {
             p.getOptions().forEach(o -> {
@@ -123,8 +123,8 @@ public class ProductServiceImpl implements ProductService {
                         value -> new HashSet<KeyValue>()).add(new KeyValue(o.getEntityKey(), o.getValue()));
             });
             productOptions.put(
-                    p.getOptions().stream().map(o -> new KeyValue(o.getEntityKey(), o.getValue())).collect(Collectors.toSet()),
-                    p.getEntityKey());
+            		p.getEntityKey(),
+                    p.getOptions().stream().map(o -> new KeyValue(o.getName(), o.getValue())).collect(Collectors.toList()));
         });
         product.setOptionValues(optionValues);
         product.setProductOptions(productOptions);

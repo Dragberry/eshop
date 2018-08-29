@@ -7,15 +7,23 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.dragberry.eshop.controller.exception.ResourceNotFoundException;
+import org.dragberry.eshop.model.common.KeyValue;
 import org.dragberry.eshop.model.product.ProductCategory;
 import org.dragberry.eshop.model.product.ProductSearchQuery;
 import org.dragberry.eshop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import lombok.extern.log4j.Log4j;
+
+@Log4j
 @Controller
 public class ProductController {
 	
@@ -23,11 +31,22 @@ public class ProductController {
 	private ProductService productService;
 	
 	/**
+     * Add to cart
+     * @return
+     */
+    @PostMapping("${url.add-to-cart}")
+    @ResponseBody
+    public ResponseEntity<KeyValue> addToCart(@RequestBody String body) {
+        log.info("Add to cart: " + body);
+        return ResponseEntity.ok(new KeyValue("1", "2"));
+    }
+	
+	/**
      * Serves images
      * @return
 	 * @throws IOException 
      */
-    @GetMapping({"/products/images/{productKey}/{imageKey}/{imageName}"})
+    @GetMapping({"${url.products-images}/{productKey}/{imageKey}/{imageName}"})
     public void productMainImage(HttpServletResponse response,
             @PathVariable Long productKey,
             @PathVariable Long imageKey,
@@ -43,7 +62,7 @@ public class ProductController {
 	 * Return a list of products
 	 * @return
 	 */
-	@GetMapping({"${url.catalog}", "${url.catalog}" + "/{selectedCategory}"})
+	@GetMapping({"${url.catalog}", "${url.catalog}/{selectedCategory}"})
 	public ModelAndView catalog(@PathVariable(required = false) String selectedCategory) {
 		ModelAndView mv = new ModelAndView("pages/products/product-list");
 		var categoryList = productService.getCategoryList();
@@ -60,7 +79,7 @@ public class ProductController {
      * Return a product page
      * @return
      */
-    @GetMapping({"${url.product}" + "/{productReference}"})
+    @GetMapping({"${url.product}/{productReference}"})
     public ModelAndView prodcut(@PathVariable String productReference) {
         if (productReference != null) {
             var product = productService.getProduct(productReference);

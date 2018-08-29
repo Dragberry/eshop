@@ -37,7 +37,7 @@ public class ProductDetails implements ActualPriceHolder {
     
     private Map<String, Set<KeyValue>> optionValues;
     
-    private Map<Set<KeyValue>, Long> productOptions;
+    private Map<Long, List<KeyValue>> productOptions;
     
     private Long mainImage;
 

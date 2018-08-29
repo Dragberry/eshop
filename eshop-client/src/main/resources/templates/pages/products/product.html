@@ -42,49 +42,115 @@
 					<h6 th:text="|#{msg.common.productArticle}: ${product.article}|">Article</h6>
 				</div>
 				<p class="text-justify" th:text="${product.description}">Description</p>
-				<div class="row">
-					<div th:each="ov : ${product.optionValues}" class="form-group col-md-4">
-				    	<label th:for="${ov.key}" th:text="${ov.key}">Option name</label>
-				   		<select th:id="${ov.key}" class="form-control">
-				   			<option th:each="v : ${ov.value}" th:value="${v.key}" th:text="${v.value}">Option value</option>
-				      	</select>
-			      	</div>
-				</div>
-				<div class="row">
-					<th:block th:if="${product.actualPrice}">
-						<div class="col-md-6">
-							<div class="h5 alert alert-danger">
-								<span>[[#{msg.common.priceAction}]]: [[${product.actualPrice}]] [[#{|msg.currency.${appInfo.currency}|}]]</span>
+				<form id="addToCartForm" th:action="${@environment.getProperty('url.product-form')}" method="POST">
+					<div class="row">
+						<div th:each="ov : ${product.optionValues}" class="form-group col-md-4">
+					    	<label th:for="${ov.key}" th:text="${ov.key}">Option name</label>
+					   		<select th:id="${ov.key}" class="product-option form-control">
+					   			<option th:each="v : ${ov.value}" th:value="${v.key}" th:text="${v.value}">Option value</option>
+					      	</select>
+				      	</div>
+					</div>
+					<div class="row">
+						<th:block th:if="${product.actualPrice}">
+							<div class="col-md-6">
+								<div class="h5 alert alert-danger">
+									<span>[[#{msg.common.priceAction}]]: [[${product.actualPrice}]] [[#{|msg.currency.${appInfo.currency}|}]]</span>
+								</div>
 							</div>
-						</div>
-						<div class="col-md-6">
-							<div class="h6 alert alert-secondary">
-								<span>[[#{msg.common.priceOld}]]: <del>[[${product.price}]] [[#{|msg.currency.${appInfo.currency}|}]]</del></span>
+							<div class="col-md-6">
+								<div class="h6 alert alert-secondary">
+									<span>[[#{msg.common.priceOld}]]: <del>[[${product.price}]] [[#{|msg.currency.${appInfo.currency}|}]]</del></span>
+								</div>
 							</div>
-						</div>
-					</th:block>
-					<th:block th:unless="${product.actualPrice}">
-						<div class="col-md-12">
-							<div class="alert alert-danger">
-								<span>[[#{msg.common.price}]]: [[${product.price}]] [[#{|msg.currency.${appInfo.currency}|}]]</span>
+						</th:block>
+						<th:block th:unless="${product.actualPrice}">
+							<div class="col-md-12">
+								<div class="alert alert-danger">
+									<span>[[#{msg.common.price}]]: [[${product.price}]] [[#{|msg.currency.${appInfo.currency}|}]]</span>
+								</div>
 							</div>
-						</div>
-				 	</th:block>
-				 	<div class="col-xs-6 col-md-6 col-lg-6">
-				 		<button id="addToCartButton" type="button" class="btn btn-danger btn-block">
-				 			<span class="fa fa-cart-plus fa-lg"></span>
-				 			<span th:text="#{msg.common.addToCart}">Add to cart</span>
-				 		</button>
-				 	</div>
-				 	<div class="col-xs-6 col-md-6 col-lg-6">
-				 		<button id="singleClickBuyButton" type="button" class="btn btn-success btn-block">
-				 			<span class="fa fa-cart-arrow-down fa-lg"></span>
-				 			<span th:text="#{msg.common.singleClickBuy}">Single click buy</span>
-				 		</button>
-				 	</div>
-				</div>
+					 	</th:block>
+					 	<div class="col-xs-6 col-md-6 col-lg-6">
+					 		<button id="addToCartButton" type="button" class="btn btn-danger btn-block">
+					 			<span class="fa fa-cart-plus fa-lg"></span>
+					 			<span th:text="#{msg.common.addToCart}">Add to cart</span>
+					 		</button>
+					 	</div>
+					 	<div class="col-xs-6 col-md-6 col-lg-6">
+					 		<button id="singleClickBuyButton" type="button" class="btn btn-success btn-block">
+					 			<span class="fa fa-cart-arrow-down fa-lg"></span>
+					 			<span th:text="#{msg.common.singleClickBuy}">Single click buy</span>
+					 		</button>
+					 	</div>
+					</div>
+				</form>
 			</div>
 		</div>
 	</div>
+	<th:block layout:fragment="page_scripts">
+		<script th:inline="javascript">
+			/*<![CDATA[*/
+			var product = /*[[${product}]]*/ null;
+			/*]]>*/
+		</script>
+		<script>
+			var capturedProduct = {
+					productArticleId: '[[${product.id}]]',
+					productId: '[[${product.id}]]'
+			};
+			function addToCard() {
+				for (productId in product.productOptions) {
+				    for (optionSetIndex in product.productOptions[productId]) {
+				    	if (product.productOptions[productId][optionSetIndex]["key"] === optionValue
+				    			&& product.productOptions[productId][optionSetIndex]["value"] === option)
+				    	console.log(product.productOptions[productId][optionSetIndex]);
+				    }
+				}
+				
+				
+				$("select.product-option").each(function() {
+					var optionName = $(this).attr('id');
+					var optionValue = $(this).find('option:selected').val();
+					for (productId in product.productOptions) {
+					    for (optionSetIndex in product.productOptions[productId]) {
+					    	if (product.productOptions[productId][optionSetIndex]["key"] === optionValue
+					    			&& product.productOptions[productId][optionSetIndex]["value"] === option)
+					    	console.log(product.productOptions[productId][optionSetIndex]);
+					    }
+					}
+					console.log($(this).val());
+				});
+				
+				
+				
+		        $.ajax({
+		        	type: "POST",
+		            contentType: "application/json",
+		            url: "[[${@environment.getProperty('url.add-to-cart')}]]",
+		            data: JSON.stringify(capturedProduct),
+		            dataType: 'json',
+		            cache: false,
+		            success: function(data) {
+		                console.log(data.msg);
+		            },
+		            error: function(e) {
+		            	console.log(e);
+		            }
+		        });
+			}
+		
+			$(document).ready(function() {
+				$("#addToCartButton").click(function() {
+					console.log("Add to cart button is clicked");
+					addToCard();
+					
+				});
+				$("#singleClickBuyButton").click(function() {
+					console.log("Single click buy button is clicked");
+				});
+			});
+		</script>
+	</th:block>
 </body>
 </html>
