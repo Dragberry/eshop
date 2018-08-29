@@ -46,7 +46,7 @@
 					<div class="row">
 						<div th:each="ov : ${product.optionValues}" class="form-group col-md-4">
 					    	<label th:for="${ov.key}" th:text="${ov.key}">Option name</label>
-					   		<select th:id="${ov.key}" class="product-option form-control">
+					   		<select th:data-option-name="${ov.key}" class="product-option form-control">
 					   			<option th:each="v : ${ov.value}" th:value="${v.key}" th:text="${v.value}">Option value</option>
 					      	</select>
 				      	</div>
@@ -95,40 +95,35 @@
 			/*]]>*/
 		</script>
 		<script>
-			var capturedProduct = {
-					productArticleId: '[[${product.id}]]',
-					productId: '[[${product.id}]]'
-			};
+			function isProductMatch(optionName, optionValue) {
+				var isMatched = false;
+				$("select[data-option-name]").each(function() {
+					if (optionName == $(this).data('option-name') && optionValue == $(this).find('option:selected').val()) {
+						isMatched = true;
+						return false;
+					}
+				});
+				return isMatched;
+			}
+			
 			function addToCard() {
+				var productToAdd;
 				for (productId in product.productOptions) {
 				    for (optionSetIndex in product.productOptions[productId]) {
-				    	if (product.productOptions[productId][optionSetIndex]["key"] === optionValue
-				    			&& product.productOptions[productId][optionSetIndex]["value"] === option)
-				    	console.log(product.productOptions[productId][optionSetIndex]);
+				    	if (isProductMatch(product.productOptions[productId][optionSetIndex]["key"], product.productOptions[productId][optionSetIndex]["value"])) {
+				    		var productToAdd = {
+									productArticleId: '[[${product.id}]]',
+									productId: productId
+							};
+				    	}
 				    }
 				}
-				
-				
-				$("select.product-option").each(function() {
-					var optionName = $(this).attr('id');
-					var optionValue = $(this).find('option:selected').val();
-					for (productId in product.productOptions) {
-					    for (optionSetIndex in product.productOptions[productId]) {
-					    	if (product.productOptions[productId][optionSetIndex]["key"] === optionValue
-					    			&& product.productOptions[productId][optionSetIndex]["value"] === option)
-					    	console.log(product.productOptions[productId][optionSetIndex]);
-					    }
-					}
-					console.log($(this).val());
-				});
-				
-				
 				
 		        $.ajax({
 		        	type: "POST",
 		            contentType: "application/json",
 		            url: "[[${@environment.getProperty('url.add-to-cart')}]]",
-		            data: JSON.stringify(capturedProduct),
+		            data: JSON.stringify(productToAdd),
 		            dataType: 'json',
 		            cache: false,
 		            success: function(data) {
