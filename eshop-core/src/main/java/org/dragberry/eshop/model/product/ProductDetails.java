@@ -3,7 +3,9 @@ package org.dragberry.eshop.model.product;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.dragberry.eshop.model.common.KeyValue;
 import org.dragberry.eshop.model.common.Modifier;
 
 import lombok.AllArgsConstructor;
@@ -33,9 +35,13 @@ public class ProductDetails implements ActualPriceHolder {
     
     private BigDecimal price;
     
-    private Map<String, Modifier> labels;
+    private Map<String, Set<KeyValue>> optionValues;
+    
+    private Map<Set<KeyValue>, Long> productOptions;
     
     private Long mainImage;
+
+    private Map<String, Modifier> labels;
     
     private List<String> images;
 }

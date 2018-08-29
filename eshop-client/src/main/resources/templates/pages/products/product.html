@@ -43,6 +43,14 @@
 				</div>
 				<p class="text-justify" th:text="${product.description}">Description</p>
 				<div class="row">
+					<div th:each="ov : ${product.optionValues}" class="form-group col-md-4">
+				    	<label th:for="${ov.key}" th:text="${ov.key}">Option name</label>
+				   		<select th:id="${ov.key}" class="form-control">
+				   			<option th:each="v : ${ov.value}" th:value="${v.key}" th:text="${v.value}">Option value</option>
+				      	</select>
+			      	</div>
+				</div>
+				<div class="row">
 					<th:block th:if="${product.actualPrice}">
 						<div class="col-md-6">
 							<div class="h5 alert alert-danger">

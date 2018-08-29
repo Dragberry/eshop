@@ -1,8 +1,11 @@
 package org.dragberry.eshop.service.impl;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -13,6 +16,7 @@ import org.dragberry.eshop.dal.repo.CategoryRepository;
 import org.dragberry.eshop.dal.repo.ImageRepository;
 import org.dragberry.eshop.dal.repo.ProductArticleRepository;
 import org.dragberry.eshop.model.common.ImageModel;
+import org.dragberry.eshop.model.common.KeyValue;
 import org.dragberry.eshop.model.common.Modifier;
 import org.dragberry.eshop.model.product.ProductListItem;
 import org.dragberry.eshop.model.product.ActualPriceHolder;
@@ -108,6 +112,22 @@ public class ProductServiceImpl implements ProductService {
         product.setTitle(article.getTitle());
         product.setDescription(article.getDescription());
         product.setMainImage(article.getMainImage() != null ? article.getMainImage().getEntityKey() : null);
+       
+        Map<String, Set<KeyValue>> optionValues = new HashMap<>();
+        Map<Set<KeyValue>, Long> productOptions = new HashMap<>();
+        
+        article.getProducts().forEach(p -> {
+            p.getOptions().forEach(o -> {
+                optionValues.computeIfAbsent(
+                        o.getName(),
+                        value -> new HashSet<KeyValue>()).add(new KeyValue(o.getEntityKey(), o.getValue()));
+            });
+            productOptions.put(
+                    p.getOptions().stream().map(o -> new KeyValue(o.getEntityKey(), o.getValue())).collect(Collectors.toSet()),
+                    p.getEntityKey());
+        });
+        product.setOptionValues(optionValues);
+        product.setProductOptions(productOptions);
         setLowestPrice(article, product);
         // test data
         product.setLabels(Map.of("Скидка", Modifier.INFO, "20%", Modifier.DANGER));
