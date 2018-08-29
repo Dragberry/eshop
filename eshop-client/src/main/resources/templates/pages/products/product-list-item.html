@@ -12,8 +12,8 @@
 				class="product-label badge" th:classappend="|badge-${label.value.value}|">Label</span>
 		</div>
 		<a th:href="@{|${@environment.getProperty('url.product')}/${product.reference}|}">
-			<img class="img-fluid" th:src="${product.mainImage} ? @{${product.mainImage}} : @{/images/no-image.png}"
-				th:title="${product.title}" th:alt="${product.title}">
+			<img class="img-fluid" th:title="${product.title}" th:alt="${product.title}"
+				th:src="${product.mainImage} ? @{|${@environment.getProperty('url.products-images')}/${product.id}/${product.mainImage}/${product.article}|} : ${@environment.getProperty('url.no-image')}">
 		</a>
 		<div class="container">
 			<div class="row">
@@ -23,12 +23,20 @@
 					</a>
 				</div>
 				<div class="col-xs-6 col-sm-6 text-right">
-					<div>
-						<strong th:text="|${product.actualPrice} #{|msg.currency.${appInfo.currency}|}|">Product price</strong>
-					</div>
-					<div>
-						<del class="small" th:text="|${product.price} #{|msg.currency.${appInfo.currency}|}|">Old product price</del>
-					</div>
+					<th:block th:if="${product.actualPrice}">
+						<div>
+							<strong th:text="|${product.actualPrice} #{|msg.currency.${appInfo.currency}|}|">Product price</strong>
+						</div>
+						<div>
+							<del class="small" th:text="|${product.price} #{|msg.currency.${appInfo.currency}|}|">Old product price</del>
+						</div>
+					</th:block>
+					<th:block th:unless="${product.actualPrice}">
+						<div>
+							<strong th:text="|${product.price} #{|msg.currency.${appInfo.currency}|}|">Product price</strong>
+						</div>
+					</th:block>
+					
 				</div>
 				<div class="col-xs-6 col-sm-7">
 					<div th:replace="components/rating :: rating(name = |product_rating_ ${product.id}|, value = ${product.rating})">Rating</div>

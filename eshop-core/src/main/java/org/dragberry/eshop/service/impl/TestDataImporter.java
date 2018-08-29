@@ -11,21 +11,25 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.dragberry.eshop.dal.entity.Category;
+import org.dragberry.eshop.dal.entity.Image;
 import org.dragberry.eshop.dal.entity.Product;
 import org.dragberry.eshop.dal.entity.Product.SaleStatus;
 import org.dragberry.eshop.dal.entity.ProductArticle;
 import org.dragberry.eshop.dal.entity.ProductArticleOption;
 import org.dragberry.eshop.dal.repo.CategoryRepository;
+import org.dragberry.eshop.dal.repo.ImageRepository;
 import org.dragberry.eshop.dal.repo.ProductArticleOptionRepository;
 import org.dragberry.eshop.dal.repo.ProductArticleRepository;
 import org.dragberry.eshop.dal.repo.ProductRepository;
 import org.dragberry.eshop.service.DataImporter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.log4j.Log4j;
@@ -38,13 +42,19 @@ public class TestDataImporter implements DataImporter {
 	private CategoryRepository categoryRepo;
 	
 	@Autowired
+    private ImageRepository imageRepo;
+	
+	@Autowired
+    private ProductRepository productRepo;
+	
+	@Autowired
 	private ProductArticleRepository productArticleRepo;
 
 	@Autowired
 	private ProductArticleOptionRepository productArticleOptionRepo;
 	
 	@Autowired
-	private ProductRepository productRepo;
+	private ResourceLoader resourceLoader;
 	
     @Override
     @Transactional
@@ -80,6 +90,17 @@ public class TestDataImporter implements DataImporter {
 			pa.setReference(article);
 			pa.setDescription(row.getCell(6).getStringCellValue());
 			pa.setDescriptionFull(row.getCell(7).getStringCellValue());
+			try {
+			    InputStream is = resourceLoader.getResource(MessageFormat.format("classpath:data/{0}_main.png", article)).getInputStream();
+			    Image img = new Image();
+                img.setType("image/png");
+                img.setName(MessageFormat.format("{0}_main.png", article));
+                img.setContent(IOUtils.toByteArray(is));
+                img = imageRepo.save(img);
+			    pa.setMainImage(img);
+			} catch (Exception exc) {
+			    log.error(MessageFormat.format("An erro has occured during image importing, Row {0}", row.getRowNum()));
+			}
 			pa = productArticleRepo.save(pa);
 		}
 		log.info(MessageFormat.format("The product with the article '{0}' is already exists. Row: {1}", article, row.getRowNum()));
@@ -106,6 +127,7 @@ public class TestDataImporter implements DataImporter {
 			if (options.isEmpty()) {
 				Product p = new Product();
 				p.setPrice(new BigDecimal(row.getCell(10).getNumericCellValue()));
+				p.setActualPrice(new BigDecimal(row.getCell(10).getNumericCellValue() * 0.8));
 				p.setProductArticle(pa);
 				p.setQuantity(1);
 				p.setSaleStatus(SaleStatus.EXPOSED);
@@ -114,6 +136,7 @@ public class TestDataImporter implements DataImporter {
 				options.forEach(option -> {
 					Product p = new Product();
 					p.setPrice(new BigDecimal(row.getCell(10).getNumericCellValue()));
+					p.setActualPrice(new BigDecimal(row.getCell(10).getNumericCellValue() * 0.8));
 					p.setProductArticle(pa);
 					p.setOptions(Set.of(option));
 					p.setQuantity(1);	

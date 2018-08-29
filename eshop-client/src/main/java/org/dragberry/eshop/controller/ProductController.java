@@ -1,5 +1,11 @@
 package org.dragberry.eshop.controller;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.IOUtils;
 import org.dragberry.eshop.controller.exception.ResourceNotFoundException;
 import org.dragberry.eshop.model.product.ProductCategory;
 import org.dragberry.eshop.model.product.ProductSearchQuery;
@@ -15,6 +21,23 @@ public class ProductController {
 	
 	@Autowired
 	private ProductService productService;
+	
+	/**
+     * Serves images
+     * @return
+	 * @throws IOException 
+     */
+    @GetMapping({"/products/images/{productKey}/{imageKey}/{imageName}"})
+    public void productMainImage(HttpServletResponse response,
+            @PathVariable Long productKey,
+            @PathVariable Long imageKey,
+            @PathVariable String imageName) throws IOException {
+        var img = productService.getProductImage(productKey, imageKey);
+        if (img != null) {
+            response.setContentType(img.getType());
+            IOUtils.copy(new ByteArrayInputStream(img.getContent()), response.getOutputStream());
+        }
+    }
 	
 	/**
 	 * Return a list of products

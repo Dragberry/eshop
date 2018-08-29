@@ -32,5 +32,5 @@ public class ProductListItem {
 	
 	private Map<String, Modifier> labels;
 	
-	private String mainImage;
+	private Long mainImage;
 }

@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -47,6 +48,10 @@ public class ProductArticle extends BaseEntity {
 	
 	@Column(name = "REFERENCE")
 	private String reference;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "MAIN_IMAGE_KEY", referencedColumnName = "IMAGE_KEY")
+	private Image mainImage;
 	
 	@Column(name = "DESCRIPTION")
 	private String description;
