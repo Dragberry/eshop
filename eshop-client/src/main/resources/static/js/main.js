@@ -11,6 +11,16 @@ $(document).ready(function() {
 	calculateRatings();
 	updateCommentsCount();
 });
+
+$(document).ready(function() {
+	$("#addToCartButton").click(function() {
+		console.log("Add to cart button is clicked");
+	});
+	$("#singleClickBuyButton").click(function() {
+		console.log("Single click buy button is clicked");
+	});
+});
+
 /* Update body margin on screen resize */
 function onPageResize() {
 	var bodyMargin = $('body').css('margin-bottom');
