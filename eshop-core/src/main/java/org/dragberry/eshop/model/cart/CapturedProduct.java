@@ -21,6 +21,10 @@ public class CapturedProduct {
     
     private String article;
     
+    private String reference;
+    
+    private String mainImage;
+    
     private BigDecimal price;
     
     private Set<KeyValue> options  = new HashSet<>();

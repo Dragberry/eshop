@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.ModelAndView;
 
 import lombok.extern.log4j.Log4j;
 
@@ -29,6 +30,17 @@ public class CartController {
     
     private Map<CapturedProduct, Integer> capturedProducts = new HashMap<>();
 
+    /**
+     * Go to cart items
+     * @return
+     */
+    @GetMapping("${url.cart}")
+    public ModelAndView cartItems() {
+        ModelAndView mv = new ModelAndView("pages/cart/cart-items");
+        mv.addObject("capturedProducts", capturedProducts);
+        return mv;
+    }
+    
     /**
      * Add to cart
      * @return

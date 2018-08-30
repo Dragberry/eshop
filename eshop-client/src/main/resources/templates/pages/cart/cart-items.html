@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/template}">
+<head>
+<title th:text="#{msg.common.cart}">Cart</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<h2 th:text="#{msg.common.cart}">Cart</h2>
+		<div class="row">
+			<table class="table">
+				<tr>
+			    	<th scope="col">#</th>
+			     	<th scope="col" th:text="#{msg.common.product}">Title</th>
+			     	<th scope="col" th:text="#{msg.common.quantity}" class="text-center">Quantity</th>
+			     	<th scope="col" th:text="#{msg.common.price}">Price</th>
+		       		<th scope="col" th:text="#{msg.common.action}">Action</th>
+			    </tr>
+				<tr th:each="product,iter : ${capturedProducts}">
+					<th scope="row" th:text="${iter.index + 1}">1</th>
+					<td>
+						<a th:href="@{|${@environment.getProperty('url.product')}/${product.key.reference}|}">
+							<img class="cart-image img-fluid img-thumbnail" th:title="${product.key.title}" th:alt="${product.key.title}"
+							 	th:src="${product.key.mainImage} ? @{|${@environment.getProperty('url.products-images')}/${product.key.articleId}/${product.key.mainImage}/${product.key.article}|} : ${@environment.getProperty('url.no-image')}">
+							<span class="d-block" th:text="${product.key.title}">Title</span>
+						</a>
+					</td>
+					<td class="text-center align-middle">
+						<button type="button" class="btn btn-secondary" th:title="#{msg.common.minus}">
+				 			<span class="fa fa-minus fa-lg"></span>
+				 		</button>
+						<span th:text="${product.value}">Quantity</span>
+						<button type="button" class="btn btn-secondary" th:title="#{msg.common.plus}">
+				 			<span class="fa fa-plus fa-lg"></span>
+				 		</button>
+					</td>
+					<td class="align-middle">
+						<span th:text="${product.key.price}">Price</span>
+						<span th:text="#{|msg.currency.${appInfo.currency}|}">Currency</span>
+					</td>
+					<td class="align-middle">
+						<button type="button" class="btn btn-danger" th:title="#{msg.common.remove}">
+				 			<span class="fa fa-times fa-lg"></span>
+				 		</button>
+					</td>
+				</tr>
+			</table>
+			<div class="col-md-12">
+				<hr>
+			</div>
+			<div class="col-md-12 text-right">
+				<button id="toOrderButton" type="button" class="btn btn-success">
+		 			<span th:text="#{msg.common.toOrder}">To order</span>
+		 		</button>
+	 		</div>
+		</div>
+	</div>
+	<th:block layout:fragment="page_scripts">
+		
+	</th:block>
+</body>
+</html>

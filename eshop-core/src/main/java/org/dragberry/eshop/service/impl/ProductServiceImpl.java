@@ -155,6 +155,7 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepo.findById(capturedProduct.getProductId()).get();
         capturedProduct.setArticle(product.getProductArticle().getArticle());
         capturedProduct.setTitle(product.getProductArticle().getTitle());
+        capturedProduct.setReference(product.getProductArticle().getReference());
         capturedProduct.setPrice(product.getActualPrice() != null ? product.getActualPrice() : product.getPrice());
         capturedProduct.setOptions(product.getOptions().stream().map(o -> new KeyValue(o.getName(), o.getValue())).collect(Collectors.toSet()));
         return capturedProduct;
