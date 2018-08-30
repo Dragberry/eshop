@@ -31,5 +31,8 @@ public interface ProductArticleRepository extends JpaRepository<ProductArticle, 
 	 * @return
 	 */
     ProductArticle findByReference(String productReference);
+    
+    @Query("select pa.mainImage.entityKey from ProductArticle pa where pa.entityKey = :productArticleId")
+    Long findMainImageKey(Long productArticleId);
 
 }

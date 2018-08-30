@@ -33,5 +33,6 @@
 }
 
 .cart-image {
-	max-width: 25%;
+	max-height: 9rem;
+	margin-right:0.5rem;
 }

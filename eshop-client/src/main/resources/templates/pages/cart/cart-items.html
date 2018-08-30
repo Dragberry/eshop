@@ -4,28 +4,35 @@
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{layouts/template}">
 <head>
-<title th:text="#{msg.common.cart}">Cart</title>
+<title th:text="|#{msg.common.cart} (#{msg.common.yourOrder})|">Cart</title>
 </head>
 <body>
 	<div layout:fragment="content">
-		<h2 th:text="#{msg.common.cart}">Cart</h2>
+		<h2 th:text="#{msg.common.yourOrder}">Your order</h2>
 		<div class="row">
-			<table class="table">
+			<div th:unless="${capturedProducts.size() > 0}"  class="col-md-12 text-center">
+				<p th:text="#{msg.common.cartIsEmpty}">Empty cart</p>
+				<p><a th:href="${@environment.getProperty('url.catalog')}" th:text="#{msg.common.goShopping}"></a></p>
+			</div>
+			<table th:if="${capturedProducts.size() > 0}" class="table">
 				<tr>
 			    	<th scope="col">#</th>
 			     	<th scope="col" th:text="#{msg.common.product}">Title</th>
 			     	<th scope="col" th:text="#{msg.common.quantity}" class="text-center">Quantity</th>
 			     	<th scope="col" th:text="#{msg.common.price}">Price</th>
-		       		<th scope="col" th:text="#{msg.common.action}">Action</th>
+		       		<th scope="col" th:text="#{msg.common.action}" class="text-center">Action</th>
 			    </tr>
 				<tr th:each="product,iter : ${capturedProducts}">
 					<th scope="row" th:text="${iter.index + 1}">1</th>
-					<td>
+					<td class="align-middle">
 						<a th:href="@{|${@environment.getProperty('url.product')}/${product.key.reference}|}">
-							<img class="cart-image img-fluid img-thumbnail" th:title="${product.key.title}" th:alt="${product.key.title}"
-							 	th:src="${product.key.mainImage} ? @{|${@environment.getProperty('url.products-images')}/${product.key.articleId}/${product.key.mainImage}/${product.key.article}|} : ${@environment.getProperty('url.no-image')}">
+							<img class="cart-image img-fluid img-thumbnail float-left" th:title="${product.key.title}" th:alt="${product.key.title}"
+							 	th:src="${product.key.mainImage} ? @{|${@environment.getProperty('url.products-images')}/${product.key.productArticleId}/${product.key.mainImage}/${product.key.article}|} : ${@environment.getProperty('url.no-image')}">
+						</a>
+						<a th:href="@{|${@environment.getProperty('url.product')}/${product.key.reference}|}">
 							<span class="d-block" th:text="${product.key.title}">Title</span>
 						</a>
+						<span class="d-block" th:text="|#{msg.common.productArticle}: ${product.key.article}|">Article</span>
 					</td>
 					<td class="text-center align-middle">
 						<button type="button" class="btn btn-secondary" th:title="#{msg.common.minus}">
@@ -40,7 +47,7 @@
 						<span th:text="${product.key.price}">Price</span>
 						<span th:text="#{|msg.currency.${appInfo.currency}|}">Currency</span>
 					</td>
-					<td class="align-middle">
+					<td class="text-center align-middle">
 						<button type="button" class="btn btn-danger" th:title="#{msg.common.remove}">
 				 			<span class="fa fa-times fa-lg"></span>
 				 		</button>
