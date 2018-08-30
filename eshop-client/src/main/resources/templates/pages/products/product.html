@@ -91,7 +91,7 @@
 		<div class="modal fade" id="addToCartSuccessModal" tabindex="-1" role="dialog" aria-labelledby="addToCartSuccessCenterTitle" aria-hidden="true">
 			<div class="modal-dialog modal-dialog-centered" role="document">
 		    	<div class="modal-content">
-		      		<div class="modal-header">
+		      		<div class="modal-header alert alert-success">
 		        		<h5 class="modal-title" id="addToCartSuccessCenterTitle" th:text="#{msg.common.productHasBeenAddedToCart}">
 		        			Product has been added
 		        		</h5>
@@ -180,10 +180,10 @@
 		            	$('#capturedProductInfo > div > .captured-product-article').text(capturedProduct.article)
 		            	$('#capturedProductInfo > div > .captured-product-price').text(capturedProduct.price)
 		            	$('#addToCartSuccessModal').modal("show")
-		                console.log(capturedProduct);
+		                updateCartProductCounter();
 		            },
 		            error: function(e) {
-		            	console.log(e);
+		            	showServerErrorModal();
 		            }
 		        });
 			}

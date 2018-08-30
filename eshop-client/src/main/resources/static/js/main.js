@@ -57,3 +57,7 @@ function updateCommentsCount() {
 		$(this).text($.fn.getCommentTitle($(this).data('value')));
 	});
 }
+
+function showServerErrorModal() {
+	$('#serverErrorModal').modal('show');
+}

@@ -45,6 +45,38 @@
 				consectetur adipiscing elit. Praesent scelerisque neque neque, ac
 				elementum quam dignissim interdum. Phasellus et placerat elit.</p>
 		</div>
+		<div class="modal fade" id="serverErrorModal" tabindex="-1" role="dialog" aria-labelledby="serverErrorModalTitle" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered" role="document">
+		    	<div class="modal-content">
+		      		<div class="modal-header alert alert-danger">
+		        		<h5 class="modal-title" id="serverErrorModalTitle" th:text="#{msg.error.commonErrorTitle}">
+		        			An error has occured in the server
+		        		</h5>
+		        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          			<span aria-hidden="true">&times;</span>
+		        		</button>
+		      		</div>
+					<div class="modal-body">
+						<div class="text-center">
+				    		<p th:text="#{msg.error.commonErrorMsg}">MSG</p>
+		        			<div th:each="phone : ${appInfo.phones}">
+		        				<img class="img-responsive" th:src="@{|/images/${phone.type}.png|}" width="15" height="15">
+		        				<strong th:text="${phone.number}"></strong>
+	        				</div>
+	        			</div>
+					</div>
+					<div class="modal-footer">
+							<div class="col-sm-2 col-md-3"></div>
+				        	<div class="col-sm-8 col-md-6">
+				        		<button type="button" class="btn btn-danger btn-block" data-dismiss="modal" th:text="#{msg.common.ok}">
+				        			Ok
+				        		</button>
+			        		</div>
+			        		<div class="col-sm-2 col-md-3"></div>
+			      	</div>
+		    	</div>
+		  	</div>
+		</div>
 	</main>
 	<footer th:replace="layouts/footer :: footer">&copy; 2014 The Static Templates</footer>
 	<script th:src="@{/js/jquery.min.js}"></script>
