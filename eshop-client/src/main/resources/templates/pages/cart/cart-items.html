@@ -10,11 +10,11 @@
 	<div layout:fragment="content">
 		<h2 th:text="#{msg.common.yourOrder}">Your order</h2>
 		<div class="row">
-			<div th:unless="${capturedProducts.size() > 0}"  class="col-md-12 text-center">
+			<div id="cartIsEmpty" th:classappend="${capturedProducts.size()} > 0 ? 'd-none' : ''" class="col-md-12 text-center">
 				<p th:text="#{msg.common.cartIsEmpty}">Empty cart</p>
 				<p><a th:href="${@environment.getProperty('url.catalog')}" th:text="#{msg.common.goShopping}"></a></p>
 			</div>
-			<table th:if="${capturedProducts.size() > 0}" class="table">
+			<table id="cartItems" th:if="${capturedProducts.size() > 0}" class="table">
 				<tr>
 			    	<th scope="col">#</th>
 			     	<th scope="col" th:text="#{msg.common.product}">Title</th>
@@ -22,7 +22,7 @@
 			     	<th scope="col" th:text="#{msg.common.price}">Price</th>
 		       		<th scope="col" th:text="#{msg.common.action}" class="text-center">Action</th>
 			    </tr>
-				<tr th:each="product,iter : ${capturedProducts}">
+				<tr th:each="product,iter : ${capturedProducts}" th:data-product-id=${product.key.productId}>
 					<th scope="row" th:text="${iter.index + 1}">1</th>
 					<td class="align-middle">
 						<a th:href="@{|${@environment.getProperty('url.product')}/${product.key.reference}|}">
@@ -48,7 +48,7 @@
 						<span th:text="#{|msg.currency.${appInfo.currency}|}">Currency</span>
 					</td>
 					<td class="text-center align-middle">
-						<button th:onclick="|removeItemFromCard(${product.key.productId})|" type="button" class="btn btn-danger" th:title="#{msg.common.remove}">
+						<button th:onclick="|removeItemFromCart(${product.key.productId})|" type="button" class="btn btn-danger" th:title="#{msg.common.remove}">
 				 			<span class="fa fa-times fa-lg"></span>
 				 		</button>
 					</td>
@@ -56,6 +56,13 @@
 			</table>
 			<div class="col-md-12">
 				<hr>
+			</div>
+			<div class="col-md-12 text-right">
+				<span class="h5">
+					<strong>
+						[[#{msg.common.total}]]: <span class="cart-product-sum">[[${session.cartProductSum}]]</span> [[#{|msg.currency.${appInfo.currency}|}]]
+					</strong>
+				</span>
 			</div>
 			<div class="col-md-12 text-right">
 				<button id="toOrderButton" type="button" class="btn btn-success">
@@ -66,7 +73,7 @@
 	</div>
 	<th:block layout:fragment="page_scripts">
 		<script>
-			function removeItemFromCard(productId) {
+			function removeItemFromCart(productId) {
 				console.log('delete product id', productId);
 				$.ajax({
 		        	type: 'POST',
@@ -76,7 +83,15 @@
 		            dataType: 'json',
 		            cache: false,
 		            success: function() {
-		            	updateCartProductCounter();
+		            	$('tr[data-product-id="' + productId + '"]').fadeOut("normal", function() {
+		            		$(this).remove();
+		            		if ($('tr[data-product-id]').length <= 0) {
+		            			$('#cartIsEmpty').removeClass('d-none');
+		            			$('#cartItems').remove();
+		            		}
+		            	});
+		            	refreshCartCount();
+		            	refreshCartSum();
 		            },
 		            error: function(e) {
 		            	showServerErrorModal();
@@ -90,6 +105,10 @@
 			
 			function decrementCartItem(productId) {
 				console.log('decrement product id', productId);
+			}
+			
+			function refreshCartSum() {
+				$(".cart-product-sum").load('[[${@environment.getProperty('url.cart.sum')}]]');
 			}
 		</script>
 	</th:block>

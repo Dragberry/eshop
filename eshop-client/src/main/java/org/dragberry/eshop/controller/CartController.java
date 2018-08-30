@@ -1,5 +1,6 @@
 package org.dragberry.eshop.controller;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,6 +52,9 @@ public class CartController {
         log.info("Remove from cart: " + capturedProduct);
         capturedProducts.remove(capturedProduct);
         session.setAttribute("cartProductCount", capturedProducts.values().stream().mapToInt(Integer::intValue).sum());
+        session.setAttribute("cartProductSum", capturedProducts.entrySet().stream().map(entry -> {
+        	return entry.getKey().getPrice().multiply(new BigDecimal(entry.getValue()));
+        }).reduce(BigDecimal.ZERO, BigDecimal::add));
         return ResponseEntity.ok(capturedProduct);
     }
     
@@ -65,18 +69,27 @@ public class CartController {
         capturedProduct = productService.getProductCartDetails(capturedProduct);
         capturedProducts.compute(capturedProduct, (cp, quanity) -> quanity == null ? 1 : quanity + 1);
         session.setAttribute("cartProductCount", capturedProducts.values().stream().mapToInt(Integer::intValue).sum());
+        session.setAttribute("cartProductSum", capturedProducts.entrySet().stream().map(entry -> {
+        	return entry.getKey().getPrice().multiply(new BigDecimal(entry.getValue()));
+        }).reduce(BigDecimal.ZERO, BigDecimal::add));
         return ResponseEntity.ok(capturedProduct);
     }
     
     /**
-     * Cart product count
+     * Get cart product count
      * @return
      */
-    @GetMapping("${url.cart.product-count}")
-    @ResponseBody
-    public ResponseEntity<Integer> cartProductCount(HttpSession session) {
-        int cartProductCount = capturedProducts.values().stream().mapToInt(Integer::intValue).sum();
-        session.setAttribute("cartProductCount", cartProductCount);
-        return ResponseEntity.ok(cartProductCount);
+    @GetMapping("${url.cart.count}")
+    public String productCount() {
+        return "components/cart-components :: cartProductCount";
+    }
+    
+    /**
+     * Get cart product sum
+     * @return
+     */
+    @GetMapping("${url.cart.sum}")
+    public String productSum() {
+        return "components/cart-components :: cartProductSum";
     }
 }
