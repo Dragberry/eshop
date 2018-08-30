@@ -35,11 +35,11 @@
 						<span class="d-block" th:text="|#{msg.common.productArticle}: ${product.key.article}|">Article</span>
 					</td>
 					<td class="text-center align-middle">
-						<button type="button" class="btn btn-secondary" th:title="#{msg.common.minus}">
+						<button th:onclick="|decrementCartItem(${product.key.productId})|" type="button" class="btn btn-secondary" th:title="#{msg.common.minus}">
 				 			<span class="fa fa-minus fa-lg"></span>
 				 		</button>
 						<span th:text="${product.value}">Quantity</span>
-						<button type="button" class="btn btn-secondary" th:title="#{msg.common.plus}">
+						<button th:onclick="|incrementCartItem(${product.key.productId})|" type="button" class="btn btn-secondary" th:title="#{msg.common.plus}">
 				 			<span class="fa fa-plus fa-lg"></span>
 				 		</button>
 					</td>
@@ -48,7 +48,7 @@
 						<span th:text="#{|msg.currency.${appInfo.currency}|}">Currency</span>
 					</td>
 					<td class="text-center align-middle">
-						<button type="button" class="btn btn-danger" th:title="#{msg.common.remove}">
+						<button th:onclick="|removeItemFromCard(${product.key.productId})|" type="button" class="btn btn-danger" th:title="#{msg.common.remove}">
 				 			<span class="fa fa-times fa-lg"></span>
 				 		</button>
 					</td>
@@ -65,7 +65,33 @@
 		</div>
 	</div>
 	<th:block layout:fragment="page_scripts">
-		
+		<script>
+			function removeItemFromCard(productId) {
+				console.log('delete product id', productId);
+				$.ajax({
+		        	type: 'POST',
+		            contentType: 'application/json',
+		            url: '[[${@environment.getProperty('url.cart.remove')}]]',
+		            data: JSON.stringify({productId: productId}),
+		            dataType: 'json',
+		            cache: false,
+		            success: function() {
+		            	updateCartProductCounter();
+		            },
+		            error: function(e) {
+		            	showServerErrorModal();
+		            }
+		        });
+			}
+			
+			function incrementCartItem(productId) {
+				console.log('increment product id', productId);
+			}
+			
+			function decrementCartItem(productId) {
+				console.log('decrement product id', productId);
+			}
+		</script>
 	</th:block>
 </body>
 </html>

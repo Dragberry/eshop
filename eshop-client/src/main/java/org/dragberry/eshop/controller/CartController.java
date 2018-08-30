@@ -42,6 +42,19 @@ public class CartController {
     }
     
     /**
+     * Remove from cart
+     * @return
+     */
+    @PostMapping("${url.cart.remove}")
+    @ResponseBody
+    public ResponseEntity<CapturedProduct> removeFromCart(@RequestBody CapturedProduct capturedProduct, HttpSession session) {
+        log.info("Remove from cart: " + capturedProduct);
+        capturedProducts.remove(capturedProduct);
+        session.setAttribute("cartProductCount", capturedProducts.values().stream().mapToInt(Integer::intValue).sum());
+        return ResponseEntity.ok(capturedProduct);
+    }
+    
+    /**
      * Add to cart
      * @return
      */
