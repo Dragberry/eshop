@@ -15,6 +15,8 @@ import org.dragberry.eshop.dal.entity.ProductArticle;
 import org.dragberry.eshop.dal.repo.CategoryRepository;
 import org.dragberry.eshop.dal.repo.ImageRepository;
 import org.dragberry.eshop.dal.repo.ProductArticleRepository;
+import org.dragberry.eshop.dal.repo.ProductRepository;
+import org.dragberry.eshop.model.cart.CapturedProduct;
 import org.dragberry.eshop.model.common.ImageModel;
 import org.dragberry.eshop.model.common.KeyValue;
 import org.dragberry.eshop.model.common.Modifier;
@@ -38,6 +40,9 @@ public class ProductServiceImpl implements ProductService {
     
     @Autowired
     private ProductArticleRepository productArticleRepo;
+    
+    @Autowired
+    private ProductRepository productRepo;
     
 	public List<ProductCategory> getCategoryList() {
 		return StreamSupport.stream(categoryRepo.findAll().spliterator(), false).map(category -> {
@@ -101,7 +106,7 @@ public class ProductServiceImpl implements ProductService {
     }
 	
     @Override
-    public ProductDetails getProduct(String productReference) {
+    public ProductDetails getProductArticleDetails(String productReference) {
         var article = productArticleRepo.findByReference(productReference);
         if (article == null) {
             return null;
@@ -143,5 +148,15 @@ public class ProductServiceImpl implements ProductService {
         img.setName(image.getName());
         img.setType(image.getType());
         return img;
+    }
+    
+    @Override
+    public CapturedProduct getProductCartDetails(CapturedProduct capturedProduct) {
+        Product product = productRepo.findById(capturedProduct.getProductId()).get();
+        capturedProduct.setArticle(product.getProductArticle().getArticle());
+        capturedProduct.setTitle(product.getProductArticle().getTitle());
+        capturedProduct.setPrice(product.getActualPrice() != null ? product.getActualPrice() : product.getPrice());
+        capturedProduct.setOptions(product.getOptions().stream().map(o -> new KeyValue(o.getName(), o.getValue())).collect(Collectors.toSet()));
+        return capturedProduct;
     }
 }

@@ -3,6 +3,7 @@ package org.dragberry.eshop.service;
 import java.util.List;
 
 import org.dragberry.eshop.model.product.ProductListItem;
+import org.dragberry.eshop.model.cart.CapturedProduct;
 import org.dragberry.eshop.model.common.ImageModel;
 import org.dragberry.eshop.model.product.ProductCategory;
 import org.dragberry.eshop.model.product.ProductDetails;
@@ -27,7 +28,7 @@ public interface ProductService {
 	 * @param productReference
 	 * @return
 	 */
-    ProductDetails getProduct(String productReference);
+    ProductDetails getProductArticleDetails(String productReference);
 
     /**
      * Get the product
@@ -36,5 +37,12 @@ public interface ProductService {
      * @return
      */
     ImageModel getProductImage(Long productKey, Long imageKey);
+
+    /**
+     * Get details for captured product
+     * @param capturedProduct
+     * @return
+     */
+    CapturedProduct getProductCartDetails(CapturedProduct capturedProduct);
 
 }

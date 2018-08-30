@@ -87,6 +87,47 @@
 				</form>
 			</div>
 		</div>
+		
+		<div class="modal fade" id="addToCartSuccessModal" tabindex="-1" role="dialog" aria-labelledby="addToCartSuccessCenterTitle" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered" role="document">
+		    	<div class="modal-content">
+		      		<div class="modal-header">
+		        		<h5 class="modal-title" id="addToCartSuccessCenterTitle" th:text="#{msg.common.productHasBeenAddedToCart}">
+		        			Product has been added
+		        		</h5>
+		        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          			<span aria-hidden="true">&times;</span>
+		        		</button>
+		      		</div>
+					<div class="modal-body">
+				    	<div id="capturedProductInfo" class="row">
+				    		<div class="col-md-12">
+				       			<strong>[[#{msg.common.title}]]:</strong> <span class="captured-product-title">DZ09</span>
+				       		</div>
+				       		<div class="col-md-12">
+				       			<strong>[[#{msg.common.article}]]:</strong> <span class="captured-product-article">DZ09</span>
+				       		</div>
+				       		<div class="col-md-12">
+				       			<strong>[[#{msg.common.price}]]:</strong> <span class="captured-product-price">129</span> [[#{|msg.currency.${appInfo.currency}|}]]
+				       		</div>
+				    	</div>
+					</div>
+					<div class="modal-footer">
+							<div class="col-xs-12 col-md-6">
+				        		<a th:href="${@environment.getProperty('url.cart')}" class="btn btn-success btn-block" th:text="#{msg.common.goToCart}">
+				        			Go to cart
+				        		</a>
+			        		</div>
+				        	<div class="col-xs-12 col-md-6">
+				        		<button type="button" class="btn btn-secondary btn-block" data-dismiss="modal" th:text="#{msg.common.continueShopping}">
+				        			Continue
+				        		</button>
+			        		</div>
+			      	</div>
+		    	</div>
+		  	</div>
+		</div>
+		
 	</div>
 	<th:block layout:fragment="page_scripts">
 		<script th:inline="javascript">
@@ -97,7 +138,7 @@
 		<script>
 			function isProductMatch(optionName, optionValue) {
 				var isMatched = false;
-				$("select[data-option-name]").each(function() {
+				$('select[data-option-name]').each(function() {
 					if (optionName == $(this).data('option-name') && optionValue == $(this).find('option:selected').val()) {
 						isMatched = true;
 						return false;
@@ -110,7 +151,7 @@
 				var productToAdd;
 				for (productId in product.productOptions) {
 				    for (optionSetIndex in product.productOptions[productId]) {
-				    	if (isProductMatch(product.productOptions[productId][optionSetIndex]["key"], product.productOptions[productId][optionSetIndex]["value"])) {
+				    	if (isProductMatch(product.productOptions[productId][optionSetIndex]['key'], product.productOptions[productId][optionSetIndex]['value'])) {
 				    		var productToAdd = {
 									productArticleId: '[[${product.id}]]',
 									productId: productId
@@ -120,14 +161,26 @@
 				}
 				
 		        $.ajax({
-		        	type: "POST",
-		            contentType: "application/json",
-		            url: "[[${@environment.getProperty('url.add-to-cart')}]]",
+		        	type: 'POST',
+		            contentType: 'application/json',
+		            url: '[[${@environment.getProperty('url.cart.add')}]]',
 		            data: JSON.stringify(productToAdd),
 		            dataType: 'json',
 		            cache: false,
-		            success: function(data) {
-		                console.log(data.msg);
+		            success: function(capturedProduct) {
+		            	var optionsTitle = '';
+		            	var options = [];
+		            	for (optionId in capturedProduct.options) {
+		            		options.push(capturedProduct.options[optionId]['key'] + ': ' + capturedProduct.options[optionId]['value'])
+		            	}
+		            	if (options) {
+		            		optionsTitle = ' (' + options.join('; ') + ')' 
+		            	}
+		            	$('#capturedProductInfo > div > .captured-product-title').text(capturedProduct.title + optionsTitle)
+		            	$('#capturedProductInfo > div > .captured-product-article').text(capturedProduct.article)
+		            	$('#capturedProductInfo > div > .captured-product-price').text(capturedProduct.price)
+		            	$('#addToCartSuccessModal').modal("show")
+		                console.log(capturedProduct);
 		            },
 		            error: function(e) {
 		            	console.log(e);
@@ -136,13 +189,13 @@
 			}
 		
 			$(document).ready(function() {
-				$("#addToCartButton").click(function() {
-					console.log("Add to cart button is clicked");
+				$('#addToCartButton').click(function() {
+					console.log('Add to cart button is clicked');
 					addToCard();
 					
 				});
-				$("#singleClickBuyButton").click(function() {
-					console.log("Single click buy button is clicked");
+				$('#singleClickBuyButton').click(function() {
+					console.log('Single click buy button is clicked');
 				});
 			});
 		</script>
