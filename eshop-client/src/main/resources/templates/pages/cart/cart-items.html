@@ -24,7 +24,7 @@
 		       		<th scope="col" th:text="#{msg.common.action}" class="text-center">Action</th>
 			    </tr>
 				<tr th:each="product,iter : ${capturedProducts}" th:data-product-id=${product.key.productId}>
-					<th scope="row" th:text="${iter.index + 1}">1</th>
+					<th scope="row" th:text="${iter.index + 1}" th:data-index="${iter.index + 1}">1</th>
 					<td class="align-middle">
 						<a th:href="@{|${@environment.getProperty('url.product')}/${product.key.reference}|}">
 							<img class="cart-image img-fluid img-thumbnail float-left" th:title="${product.key.title}" th:alt="${product.key.title}"
@@ -93,6 +93,10 @@
 		            		if ($('tr[data-product-id]').length <= 0) {
 		            			$('#cartIsEmpty').removeClass('d-none');
 		            			$('#cartItems').remove();
+		            		} else {
+			            		$("th[data-index]").each(function(index) {
+			                		$(this).text(index + 1);
+			                	})
 		            		}
 		            	});
 		            	onCartChanges(cartState);
