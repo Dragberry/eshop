@@ -44,7 +44,6 @@
 			<groupId>org.dragberry.eshop</groupId>
 			<artifactId>eshop-client</artifactId>
 			<version>${project.version}</version>
-			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.dragberry.eshop</groupId>
