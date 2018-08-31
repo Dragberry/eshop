@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/template}">
+<head>
+<title th:text="|#{msg.common.cart} (#{msg.common.ordering})|">Ordering</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<h2 th:text="#{msg.common.ordering}">Ordering</h2>
+		<form>
+			<div class="row">
+				<div class="col-md-12">
+					<div class="row">
+						<div class="col-md-6">
+							<fieldset class="col-md-12">
+								<legend th:text="#{msg.common.contactInfo}">Contact info</legend>
+								<div class="form-group">
+						    		<label for="orderDetailsPhone" th:text="#{msg.common.contactPhone}">Phone</label>
+						    		<input type="text" class="form-control" id="orderDetailsPhone" aria-describedby="orderDetailsPhoneHelp" th:placeholder="#{msg.common.contactPhone}">
+						    		<small id="orderDetailsPhoneHelp" class="form-text text-muted" th:text="#{msg.common.examplePhone}">Example</small>
+						  		</div>
+						  		<div class="form-group">
+						    		<label for="orderDetailsFullName" th:text="#{msg.common.contactPerson}">Full name</label>
+						    		<input type="text" class="form-control" id="orderDetailsFullName" th:placeholder="#{msg.common.contactPerson}">
+						  		</div>
+						  		<div class="form-group">
+						    		<label for="orderDetailsAddress" th:text="#{msg.common.deliveryAddress}">Address</label>
+						    		<textarea class="form-control" id="orderDetailsAddress" th:placeholder="#{msg.common.deliveryAddress}"></textarea>
+						  		</div>
+						  		<div class="form-group">
+						    		<label for="orderDetailsEmail" th:text="#{msg.common.email}">Email</label>
+						    		<input type="text" class="form-control" id="orderDetailsEmail" th:placeholder="#{msg.common.email}">
+						  		</div>
+						  		<div class="form-group">
+						    		<label for="orderDetailsComment" th:text="#{msg.common.comment}">Comment</label>
+						    		<textarea class="form-control" id="orderDetailsComment" th:placeholder="#{msg.common.comment}"></textarea>
+						  		</div>
+						  	</fieldset>
+							<fieldset class="col-md-12">
+								<legend th:text="#{msg.common.delivery}">Delivery</legend>
+								<div class="form-check">
+								  	<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
+								  	<label class="form-check-label" for="exampleRadios1">
+								   		Default radio
+								  	</label>
+								</div>
+								<div class="form-check">
+								  	<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+								  	<label class="form-check-label" for="exampleRadios2">
+								   		Second default radio
+								  	</label>
+								</div>
+							</fieldset>
+							<fieldset class="col-md-12">
+								<legend th:text="#{msg.common.paymentMethod}">Payment method</legend>
+								<div class="form-check">
+								  	<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
+								  	<label class="form-check-label" for="exampleRadios1">
+								   		Default radio
+								  	</label>
+								</div>
+								<div class="form-check">
+								  	<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+								  	<label class="form-check-label" for="exampleRadios2">
+								   		Second default radio
+								  	</label>
+								</div>
+							</fieldset>
+						</div>
+						<div class="col-md-6">
+							<fieldset class="col-md-12">
+								<legend th:text="#{msg.common.yourOrder}">Your order</legend>
+								<table class="table">
+									<tr th:each="product : ${capturedProducts}" th:data-product-id=${product.key.productId}>
+										<td>
+											<img class="cart-image-small img-fluid img-thumbnail" th:title="${product.key.title}" th:alt="${product.key.title}"
+								 				th:src="${product.key.mainImage} ? @{|${@environment.getProperty('url.products-images')}/${product.key.productArticleId}/${product.key.mainImage}/${product.key.article}|} : ${@environment.getProperty('url.no-image')}">
+										</td>
+										<td class="align-bottom">
+											<span th:text="${product.key.fullTitle}">Title</span>
+										</td>
+										<td class="align-bottom text-right">
+											<span th:text="${product.value.quantity}">Quantity</span>
+											<span>X</span>
+											<span th:text="${product.key.price}">Price</span>
+											<span th:text="#{|msg.currency.${appInfo.currency}|}">Currency</span>
+										</td>
+									</tr>
+								</table>
+							</fieldset>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-12">
+					<hr>
+				</div>
+				<div class="col-md-12 text-right">
+					<button id="confirmOrderButton" type="button" class="btn btn-secondary">
+						<span class="fa fa-edit fa-lg"></span>
+			 			<span th:text="#{msg.common.changeOrder}">Change order</span>
+			 		</button>
+					<button id="confirmOrderButton" type="button" class="btn btn-success" th:disabled="${true}">
+			 			<span class="fa fa-check fa-lg"></span>
+			 			<span th:text="#{msg.common.submitOrder}">Confirm order</span>
+			 		</button>
+		 		</div>
+			</div>	
+		</form>
+	</div>
+	<th:block layout:fragment="page_scripts">
+		<script>
+			
+		</script>
+	</th:block>
+</body>
+</html>

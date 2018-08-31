@@ -26,10 +26,22 @@ import org.springframework.web.servlet.ModelAndView;
 @Scope(WebApplicationContext.SCOPE_SESSION)
 public class CartController {
     
+    private static enum State {
+        CART_ITEMS("pages/cart/cart-items"), ORDERING("pages/cart/ordering");
+        
+        public final String template;
+        
+        private State(String template) {
+            this.template = template;
+        }
+    }
+    
     @Autowired
     private ProductService productService;
     
     private Map<CapturedProduct, CapturedProductState> capturedProducts = new HashMap<>();
+    
+    private State state = State.ORDERING;
 
     /**
      * Go to cart items
@@ -37,7 +49,7 @@ public class CartController {
      */
     @GetMapping("${url.cart}")
     public ModelAndView cartItems(HttpSession session) {
-        ModelAndView mv = new ModelAndView("pages/cart/cart-items");
+        ModelAndView mv = new ModelAndView(state.template);
         mv.addObject("capturedProducts", capturedProducts);
         updateCartState(session);
         return mv;
