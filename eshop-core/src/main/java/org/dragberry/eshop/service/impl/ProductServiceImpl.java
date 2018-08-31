@@ -159,6 +159,7 @@ public class ProductServiceImpl implements ProductService {
         capturedProduct.setPrice(product.getActualPrice() != null ? product.getActualPrice() : product.getPrice());
         capturedProduct.setOptions(product.getOptions().stream().map(o -> new KeyValue(o.getName(), o.getValue())).collect(Collectors.toSet()));
         capturedProduct.setMainImage(productArticleRepo.findMainImageKey(capturedProduct.getProductArticleId()));
+        capturedProduct.updateFullTitle();
         return capturedProduct;
     }
 }

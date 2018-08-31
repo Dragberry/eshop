@@ -182,7 +182,7 @@
 		            	}
 		            	$('#capturedProductInfo > div > .captured-product-title').text(capturedProduct.title + optionsTitle)
 		            	$('#capturedProductInfo > div > .captured-product-article').text(capturedProduct.article)
-		            	$('#capturedProductInfo > div > .captured-product-price').text(capturedProduct.price)
+		            	$('#capturedProductInfo > div > .captured-product-price').text(capturedProduct.price.toFixed(2))
 		            	$('#addToCartSuccessModal').modal("show")
 		                refreshCartCount();
 		            },

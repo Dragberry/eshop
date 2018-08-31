@@ -6,7 +6,9 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.dragberry.eshop.controller.exception.BadRequestException;
 import org.dragberry.eshop.model.cart.CapturedProduct;
+import org.dragberry.eshop.model.cart.CapturedProductState;
 import org.dragberry.eshop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -19,9 +21,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 
-import lombok.extern.log4j.Log4j;
-
-@Log4j
 @Controller
 @Scope(WebApplicationContext.SCOPE_SESSION)
 public class CartController {
@@ -29,17 +28,61 @@ public class CartController {
     @Autowired
     private ProductService productService;
     
-    private Map<CapturedProduct, Integer> capturedProducts = new HashMap<>();
+    private Map<CapturedProduct, CapturedProductState> capturedProducts = new HashMap<>();
 
     /**
      * Go to cart items
      * @return
      */
     @GetMapping("${url.cart}")
-    public ModelAndView cartItems() {
+    public ModelAndView cartItems(HttpSession session) {
         ModelAndView mv = new ModelAndView("pages/cart/cart-items");
         mv.addObject("capturedProducts", capturedProducts);
+        updateCartState(session);
         return mv;
+    }
+    
+    /**
+     * Updates product count and sum in session
+     * @param session
+     */
+    private void updateCartState(HttpSession session) {
+        session.setAttribute("cartProductCount", capturedProducts.values().stream()
+                .mapToInt(CapturedProductState::getQuantity).sum());
+        session.setAttribute("cartProductSum", capturedProducts.values().stream()
+                .map(CapturedProductState::getTotalPrice).reduce(BigDecimal.ZERO, BigDecimal::add));
+    }
+    
+    /**
+     * Decrement product item
+     * @return
+     */
+    @PostMapping("${url.cart.decrement}")
+    @ResponseBody
+    public ResponseEntity<CapturedProductState> decrement(@RequestBody CapturedProduct capturedProduct, HttpSession session) {
+        if (capturedProducts.containsKey(capturedProduct)) {
+            CapturedProductState state = capturedProducts.get(capturedProduct);
+            state.decrement();
+            updateCartState(session);
+            return ResponseEntity.ok(state);
+        }
+        throw new BadRequestException();
+    }
+    
+    /**
+     * Increment product item
+     * @return
+     */
+    @PostMapping("${url.cart.increment}")
+    @ResponseBody
+    public ResponseEntity<CapturedProductState> increment(@RequestBody CapturedProduct capturedProduct, HttpSession session) {
+        if (capturedProducts.containsKey(capturedProduct)) {
+            CapturedProductState state = capturedProducts.get(capturedProduct);
+            state.increment();
+            updateCartState(session);
+            return ResponseEntity.ok(state);
+        }
+        throw new BadRequestException();
     }
     
     /**
@@ -49,13 +92,12 @@ public class CartController {
     @PostMapping("${url.cart.remove}")
     @ResponseBody
     public ResponseEntity<CapturedProduct> removeFromCart(@RequestBody CapturedProduct capturedProduct, HttpSession session) {
-        log.info("Remove from cart: " + capturedProduct);
-        capturedProducts.remove(capturedProduct);
-        session.setAttribute("cartProductCount", capturedProducts.values().stream().mapToInt(Integer::intValue).sum());
-        session.setAttribute("cartProductSum", capturedProducts.entrySet().stream().map(entry -> {
-        	return entry.getKey().getPrice().multiply(new BigDecimal(entry.getValue()));
-        }).reduce(BigDecimal.ZERO, BigDecimal::add));
-        return ResponseEntity.ok(capturedProduct);
+        if (capturedProducts.containsKey(capturedProduct)) {
+            capturedProducts.remove(capturedProduct);
+            updateCartState(session);
+            return ResponseEntity.ok(capturedProduct);
+        }
+        throw new BadRequestException();
     }
     
     /**
@@ -65,14 +107,12 @@ public class CartController {
     @PostMapping("${url.cart.add}")
     @ResponseBody
     public ResponseEntity<CapturedProduct> addToCart(@RequestBody CapturedProduct capturedProduct, HttpSession session) {
-        log.info("Add to cart: " + capturedProduct);
         capturedProduct = productService.getProductCartDetails(capturedProduct);
-        capturedProducts.compute(capturedProduct, (cp, quanity) -> quanity == null ? 1 : quanity + 1);
-        session.setAttribute("cartProductCount", capturedProducts.values().stream().mapToInt(Integer::intValue).sum());
-        session.setAttribute("cartProductSum", capturedProducts.entrySet().stream().map(entry -> {
-        	return entry.getKey().getPrice().multiply(new BigDecimal(entry.getValue()));
-        }).reduce(BigDecimal.ZERO, BigDecimal::add));
-        return ResponseEntity.ok(capturedProduct);
+        if (capturedProduct != null) {
+            capturedProducts.computeIfAbsent(capturedProduct, cp -> new CapturedProductState(cp.getProductId(), cp.getPrice())).increment();
+            updateCartState(session);
+            return ResponseEntity.ok(capturedProduct);
+        } throw new BadRequestException();
     }
     
     /**

@@ -18,8 +18,9 @@
 				<tr>
 			    	<th scope="col">#</th>
 			     	<th scope="col" th:text="#{msg.common.product}">Title</th>
-			     	<th scope="col" th:text="#{msg.common.quantity}" class="text-center">Quantity</th>
 			     	<th scope="col" th:text="#{msg.common.price}">Price</th>
+			     	<th scope="col" th:text="#{msg.common.quantity}" class="text-center">Quantity</th>
+			     	<th scope="col" th:text="#{msg.common.sum}">Sum</th>
 		       		<th scope="col" th:text="#{msg.common.action}" class="text-center">Action</th>
 			    </tr>
 				<tr th:each="product,iter : ${capturedProducts}" th:data-product-id=${product.key.productId}>
@@ -30,21 +31,25 @@
 							 	th:src="${product.key.mainImage} ? @{|${@environment.getProperty('url.products-images')}/${product.key.productArticleId}/${product.key.mainImage}/${product.key.article}|} : ${@environment.getProperty('url.no-image')}">
 						</a>
 						<a th:href="@{|${@environment.getProperty('url.product')}/${product.key.reference}|}">
-							<span class="d-block" th:text="${product.key.title}">Title</span>
+							<span class="d-block" th:text="${product.key.fullTitle}">Title</span>
 						</a>
 						<span class="d-block" th:text="|#{msg.common.productArticle}: ${product.key.article}|">Article</span>
+					</td>
+					<td class="align-middle">
+						<span th:text="${product.key.price}">Price</span>
+						<span th:text="#{|msg.currency.${appInfo.currency}|}">Currency</span>
 					</td>
 					<td class="text-center align-middle">
 						<button th:onclick="|decrementCartItem(${product.key.productId})|" type="button" class="btn btn-secondary" th:title="#{msg.common.minus}">
 				 			<span class="fa fa-minus fa-lg"></span>
 				 		</button>
-						<span th:text="${product.value}">Quantity</span>
+						<span class="cart-product-quantity" th:text="${product.value.quantity}">Quantity</span>
 						<button th:onclick="|incrementCartItem(${product.key.productId})|" type="button" class="btn btn-secondary" th:title="#{msg.common.plus}">
 				 			<span class="fa fa-plus fa-lg"></span>
 				 		</button>
 					</td>
 					<td class="align-middle">
-						<span th:text="${product.key.price}">Price</span>
+						<span class="cart-product-total-price" th:text="${product.value.totalPrice}">Total Price</span>
 						<span th:text="#{|msg.currency.${appInfo.currency}|}">Currency</span>
 					</td>
 					<td class="text-center align-middle">
@@ -99,12 +104,32 @@
 		        });
 			}
 			
+			function changeCartItemQuantity(productId, url) {
+				$.ajax({
+		        	type: 'POST',
+		            contentType: 'application/json',
+		            url: url,
+		            data: JSON.stringify({productId: productId}),
+		            dataType: 'json',
+		            cache: false,
+		            success: function(state) {
+		            	$('tr[data-product-id="' + productId + '"] > td > span.cart-product-quantity').text(state.quantity);
+		            	$('tr[data-product-id="' + productId + '"] > td > span.cart-product-total-price').text(state.totalPrice.toFixed(2));
+		            	refreshCartCount();
+		            	refreshCartSum();
+		            },
+		            error: function(e) {
+		            	showServerErrorModal();
+		            }
+		        });
+			}
+			
 			function incrementCartItem(productId) {
-				console.log('increment product id', productId);
+				changeCartItemQuantity(productId, '[[${@environment.getProperty('url.cart.increment')}]]');
 			}
 			
 			function decrementCartItem(productId) {
-				console.log('decrement product id', productId);
+				changeCartItemQuantity(productId, '[[${@environment.getProperty('url.cart.decrement')}]]');
 			}
 			
 			function refreshCartSum() {
