@@ -70,7 +70,7 @@
 				</span>
 			</div>
 			<div class="col-md-12 text-right">
-				<button id="toOrderButton" type="button" class="btn btn-success">
+				<button id="toOrderButton" type="button" class="btn btn-success" th:disabled="${session.cartProductCount > 0 ? false : true}">
 		 			<span th:text="#{msg.common.toOrder}">To order</span>
 		 		</button>
 	 		</div>
@@ -87,7 +87,7 @@
 		            data: JSON.stringify({productId: productId}),
 		            dataType: 'json',
 		            cache: false,
-		            success: function() {
+		            success: function(cartState) {
 		            	$('tr[data-product-id="' + productId + '"]').fadeOut("normal", function() {
 		            		$(this).remove();
 		            		if ($('tr[data-product-id]').length <= 0) {
@@ -95,8 +95,7 @@
 		            			$('#cartItems').remove();
 		            		}
 		            	});
-		            	refreshCartCount();
-		            	refreshCartSum();
+		            	onCartChanges(cartState);
 		            },
 		            error: function(e) {
 		            	showServerErrorModal();
@@ -112,16 +111,25 @@
 		            data: JSON.stringify({productId: productId}),
 		            dataType: 'json',
 		            cache: false,
-		            success: function(state) {
-		            	$('tr[data-product-id="' + productId + '"] > td > span.cart-product-quantity').text(state.quantity);
-		            	$('tr[data-product-id="' + productId + '"] > td > span.cart-product-total-price').text(state.totalPrice.toFixed(2));
-		            	refreshCartCount();
-		            	refreshCartSum();
+		            success: function(cartState) {
+		            	$('tr[data-product-id="' + productId + '"] > td > span.cart-product-quantity').text(cartState.change.quantity);
+		            	$('tr[data-product-id="' + productId + '"] > td > span.cart-product-total-price').text(cartState.change.totalPrice.toFixed(2));
+		            	onCartChanges(cartState);
 		            },
 		            error: function(e) {
 		            	showServerErrorModal();
 		            }
 		        });
+			}
+			
+			function onCartChanges(cartState) {
+				refreshCartCount(cartState);
+            	refreshCartSum(cartState);
+            	changeToOrderButtonState(cartState);
+			}
+			
+			function changeToOrderButtonState(cartState) {
+				$('#toOrderButton').prop('disabled', cartState.quantity <= 0);
 			}
 			
 			function incrementCartItem(productId) {
@@ -132,8 +140,8 @@
 				changeCartItemQuantity(productId, '[[${@environment.getProperty('url.cart.decrement')}]]');
 			}
 			
-			function refreshCartSum() {
-				$(".cart-product-sum").load('[[${@environment.getProperty('url.cart.sum')}]]');
+			function refreshCartSum(cartState) {
+				$(".cart-product-sum").text(cartState.sum.toFixed(2));
 			}
 		</script>
 	</th:block>

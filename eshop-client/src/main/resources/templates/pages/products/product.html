@@ -171,20 +171,20 @@
 		            data: JSON.stringify(productToAdd),
 		            dataType: 'json',
 		            cache: false,
-		            success: function(capturedProduct) {
+		            success: function(cartState) {
 		            	var optionsTitle = '';
 		            	var options = [];
-		            	for (optionId in capturedProduct.options) {
-		            		options.push(capturedProduct.options[optionId]['key'] + ': ' + capturedProduct.options[optionId]['value'])
+		            	for (optionId in cartState.change.options) {
+		            		options.push(cartState.change.options[optionId]['key'] + ': ' + cartState.change.options[optionId]['value'])
 		            	}
 		            	if (options) {
 		            		optionsTitle = ' (' + options.join('; ') + ')' 
 		            	}
-		            	$('#capturedProductInfo > div > .captured-product-title').text(capturedProduct.title + optionsTitle)
-		            	$('#capturedProductInfo > div > .captured-product-article').text(capturedProduct.article)
-		            	$('#capturedProductInfo > div > .captured-product-price').text(capturedProduct.price.toFixed(2))
+		            	$('#capturedProductInfo > div > .captured-product-title').text(cartState.change.title + optionsTitle)
+		            	$('#capturedProductInfo > div > .captured-product-article').text(cartState.change.article)
+		            	$('#capturedProductInfo > div > .captured-product-price').text(cartState.change.price.toFixed(2))
 		            	$('#addToCartSuccessModal').modal("show")
-		                refreshCartCount();
+		                refreshCartCount(cartState);
 		            },
 		            error: function(e) {
 		            	showServerErrorModal();

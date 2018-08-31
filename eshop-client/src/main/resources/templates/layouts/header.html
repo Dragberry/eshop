@@ -71,8 +71,8 @@
 			</div>
 		</nav>
 		<script>
-			function refreshCartCount() {
-				$(".cart-product-count").load('[[${@environment.getProperty('url.cart.count')}]]');
+			function refreshCartCount(cartState) {
+				$(".cart-product-count").text(cartState.quantity == 0 ? '' : cartState.quantity);
 			}
 		</script>
 	</header>
