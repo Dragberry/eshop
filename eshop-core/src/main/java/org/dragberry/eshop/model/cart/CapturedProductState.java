@@ -27,7 +27,7 @@ public class CapturedProductState {
         update(quantity + 1);
     }
     public void decrement() {
-        update(quantity <= 0 ? 0 : quantity - 1);
+        update(quantity <= 1 ? 1 : quantity - 1);
     }
     
     public void update(int quantity) {

@@ -26,13 +26,17 @@ import org.springframework.web.servlet.ModelAndView;
 @Scope(WebApplicationContext.SCOPE_SESSION)
 public class CartController {
     
-    private static enum State {
-        EDITING("pages/cart/cart-items"), ORDERING("pages/cart/ordering");
+    public static enum CartStep {
+        EDITING("pages/cart/editing-cart-items"), ORDERING("pages/cart/ordering");
         
         public final String template;
         
-        private State(String template) {
-            this.template = template;
+        private CartStep(String template) {
+            this.template = template + " :: cart-content";
+        }
+        
+        public String getTemplate() {
+        	return template;
         }
     }
     
@@ -41,7 +45,7 @@ public class CartController {
     
     private Map<CapturedProduct, CapturedProductState> capturedProducts = new HashMap<>();
     
-    private State state = State.EDITING;
+    private CartStep cartStep = CartStep.EDITING;
 
     /**
      * Go to cart items
@@ -49,7 +53,8 @@ public class CartController {
      */
     @GetMapping("${url.cart}")
     public ModelAndView cartItems(HttpSession session) {
-        ModelAndView mv = new ModelAndView(state.template);
+        ModelAndView mv = new ModelAndView("pages/cart/cart");
+        mv.addObject("cartStep", cartStep);
         mv.addObject("capturedProducts", capturedProducts);
         updateCartState(session);
         return mv;
@@ -61,45 +66,36 @@ public class CartController {
      */
     @PostMapping("${url.cart.submit-order}")
     public ModelAndView submitForm(HttpSession session) {
-        ModelAndView mv = new ModelAndView(state.template);
+        ModelAndView mv = new ModelAndView(cartStep.template);
         mv.addObject("capturedProducts", capturedProducts);
         updateCartState(session);
         return mv;
     }
     
     /**
-     * Go to ordering page
+     * Go to next step
      * @return
      */
-    @PostMapping("${url.cart.order-success}")
-    public ModelAndView successOrder(HttpSession session) {
-        ModelAndView mv = new ModelAndView(state.template);
-        mv.addObject("capturedProducts", capturedProducts);
-        updateCartState(session);
-        return mv;
-    }
+    @GetMapping("${url.cart.next}")
     
-    /**
-     * Go to ordering page
-     * @return
-     */
-    @GetMapping("${url.cart.order}")
     public ModelAndView order(HttpSession session) {
-    	state = State.ORDERING;
-        ModelAndView mv = new ModelAndView(state.template);
+    	if (updateCartState(session).getQuantity() > 0) {
+    		cartStep = CartStep.ORDERING;
+    	}
+        ModelAndView mv = new ModelAndView(cartStep.template);
         mv.addObject("capturedProducts", capturedProducts);
         updateCartState(session);
         return mv;
     }
     
     /**
-     * Go to edit order page
+     * Go to previous step
      * @return
      */
-    @GetMapping("${url.cart.edit}")
+    @GetMapping("${url.cart.back}")
     public ModelAndView edit(HttpSession session) {
-    	state = State.EDITING;
-        ModelAndView mv = new ModelAndView(state.template);
+		cartStep = CartStep.EDITING;
+        ModelAndView mv = new ModelAndView(cartStep.template);
         mv.addObject("capturedProducts", capturedProducts);
         updateCartState(session);
         return mv;
@@ -129,8 +125,8 @@ public class CartController {
      * @param session
      * @param change
      */
-    private void updateCartState(HttpSession session) {
-        updateCartState(session, null);
+    private CartState<?> updateCartState(HttpSession session) {
+        return updateCartState(session, null);
     }
     
     /**

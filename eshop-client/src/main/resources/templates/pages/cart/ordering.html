@@ -1,13 +1,8 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{layouts/template}">
-<head>
-<title th:text="|#{msg.common.cart} (#{msg.common.ordering})|">Ordering</title>
-</head>
+	xmlns:th="http://www.thymeleaf.org">
 <body>
-	<div layout:fragment="content">
+	<div th:fragment="cart-content">
 		<h2 th:text="#{msg.common.ordering}">Ordering</h2>
 		<form id="submitOrderForm" th:action="${@environment.getProperty('url.cart.submit-order')}" method="POST">
 			<div class="row">
@@ -109,10 +104,10 @@
 					<hr>
 				</div>
 				<div class="col-md-12 text-right">
-					<a id="editOrderButton" th:href="${@environment.getProperty('url.cart.edit')}" class="btn btn-secondary">
+					<button id="editOrderButton" onclick="toEditing()" th:href="${@environment.getProperty('url.cart.edit')}" class="btn btn-secondary">
 						<span class="fa fa-edit fa-lg"></span>
 			 			<span th:text="#{msg.common.editOrder}">Edit order</span>
-			 		</a>
+			 		</button>
 					<button type="submit" id="submitOrderButton" class="btn btn-success" th:disabled="${false}">
 			 			<span class="fa fa-check fa-lg"></span>
 			 			<span th:text="#{msg.common.submitOrder}">Submit order</span>
@@ -121,29 +116,5 @@
 			</div>	
 		</form>
 	</div>
-	<th:block layout:fragment="page_scripts">
-		<script>
-			$(document).ready(function() {
-				$('#submitOrderForm').validate({
-					debug: true,
-					errorClass: 'is-invalid',
-					validClass: 'is-valid',
-					rules: {
-						phone: 'required'
-					},
-					messages: {
-						phone: '[[#{msg.error.contactPhone}]]'
-					},
-					submitHandler: function(form) {
-						console.log('Submit handler')
-						form.submit();
-					},
-					invalidHandler: function(event, validator) {
-						console.log('Invalid handler...', event);
-					}
-				});
-			});
-		</script>
-	</th:block>
 </body>
 </html>

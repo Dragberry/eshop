@@ -9,11 +9,21 @@
 <body>
 	<div layout:fragment="content">
 		<div id="cartContent">
-			
+			<div th:replace="__${cartStep.template}__"></div>
 		</div>
 	</div>
 	<th:block layout:fragment="page_scripts">
 		<script>
+		    function toOrdering() {
+		    	$('#cartContent').load('[[${@environment.getProperty('url.cart.next')}]]', function() {
+		    		prepareForm();
+		    	});
+		    }
+		    
+		    function toEditing() {
+		    	$('#cartContent').load('[[${@environment.getProperty('url.cart.back')}]]');
+		    }
+		    
 			function removeItemFromCart(productId) {
 				console.log('delete product id', productId);
 				$.ajax({
@@ -84,7 +94,7 @@
 				$(".cart-product-sum").text(cartState.sum.toFixed(2));
 			}
 		
-			$(document).ready(function() {
+			function prepareForm() {
 				$('#submitOrderForm').validate({
 					debug: true,
 					errorClass: 'is-invalid',
@@ -103,6 +113,10 @@
 						console.log('Invalid handler...', event);
 					}
 				});
+			}
+			
+			$(document).ready(function() {
+				prepareForm();
 			});
 		</script>
 	</th:block>

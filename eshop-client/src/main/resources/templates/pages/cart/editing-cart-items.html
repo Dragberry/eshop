@@ -1,13 +1,8 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{layouts/template}">
-<head>
-<title th:text="|#{msg.common.cart} (#{msg.common.yourOrder})|">Cart</title>
-</head>
+	xmlns:th="http://www.thymeleaf.org">
 <body>
-	<div layout:fragment="content">
+	<div th:fragment="cart-content">
 		<h2 th:text="#{msg.common.yourOrder}">Your order</h2>
 		<div class="row">
 			<div id="cartIsEmpty" th:classappend="${capturedProducts.size()} > 0 ? 'd-none' : ''" class="col-md-12 text-center">
@@ -70,84 +65,11 @@
 				</span>
 			</div>
 			<div class="col-md-12 text-right">
-				<a id="toOrderButton" th:href="${@environment.getProperty('url.cart.order')}" class="btn btn-success" th:disabled="${session.cartProductCount > 0 ? false : true}">
+				<button id="toOrderButton" type="button" onclick="toOrdering()" th:href="${@environment.getProperty('url.cart.order')}" class="btn btn-success" th:disabled="${session.cartProductCount > 0 ? false : true}">
 		 			<span th:text="#{msg.common.toOrder}">To order</span>
-		 		</a>
+		 		</button>
 	 		</div>
 		</div>
 	</div>
-	<th:block layout:fragment="page_scripts">
-		<script>
-			function removeItemFromCart(productId) {
-				console.log('delete product id', productId);
-				$.ajax({
-		        	type: 'POST',
-		            contentType: 'application/json',
-		            url: '[[${@environment.getProperty('url.cart.remove')}]]',
-		            data: JSON.stringify({productId: productId}),
-		            dataType: 'json',
-		            cache: false,
-		            success: function(cartState) {
-		            	$('tr[data-product-id="' + productId + '"]').fadeOut("normal", function() {
-		            		$(this).remove();
-		            		if ($('tr[data-product-id]').length <= 0) {
-		            			$('#cartIsEmpty').removeClass('d-none');
-		            			$('#cartItems').remove();
-		            		} else {
-			            		$("th[data-index]").each(function(index) {
-			                		$(this).text(index + 1);
-			                	})
-		            		}
-		            	});
-		            	onCartChanges(cartState);
-		            },
-		            error: function(e) {
-		            	showServerErrorModal();
-		            }
-		        });
-			}
-			
-			function changeCartItemQuantity(productId, url) {
-				$.ajax({
-		        	type: 'POST',
-		            contentType: 'application/json',
-		            url: url,
-		            data: JSON.stringify({productId: productId}),
-		            dataType: 'json',
-		            cache: false,
-		            success: function(cartState) {
-		            	$('tr[data-product-id="' + productId + '"] > td > span.cart-product-quantity').text(cartState.change.quantity);
-		            	$('tr[data-product-id="' + productId + '"] > td > span.cart-product-total-price').text(cartState.change.totalPrice.toFixed(2));
-		            	onCartChanges(cartState);
-		            },
-		            error: function(e) {
-		            	showServerErrorModal();
-		            }
-		        });
-			}
-			
-			function onCartChanges(cartState) {
-				refreshCartCount(cartState);
-            	refreshCartSum(cartState);
-            	changeToOrderButtonState(cartState);
-			}
-			
-			function changeToOrderButtonState(cartState) {
-				$('#toOrderButton').prop('disabled', cartState.quantity <= 0);
-			}
-			
-			function incrementCartItem(productId) {
-				changeCartItemQuantity(productId, '[[${@environment.getProperty('url.cart.increment')}]]');
-			}
-			
-			function decrementCartItem(productId) {
-				changeCartItemQuantity(productId, '[[${@environment.getProperty('url.cart.decrement')}]]');
-			}
-			
-			function refreshCartSum(cartState) {
-				$(".cart-product-sum").text(cartState.sum.toFixed(2));
-			}
-		</script>
-	</th:block>
 </body>
 </html>
