@@ -70,9 +70,9 @@
 				</span>
 			</div>
 			<div class="col-md-12 text-right">
-				<button id="toOrderButton" type="button" class="btn btn-success" th:disabled="${session.cartProductCount > 0 ? false : true}">
+				<a id="toOrderButton" th:href="${@environment.getProperty('url.cart.order')}" class="btn btn-success" th:disabled="${session.cartProductCount > 0 ? false : true}">
 		 			<span th:text="#{msg.common.toOrder}">To order</span>
-		 		</button>
+		 		</a>
 	 		</div>
 		</div>
 	</div>

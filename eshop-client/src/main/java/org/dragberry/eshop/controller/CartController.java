@@ -27,7 +27,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class CartController {
     
     private static enum State {
-        CART_ITEMS("pages/cart/cart-items"), ORDERING("pages/cart/ordering");
+        EDITING("pages/cart/cart-items"), ORDERING("pages/cart/ordering");
         
         public final String template;
         
@@ -41,7 +41,7 @@ public class CartController {
     
     private Map<CapturedProduct, CapturedProductState> capturedProducts = new HashMap<>();
     
-    private State state = State.ORDERING;
+    private State state = State.EDITING;
 
     /**
      * Go to cart items
@@ -49,6 +49,56 @@ public class CartController {
      */
     @GetMapping("${url.cart}")
     public ModelAndView cartItems(HttpSession session) {
+        ModelAndView mv = new ModelAndView(state.template);
+        mv.addObject("capturedProducts", capturedProducts);
+        updateCartState(session);
+        return mv;
+    }
+    
+    /**
+     * Go to ordering page
+     * @return
+     */
+    @PostMapping("${url.cart.submit-order}")
+    public ModelAndView submitForm(HttpSession session) {
+        ModelAndView mv = new ModelAndView(state.template);
+        mv.addObject("capturedProducts", capturedProducts);
+        updateCartState(session);
+        return mv;
+    }
+    
+    /**
+     * Go to ordering page
+     * @return
+     */
+    @PostMapping("${url.cart.order-success}")
+    public ModelAndView successOrder(HttpSession session) {
+        ModelAndView mv = new ModelAndView(state.template);
+        mv.addObject("capturedProducts", capturedProducts);
+        updateCartState(session);
+        return mv;
+    }
+    
+    /**
+     * Go to ordering page
+     * @return
+     */
+    @GetMapping("${url.cart.order}")
+    public ModelAndView order(HttpSession session) {
+    	state = State.ORDERING;
+        ModelAndView mv = new ModelAndView(state.template);
+        mv.addObject("capturedProducts", capturedProducts);
+        updateCartState(session);
+        return mv;
+    }
+    
+    /**
+     * Go to edit order page
+     * @return
+     */
+    @GetMapping("${url.cart.edit}")
+    public ModelAndView edit(HttpSession session) {
+    	state = State.EDITING;
         ModelAndView mv = new ModelAndView(state.template);
         mv.addObject("capturedProducts", capturedProducts);
         updateCartState(session);

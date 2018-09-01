@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/template}">
+<head>
+<title th:text="#{msg.common.cart}">Cart</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div id="cartContent">
+			
+		</div>
+	</div>
+	<th:block layout:fragment="page_scripts">
+		<script>
+			function removeItemFromCart(productId) {
+				console.log('delete product id', productId);
+				$.ajax({
+		        	type: 'POST',
+		            contentType: 'application/json',
+		            url: '[[${@environment.getProperty('url.cart.remove')}]]',
+		            data: JSON.stringify({productId: productId}),
+		            dataType: 'json',
+		            cache: false,
+		            success: function(cartState) {
+		            	$('tr[data-product-id="' + productId + '"]').fadeOut("normal", function() {
+		            		$(this).remove();
+		            		if ($('tr[data-product-id]').length <= 0) {
+		            			$('#cartIsEmpty').removeClass('d-none');
+		            			$('#cartItems').remove();
+		            		} else {
+			            		$("th[data-index]").each(function(index) {
+			                		$(this).text(index + 1);
+			                	})
+		            		}
+		            	});
+		            	onCartChanges(cartState);
+		            },
+		            error: function(e) {
+		            	showServerErrorModal();
+		            }
+		        });
+			}
+			
+			function changeCartItemQuantity(productId, url) {
+				$.ajax({
+		        	type: 'POST',
+		            contentType: 'application/json',
+		            url: url,
+		            data: JSON.stringify({productId: productId}),
+		            dataType: 'json',
+		            cache: false,
+		            success: function(cartState) {
+		            	$('tr[data-product-id="' + productId + '"] > td > span.cart-product-quantity').text(cartState.change.quantity);
+		            	$('tr[data-product-id="' + productId + '"] > td > span.cart-product-total-price').text(cartState.change.totalPrice.toFixed(2));
+		            	onCartChanges(cartState);
+		            },
+		            error: function(e) {
+		            	showServerErrorModal();
+		            }
+		        });
+			}
+			
+			function onCartChanges(cartState) {
+				refreshCartCount(cartState);
+	        	refreshCartSum(cartState);
+	        	changeToOrderButtonState(cartState);
+			}
+			
+			function changeToOrderButtonState(cartState) {
+				$('#toOrderButton').prop('disabled', cartState.quantity <= 0);
+			}
+			
+			function incrementCartItem(productId) {
+				changeCartItemQuantity(productId, '[[${@environment.getProperty('url.cart.increment')}]]');
+			}
+			
+			function decrementCartItem(productId) {
+				changeCartItemQuantity(productId, '[[${@environment.getProperty('url.cart.decrement')}]]');
+			}
+			
+			function refreshCartSum(cartState) {
+				$(".cart-product-sum").text(cartState.sum.toFixed(2));
+			}
+		
+			$(document).ready(function() {
+				$('#submitOrderForm').validate({
+					debug: true,
+					errorClass: 'is-invalid',
+					validClass: 'is-valid',
+					rules: {
+						phone: 'required'
+					},
+					messages: {
+						phone: '[[#{msg.error.contactPhone}]]'
+					},
+					submitHandler: function(form) {
+						console.log('Submit handler')
+						form.submit();
+					},
+					invalidHandler: function(event, validator) {
+						console.log('Invalid handler...', event);
+					}
+				});
+			});
+		</script>
+	</th:block>
+</body>
+</html>

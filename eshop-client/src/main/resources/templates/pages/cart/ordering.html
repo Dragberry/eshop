@@ -9,7 +9,7 @@
 <body>
 	<div layout:fragment="content">
 		<h2 th:text="#{msg.common.ordering}">Ordering</h2>
-		<form>
+		<form id="submitOrderForm" th:action="${@environment.getProperty('url.cart.submit-order')}" method="POST">
 			<div class="row">
 				<div class="col-md-12">
 					<div class="row">
@@ -18,7 +18,7 @@
 								<legend th:text="#{msg.common.contactInfo}">Contact info</legend>
 								<div class="form-group">
 						    		<label for="orderDetailsPhone" th:text="#{msg.common.contactPhone}">Phone</label>
-						    		<input type="text" class="form-control" id="orderDetailsPhone" aria-describedby="orderDetailsPhoneHelp" th:placeholder="#{msg.common.contactPhone}">
+						    		<input type="text" name="phone" class="form-control" id="orderDetailsPhone" aria-describedby="orderDetailsPhoneHelp" th:placeholder="#{msg.common.contactPhone}" required>
 						    		<small id="orderDetailsPhoneHelp" class="form-text text-muted" th:text="#{msg.common.examplePhone}">Example</small>
 						  		</div>
 						  		<div class="form-group">
@@ -82,14 +82,26 @@
 											<span th:text="${product.key.fullTitle}">Title</span>
 										</td>
 										<td class="align-bottom text-right">
-											<span th:text="${product.value.quantity}">Quantity</span>
-											<span>X</span>
-											<span th:text="${product.key.price}">Price</span>
-											<span th:text="#{|msg.currency.${appInfo.currency}|}">Currency</span>
+											<strong>
+												<span th:text="${product.value.quantity}">Quantity</span>
+												<span>X</span>
+												<span th:text="${product.key.price}">Price</span>
+												<span th:text="#{|msg.currency.${appInfo.currency}|}">Currency</span>
+											</strong>
 										</td>
 									</tr>
 								</table>
 							</fieldset>
+							<div class="col-md-12">
+								<hr/>
+							</div>
+							<div class="col-md-12 text-right">
+								<span class="h5">
+									<strong>
+										[[#{msg.common.total}]]: <span class="cart-product-sum">[[${session.cartProductSum}]]</span> [[#{|msg.currency.${appInfo.currency}|}]]
+									</strong>
+								</span>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -97,13 +109,13 @@
 					<hr>
 				</div>
 				<div class="col-md-12 text-right">
-					<button id="confirmOrderButton" type="button" class="btn btn-secondary">
+					<a id="editOrderButton" th:href="${@environment.getProperty('url.cart.edit')}" class="btn btn-secondary">
 						<span class="fa fa-edit fa-lg"></span>
-			 			<span th:text="#{msg.common.changeOrder}">Change order</span>
-			 		</button>
-					<button id="confirmOrderButton" type="button" class="btn btn-success" th:disabled="${true}">
+			 			<span th:text="#{msg.common.editOrder}">Edit order</span>
+			 		</a>
+					<button type="submit" id="submitOrderButton" class="btn btn-success" th:disabled="${false}">
 			 			<span class="fa fa-check fa-lg"></span>
-			 			<span th:text="#{msg.common.submitOrder}">Confirm order</span>
+			 			<span th:text="#{msg.common.submitOrder}">Submit order</span>
 			 		</button>
 		 		</div>
 			</div>	
@@ -111,7 +123,26 @@
 	</div>
 	<th:block layout:fragment="page_scripts">
 		<script>
-			
+			$(document).ready(function() {
+				$('#submitOrderForm').validate({
+					debug: true,
+					errorClass: 'is-invalid',
+					validClass: 'is-valid',
+					rules: {
+						phone: 'required'
+					},
+					messages: {
+						phone: '[[#{msg.error.contactPhone}]]'
+					},
+					submitHandler: function(form) {
+						console.log('Submit handler')
+						form.submit();
+					},
+					invalidHandler: function(event, validator) {
+						console.log('Invalid handler...', event);
+					}
+				});
+			});
 		</script>
 	</th:block>
 </body>
