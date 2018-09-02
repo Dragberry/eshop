@@ -7,7 +7,7 @@
 		<div class="row">
 			<div id="cartIsEmpty" th:classappend="${capturedProducts.size()} > 0 ? 'd-none' : ''" class="col-md-12 text-center">
 				<p th:text="#{msg.common.cartIsEmpty}">Empty cart</p>
-				<p><a th:href="${@environment.getProperty('url.catalog')}" th:text="#{msg.common.goShopping}"></a></p>
+				<p><a class="btn btn-success" th:href="${@environment.getProperty('url.catalog')}" th:text="#{msg.common.goShopping}"></a></p>
 			</div>
 			<table id="cartItems" th:if="${capturedProducts.size() > 0}" class="table">
 				<tr>
