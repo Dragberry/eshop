@@ -15,9 +15,9 @@ public class OrderDetails {
 	
 	private String email;
 	
-	private String deliveryType;
+	private Long deliveryMethod;
 	
-	private String paymentMethod;
+	private Long paymentMethod;
 	
 	public void clear() {
 		this.phone = null;
@@ -25,7 +25,7 @@ public class OrderDetails {
 		this.address = null;
 		this.comment = null;
 		this.email = null;
-		this.deliveryType = null;
+		this.deliveryMethod = null;
 		this.paymentMethod = null;
 	}
 }

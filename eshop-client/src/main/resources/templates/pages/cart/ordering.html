@@ -35,32 +35,43 @@
 						  	</fieldset>
 							<fieldset class="col-md-12">
 								<legend th:text="#{msg.common.delivery}">Delivery</legend>
-								<div class="form-check">
-								  	<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
-								  	<label class="form-check-label" for="exampleRadios1">
-								   		Default radio
-								  	</label>
-								</div>
-								<div class="form-check">
-								  	<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
-								  	<label class="form-check-label" for="exampleRadios2">
-								   		Second default radio
-								  	</label>
+								<label for="deliveryMethod" class="is-invalid" style="display:none;"></label>
+								<div th:each="dm : ${deliveryMethods}" class="form-check">
+								  	<input class="form-check-input" type="radio" name="deliveryMethod" th:value="${dm.id}" th:checked="${dm.id == orderDetails.deliveryMethod}">
+								  	<div class="form-check-label">
+								  		<div class="container">
+								  			<div class="row">
+								  				<div class="col-md-8">
+											  		<div><strong th:text="${dm.name}"></strong></div>
+											  		<div><small th:text="${dm.description}"></small></div>
+								  				</div>
+								  				<div class="col-md-4 text-right">
+								  					<strong>
+								  						<span>+</span>
+								  						<span th:text="${dm.price}">Price</span>
+														<span th:text="#{|msg.currency.${appInfo.currency}|}">Currency</span>
+													</strong>
+								  				</div>
+									  		</div>
+								  		</div>
+								  	</div>
 								</div>
 							</fieldset>
 							<fieldset class="col-md-12">
 								<legend th:text="#{msg.common.paymentMethod}">Payment method</legend>
-								<div class="form-check">
-								  	<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
-								  	<label class="form-check-label" for="exampleRadios1">
-								   		Default radio
-								  	</label>
-								</div>
-								<div class="form-check">
-								  	<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
-								  	<label class="form-check-label" for="exampleRadios2">
-								   		Second default radio
-								  	</label>
+								<label for="paymentMethod" class="is-invalid" style="display:none;"></label>
+								<div th:each="pm : ${paymentMethods}" class="form-check">
+								  	<input class="form-check-input" type="radio" name="paymentMethod" th:value="${pm.id}" th:checked="${pm.id == orderDetails.paymentMethod}">
+								  	<div class="form-check-label">
+								  		<div class="container">
+								  			<div class="row">
+								  				<div class="col-md-12">
+											  		<div><strong th:text="${pm.name}"></strong></div>
+											  		<div><small th:text="${pm.description}"></small></div>
+								  				</div>
+									  		</div>
+								  		</div>
+								  	</div>
 								</div>
 							</fieldset>
 						</div>

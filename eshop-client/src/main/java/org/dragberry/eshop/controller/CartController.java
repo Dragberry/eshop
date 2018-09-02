@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -15,6 +16,10 @@ import org.dragberry.eshop.model.cart.CapturedProduct;
 import org.dragberry.eshop.model.cart.CapturedProductState;
 import org.dragberry.eshop.model.cart.CartState;
 import org.dragberry.eshop.model.cart.OrderDetails;
+import org.dragberry.eshop.model.delivery.DeliveryMethod;
+import org.dragberry.eshop.model.payment.PaymentMethod;
+import org.dragberry.eshop.service.DeliveryService;
+import org.dragberry.eshop.service.PaymentService;
 import org.dragberry.eshop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -51,6 +56,12 @@ public class CartController {
     private ProductService productService;
     
     @Autowired
+    private DeliveryService deliveryService;
+    
+    @Autowired
+    private PaymentService paymentService;
+    
+    @Autowired
     private HttpSession session;
     
     @Autowired
@@ -61,6 +72,19 @@ public class CartController {
     private final OrderDetails orderDetails = new OrderDetails();
     
     private CartStep cartStep = CartStep.EDITING;
+    
+    private List<DeliveryMethod> deliveryMethods;
+    
+    private List<PaymentMethod> paymentMethods;
+    
+    /**
+     * Initialize
+     */
+    @PostConstruct
+    public void init() {
+    	deliveryMethods = deliveryService.getDeliveryMethods();
+    	paymentMethods = paymentService.getPaymentMethods();
+    }
 
     /**
      * Go to cart items
@@ -75,6 +99,8 @@ public class CartController {
         mv.addObject("orderDetails", orderDetails);
         mv.addObject("cartStep", cartStep);
         mv.addObject("capturedProducts", capturedProducts);
+        mv.addObject("deliveryMethods", deliveryMethods);
+        mv.addObject("paymentMethods", paymentMethods);
         updateCartState();
         return mv;
     }
@@ -115,8 +141,8 @@ public class CartController {
     	orderDetails.setAddress(request.getParameter("address"));
     	orderDetails.setEmail(request.getParameter("email"));
     	orderDetails.setComment(request.getParameter("comment"));
-    	orderDetails.setDeliveryType(request.getParameter("deliveryType"));
-    	orderDetails.setPaymentMethod(request.getParameter("paymentMethod"));
+    	orderDetails.setDeliveryMethod(Long.valueOf(request.getParameter("deliveryMethod")));
+    	orderDetails.setPaymentMethod(Long.valueOf(request.getParameter("paymentMethod")));
     }
     
     /**
@@ -131,6 +157,8 @@ public class CartController {
         ModelAndView mv = new ModelAndView(cartStep.template);
         mv.addObject("orderDetails", orderDetails);
         mv.addObject("capturedProducts", capturedProducts);
+        mv.addObject("deliveryMethods", deliveryMethods);
+        mv.addObject("paymentMethods", paymentMethods);
         updateCartState();
         return mv;
     }

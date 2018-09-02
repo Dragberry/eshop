@@ -94,10 +94,14 @@
 					errorClass: 'is-invalid',
 					validClass: 'is-valid',
 					rules: {
-						phone: 'required'
+						phone: 'required',
+						deliveryMethod: 'required',
+						paymentMethod: 'required'
 					},
 					messages: {
-						phone: '[[#{msg.error.contactPhone}]]'
+						phone: '[[#{msg.error.contactPhoneRequired}]]',
+						deliveryMethod: '[[#{msg.error.deliveryMethodRequired}]]',
+						paymentMethod: '[[#{msg.error.paymentMethodRequired}]]'
 					},
 					submitHandler: function(form) {
 						$.ajax({
