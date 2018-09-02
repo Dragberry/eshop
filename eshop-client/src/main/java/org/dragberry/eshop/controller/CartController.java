@@ -1,15 +1,20 @@
 package org.dragberry.eshop.controller;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.StringUtils;
 import org.dragberry.eshop.controller.exception.BadRequestException;
 import org.dragberry.eshop.model.cart.CapturedProduct;
 import org.dragberry.eshop.model.cart.CapturedProductState;
 import org.dragberry.eshop.model.cart.CartState;
+import org.dragberry.eshop.model.cart.OrderDetails;
 import org.dragberry.eshop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -27,7 +32,9 @@ import org.springframework.web.servlet.ModelAndView;
 public class CartController {
     
     public static enum CartStep {
-        EDITING("pages/cart/editing-cart-items"), ORDERING("pages/cart/ordering");
+        EDITING("pages/cart/editing-cart-items"),
+        ORDERING("pages/cart/ordering"),
+        SUCCESS("pages/cart/success");
         
         public final String template;
         
@@ -43,7 +50,15 @@ public class CartController {
     @Autowired
     private ProductService productService;
     
-    private Map<CapturedProduct, CapturedProductState> capturedProducts = new HashMap<>();
+    @Autowired
+    private HttpSession session;
+    
+    @Autowired
+    private HttpServletRequest request;
+    
+    private final Map<CapturedProduct, CapturedProductState> capturedProducts = new HashMap<>();
+    
+    private final OrderDetails orderDetails = new OrderDetails();
     
     private CartStep cartStep = CartStep.EDITING;
 
@@ -52,11 +67,15 @@ public class CartController {
      * @return
      */
     @GetMapping("${url.cart}")
-    public ModelAndView cartItems(HttpSession session) {
+    public ModelAndView cartItems() {
+    	if (cartStep == null || cartStep == CartStep.SUCCESS) {
+    		cartStep = CartStep.EDITING;
+    	}
         ModelAndView mv = new ModelAndView("pages/cart/cart");
+        mv.addObject("orderDetails", orderDetails);
         mv.addObject("cartStep", cartStep);
         mv.addObject("capturedProducts", capturedProducts);
-        updateCartState(session);
+        updateCartState();
         return mv;
     }
     
@@ -65,11 +84,39 @@ public class CartController {
      * @return
      */
     @PostMapping("${url.cart.submit-order}")
-    public ModelAndView submitForm(HttpSession session) {
-        ModelAndView mv = new ModelAndView(cartStep.template);
+    public ModelAndView submitOrder() {
+    	List<String> validationErrors = new ArrayList<>();
+    	String phone = request.getParameter("phone");
+    	if (StringUtils.isNotBlank(phone)) {
+    		orderDetails.setPhone(phone);
+    	} else {
+    		validationErrors.add("Phone is empty");
+    	}
+    	saveOrderDetails();
+    	
+    	if (validationErrors.isEmpty()) {
+    		capturedProducts.clear();
+    		cartStep = CartStep.SUCCESS;
+    	}
+    	ModelAndView mv = new ModelAndView(cartStep.template);
+		mv.addObject("orderDetails", orderDetails);
         mv.addObject("capturedProducts", capturedProducts);
-        updateCartState(session);
+        mv.addObject("validationErrors", validationErrors);
+        updateCartState();
         return mv;
+    }
+    
+    /**
+     * Save order details from the request
+     */
+    public void saveOrderDetails() {
+    	orderDetails.setPhone(request.getParameter("phone"));
+    	orderDetails.setFullName(request.getParameter("fullName"));
+    	orderDetails.setAddress(request.getParameter("address"));
+    	orderDetails.setEmail(request.getParameter("email"));
+    	orderDetails.setComment(request.getParameter("comment"));
+    	orderDetails.setDeliveryType(request.getParameter("deliveryType"));
+    	orderDetails.setPaymentMethod(request.getParameter("paymentMethod"));
     }
     
     /**
@@ -77,14 +124,14 @@ public class CartController {
      * @return
      */
     @GetMapping("${url.cart.next}")
-    
-    public ModelAndView order(HttpSession session) {
-    	if (updateCartState(session).getQuantity() > 0) {
+    public ModelAndView nextStep() {
+    	if (updateCartState().getQuantity() > 0) {
     		cartStep = CartStep.ORDERING;
     	}
         ModelAndView mv = new ModelAndView(cartStep.template);
+        mv.addObject("orderDetails", orderDetails);
         mv.addObject("capturedProducts", capturedProducts);
-        updateCartState(session);
+        updateCartState();
         return mv;
     }
     
@@ -93,20 +140,19 @@ public class CartController {
      * @return
      */
     @GetMapping("${url.cart.back}")
-    public ModelAndView edit(HttpSession session) {
+    public ModelAndView backStep() {
 		cartStep = CartStep.EDITING;
         ModelAndView mv = new ModelAndView(cartStep.template);
         mv.addObject("capturedProducts", capturedProducts);
-        updateCartState(session);
+        updateCartState();
         return mv;
     }
     
     /**
      * Updates product count and sum in session. Wraps result in holder
-     * @param session
      * @param change
      */
-    private <T> CartState<T> updateCartState(HttpSession session, T change) {
+    private <T> CartState<T> updateCartState(T change) {
         var cartState = new CartState<T>();
         int quantity = capturedProducts.values().stream()
                 .mapToInt(CapturedProductState::getQuantity).sum();
@@ -122,11 +168,9 @@ public class CartController {
     
     /**
      * Updates product count and sum in session
-     * @param session
-     * @param change
      */
-    private CartState<?> updateCartState(HttpSession session) {
-        return updateCartState(session, null);
+    private CartState<?> updateCartState() {
+        return updateCartState(null);
     }
     
     /**
@@ -135,11 +179,11 @@ public class CartController {
      */
     @PostMapping("${url.cart.decrement}")
     @ResponseBody
-    public ResponseEntity<CartState<CapturedProductState>> decrement(@RequestBody CapturedProduct capturedProduct, HttpSession session) {
+    public ResponseEntity<CartState<CapturedProductState>> decrement(@RequestBody CapturedProduct capturedProduct) {
         if (capturedProducts.containsKey(capturedProduct)) {
             CapturedProductState state = capturedProducts.get(capturedProduct);
             state.decrement();
-            return ResponseEntity.ok(updateCartState(session, state));
+            return ResponseEntity.ok(updateCartState(state));
         }
         throw new BadRequestException();
     }
@@ -150,11 +194,11 @@ public class CartController {
      */
     @PostMapping("${url.cart.increment}")
     @ResponseBody
-    public ResponseEntity<CartState<CapturedProductState>> increment(@RequestBody CapturedProduct capturedProduct, HttpSession session) {
+    public ResponseEntity<CartState<CapturedProductState>> increment(@RequestBody CapturedProduct capturedProduct) {
         if (capturedProducts.containsKey(capturedProduct)) {
             CapturedProductState state = capturedProducts.get(capturedProduct);
             state.increment();
-            return ResponseEntity.ok(updateCartState(session, state));
+            return ResponseEntity.ok(updateCartState(state));
         }
         throw new BadRequestException();
     }
@@ -165,10 +209,10 @@ public class CartController {
      */
     @PostMapping("${url.cart.remove}")
     @ResponseBody
-    public ResponseEntity<CartState<CapturedProduct>> removeFromCart(@RequestBody CapturedProduct capturedProduct, HttpSession session) {
+    public ResponseEntity<CartState<CapturedProduct>> removeFromCart(@RequestBody CapturedProduct capturedProduct) {
         if (capturedProducts.containsKey(capturedProduct)) {
             capturedProducts.remove(capturedProduct);
-            return ResponseEntity.ok(updateCartState(session, capturedProduct));
+            return ResponseEntity.ok(updateCartState(capturedProduct));
         }
         throw new BadRequestException();
     }
@@ -179,11 +223,11 @@ public class CartController {
      */
     @PostMapping("${url.cart.add}")
     @ResponseBody
-    public ResponseEntity<CartState<CapturedProduct>> addToCart(@RequestBody CapturedProduct capturedProduct, HttpSession session) {
+    public ResponseEntity<CartState<CapturedProduct>> addToCart(@RequestBody CapturedProduct capturedProduct) {
         capturedProduct = productService.getProductCartDetails(capturedProduct);
         if (capturedProduct != null) {
             capturedProducts.computeIfAbsent(capturedProduct, cp -> new CapturedProductState(cp.getProductId(), cp.getPrice())).increment();
-            return ResponseEntity.ok(updateCartState(session, capturedProduct));
+            return ResponseEntity.ok(updateCartState(capturedProduct));
         } throw new BadRequestException();
     }
     

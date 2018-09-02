@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<body>
+	<div th:fragment="cart-content">
+		<h2 th:text="#{msg.common.yourOrder}">Your order</h2>
+		<div class="row">
+			<div id="cartIsEmpty" class="col-md-12 text-center">
+				<p th:text="#{msg.common.orderSuccess}">Success orders</p>
+				<p><a class="btn btn-success" th:href="${@environment.getProperty('url.catalog')}" th:text="#{msg.common.goShopping}"></a></p>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

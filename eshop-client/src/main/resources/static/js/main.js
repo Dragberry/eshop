@@ -12,6 +12,8 @@ $(document).ready(function() {
 	updateCommentsCount();
 });
 
+$(document).ajaxError(showServerErrorModal);
+
 /* Update body margin on screen resize */
 function onPageResize() {
 	var bodyMargin = $('body').css('margin-bottom');
@@ -33,10 +35,12 @@ function calculateRatings() {
 		});
 	});
 }
+
 /* Builds title for comments count */
 $.fn.buildCommentTitle = function(num, suffix) {
   return num == 0 ? 'Нет отзывов' : num + ' ' + suffix;
 }
+
 /* Builds title for comments count */
 $.fn.getCommentTitle = function(num) {
   var str = '' + num;
@@ -51,6 +55,7 @@ $.fn.getCommentTitle = function(num) {
   }
   return $.fn.buildCommentTitle(num, 'отзывов');
 }
+
 /* Updates comments count */
 function updateCommentsCount() {
 	$('.product-comments-count').each(function() {
@@ -58,6 +63,7 @@ function updateCommentsCount() {
 	});
 }
 
+/* Show an error model window */
 function showServerErrorModal() {
 	$('#serverErrorModal').modal('show');
 }

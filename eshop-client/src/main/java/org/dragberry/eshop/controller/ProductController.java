@@ -61,7 +61,7 @@ public class ProductController {
      * @return
      */
     @GetMapping({"${url.product}/{productReference}"})
-    public ModelAndView prodcut(@PathVariable String productReference) {
+    public ModelAndView product(@PathVariable String productReference) {
         if (productReference != null) {
             var product = productService.getProductArticleDetails(productReference);
             if (product != null) {

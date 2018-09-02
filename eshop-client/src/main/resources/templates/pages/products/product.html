@@ -185,9 +185,6 @@
 		            	$('#capturedProductInfo > div > .captured-product-price').text(cartState.change.price.toFixed(2))
 		            	$('#addToCartSuccessModal').modal("show")
 		                refreshCartCount(cartState);
-		            },
-		            error: function(e) {
-		            	showServerErrorModal();
 		            }
 		        });
 			}

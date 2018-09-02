@@ -13,24 +13,24 @@
 								<legend th:text="#{msg.common.contactInfo}">Contact info</legend>
 								<div class="form-group">
 						    		<label for="orderDetailsPhone" th:text="#{msg.common.contactPhone}">Phone</label>
-						    		<input type="text" name="phone" class="form-control" id="orderDetailsPhone" aria-describedby="orderDetailsPhoneHelp" th:placeholder="#{msg.common.contactPhone}" required>
+						    		<input type="text" name="phone" class="form-control" id="orderDetailsPhone" aria-describedby="orderDetailsPhoneHelp" th:placeholder="#{msg.common.contactPhone}" th:value="${orderDetails.phone}">
 						    		<small id="orderDetailsPhoneHelp" class="form-text text-muted" th:text="#{msg.common.examplePhone}">Example</small>
 						  		</div>
 						  		<div class="form-group">
 						    		<label for="orderDetailsFullName" th:text="#{msg.common.contactPerson}">Full name</label>
-						    		<input type="text" class="form-control" id="orderDetailsFullName" th:placeholder="#{msg.common.contactPerson}">
+						    		<input type="text" name="fullName" class="form-control" id="orderDetailsFullName" th:placeholder="#{msg.common.contactPerson}" th:value="${orderDetails.fullName}">
 						  		</div>
 						  		<div class="form-group">
 						    		<label for="orderDetailsAddress" th:text="#{msg.common.deliveryAddress}">Address</label>
-						    		<textarea class="form-control" id="orderDetailsAddress" th:placeholder="#{msg.common.deliveryAddress}"></textarea>
+						    		<textarea name="address" class="form-control" id="orderDetailsAddress" th:placeholder="#{msg.common.deliveryAddress}" th:value="${orderDetails.address}"></textarea>
 						  		</div>
 						  		<div class="form-group">
 						    		<label for="orderDetailsEmail" th:text="#{msg.common.email}">Email</label>
-						    		<input type="text" class="form-control" id="orderDetailsEmail" th:placeholder="#{msg.common.email}">
+						    		<input type="text" name="email" class="form-control" id="orderDetailsEmail" th:placeholder="#{msg.common.email}" th:value="${orderDetails.email}">
 						  		</div>
 						  		<div class="form-group">
 						    		<label for="orderDetailsComment" th:text="#{msg.common.comment}">Comment</label>
-						    		<textarea class="form-control" id="orderDetailsComment" th:placeholder="#{msg.common.comment}"></textarea>
+						    		<textarea name="comment" class="form-control" id="orderDetailsComment" th:placeholder="#{msg.common.comment}" th:value="${orderDetails.comment}"></textarea>
 						  		</div>
 						  	</fieldset>
 							<fieldset class="col-md-12">
@@ -104,7 +104,7 @@
 					<hr>
 				</div>
 				<div class="col-md-12 text-right">
-					<button id="editOrderButton" onclick="toEditing()" th:href="${@environment.getProperty('url.cart.edit')}" class="btn btn-secondary">
+					<button id="editOrderButton" onclick="toEditing()" class="btn btn-secondary">
 						<span class="fa fa-edit fa-lg"></span>
 			 			<span th:text="#{msg.common.editOrder}">Edit order</span>
 			 		</button>
