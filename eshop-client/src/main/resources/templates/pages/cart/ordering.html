@@ -10,74 +10,78 @@
 					<div class="row">
 						<div class="col-md-6">
 							<fieldset class="col-md-12">
-								<legend th:text="#{msg.common.contactInfo}">Contact info</legend>
-								<div class="form-group">
-						    		<label for="orderDetailsPhone" th:text="#{msg.common.contactPhone}">Phone</label>
+								<legend class="h5" th:text="#{msg.common.contactInfo}">Contact info</legend>
+								<div class="form-group required">
+						    		<label class="control-label" for="orderDetailsPhone"><strong>[[#{msg.common.contactPhone}]]</strong></label>
 						    		<input type="text" name="phone" class="form-control" id="orderDetailsPhone" aria-describedby="orderDetailsPhoneHelp" th:placeholder="#{msg.common.contactPhone}" th:value="${order.phone}">
 						    		<small id="orderDetailsPhoneHelp" class="form-text text-muted" th:text="#{msg.common.examplePhone}">Example</small>
 						  		</div>
 						  		<div class="form-group">
-						    		<label for="orderDetailsFullName" th:text="#{msg.common.contactPerson}">Full name</label>
+						    		<label for="orderDetailsFullName"><strong>[[#{msg.common.contactPerson}]]</strong></label>
 						    		<input type="text" name="fullName" class="form-control" id="orderDetailsFullName" th:placeholder="#{msg.common.contactPerson}" th:value="${order.fullName}">
 						  		</div>
 						  		<div class="form-group">
-						    		<label for="orderDetailsAddress" th:text="#{msg.common.deliveryAddress}">Address</label>
+						    		<label for="orderDetailsAddress"><strong>[[#{msg.common.deliveryAddress}]]</strong></label>
 						    		<textarea name="address" class="form-control" id="orderDetailsAddress" th:placeholder="#{msg.common.deliveryAddress}" th:value="${order.address}"></textarea>
 						  		</div>
 						  		<div class="form-group">
-						    		<label for="orderDetailsEmail" th:text="#{msg.common.email}">Email</label>
+						    		<label for="orderDetailsEmail"><strong>[[#{msg.common.email}]]</strong></label>
 						    		<input type="text" name="email" class="form-control" id="orderDetailsEmail" th:placeholder="#{msg.common.email}" th:value="${order.email}">
 						  		</div>
 						  		<div class="form-group">
-						    		<label for="orderDetailsComment" th:text="#{msg.common.comment}">Comment</label>
+						    		<label for="orderDetailsComment"><strong>[[#{msg.common.comment}]]</strong></label>
 						    		<textarea name="comment" class="form-control" id="orderDetailsComment" th:placeholder="#{msg.common.comment}" th:value="${order.comment}"></textarea>
 						  		</div>
 						  	</fieldset>
-							<fieldset class="col-md-12">
-								<legend th:text="#{msg.common.delivery}">Delivery</legend>
-								<label for="deliveryMethod" class="is-invalid" style="display:none;"></label>
-								<div th:each="dm : ${deliveryMethods}" class="form-check">
-								  	<input class="form-check-input" type="radio" name="deliveryMethod" th:value="${dm.id}" th:checked="${dm.id == order.deliveryMethod?.id}">
-								  	<div class="form-check-label">
-								  		<div class="container">
-								  			<div class="row">
-								  				<div class="col-9">
-											  		<div><strong th:text="${dm.name}"></strong></div>
-											  		<div><small th:text="${dm.description}"></small></div>
-								  				</div>
-								  				<div class="col-3 text-right">
-								  					<strong>
-								  						<span>+</span>
-								  						<span th:text="${dm.price}">Price</span>
-														<span th:text="#{|msg.currency.${appInfo.currency}|}">Currency</span>
-													</strong>
-								  				</div>
+						  	<div class="form-group required">
+								<fieldset class="col-md-12 mt-2">
+									<legend class="h5 control-label">[[#{msg.common.delivery}]]</legend>
+									<label for="deliveryMethod" class="is-invalid" style="display:none;"></label>
+										<div th:each="dm : ${deliveryMethods}" class="form-check">
+										  	<input class="form-check-input" type="radio" name="deliveryMethod" th:value="${dm.id}" th:checked="${dm.id == order.deliveryMethod?.id}">
+										  	<div class="form-check-label">
+										  		<div class="container">
+										  			<div class="row">
+										  				<div class="col-9">
+													  		<div><strong th:text="${dm.name}"></strong></div>
+													  		<div><small th:text="${dm.description}"></small></div>
+										  				</div>
+										  				<div class="col-3 text-right">
+										  					<strong>
+										  						<span>+</span>
+										  						<span th:text="${dm.price}">Price</span>
+																<span th:text="#{|msg.currency.${appInfo.currency}|}">Currency</span>
+															</strong>
+										  				</div>
+										  		</div>
 									  		</div>
-								  		</div>
-								  	</div>
-								</div>
-							</fieldset>
-							<fieldset class="col-md-12">
-								<legend th:text="#{msg.common.paymentMethod}">Payment method</legend>
-								<label for="paymentMethod" class="is-invalid" style="display:none;"></label>
-								<div th:each="pm : ${paymentMethods}" class="form-check">
-								  	<input class="form-check-input" type="radio" name="paymentMethod" th:value="${pm.id}" th:checked="${pm.id == order.paymentMethod?.id}">
-								  	<div class="form-check-label">
-								  		<div class="container">
-								  			<div class="row">
-								  				<div class="col-md-12">
-											  		<div><strong th:text="${pm.name}"></strong></div>
-											  		<div><small th:text="${pm.description}"></small></div>
-								  				</div>
+									  	</div>
+									</div>
+								</fieldset>
+							</div>
+							<div class="form-group required">
+								<fieldset class="col-md-12 mt-4">
+									<legend class="h5 control-label">[[#{msg.common.paymentMethod}]]</legend>
+									<label for="paymentMethod" class="is-invalid" style="display:none;"></label>
+									<div th:each="pm : ${paymentMethods}" class="form-check">
+									  	<input class="form-check-input" type="radio" name="paymentMethod" th:value="${pm.id}" th:checked="${pm.id == order.paymentMethod?.id}">
+									  	<div class="form-check-label">
+									  		<div class="container">
+									  			<div class="row">
+									  				<div class="col-md-12">
+												  		<div><strong th:text="${pm.name}"></strong></div>
+												  		<div><small th:text="${pm.description}"></small></div>
+									  				</div>
+										  		</div>
 									  		</div>
-								  		</div>
-								  	</div>
-								</div>
-							</fieldset>
+									  	</div>
+									</div>
+								</fieldset>
+							</div>
 						</div>
 						<div class="col-md-6">
 							<fieldset class="col-md-12">
-								<legend th:text="#{msg.common.yourOrder}">Your order</legend>
+								<legend class="h5">[[#{msg.common.yourOrder}]]</legend>
 								<table class="table">
 									<tr th:each="product : ${order.products}" th:data-product-id=${product.key.productId}>
 										<td>

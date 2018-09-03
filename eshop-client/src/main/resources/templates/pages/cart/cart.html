@@ -86,6 +86,8 @@
 			}
 		
 			function prepareForm() {
+				$('#orderDetailsPhone').mask('+375(00)000-00-00');
+				
 				$('input[type=radio][name=deliveryMethod]').change(function() {
 					changeCart('DELIVERY_METHOD', $(this).val(), function(cartState) {
 		            	onCartChanges(cartState);
@@ -94,17 +96,23 @@
 				
 				$('#submitOrderForm').validate({
 					debug: true,
-					errorClass: 'is-invalid',
-					validClass: 'is-valid',
+					errorClass: 'invalid-feedback',
+					validClass: 'valid-feedback',
 					rules: {
 						phone: 'required',
 						deliveryMethod: 'required',
-						paymentMethod: 'required'
+						paymentMethod: 'required',
+						email: {
+							email: true
+						}
 					},
 					messages: {
 						phone: '[[#{msg.error.contactPhoneRequired}]]',
 						deliveryMethod: '[[#{msg.error.deliveryMethodRequired}]]',
-						paymentMethod: '[[#{msg.error.paymentMethodRequired}]]'
+						paymentMethod: '[[#{msg.error.paymentMethodRequired}]]',
+						email: {
+							email: '[[#{msg.error.emailInvalid}]]'
+						}
 					},
 					submitHandler: function(form) {
 						$.ajax({
@@ -116,9 +124,18 @@
 							}
 						});
 					},
-					invalidHandler: function(event, validator) {
-						console.log('Unsuccess order...', event);
-					}
+					highlight: function(element, errorClass, validClass) {
+				    	$(element.form).find("input[name=" + element.name + "]")
+			      			.addClass('is-invalid').removeClass('is-valid');
+				    	$(element.form).find("label[for=" + element.name + "]")
+				      		.addClass('invalid-feedback');
+				  	},
+				  	unhighlight: function(element, errorClass, validClass) {
+				  		$(element.form).find("input[name=" + element.name + "]")
+		      				.removeClass('is-invalid').addClass('is-valid');
+				    	$(element.form).find("label[for=" + element.name + "]")
+				      		.removeClass('invalid-feedback');
+				  	}
 				});
 			}
 			

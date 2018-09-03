@@ -40,3 +40,9 @@
 .cart-image-small {
 	max-height: 5rem;
 }
+
+.form-group.required .control-label:after { 
+   content:"*";
+   color:red;
+   font-size:1.25rem;
+}
