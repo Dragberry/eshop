@@ -121,6 +121,7 @@
 							data: $(form).serialize(),
 							success: function(response) {
 								$('#cartContent').html(response);
+								refreshCartCount({quantity: 0});
 							}
 						});
 					},
