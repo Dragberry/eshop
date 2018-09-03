@@ -38,43 +38,43 @@
 									<legend class="h5 control-label">[[#{msg.common.delivery}]]</legend>
 									<label for="deliveryMethod" class="is-invalid" style="display:none;"></label>
 										<div th:each="dm : ${deliveryMethods}" class="form-check">
-										  	<input class="form-check-input" type="radio" name="deliveryMethod" th:value="${dm.id}" th:checked="${dm.id == order.deliveryMethod?.id}">
-										  	<div class="form-check-label">
-										  		<div class="container">
-										  			<div class="row">
-										  				<div class="col-9">
-													  		<div><strong th:text="${dm.name}"></strong></div>
-													  		<div><small th:text="${dm.description}"></small></div>
-										  				</div>
-										  				<div class="col-3 text-right">
+										  	<input th:id="|deliveryMethod${dm.id}|" class="form-check-input" type="radio" name="deliveryMethod" th:value="${dm.id}" th:checked="${dm.id == order.deliveryMethod?.id}">
+										  	<label th:for="|deliveryMethod${dm.id}|" class="form-check-label">
+										  		<span class="container d-block">
+										  			<span class="row">
+									  					<span class="col-8 d-block">
+													  		<span class="d-block"><strong th:text="${dm.name}"></strong></span>
+													  		<span class="d-block"><small th:text="${dm.description}"></small></span>
+										  				</span>
+									  					<span class="col-4 d-block text-right">
 										  					<strong>
 										  						<span>+</span>
 										  						<span th:text="${dm.price}">Price</span>
 																<span th:text="#{|msg.currency.${appInfo.currency}|}">Currency</span>
 															</strong>
-										  				</div>
-										  		</div>
-									  		</div>
-									  	</div>
-									</div>
-								</fieldset>
-							</div>
+										  				</span>
+										  			</span>
+									  			</span>
+								  			</label>
+										</div>
+									</fieldset>
+								</div>
 							<div class="form-group required">
 								<fieldset class="col-md-12 mt-4">
 									<legend class="h5 control-label">[[#{msg.common.paymentMethod}]]</legend>
 									<label for="paymentMethod" class="is-invalid" style="display:none;"></label>
 									<div th:each="pm : ${paymentMethods}" class="form-check">
-									  	<input class="form-check-input" type="radio" name="paymentMethod" th:value="${pm.id}" th:checked="${pm.id == order.paymentMethod?.id}">
-									  	<div class="form-check-label">
-									  		<div class="container">
-									  			<div class="row">
-									  				<div class="col-md-12">
-												  		<div><strong th:text="${pm.name}"></strong></div>
-												  		<div><small th:text="${pm.description}"></small></div>
-									  				</div>
-										  		</div>
-									  		</div>
-									  	</div>
+									  	<input th:id="|paymentMethod${pm.id}|" class="form-check-input" type="radio" name="paymentMethod" th:value="${pm.id}" th:checked="${pm.id == order.paymentMethod?.id}">
+									  	<label th:for="|paymentMethod${pm.id}|" class="form-check-label">
+									  		<span class="container d-block">
+									  			<span class="row">
+									  				<span class="col-md-12">
+												  		<span class="d-block"><strong th:text="${pm.name}"></strong></span>
+												  		<span class="d-block"><small th:text="${pm.description}"></small></span>
+									  				</span>
+										  		</span>
+									  		</span>
+									  	</label>
 									</div>
 								</fieldset>
 							</div>

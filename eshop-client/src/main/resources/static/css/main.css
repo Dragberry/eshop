@@ -46,3 +46,7 @@
    color:red;
    font-size:1.25rem;
 }
+
+.form-check-label {
+	width: 100%;
+}
