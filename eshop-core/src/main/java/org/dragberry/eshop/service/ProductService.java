@@ -40,9 +40,9 @@ public interface ProductService {
 
     /**
      * Get details for captured product
-     * @param capturedProduct
+     * @param productId
      * @return
      */
-    CapturedProduct getProductCartDetails(CapturedProduct capturedProduct);
+    CapturedProduct getProductCartDetails(Long productId);
 
 }

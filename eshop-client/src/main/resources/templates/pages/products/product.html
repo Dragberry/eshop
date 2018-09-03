@@ -157,18 +157,18 @@
 				    for (optionSetIndex in product.productOptions[productId]) {
 				    	if (isProductMatch(product.productOptions[productId][optionSetIndex]['key'], product.productOptions[productId][optionSetIndex]['value'])) {
 				    		var productToAdd = {
-									productArticleId: '[[${product.id}]]',
-									productId: productId
+				    				action: 'ADD_PRODUCT',
+									entityId: productId
 							};
 				    	}
 				    }
 				}
 				
 				$.ajax({
-		        	type: 'POST',
+					url: '[[${@environment.getProperty('url.cart.state')}]]',
+				    data: JSON.stringify(productToAdd),
+		        	type: 'PATCH',
 		            contentType: 'application/json',
-		            url: '[[${@environment.getProperty('url.cart.add')}]]',
-		            data: JSON.stringify(productToAdd),
 		            dataType: 'json',
 		            cache: false,
 		            success: function(cartState) {

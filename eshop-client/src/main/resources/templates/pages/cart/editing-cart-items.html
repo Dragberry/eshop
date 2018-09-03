@@ -5,11 +5,11 @@
 	<div th:fragment="cart-content">
 		<h2 th:text="#{msg.common.yourOrder}">Your order</h2>
 		<div class="row">
-			<div id="cartIsEmpty" th:classappend="${capturedProducts.size()} > 0 ? 'd-none' : ''" class="col-md-12 text-center">
+			<div id="cartIsEmpty" th:classappend="${order.products.size()} > 0 ? 'd-none' : ''" class="col-md-12 text-center">
 				<p th:text="#{msg.common.cartIsEmpty}">Empty cart</p>
 				<p><a class="btn btn-success" th:href="${@environment.getProperty('url.catalog')}" th:text="#{msg.common.goShopping}"></a></p>
 			</div>
-			<table id="cartItems" th:if="${capturedProducts.size() > 0}" class="table">
+			<table id="cartItems" th:if="${order.products.size() > 0}" class="table">
 				<tr>
 			    	<th scope="col">#</th>
 			     	<th scope="col" th:text="#{msg.common.product}">Title</th>
@@ -18,7 +18,7 @@
 			     	<th scope="col" th:text="#{msg.common.sum}">Sum</th>
 		       		<th scope="col" th:text="#{msg.common.action}" class="text-center">Action</th>
 			    </tr>
-				<tr th:each="product,iter : ${capturedProducts}" th:data-product-id=${product.key.productId}>
+				<tr th:each="product,iter : ${order.products}" th:data-product-id=${product.key.productId}>
 					<th scope="row" th:text="${iter.index + 1}" th:data-index="${iter.index + 1}">1</th>
 					<td class="align-middle">
 						<a th:href="@{|${@environment.getProperty('url.product')}/${product.key.reference}|}">

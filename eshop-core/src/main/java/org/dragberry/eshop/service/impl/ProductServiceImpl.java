@@ -151,8 +151,11 @@ public class ProductServiceImpl implements ProductService {
     }
     
     @Override
-    public CapturedProduct getProductCartDetails(CapturedProduct capturedProduct) {
-        Product product = productRepo.findById(capturedProduct.getProductId()).get();
+    public CapturedProduct getProductCartDetails(Long productId) {
+        Product product = productRepo.findById(productId).get();
+        CapturedProduct capturedProduct = new CapturedProduct();
+        capturedProduct.setProductId(productId);
+        capturedProduct.setProductArticleId(product.getProductArticle().getEntityKey());
         capturedProduct.setArticle(product.getProductArticle().getArticle());
         capturedProduct.setTitle(product.getProductArticle().getTitle());
         capturedProduct.setReference(product.getProductArticle().getReference());

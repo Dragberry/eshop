@@ -9,7 +9,11 @@ public class CartState<T> {
 
     private int quantity;
     
-    private BigDecimal sum;
+    private BigDecimal productSum;
+    
+    private BigDecimal deliveryPrice;
 
+    private BigDecimal sum;
+    
     private T change;
 }
