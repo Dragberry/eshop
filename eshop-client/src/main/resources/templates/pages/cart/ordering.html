@@ -3,7 +3,19 @@
 	xmlns:th="http://www.thymeleaf.org">
 <body>
 	<div th:fragment="cart-content">
-		<h2 th:text="#{msg.common.ordering}">Ordering</h2>
+		<nav aria-label="breadcrumb">
+		  	<ol class="breadcrumb">
+			    <li class="breadcrumb-item">
+			    	<a th:href="${@environment.getProperty('url.home')}" th:text="#{msg.menu.home}">Home</a>
+			    </li>
+			    <li class="breadcrumb-item">
+			    	<a href="#" onclick="toEditing()" th:text="#{msg.common.yourOrder}">Your oder</a>
+			    </li>
+			    <li class="breadcrumb-item active" aria-current="page">
+			    	<strong th:text="#{msg.common.ordering}">Ordering</strong>
+			    </li>
+		  	</ol>
+		</nav>
 		<form id="submitOrderForm" th:action="${@environment.getProperty('url.cart.submit-order')}" method="POST">
 			<div class="row">
 				<div class="col-md-12">

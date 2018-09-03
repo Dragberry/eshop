@@ -3,7 +3,16 @@
 	xmlns:th="http://www.thymeleaf.org">
 <body>
 	<div th:fragment="cart-content">
-		<h2 th:text="#{msg.common.yourOrder}">Your order</h2>
+		<nav aria-label="breadcrumb">
+		  	<ol class="breadcrumb">
+			    <li class="breadcrumb-item">
+			    	<a th:href="${@environment.getProperty('url.home')}" th:text="#{msg.menu.home}">Home</a>
+			    </li>
+			    <li class="breadcrumb-item active" aria-current="page">
+			    	<strong th:text="#{msg.common.yourOrder}">Your order</strong>
+			    </li>
+		  	</ol>
+		</nav>
 		<div class="row">
 			<div id="cartIsEmpty" th:classappend="${order.products.size()} > 0 ? 'd-none' : ''" class="col-md-12 text-center">
 				<p th:text="#{msg.common.cartIsEmpty}">Empty cart</p>
