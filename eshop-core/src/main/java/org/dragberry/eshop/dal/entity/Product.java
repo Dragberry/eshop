@@ -16,7 +16,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.dragberry.era.domain.BaseEnum;
 import org.dragberry.eshop.dal.entity.converter.SaleStatusConverter;
 
 import lombok.Getter;
@@ -66,7 +65,7 @@ public class Product extends BaseEntity {
     @Convert(converter = SaleStatusConverter.class)
 	private SaleStatus saleStatus;
 
-	public enum SaleStatus implements BaseEnum<Character> {
+	public static enum SaleStatus implements BaseEnum<Character> {
 
 	    EXPOSED ('E'), IN_STOCK('S'), OUT_OF_STOCK('O');
 	    
@@ -80,9 +79,9 @@ public class Product extends BaseEntity {
 	        if (value == null) {
 	            throw BaseEnum.npeException(SaleStatus.class);
 	        }
-	        for (SaleStatus base : SaleStatus.values()) {
-	            if (value.equals(base.value)) {
-	                return base;
+	        for (SaleStatus status : SaleStatus.values()) {
+	            if (value.equals(status.value)) {
+	                return status;
 	            }
 	        }
 	        throw BaseEnum.unknownValueException(SaleStatus.class, value);

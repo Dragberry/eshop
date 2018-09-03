@@ -1,4 +1,4 @@
-package org.dragberry.era.domain;
+package org.dragberry.eshop.dal.entity;
 
 import java.text.MessageFormat;
 

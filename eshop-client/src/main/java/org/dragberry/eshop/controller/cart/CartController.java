@@ -19,6 +19,7 @@ import org.dragberry.eshop.model.cart.OrderDetails;
 import org.dragberry.eshop.model.delivery.DeliveryMethod;
 import org.dragberry.eshop.model.payment.PaymentMethod;
 import org.dragberry.eshop.service.DeliveryService;
+import org.dragberry.eshop.service.OrderService;
 import org.dragberry.eshop.service.PaymentService;
 import org.dragberry.eshop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,9 @@ public class CartController {
         	return template;
         }
     }
+    
+    @Autowired
+    private OrderService orderService;
     
     @Autowired
     private ProductService productService;
@@ -127,6 +131,7 @@ public class CartController {
     	saveOrderDetails();
     	
     	if (validationErrors.isEmpty()) {
+    		orderService.createOrder(order);
     		order.getProducts().clear();
     		cartStep = CartStep.SUCCESS;
     	}
