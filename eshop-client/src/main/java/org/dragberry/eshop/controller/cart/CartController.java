@@ -20,6 +20,7 @@ import org.dragberry.eshop.model.cart.OrderDetails;
 import org.dragberry.eshop.model.delivery.DeliveryMethod;
 import org.dragberry.eshop.model.payment.PaymentMethod;
 import org.dragberry.eshop.service.DeliveryService;
+import org.dragberry.eshop.service.NotificationService;
 import org.dragberry.eshop.service.OrderService;
 import org.dragberry.eshop.service.PaymentService;
 import org.dragberry.eshop.service.ProductService;
@@ -59,6 +60,9 @@ public class CartController {
     
     @Autowired
     private OrderService orderService;
+    
+    @Autowired
+    private NotificationService notificationService;
     
     @Autowired
     private ProductService productService;
@@ -125,6 +129,9 @@ public class CartController {
         saveOrderDetails();
         ResultTO<OrderDetails> result = orderService.createOrder(order);
         if (result.getIssues().isEmpty()) {
+        	notificationService.sendNotification("max-hellfire@mail.ru", order, orderDetails -> {
+        		return orderDetails.toString();
+        	});
             order.getProducts().clear();
             cartStep = CartStep.SUCCESS;
         }
