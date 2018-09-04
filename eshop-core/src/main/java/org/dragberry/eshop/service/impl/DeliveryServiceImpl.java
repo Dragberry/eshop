@@ -1,21 +1,26 @@
 package org.dragberry.eshop.service.impl;
 
-import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.dragberry.eshop.dal.entity.DeliveryMethod.Status;
+import org.dragberry.eshop.dal.repo.DeliveryMethodRepository;
 import org.dragberry.eshop.model.delivery.DeliveryMethod;
 import org.dragberry.eshop.service.DeliveryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class DeliveryServiceImpl implements DeliveryService {
 
+    @Autowired
+    private DeliveryMethodRepository deliveryMethodRepo;
+    
 	@Override
 	public List<DeliveryMethod> getDeliveryMethods() {
-		return List.of(
-				new DeliveryMethod(1L, "Курьером по Минску", "Доставка курьером по Минску в день заказа", BigDecimal.ZERO),
-				new DeliveryMethod(2L, "Курьером по Беларуси", "Доставка курьером по всем городам и населенным пунктам Беларуси. Срок доставки: 1-2 дня.", new BigDecimal(8)),
-				new DeliveryMethod(3L, "Доставка почтой", "Доставка в ближайшее почтовое отделение. Срок доставки: 2-3 рабочих дня.", new BigDecimal(5)));
+		return deliveryMethodRepo.findByStatusOrderByOrder(Status.ACTIVE).stream().map(dm -> {
+		    return new DeliveryMethod(dm.getEntityKey(), dm.getName(), dm.getDescription(), dm.getPrice());
+		}).collect(Collectors.toList());
 	}
 
 }

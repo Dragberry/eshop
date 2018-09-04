@@ -51,6 +51,9 @@ public class DeliveryMethod extends BaseEntity {
 	@Column(name = "STATUS")
     private Status status;
 	
+	@Column(name = "`ORDER`")
+    private Integer order;
+	
 	public static enum Status implements BaseEnum<Character> {
 
 		ACTIVE('A'), INACTIVE('I');

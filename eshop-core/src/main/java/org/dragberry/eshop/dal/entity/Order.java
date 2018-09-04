@@ -9,6 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -58,6 +60,14 @@ public class Order extends BaseEntity {
 	@Column(name = "ORDER_STATUS")
 	@Convert(converter = OrderStatusConverter.class)
 	private OrderStatus orderStatus;
+	
+	@ManyToOne
+	@JoinColumn(name = "PAYMENT_METHOD_KEY", referencedColumnName = "PAYMENT_METHOD_KEY")
+	private PaymentMethod paymentMethod;
+	
+	@ManyToOne
+    @JoinColumn(name = "DELIVERY_METHOD_KEY", referencedColumnName = "DELIVERY_METHOD_KEY")
+	private DeliveryMethod deliveryMethod;
 	
 	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "order")
 	private List<OrderItem> items;

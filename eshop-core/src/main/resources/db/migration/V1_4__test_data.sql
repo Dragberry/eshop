@@ -15,3 +15,28 @@ INSERT INTO USER_ACCOUNT_ROLE (USER_ACCOUNT_KEY, ROLE_KEY)
 	VALUES (
 		(SELECT USER_ACCOUNT_KEY FROM USER_ACCOUNT WHERE USERNAME = 'makseemka'), 
 		(SELECT ROLE_KEY FROM ROLE WHERE MODULE = 'ADMIN' AND ACTION = 'VIEW'));
+
+-- Payment methods
+INSERT INTO PAYMENT_METHOD (PAYMENT_METHOD_KEY, STATUS, `ORDER`, NAME, DESCRIPTION)
+	VALUES ((SELECT MAX(GEN_VALUE) FROM GENERATOR WHERE GEN_NAME = 'PAYMENT_METHOD_GEN'), 'A', 0, 'Наличными при получении заказа', 'Оплата наличными деньгами (белорусские рубли) при получении товара');
+UPDATE GENERATOR SET GEN_VALUE = GEN_VALUE + 1 WHERE GEN_NAME = 'PAYMENT_METHOD_GEN';
+INSERT INTO PAYMENT_METHOD (PAYMENT_METHOD_KEY, STATUS, `ORDER`, NAME, DESCRIPTION)
+	VALUES ((SELECT MAX(GEN_VALUE) FROM GENERATOR WHERE GEN_NAME = 'PAYMENT_METHOD_GEN'), 'A', 1, 'Банковской картой при получении заказа', 'Оплата картой любого банка: Visa, Visa Electron, MasterCard,  Maestro, Белкарт, карта рассрочки Халва (3 месяца) и Магнит (2 месяца)');
+UPDATE GENERATOR SET GEN_VALUE = GEN_VALUE + 1 WHERE GEN_NAME = 'PAYMENT_METHOD_GEN';
+INSERT INTO PAYMENT_METHOD (PAYMENT_METHOD_KEY, STATUS, `ORDER`, NAME, DESCRIPTION)
+	VALUES ((SELECT MAX(GEN_VALUE) FROM GENERATOR WHERE GEN_NAME = 'PAYMENT_METHOD_GEN'), 'I', 2, 'Оплата онлайн через сайт: bePaid.by', 'Оплата картой любого банка при оформлении заказа через корзину. После нажатия кнопки «ПОДТВЕРДИТЬ ЗАКАЗ» вы перейдете на специальную защищенную платежную страницу процессинговой системы bePaid.');
+UPDATE GENERATOR SET GEN_VALUE = GEN_VALUE + 1 WHERE GEN_NAME = 'PAYMENT_METHOD_GEN';
+INSERT INTO PAYMENT_METHOD (PAYMENT_METHOD_KEY, STATUS, `ORDER`, NAME, DESCRIPTION)
+	VALUES ((SELECT MAX(GEN_VALUE) FROM GENERATOR WHERE GEN_NAME = 'PAYMENT_METHOD_GEN'), 'A', 3, 'Рассрочка без переплат на 12 месяцев', 'Рассрочку от Беларусбанка на 12 месяцев. Мы подготавливаем для Вас счет-фактуру, с которой необходимо обратиться в любое отделение Беларусбанка для оформления. Нужен только паспорт!');
+UPDATE GENERATOR SET GEN_VALUE = GEN_VALUE + 1 WHERE GEN_NAME = 'PAYMENT_METHOD_GEN';
+
+-- Delivery methods
+INSERT INTO DELIVERY_METHOD (DELIVERY_METHOD_KEY, STATUS, `ORDER`, PRICE,  NAME, DESCRIPTION)
+	VALUES ((SELECT MAX(GEN_VALUE) FROM GENERATOR WHERE GEN_NAME = 'DELIVERY_METHOD_GEN'), 'A', 0, '0.00', 'Курьером по Минску', 'Доставка курьером по Минску в день заказа');
+UPDATE GENERATOR SET GEN_VALUE = GEN_VALUE + 1 WHERE GEN_NAME = 'DELIVERY_METHOD_GEN';
+INSERT INTO DELIVERY_METHOD (DELIVERY_METHOD_KEY, STATUS, `ORDER`, PRICE,  NAME, DESCRIPTION)
+	VALUES ((SELECT MAX(GEN_VALUE) FROM GENERATOR WHERE GEN_NAME = 'DELIVERY_METHOD_GEN'), 'A', 1, '8.00', 'Курьером по Беларуси', 'Доставка курьером по всем городам и населенным пунктам Беларуси. Срок доставки: 1-2 дня.');
+UPDATE GENERATOR SET GEN_VALUE = GEN_VALUE + 1 WHERE GEN_NAME = 'DELIVERY_METHOD_GEN';
+INSERT INTO DELIVERY_METHOD (DELIVERY_METHOD_KEY, STATUS, `ORDER`, PRICE,  NAME, DESCRIPTION)
+	VALUES ((SELECT MAX(GEN_VALUE) FROM GENERATOR WHERE GEN_NAME = 'DELIVERY_METHOD_GEN'), 'A', 2, '5.00', 'Доставка почтой', 'Доставка в ближайшее почтовое отделение. Срок доставки: 2-3 рабочих дня.');
+UPDATE GENERATOR SET GEN_VALUE = GEN_VALUE + 1 WHERE GEN_NAME = 'DELIVERY_METHOD_GEN';
