@@ -1,6 +1,7 @@
 package org.dragberry.eshop.application;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.dragberry.eshop.controller.Controllers;
@@ -25,6 +26,12 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+import org.thymeleaf.templateresolver.ITemplateResolver;
+import org.thymeleaf.templateresolver.StringTemplateResolver;
 
 @SpringBootApplication
 @ComponentScan(basePackageClasses = { Application.class, Controllers.class, Security.class, Services.class })
@@ -37,6 +44,8 @@ public class Application implements WebMvcConfigurer {
 
     private static final String[] CLASSPATH_RESOURCE_LOCATIONS = { "classpath:/META-INF/resources/",
             "classpath:/resources/", "classpath:/static/", "classpath:/public/" };
+
+	private static final String EMAIL_TEMPLATE_ENCODING = "UTF-8";
 
     @Autowired
     private AppInfoInterceptor appInfoInterceptor;
@@ -60,6 +69,55 @@ public class Application implements WebMvcConfigurer {
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         argumentResolvers.add(deviceResolver());
     }
+    
+    
+    
+
+    @Bean("emailTemplateEngine")
+    public TemplateEngine emailTemplateEngine() {
+        final SpringTemplateEngine templateEngine = new SpringTemplateEngine();
+        // Resolver for TEXT emails
+        templateEngine.addTemplateResolver(textTemplateResolver());
+        // Resolver for HTML emails (except the editable one)
+        templateEngine.addTemplateResolver(htmlTemplateResolver());
+        // Resolver for HTML editable emails (which will be treated as a String)
+        templateEngine.addTemplateResolver(stringTemplateResolver());
+        // Message source, internationalization specific to emails
+//        templateEngine.setTemplateEngineMessageSource(emailMessageSource());
+        return templateEngine;
+    }
+    
+    private ITemplateResolver textTemplateResolver() {
+        final ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
+        templateResolver.setOrder(Integer.valueOf(1));
+        templateResolver.setPrefix("/mail/");
+        templateResolver.setSuffix(".txt");
+        templateResolver.setTemplateMode(TemplateMode.TEXT);
+        templateResolver.setCharacterEncoding(EMAIL_TEMPLATE_ENCODING);
+        templateResolver.setCacheable(false);
+        return templateResolver;
+    }
+
+    private ITemplateResolver htmlTemplateResolver() {
+        final ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
+        templateResolver.setOrder(Integer.valueOf(2));
+        templateResolver.setPrefix("/mail/");
+        templateResolver.setSuffix(".html");
+        templateResolver.setTemplateMode(TemplateMode.HTML);
+        templateResolver.setCharacterEncoding(EMAIL_TEMPLATE_ENCODING);
+        templateResolver.setCacheable(false);
+        return templateResolver;
+    }
+
+    private ITemplateResolver stringTemplateResolver() {
+        final StringTemplateResolver templateResolver = new StringTemplateResolver();
+        templateResolver.setOrder(Integer.valueOf(3));
+        // No resolvable pattern, will simply process as a String template everything not previously matched
+        templateResolver.setTemplateMode("HTML5");
+        templateResolver.setCacheable(false);
+        return templateResolver;
+    }
+
 
     public static void main(String[] args) {
         ApplicationContext ctx = SpringApplication.run(Application.class, args);
