@@ -46,8 +46,12 @@ public class OrderServiceImpl implements OrderService {
 	    List<IssueTO> issues = new ArrayList<>();
 	    if (StringUtils.isBlank(orderDetails.getPhone())) {
 	        issues.add(Issues.error("msg.error.contactPhoneRequired", "phone"));
+	    } else if (!GenericValidator.maxLength(orderDetails.getPhone(), 20)) {
+	    	issues.add(Issues.error("msg.error.contactPhoneIsTooLong", "phone"));
 	    }
-	    if (StringUtils.isNotBlank(orderDetails.getEmail()) && !EmailValidator.getInstance().isValid(orderDetails.getEmail())) {
+	    if (StringUtils.isNotBlank(orderDetails.getEmail()) 
+	    		&& !GenericValidator.maxLength(orderDetails.getEmail(), 128)
+	    		&& !EmailValidator.getInstance().isValid(orderDetails.getEmail())) {
 	        issues.add(Issues.error("msg.error.emailInvalid", "email"));
 	    }
 	    DeliveryMethod deliveryMethod = null;
@@ -64,13 +68,13 @@ public class OrderServiceImpl implements OrderService {
         if (paymentMethod == null) {
             issues.add(Issues.error("msg.error.paymentMethodRequired", "paymentMethod"));
         }
-        if (StringUtils.isNotBlank(orderDetails.getFullName()) && GenericValidator.maxLength(orderDetails.getFullName(), 64)) {
+        if (StringUtils.isNotBlank(orderDetails.getFullName()) && !GenericValidator.maxLength(orderDetails.getFullName(), 64)) {
             issues.add(Issues.error("msg.error.fullNameIsTooLong", "fullName"));
         }
-        if (StringUtils.isNotBlank(orderDetails.getAddress()) && GenericValidator.maxLength(orderDetails.getAddress(), 128)) {
+        if (StringUtils.isNotBlank(orderDetails.getAddress()) && !GenericValidator.maxLength(orderDetails.getAddress(), 128)) {
             issues.add(Issues.error("msg.error.addressIsTooLong", "address"));
         }
-        if (StringUtils.isNotBlank(orderDetails.getComment()) && GenericValidator.maxLength(orderDetails.getComment(), 128)) {
+        if (StringUtils.isNotBlank(orderDetails.getComment()) && !GenericValidator.maxLength(orderDetails.getComment(), 128)) {
             issues.add(Issues.error("msg.error.commentIsTooLong", "comment"));
         }
         
