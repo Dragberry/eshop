@@ -2,9 +2,11 @@ package org.dragberry.eshop.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.validator.GenericValidator;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.dragberry.eshop.common.IssueTO;
 import org.dragberry.eshop.common.Issues;
@@ -62,7 +64,16 @@ public class OrderServiceImpl implements OrderService {
         if (paymentMethod == null) {
             issues.add(Issues.error("msg.error.paymentMethodRequired", "paymentMethod"));
         }
-	    
+        if (StringUtils.isNotBlank(orderDetails.getFullName()) && GenericValidator.maxLength(orderDetails.getFullName(), 64)) {
+            issues.add(Issues.error("msg.error.fullNameIsTooLong", "fullName"));
+        }
+        if (StringUtils.isNotBlank(orderDetails.getAddress()) && GenericValidator.maxLength(orderDetails.getAddress(), 128)) {
+            issues.add(Issues.error("msg.error.addressIsTooLong", "address"));
+        }
+        if (StringUtils.isNotBlank(orderDetails.getComment()) && GenericValidator.maxLength(orderDetails.getComment(), 128)) {
+            issues.add(Issues.error("msg.error.commentIsTooLong", "comment"));
+        }
+        
         if (issues.isEmpty()) {
     		var order = new Order();
     		order.setOrderStatus(OrderStatus.NEW);
@@ -71,11 +82,14 @@ public class OrderServiceImpl implements OrderService {
     		order.setAddress(orderDetails.getAddress());
     		order.setEmail(orderDetails.getEmail());
     		order.setItems(orderDetails.getProducts().entrySet().stream().map(cp -> {
-    			var item = new OrderItem();
+    		    var item = new OrderItem();
     			item.setOrder(order);
     			item.setPrice(cp.getValue().getPrice());
     			item.setQuantity(cp.getValue().getQuantity());
-    			item.setProduct(productRepo.findById(cp.getKey().getProductId()).get());
+    			Optional.ofNullable(cp.getKey().getProductId()).ifPresentOrElse(productId -> {
+    			    productRepo.findById(productId).ifPresentOrElse(product -> item.setProduct(product),
+    			            () -> issues.add(Issues.error("msg.error.productIsUnknown", cp.getKey())));
+    		        }, () -> issues.add(Issues.error("msg.error.productIsNull", cp.getKey())));
     			return item;
     		}).collect(Collectors.toList()));
     		order.setDeliveryMethod(deliveryMethod);
