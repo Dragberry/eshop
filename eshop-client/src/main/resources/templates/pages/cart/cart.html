@@ -99,19 +99,45 @@
 					errorClass: 'invalid-feedback',
 					validClass: 'valid-feedback',
 					rules: {
-						phone: 'required',
+						phone: {
+							required: true,
+							maxlength: 20
+						},
+						fullName: {
+							maxlength: 64
+						},
 						deliveryMethod: 'required',
 						paymentMethod: 'required',
 						email: {
-							email: true
+							email: true,
+							maxlength: 128
+						},
+						address: {
+							maxlength: 128
+						},
+						comment: {
+							maxlength: 128
 						}
 					},
 					messages: {
-						phone: '[[#{msg.error.contactPhoneRequired}]]',
+						phone: {
+							required: '[[#{msg.error.contactPhoneRequired}]]',
+							maxlength: '[[#{msg.error.contactPhoneIsTooLong}]]'
+						},
+						fullName: {
+							maxlength: '[[#{msg.error.fullNameIsTooLong}]]'
+						},
 						deliveryMethod: '[[#{msg.error.deliveryMethodRequired}]]',
 						paymentMethod: '[[#{msg.error.paymentMethodRequired}]]',
 						email: {
-							email: '[[#{msg.error.emailInvalid}]]'
+							email: '[[#{msg.error.emailInvalid}]]',
+							maxlength: '[[#{msg.error.emailIsTooLong}]]'
+						},
+						address: {
+							maxlength: '[[#{msg.error.addressIsTooLong}]]'
+						},
+						comment: {
+							maxlength: '[[#{msg.error.commentIsTooLong}]]'
 						}
 					},
 					submitHandler: function(form) {
@@ -121,7 +147,7 @@
 							data: $(form).serialize(),
 							success: function(response) {
 								$('#cartContent').html(response);
-								refreshCartCount({quantity: 0});
+								prepareForm();
 							}
 						});
 					},

@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
+import org.dragberry.eshop.common.ResultTO;
 import org.dragberry.eshop.controller.exception.BadRequestException;
 import org.dragberry.eshop.model.cart.CapturedProduct;
 import org.dragberry.eshop.model.cart.CapturedProductState;
@@ -121,23 +122,17 @@ public class CartController {
      */
     @PostMapping("${url.cart.submit-order}")
     public ModelAndView submitOrder() {
-    	List<String> validationErrors = new ArrayList<>();
-    	String phone = request.getParameter("phone");
-    	if (StringUtils.isNotBlank(phone)) {
-    		order.setPhone(phone);
-    	} else {
-    		validationErrors.add("Phone is empty");
-    	}
-    	saveOrderDetails();
-    	
-    	if (validationErrors.isEmpty()) {
-    		orderService.createOrder(order);
-    		order.getProducts().clear();
-    		cartStep = CartStep.SUCCESS;
-    	}
-    	ModelAndView mv = new ModelAndView(cartStep.template);
-		mv.addObject("orderDetails", order);
-        mv.addObject("validationErrors", validationErrors);
+        saveOrderDetails();
+        ResultTO<OrderDetails> result = orderService.createOrder(order);
+        if (result.getIssues().isEmpty()) {
+            order.getProducts().clear();
+            cartStep = CartStep.SUCCESS;
+        }
+        ModelAndView mv = new ModelAndView(cartStep.template);
+        mv.addObject("order", order);
+        mv.addObject("validationErrors", result.getIssues());
+        mv.addObject("deliveryMethods", deliveryMethods);
+        mv.addObject("paymentMethods", paymentMethods);
         updateCartState();
         return mv;
     }
@@ -181,10 +176,12 @@ public class CartController {
     	order.setAddress(request.getParameter("address"));
     	order.setEmail(request.getParameter("email"));
     	order.setComment(request.getParameter("comment"));
-    	order.setDeliveryMethod(deliveryMethods.stream().filter(dm -> dm.getId().equals(Long.valueOf(request.getParameter("deliveryMethod")))).findFirst()
-                .orElse(null));
-    	order.setPaymentMethod(paymentMethods.stream().filter(pm -> pm.getId().equals(Long.valueOf(request.getParameter("paymentMethod")))).findFirst()
-                .orElse(null));
+    	try {
+    	    Long deliveryMethodKey = Long.valueOf(request.getParameter("deliveryMethod"));
+    	    order.setDeliveryMethod(deliveryMethods.stream().filter(dm -> dm.getId().equals(deliveryMethodKey)).findFirst().orElse(null));
+    	    Long paymentMethodKey = Long.valueOf(request.getParameter("paymentMethod"));
+    	    order.setPaymentMethod(paymentMethods.stream().filter(pm -> pm.getId().equals(paymentMethodKey)).findFirst().orElse(null));
+    	} catch (NumberFormatException nfe) { /* Do nothing */ }
     }
     
     /**
