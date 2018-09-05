@@ -1,5 +1,6 @@
 package org.dragberry.eshop.model.cart;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,6 +24,8 @@ public class OrderDetails {
 	
 	private String email;
 	
+	private BigDecimal totalPrice;
+	
 	private DeliveryMethod deliveryMethod;
 	
 	private PaymentMethod paymentMethod;
@@ -35,6 +38,7 @@ public class OrderDetails {
 		this.address = null;
 		this.comment = null;
 		this.email = null;
+		this.totalPrice = null;
 		this.deliveryMethod = null;
 		this.paymentMethod = null;
 		this.products.clear();

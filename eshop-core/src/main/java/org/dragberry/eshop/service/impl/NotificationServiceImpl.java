@@ -34,9 +34,7 @@ public class NotificationServiceImpl implements NotificationService {
 		try {
 			// Prepare the evaluation context
 			final Context ctx = new Context();
-		    ctx.setVariable("name", "Max");
-		    ctx.setVariable("subscriptionDate", new Date());
-		    ctx.setVariable("hobbies", List.of("Cinema", "Sports", "Music"));
+		    ctx.setVariable("order", object);
 	
 		    // Prepare message using a Spring helper
 		    final MimeMessage mimeMessage = this.mailSender.createMimeMessage();
@@ -47,7 +45,7 @@ public class NotificationServiceImpl implements NotificationService {
 		    message.setTo(notifier);
 	
 		    // Create the HTML body using Thymeleaf
-		    final String htmlContent = this.templateEngine.process("test-email.html", ctx);
+		    final String htmlContent = this.templateEngine.process("order-report.html", ctx);
 		    message.setText(htmlContent, true); // true = isHtml
 	
 		    // Send mail

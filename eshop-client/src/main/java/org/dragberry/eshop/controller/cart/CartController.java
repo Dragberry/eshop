@@ -129,7 +129,7 @@ public class CartController {
         saveOrderDetails();
         ResultTO<OrderDetails> result = orderService.createOrder(order);
         if (result.getIssues().isEmpty()) {
-        	notificationService.sendNotification("max-hellfire@mail.ru", order, orderDetails -> {
+        	notificationService.sendNotification("max-hellfire@mail.ru", updateCartState(order), orderDetails -> {
         		return orderDetails.toString();
         	});
             order.getProducts().clear();

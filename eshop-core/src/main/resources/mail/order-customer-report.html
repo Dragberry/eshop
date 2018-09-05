@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title th:remove="all">Customer order report</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+	<h3>New order #[[${order.id}]]</h3>
+	<h4>Contact info</h4>
+	<table>
+		<tr>
+			<td>Contact phone</td>
+			<td>[[${order.contactPhone}]]</td>
+		</tr>
+		<tr th:if="${order.fullName}">
+			<td>Full name</td>
+			<td>[[${order.fullName}]]</td>
+		</tr>
+		<tr th:if="${order.address}">
+			<td>Address</td>
+			<td>[[${order.address}]]</td>
+		</tr>
+		<tr th:if="${order.email}">
+			<td>E-mail</td>
+			<td>[[${order.email}]]</td>
+		</tr>
+		<tr th:if="${order.comment}">
+			<td>Comment</td>
+			<td>[[${order.comment}]]</td>
+		</tr>
+	</table>
+</body>
+</html>

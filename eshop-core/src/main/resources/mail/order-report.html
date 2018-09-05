@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title th:remove="all">Customer order report</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<style>
+		table {
+		    border-collapse: collapse;
+		}
+		table, tr {
+		    border: 1px solid black;
+		}
+		td, th {
+			padding: 8px;
+			text-align: left;
+		},
+		div.product-title {
+			text-decoration: underline;
+			font-style: italic;
+			font-weight: bold;
+		}
+	</style>
+</head>
+<body>
+	<h2>Новый заказ #[[${order.change.id}]]</h2>
+	<h4>Контактная информация</h4>
+	<table>
+		<tr>
+			<th>Контактный телефон</th>
+			<td>[[${order.change.phone}]]</td>
+		</tr>
+		<tr th:if="${order.change.fullName}">
+			<th>ФИО</th>
+			<td>[[${order.change.fullName}]]</td>
+		</tr>
+		<tr th:if="${order.change.address}">
+			<th>Адрес</th>
+			<td>[[${order.change.address}]]</td>
+		</tr>
+		<tr th:if="${order.change.email}">
+			<th>E-mail</th>
+			<td>[[${order.change.email}]]</td>
+		</tr>
+		<tr th:if="${order.change.comment}">
+			<th>Комментарий</th>
+			<td>[[${order.change.comment}]]</td>
+		</tr>
+		<tr>
+			<th>Способ оплаты</th>
+			<td>[[${order.change.paymentMethod.name}]]</td>
+		</tr>
+		<tr>
+			<th>Способ доставки</th>
+			<td>[[${order.change.deliveryMethod.name}]]</td>
+		</tr>
+	</table>
+	<h4>Список товаров</h4>
+	<table style="border: solid 1px">
+		<tr>
+			<th>№</th>
+			<th>ID товара</th>
+			<th>Наименование</th>
+			<th>Количество и цена</th>
+			<th>Полная стоимость</th>
+		</tr>
+		<tr th:each="item, iter : ${order.change.products}">
+			<th>[[${iter.index + 1}]]</th>
+			<td>
+				[[${item.key.productId}]]
+			</td>
+			<td>
+				<div class="product-title">[[${item.key.fullTitle}]]</div>
+				<div>Article: [[${item.key.article}]]</div>
+			</td>
+			<td>
+				[[${item.value.quantity}]] X [[${item.value.price}]] Руб.
+			</td>
+			<td>
+				[[${item.value.totalPrice}]] Руб.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="4">Итого по товарам:</td>
+			<td>[[${order.productSum}]] Руб.</td>
+		</tr>
+		<tr>
+			<td colspan="4">Стоимость доставки:</td>
+			<td>[[${order.deliveryPrice}]] Руб.</td>
+		</tr>
+		<tr>
+			<td colspan="4">Итого:</td>
+			<td>[[${order.sum}]] Руб.</td>
+		</tr>
+	</table>
+</body>
+</html>
