@@ -12,12 +12,12 @@ import org.dragberry.eshop.common.IssueTO;
 import org.dragberry.eshop.common.Issues;
 import org.dragberry.eshop.common.ResultTO;
 import org.dragberry.eshop.common.Results;
-import org.dragberry.eshop.dal.entity.DeliveryMethod;
+import org.dragberry.eshop.dal.entity.ShippingMethod;
 import org.dragberry.eshop.dal.entity.Order;
 import org.dragberry.eshop.dal.entity.Order.OrderStatus;
 import org.dragberry.eshop.dal.entity.OrderItem;
 import org.dragberry.eshop.dal.entity.PaymentMethod;
-import org.dragberry.eshop.dal.repo.DeliveryMethodRepository;
+import org.dragberry.eshop.dal.repo.ShippingMethodRepository;
 import org.dragberry.eshop.dal.repo.OrderRepository;
 import org.dragberry.eshop.dal.repo.PaymentMethodRepository;
 import org.dragberry.eshop.dal.repo.ProductRepository;
@@ -30,7 +30,7 @@ import org.springframework.stereotype.Service;
 public class OrderServiceImpl implements OrderService {
 
     @Autowired
-    private DeliveryMethodRepository deliveryMethodRepo;
+    private ShippingMethodRepository shippingMethodRepo;
     
 	@Autowired
 	private OrderRepository orderRepo;
@@ -54,11 +54,11 @@ public class OrderServiceImpl implements OrderService {
 	    		&& !EmailValidator.getInstance().isValid(orderDetails.getEmail())) {
 	        issues.add(Issues.error("msg.error.emailInvalid", "email"));
 	    }
-	    DeliveryMethod deliveryMethod = null;
-	    if (orderDetails.getDeliveryMethod() != null) {
-	        deliveryMethod = deliveryMethodRepo.findById(orderDetails.getDeliveryMethod().getId()).orElse(null);
+	    ShippingMethod shippingMethod = null;
+	    if (orderDetails.getShippingMethod() != null) {
+	        shippingMethod = shippingMethodRepo.findById(orderDetails.getShippingMethod().getId()).orElse(null);
 	    }
-	    if (deliveryMethod == null) {
+	    if (shippingMethod == null) {
 	        issues.add(Issues.error("msg.error.deliveryMethodRequired", "deliveryMethod"));
 	    }
 	    PaymentMethod paymentMethod = null;
@@ -81,6 +81,9 @@ public class OrderServiceImpl implements OrderService {
         if (issues.isEmpty()) {
     		var order = new Order();
     		order.setOrderStatus(OrderStatus.NEW);
+    		order.setTotalProductAmount(orderDetails.getTotalProductAmount());
+    		order.setShippingCost(orderDetails.getShippingCost());
+    		order.setTotalAmount(orderDetails.getTotalAmount());
     		order.setPhone(orderDetails.getPhone());
     		order.setFullName(orderDetails.getFullName());
     		order.setAddress(orderDetails.getAddress());
@@ -90,13 +93,14 @@ public class OrderServiceImpl implements OrderService {
     			item.setOrder(order);
     			item.setPrice(cp.getValue().getPrice());
     			item.setQuantity(cp.getValue().getQuantity());
+    			item.setTotalAmount(cp.getValue().getTotalAmount());
     			Optional.ofNullable(cp.getKey().getProductId()).ifPresentOrElse(productId -> {
     			    productRepo.findById(productId).ifPresentOrElse(product -> item.setProduct(product),
     			            () -> issues.add(Issues.error("msg.error.productIsUnknown", cp.getKey())));
     		        }, () -> issues.add(Issues.error("msg.error.productIsNull", cp.getKey())));
     			return item;
     		}).collect(Collectors.toList()));
-    		order.setDeliveryMethod(deliveryMethod);
+    		order.setShippingMethod(shippingMethod);
     		order.setPaymentMethod(paymentMethod);
     		var newOrder = orderRepo.save(order);
     		orderDetails.setId(newOrder.getEntityKey());

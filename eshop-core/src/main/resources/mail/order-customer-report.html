@@ -58,7 +58,7 @@
 			</tr>
 			<tr>
 				<th>Способ доставки</th>
-				<td>[[${order.deliveryMethod.name}]]</td>
+				<td>[[${order.shippingMethod.name}]]</td>
 			</tr>
 		</table>
 		<h4>Список товаров</h4>
@@ -83,20 +83,20 @@
 					[[${item.value.quantity}]] X [[${item.value.price}]] Руб.
 				</td>
 				<td>
-					[[${item.value.totalPrice}]] Руб.
+					[[${item.value.totalAmount}]] Руб.
 				</td>
 			</tr>
 			<tr>
 				<td colspan="4">Итого по товарам:</td>
-				<td>[[${productSum}]] Руб.</td>
+				<td>[[${totalProductAmount}]] Руб.</td>
 			</tr>
 			<tr>
 				<td colspan="4">Стоимость доставки:</td>
-				<td>[[${deliveryPrice}]] Руб.</td>
+				<td>[[${shippingCost}]] Руб.</td>
 			</tr>
 			<tr>
 				<td colspan="4">Итого:</td>
-				<td>[[${sum}]] Руб.</td>
+				<td>[[${totalAmount}]] Руб.</td>
 			</tr>
 		</table>
 	</body>

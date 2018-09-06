@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.dragberry.eshop.model.delivery.DeliveryMethod;
 import org.dragberry.eshop.model.payment.PaymentMethod;
+import org.dragberry.eshop.model.shipping.ShippingMethod;
 
 import lombok.Data;
 
@@ -24,9 +24,13 @@ public class OrderDetails {
 	
 	private String email;
 	
-	private BigDecimal totalPrice;
+	private BigDecimal totalProductAmount;
 	
-	private DeliveryMethod deliveryMethod;
+	private BigDecimal shippingCost;
+	
+	private BigDecimal totalAmount;
+	
+	private ShippingMethod shippingMethod;
 	
 	private PaymentMethod paymentMethod;
 	
@@ -38,8 +42,10 @@ public class OrderDetails {
 		this.address = null;
 		this.comment = null;
 		this.email = null;
-		this.totalPrice = null;
-		this.deliveryMethod = null;
+		this.totalProductAmount = null;
+		this.shippingCost = null;
+		this.totalAmount= null;
+		this.shippingMethod = null;
 		this.paymentMethod = null;
 		this.products.clear();
 	}

@@ -1,4 +1,4 @@
-package org.dragberry.eshop.model.delivery;
+package org.dragberry.eshop.model.shipping;
 
 import java.math.BigDecimal;
 
@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class DeliveryMethod {
+public class ShippingMethod {
 
 	private Long id;
 	
@@ -15,6 +15,6 @@ public class DeliveryMethod {
 
 	private String description;
 	
-	private BigDecimal price;
+	private BigDecimal cost;
 
 }

@@ -21,7 +21,7 @@
 		    }
 		    
 		    function toEditing() {
-		    	$('#cartContent').load('[[${@environment.getProperty('url.cart.back')}]]', $("#submitOrderForm").serialize());
+		    	$('#cartContent').load('[[${@environment.getProperty('url.cart.back')}]]');
 		    }
 		    
 		    function incrementCartItem(productId) {
@@ -64,14 +64,14 @@
 			function changeCartItemQuantity(productId, action) {
 				changeCart(action, productId, function(cartState) {
 	            	$('tr[data-product-id="' + productId + '"] > td > span.cart-product-quantity').text(cartState.value.quantity);
-	            	$('tr[data-product-id="' + productId + '"] > td > span.cart-product-total-price').text(cartState.value.totalPrice.toFixed(2));
+	            	$('tr[data-product-id="' + productId + '"] > td > span.cart-product-item-total-amount').text(cartState.value.totalAmount.toFixed(2));
 	            	onCartChanges(cartState);
 	            });
 			}
 			
 			function onCartChanges(cartState) {
 				refreshCartCount(cartState);
-	        	refreshCartSum(cartState);
+	        	refreshCartTotalAmount(cartState);
 	        	changeToOrderButtonState(cartState);
 			}
 			
@@ -79,17 +79,17 @@
 				$('#toOrderButton').prop('disabled', cartState.quantity <= 0);
 			}
 			
-			function refreshCartSum(cartState) {
-				$(".cart-product-sum").text(cartState.productSum.toFixed(2));
-				$(".cart-delivery-price").text(cartState.deliveryPrice.toFixed(2));
-				$(".cart-total-sum").text(cartState.sum.toFixed(2));
+			function refreshCartTotalAmount(cartState) {
+				$(".cart-product-total-amount").text(cartState.totalProductAmount.toFixed(2));
+				$(".cart-shipping-cost").text(cartState.shippingCost.toFixed(2));
+				$(".cart-total-amount").text(cartState.totalAmount.toFixed(2));
 			}
 		
 			function prepareForm() {
 				$('#orderDetailsPhone').mask('+375(00)000-00-00');
 				
-				$('input[type=radio][name=deliveryMethod]').change(function() {
-					changeCart('DELIVERY_METHOD', $(this).val(), function(cartState) {
+				$('input[type=radio][name=shippingMethod]').change(function() {
+					changeCart('SHIPPING_METHOD', $(this).val(), function(cartState) {
 		            	onCartChanges(cartState);
 		            });
 				});
@@ -106,7 +106,7 @@
 						fullName: {
 							maxlength: 64
 						},
-						deliveryMethod: 'required',
+						shippingMethod: 'required',
 						paymentMethod: 'required',
 						email: {
 							email: true,
@@ -127,7 +127,7 @@
 						fullName: {
 							maxlength: '[[#{msg.error.fullNameIsTooLong}]]'
 						},
-						deliveryMethod: '[[#{msg.error.deliveryMethodRequired}]]',
+						shippingMethod: '[[#{msg.error.shippingMethodRequired}]]',
 						paymentMethod: '[[#{msg.error.paymentMethodRequired}]]',
 						email: {
 							email: '[[#{msg.error.emailInvalid}]]',

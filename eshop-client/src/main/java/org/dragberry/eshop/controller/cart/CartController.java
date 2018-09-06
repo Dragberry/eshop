@@ -18,10 +18,10 @@ import org.dragberry.eshop.model.cart.CapturedProduct;
 import org.dragberry.eshop.model.cart.CapturedProductState;
 import org.dragberry.eshop.model.cart.CartState;
 import org.dragberry.eshop.model.cart.OrderDetails;
-import org.dragberry.eshop.model.delivery.DeliveryMethod;
 import org.dragberry.eshop.model.payment.PaymentMethod;
+import org.dragberry.eshop.model.shipping.ShippingMethod;
 import org.dragberry.eshop.service.AppInfoService;
-import org.dragberry.eshop.service.DeliveryService;
+import org.dragberry.eshop.service.ShippingService;
 import org.dragberry.eshop.service.NotificationService;
 import org.dragberry.eshop.service.OrderService;
 import org.dragberry.eshop.service.PaymentService;
@@ -73,7 +73,7 @@ public class CartController {
     private ProductService productService;
     
     @Autowired
-    private DeliveryService deliveryService;
+    private ShippingService deliveryService;
     
     @Autowired
     private PaymentService paymentService;
@@ -88,7 +88,7 @@ public class CartController {
     
     private CartStep cartStep = CartStep.EDITING;
     
-    private List<DeliveryMethod> deliveryMethods;
+    private List<ShippingMethod> shippingMethods;
     
     private List<PaymentMethod> paymentMethods;
     
@@ -97,7 +97,7 @@ public class CartController {
      */
     @PostConstruct
     public void init() {
-    	deliveryMethods = deliveryService.getDeliveryMethods();
+    	shippingMethods = deliveryService.getShippingMethods();
     	paymentMethods = paymentService.getPaymentMethods();
     }
 
@@ -113,7 +113,7 @@ public class CartController {
         ModelAndView mv = new ModelAndView("pages/cart/cart");
         mv.addObject("order", order);
         mv.addObject("cartStep", cartStep);
-        mv.addObject("deliveryMethods", deliveryMethods);
+        mv.addObject("shippingMethods", shippingMethods);
         mv.addObject("paymentMethods", paymentMethods);
         updateCartState();
         return mv;
@@ -133,15 +133,18 @@ public class CartController {
     public ModelAndView submitOrder() {
         log.info("New order has been submitted!");
         saveOrderDetails();
+        CartState<OrderDetails> cartState = updateCartState(order);
+        order.setTotalProductAmount(cartState.getTotalProductAmount());
+        order.setShippingCost(cartState.getShippingCost());
+        order.setTotalAmount(cartState.getTotalAmount());
         ResultTO<OrderDetails> result = orderService.createOrder(order);
         List<IssueTO> issues = result.getIssues();
         if (issues.isEmpty()) {
-            CartState<OrderDetails> cartState = updateCartState(result.getValue());
             Map<String, Object> notificationParams = Map.of(
                     "order", cartState.getValue(),
-                    "productSum", cartState.getProductSum(),
-                    "deliveryPrice", cartState.getDeliveryPrice(),
-                    "sum", cartState.getSum(),
+                    "totalProductAmount", cartState.getTotalProductAmount(),
+                    "shippingCost", cartState.getShippingCost(),
+                    "totalAmount", cartState.getTotalAmount(),
                     "shopName", appInfoService.shopName());
             notificationService.sendNotification(appInfoService.getSystemInfo().getEmail(), "order-report", notificationParams);
             if (StringUtils.isNotBlank(order.getEmail())) {
@@ -156,7 +159,7 @@ public class CartController {
         ModelAndView mv = new ModelAndView(cartStep.template);
         mv.addObject("order", order);
         mv.addObject("validationErrors", issues);
-        mv.addObject("deliveryMethods", deliveryMethods);
+        mv.addObject("shippingMethods", shippingMethods);
         mv.addObject("paymentMethods", paymentMethods);
         updateCartState();
         return mv;
@@ -173,7 +176,7 @@ public class CartController {
         }
         ModelAndView mv = new ModelAndView(cartStep.template);
         mv.addObject("order", order);
-        mv.addObject("deliveryMethods", deliveryMethods);
+        mv.addObject("shippingMethods", shippingMethods);
         mv.addObject("paymentMethods", paymentMethods);
         updateCartState();
         return mv;
@@ -202,8 +205,8 @@ public class CartController {
     	order.setEmail(request.getParameter("email"));
     	order.setComment(request.getParameter("comment"));
     	try {
-    	    Long deliveryMethodKey = Long.valueOf(request.getParameter("deliveryMethod"));
-    	    order.setDeliveryMethod(deliveryMethods.stream().filter(dm -> dm.getId().equals(deliveryMethodKey)).findFirst().orElse(null));
+    	    Long shippingMethodKey = Long.valueOf(request.getParameter("shippingMethod"));
+    	    order.setShippingMethod(shippingMethods.stream().filter(sm -> sm.getId().equals(shippingMethodKey)).findFirst().orElse(null));
     	    Long paymentMethodKey = Long.valueOf(request.getParameter("paymentMethod"));
     	    order.setPaymentMethod(paymentMethods.stream().filter(pm -> pm.getId().equals(paymentMethodKey)).findFirst().orElse(null));
     	} catch (NumberFormatException nfe) { /* Do nothing */ }
@@ -217,17 +220,18 @@ public class CartController {
         var cartState = new CartState<T>();
         int quantity = order.getProducts().values().stream()
                 .mapToInt(CapturedProductState::getQuantity).sum();
-        cartState.setQuantity(quantity);
-        session.setAttribute("cartProductCount", quantity);
-        BigDecimal productSum = order.getProducts().values().stream()
-                .map(CapturedProductState::getTotalPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
-        cartState.setProductSum(productSum);
-        session.setAttribute("cartProductSum", productSum);
+        BigDecimal totalProductAmount = order.getProducts().values().stream()
+                .map(CapturedProductState::getTotalAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
         
-        cartState.setDeliveryPrice(order.getDeliveryMethod() == null ? BigDecimal.ZERO : order.getDeliveryMethod().getPrice());
-        session.setAttribute("cartDeliveryPrice", cartState.getDeliveryPrice());
-        cartState.setSum(productSum.add(cartState.getDeliveryPrice()));
-        session.setAttribute("cartTotalSum", cartState.getSum());
+        cartState.setQuantity(quantity);
+        cartState.setTotalProductAmount(totalProductAmount);
+        cartState.setShippingCost(order.getShippingMethod() == null ? BigDecimal.ZERO : order.getShippingMethod().getCost());
+        cartState.setTotalAmount(totalProductAmount.add(cartState.getShippingCost()));
+
+        session.setAttribute("cartProductCount", quantity);
+        session.setAttribute("cartTotalProductAmount", totalProductAmount);
+        session.setAttribute("cartShippingCost", cartState.getShippingCost());
+        session.setAttribute("cartTotalAmount", cartState.getTotalAmount());
         
         cartState.setValue(value);
         return cartState;
@@ -313,13 +317,13 @@ public class CartController {
           }
         });
       
-      executors.put(CartAction.DELIVERY_METHOD, new CartActionExecutor<DeliveryMethod>() {
+      executors.put(CartAction.SHIPPING_METHOD, new CartActionExecutor<ShippingMethod>() {
 
           @Override
-          public CartState<DeliveryMethod> execute(CartStateChange change) {
-              DeliveryMethod method = deliveryMethods.stream().filter(dm -> dm.getId().equals(change.getEntityId())).findFirst()
+          public CartState<ShippingMethod> execute(CartStateChange change) {
+              ShippingMethod method = shippingMethods.stream().filter(dm -> dm.getId().equals(change.getEntityId())).findFirst()
                       .orElseThrow(BadRequestException::new);
-              order.setDeliveryMethod(method);
+              order.setShippingMethod(method);
               return updateCartState(method);
           }
         });

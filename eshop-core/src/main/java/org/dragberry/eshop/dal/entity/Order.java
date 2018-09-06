@@ -1,5 +1,6 @@
 package org.dragberry.eshop.dal.entity;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -56,6 +57,15 @@ public class Order extends BaseEntity {
 	
 	@Column(name = "COMMENT")
     private String comment;
+	
+	@Column(name = "TOTAL_PRODUCT_AMOUNT")
+    private BigDecimal totalProductAmount;
+	
+	@Column(name = "SHIPPING_COST")
+    private BigDecimal shippingCost;
+	
+	@Column(name = "TOTAL_AMOUNT")
+    private BigDecimal totalAmount;
 
 	@Column(name = "ORDER_STATUS")
 	@Convert(converter = OrderStatusConverter.class)
@@ -66,8 +76,8 @@ public class Order extends BaseEntity {
 	private PaymentMethod paymentMethod;
 	
 	@ManyToOne
-    @JoinColumn(name = "DELIVERY_METHOD_KEY", referencedColumnName = "DELIVERY_METHOD_KEY")
-	private DeliveryMethod deliveryMethod;
+    @JoinColumn(name = "SHIPPING_METHOD_KEY", referencedColumnName = "SHIPPING_METHOD_KEY")
+	private ShippingMethod shippingMethod;
 	
 	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "order")
 	private List<OrderItem> items;

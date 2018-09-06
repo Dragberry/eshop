@@ -12,30 +12,30 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 import org.dragberry.eshop.dal.entity.Product.SaleStatus;
-import org.dragberry.eshop.dal.entity.converter.DeliveryMethodStatusConverter;
+import org.dragberry.eshop.dal.entity.converter.ShippingMethodStatusConverter;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "DELIVERY_METHOD")
+@Table(name = "SHIPPING_METHOD")
 @TableGenerator(
-		name = "DELIVERY_METHOD_GEN", 
+		name = "SHIPPING_METHOD_GEN", 
 		table = "GENERATOR",
 		pkColumnName = "GEN_NAME", 
-		pkColumnValue = "DELIVERY_METHOD_GEN",
+		pkColumnValue = "SHIPPING_METHOD_GEN",
 		valueColumnName = "GEN_VALUE",
 		initialValue = 1000,
 		allocationSize = 1)
 @Setter
 @Getter
-public class DeliveryMethod extends BaseEntity {
+public class ShippingMethod extends BaseEntity {
 
 	private static final long serialVersionUID = 6817451222642163283L;
 
 	@Id
-	@Column(name = "DELIVERY_METHOD_KEY")
-	@GeneratedValue(strategy = GenerationType.TABLE, generator = "DELIVERY_METHOD_GEN")
+	@Column(name = "SHIPPING_METHOD_KEY")
+	@GeneratedValue(strategy = GenerationType.TABLE, generator = "SHIPPING_METHOD_GEN")
 	private Long entityKey;
 	
 	@Column(name = "NAME")
@@ -44,10 +44,10 @@ public class DeliveryMethod extends BaseEntity {
 	@Column(name = "DESCRIPTION")
     private String description;
 	
-	@Column(name = "PRICE")
-    private BigDecimal price;
+	@Column(name = "COST")
+    private BigDecimal cost;
 	
-	@Convert(converter = DeliveryMethodStatusConverter.class)
+	@Convert(converter = ShippingMethodStatusConverter.class)
 	@Column(name = "STATUS")
     private Status status;
 	

@@ -15,12 +15,12 @@ public class CapturedProductState {
     
     private BigDecimal price;
     
-    private BigDecimal totalPrice;
+    private BigDecimal totalAmount;
     
     public CapturedProductState(Long productId, BigDecimal price) {
         this.productId = productId;
         this.price = price;
-        this.totalPrice = price;
+        this.totalAmount = price;
     }
 
     public void increment() {
@@ -32,10 +32,10 @@ public class CapturedProductState {
     
     public void update(int quantity) {
         this.quantity = quantity;
-        if (totalPrice != null && price != null) {
-            totalPrice = price.multiply(new BigDecimal(quantity)).setScale(2);
+        if (totalAmount != null && price != null) {
+            totalAmount = price.multiply(new BigDecimal(quantity)).setScale(2);
         } else {
-            totalPrice = BigDecimal.ZERO;
+            totalAmount = BigDecimal.ZERO;
         }
         
     }

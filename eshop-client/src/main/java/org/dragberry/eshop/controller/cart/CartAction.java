@@ -6,5 +6,5 @@ package org.dragberry.eshop.controller.cart;
  *
  */
 public enum CartAction {
-    ADD_PRODUCT, REMOVE_PRODUCT, INCREMENT, DECREMENT, DELIVERY_METHOD;
+    ADD_PRODUCT, REMOVE_PRODUCT, INCREMENT, DECREMENT, SHIPPING_METHOD;
 }

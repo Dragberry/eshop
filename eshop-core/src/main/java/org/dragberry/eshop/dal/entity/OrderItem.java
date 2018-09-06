@@ -43,11 +43,13 @@ public class OrderItem extends BaseEntity {
 	@ManyToOne
 	@JoinColumn(name = "PRODUCT_KEY", referencedColumnName = "PRODUCT_KEY")
 	private Product product;
+
+	@Column(name = "PRICE")
+	private BigDecimal price;
 	
 	@Column(name = "QUANTITY")
 	private Integer quantity;
 	
-	@Column(name = "PRICE")
-	private BigDecimal price;
-    
+	@Column(name = "TOTAL_AMOUNT")
+	private BigDecimal totalAmount;
 }
