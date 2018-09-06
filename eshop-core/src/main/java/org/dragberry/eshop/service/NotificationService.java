@@ -1,9 +1,9 @@
 package org.dragberry.eshop.service;
 
-import java.util.function.Function;
+import java.util.Map;
 
 public interface NotificationService {
 	
-	<T> void sendNotification(String notifier, T object, Function<T, String> notification);
+	void sendNotification(String recipient, String template, Map<String, Object> objects);
 
 }

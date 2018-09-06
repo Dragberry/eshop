@@ -5,13 +5,23 @@ import java.util.List;
 
 import org.dragberry.eshop.model.common.AppInfo;
 import org.dragberry.eshop.model.common.Phone;
+import org.dragberry.eshop.model.common.SystemInfo;
 import org.dragberry.eshop.model.common.WorkingDay;
 import org.dragberry.eshop.model.common.WorkingDays;
 import org.dragberry.eshop.service.AppInfoService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AppInfoServiceImpl implements AppInfoService {
+    
+    @Value("${application.title}")
+    private String shopName;
+    
+    @Override
+    public String shopName() {
+        return shopName;
+    }
 
 	@Override
 	public AppInfo getAppInfo() {
@@ -30,5 +40,12 @@ public class AppInfoServiceImpl implements AppInfoService {
 				"Работаем: с 9:00 до 21:00 без выходных"));
 		return info;
 	}
+
+    @Override
+    public SystemInfo getSystemInfo() {
+        SystemInfo systemInfo = new SystemInfo();
+        systemInfo.setEmail("max-hellfire@mail.ru");
+        return systemInfo;
+    }
 
 }

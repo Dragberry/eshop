@@ -181,15 +181,15 @@
 		            success: function(cartState) {
 		            	var optionsTitle = '';
 		            	var options = [];
-		            	for (optionId in cartState.change.options) {
-		            		options.push(cartState.change.options[optionId]['key'] + ': ' + cartState.change.options[optionId]['value'])
+		            	for (optionId in cartState.value.options) {
+		            		options.push(cartState.value.options[optionId]['key'] + ': ' + cartState.value.options[optionId]['value'])
 		            	}
 		            	if (options) {
 		            		optionsTitle = ' (' + options.join('; ') + ')' 
 		            	}
-		            	$('#capturedProductInfo > div > .captured-product-title').text(cartState.change.title + optionsTitle)
-		            	$('#capturedProductInfo > div > .captured-product-article').text(cartState.change.article)
-		            	$('#capturedProductInfo > div > .captured-product-price').text(cartState.change.price.toFixed(2))
+		            	$('#capturedProductInfo > div > .captured-product-title').text(cartState.value.title + optionsTitle)
+		            	$('#capturedProductInfo > div > .captured-product-article').text(cartState.value.article)
+		            	$('#capturedProductInfo > div > .captured-product-price').text(cartState.value.price.toFixed(2))
 		            	$('#addToCartSuccessModal').modal("show")
 		                refreshCartCount(cartState);
 		            }

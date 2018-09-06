@@ -15,5 +15,5 @@ public class CartState<T> {
 
     private BigDecimal sum;
     
-    private T change;
+    private T value;
 }

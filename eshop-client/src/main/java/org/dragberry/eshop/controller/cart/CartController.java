@@ -1,7 +1,7 @@
 package org.dragberry.eshop.controller.cart;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
+import org.dragberry.eshop.common.IssueTO;
 import org.dragberry.eshop.common.ResultTO;
 import org.dragberry.eshop.controller.exception.BadRequestException;
 import org.dragberry.eshop.model.cart.CapturedProduct;
@@ -19,6 +20,7 @@ import org.dragberry.eshop.model.cart.CartState;
 import org.dragberry.eshop.model.cart.OrderDetails;
 import org.dragberry.eshop.model.delivery.DeliveryMethod;
 import org.dragberry.eshop.model.payment.PaymentMethod;
+import org.dragberry.eshop.service.AppInfoService;
 import org.dragberry.eshop.service.DeliveryService;
 import org.dragberry.eshop.service.NotificationService;
 import org.dragberry.eshop.service.OrderService;
@@ -59,6 +61,9 @@ public class CartController {
     }
     
     @Autowired
+    private AppInfoService appInfoService;
+    
+    @Autowired
     private OrderService orderService;
     
     @Autowired
@@ -79,7 +84,7 @@ public class CartController {
     @Autowired
     private HttpServletRequest request;
     
-    private final OrderDetails order = new OrderDetails();
+    private OrderDetails order = new OrderDetails();
     
     private CartStep cartStep = CartStep.EDITING;
     
@@ -126,18 +131,31 @@ public class CartController {
      */
     @PostMapping("${url.cart.submit-order}")
     public ModelAndView submitOrder() {
+        log.info("New order has been submitted!");
         saveOrderDetails();
         ResultTO<OrderDetails> result = orderService.createOrder(order);
-        if (result.getIssues().isEmpty()) {
-        	notificationService.sendNotification("max-hellfire@mail.ru", updateCartState(order), orderDetails -> {
-        		return orderDetails.toString();
-        	});
-            order.getProducts().clear();
+        List<IssueTO> issues = result.getIssues();
+        if (issues.isEmpty()) {
+            CartState<OrderDetails> cartState = updateCartState(result.getValue());
+            Map<String, Object> notificationParams = Map.of(
+                    "order", cartState.getValue(),
+                    "productSum", cartState.getProductSum(),
+                    "deliveryPrice", cartState.getDeliveryPrice(),
+                    "sum", cartState.getSum(),
+                    "shopName", appInfoService.shopName());
+            notificationService.sendNotification(appInfoService.getSystemInfo().getEmail(), "order-report", notificationParams);
+            if (StringUtils.isNotBlank(order.getEmail())) {
+                notificationService.sendNotification(order.getEmail(), "order-customer-report", notificationParams);
+            }
+            order = new OrderDetails();
             cartStep = CartStep.SUCCESS;
+            log.info("New order has been created!");
+        } else {
+            log.warn(MessageFormat.format("Validation fails during order creation: {0}", issues));
         }
         ModelAndView mv = new ModelAndView(cartStep.template);
         mv.addObject("order", order);
-        mv.addObject("validationErrors", result.getIssues());
+        mv.addObject("validationErrors", issues);
         mv.addObject("deliveryMethods", deliveryMethods);
         mv.addObject("paymentMethods", paymentMethods);
         updateCartState();
@@ -193,9 +211,9 @@ public class CartController {
     
     /**
      * Updates product count and sum in session. Wraps result in holder
-     * @param change
+     * @param value
      */
-    private <T> CartState<T> updateCartState(T change) {
+    private <T> CartState<T> updateCartState(T value) {
         var cartState = new CartState<T>();
         int quantity = order.getProducts().values().stream()
                 .mapToInt(CapturedProductState::getQuantity).sum();
@@ -211,7 +229,7 @@ public class CartController {
         cartState.setSum(productSum.add(cartState.getDeliveryPrice()));
         session.setAttribute("cartTotalSum", cartState.getSum());
         
-        cartState.setChange(change);
+        cartState.setValue(value);
         return cartState;
     }
     

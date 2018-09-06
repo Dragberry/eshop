@@ -1,8 +1,10 @@
 package org.dragberry.eshop.service.impl;
 
-import java.util.Date;
-import java.util.List;
-import java.util.function.Function;
+import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -28,31 +31,35 @@ public class NotificationServiceImpl implements NotificationService {
 	
 	@Autowired
     private JavaMailSender mailSender;
-
-	@Override
-	public <T> void sendNotification(String notifier, T object, Function<T, String> notification) {
-		try {
-			// Prepare the evaluation context
-			final Context ctx = new Context();
-		    ctx.setVariable("order", object);
 	
-		    // Prepare message using a Spring helper
-		    final MimeMessage mimeMessage = this.mailSender.createMimeMessage();
-		    final MimeMessageHelper message =
-		        new MimeMessageHelper(mimeMessage, true, "UTF-8"); // true = multipart
-		    message.setSubject("Example HTML email with inline image");
-		    message.setFrom("thymeleaf@example.com");
-		    message.setTo(notifier);
-	
-		    // Create the HTML body using Thymeleaf
-		    final String htmlContent = this.templateEngine.process("order-report.html", ctx);
-		    message.setText(htmlContent, true); // true = isHtml
-	
-		    // Send mail
-		    this.mailSender.send(mimeMessage);
-	    } catch (MessagingException exc) {
-			log.error("Notification error...", exc);
-		}
+	private class EmailHelper {
+	    
+	    void send(String recipient, String template, Map<String, Object> objects) {
+	        Context ctx = new Context();
+	        objects.forEach(ctx::setVariable);
+            send(recipient,
+                    () -> templateEngine.process(template, Set.of("message-body") , ctx),
+                    () -> templateEngine.process(template, Set.of("message-subject") , ctx));
+        }
+	    
+	    <T> void send(String recipient, Supplier<String> bodyProvider, Supplier<String> headerProvider) {
+	        try {
+    	        final MimeMessage mimeMessage = mailSender.createMimeMessage();
+                final MimeMessageHelper message = new MimeMessageHelper(mimeMessage, true, StandardCharsets.UTF_8.name());
+                message.setTo(recipient);
+                message.setSubject(headerProvider.get());
+                message.setText(bodyProvider.get(), true);
+                mailSender.send(mimeMessage);
+	        } catch (MessagingException exc) {
+	            log.error(MessageFormat.format("An error has occurred during sending a email: [recipient={0}]", exc));
+	        }
+	    }
 	}
 
+	@Override
+	@Async("notifications")
+	public void sendNotification(String recipient, String template, Map<String, Object> objects) {
+	    new EmailHelper().send(recipient, template, objects);
+	}
 }
+

@@ -63,8 +63,8 @@
 			
 			function changeCartItemQuantity(productId, action) {
 				changeCart(action, productId, function(cartState) {
-	            	$('tr[data-product-id="' + productId + '"] > td > span.cart-product-quantity').text(cartState.change.quantity);
-	            	$('tr[data-product-id="' + productId + '"] > td > span.cart-product-total-price').text(cartState.change.totalPrice.toFixed(2));
+	            	$('tr[data-product-id="' + productId + '"] > td > span.cart-product-quantity').text(cartState.value.quantity);
+	            	$('tr[data-product-id="' + productId + '"] > td > span.cart-product-total-price').text(cartState.value.totalPrice.toFixed(2));
 	            	onCartChanges(cartState);
 	            });
 			}
