@@ -37,5 +37,8 @@ public class Category extends BaseEntity {
 	
 	@Column(name = "REFERENCE")
     private String reference;
+	
+	@Column(name = "`ORDER`")
+    private Integer order;
     
 }

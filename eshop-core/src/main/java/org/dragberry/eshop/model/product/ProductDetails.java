@@ -44,4 +44,10 @@ public class ProductDetails implements ActualPriceHolder {
     private Map<String, Modifier> labels;
     
     private List<String> images;
+    
+    private String tagDescription;
+    
+    private String tagKeywords;
+    
+    private String tagTitle;
 }

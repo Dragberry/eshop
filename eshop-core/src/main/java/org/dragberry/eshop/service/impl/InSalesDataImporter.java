@@ -91,10 +91,10 @@ public class InSalesDataImporter implements DataImporter {
 	
 	@PostConstruct
 	public void init() {
-		createCategory("Каталог смарт-часов", "Смарт-часы");
-		createCategory("Каталог фитнес-браслетов", "Фитнес-браслеты");
-		createCategory("Прочие аксессуары", "Прочие аксессуары");
-		createCategory("Каталог детских смарт-часов", "Детские смарт-часы");
+		createCategory("Каталог смарт-часов", "Смарт-часы", 0);
+		createCategory("Каталог фитнес-браслетов", "Фитнес-браслеты", 2);
+		createCategory("Прочие аксессуары", "Прочие аксессуары", 3);
+		createCategory("Каталог детских смарт-часов", "Детские смарт-часы", 1);
 	}
 	
 	/**
@@ -102,7 +102,7 @@ public class InSalesDataImporter implements DataImporter {
      * @param categoryName
      * @return category
      */
-	private void createCategory(String externalName, String name) {
+	private void createCategory(String externalName, String name, int order) {
 		Category ctg = null;
 		for (int index = 0; ctg == null && index < 3; index++) {
 			try {
@@ -110,6 +110,7 @@ public class InSalesDataImporter implements DataImporter {
 					Category newCtg = new Category();
 					newCtg.setName(name);
 					newCtg.setReference(name);
+					newCtg.setOrder(order);
 					return categoryRepo.save(newCtg);
 				}));
 			} catch (Exception exc) {

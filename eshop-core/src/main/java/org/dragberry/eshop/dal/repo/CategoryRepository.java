@@ -1,5 +1,6 @@
 package org.dragberry.eshop.dal.repo;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.dragberry.eshop.dal.entity.Category;
@@ -14,5 +15,11 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 	 * @return
 	 */
 	Optional<Category> findByName(String name);
+	
+	/**
+	 * Find categories as an ordered list
+	 * @return
+	 */
+	List<Category> findAllByOrderByOrder();
 
 }
