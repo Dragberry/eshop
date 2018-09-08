@@ -35,7 +35,7 @@ import org.springframework.stereotype.Service;
 import lombok.extern.log4j.Log4j;
 
 @Log4j
-@Service
+@Service("TestDataImporter")
 public class TestDataImporter implements DataImporter {
 	
 	@Autowired
@@ -81,7 +81,7 @@ public class TestDataImporter implements DataImporter {
     }
 
     private ProductArticle findOrCreateArticle(String article, String title, Category category, Row row) {
-    	var pa = productArticleRepo.findByArticle(article);
+    	var pa = productArticleRepo.findByArticle(article).orElse(new ProductArticle());
 		if (pa == null) {
 			pa = new ProductArticle();
 			pa.setArticle(article);
@@ -155,17 +155,20 @@ public class TestDataImporter implements DataImporter {
      * @return category
      */
 	private Category processCategory(String categoryName) {
-		Category ctg = categoryRepo.findByName(categoryName);
-		if (ctg == null) {
-			ctg = new Category();
-			ctg.setName(categoryName);
-			ctg.setReference(categoryName);
-			ctg = categoryRepo.save(ctg);
-			log.info(MessageFormat.format("Category {0} is created", categoryName));
-		} else {
-			log.info(MessageFormat.format("Category {0} is found", categoryName));
+		Category ctg = null;
+		for (int index = 0; ctg == null || index < 3; index++) {
+			try {
+				ctg = categoryRepo.findByName(categoryName).orElseGet(() -> {
+					Category newCtg = new Category();
+					newCtg.setName(categoryName);
+					newCtg.setReference(categoryName);
+					return categoryRepo.save(newCtg);
+				});
+			} catch (Exception exc) {
+				log.warn(MessageFormat.format("It looks like a category with the same name {0} already exists", categoryName), exc);
+			}
 		}
-		return ctg;
+		return null;
 	}
 
 }

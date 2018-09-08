@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import org.dragberry.eshop.service.DataImporter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +18,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class MainController {
     
     @Autowired
-    private DataImporter dataImporter;
+    @Qualifier("TestDataImporter")
+    private DataImporter testDataImporter;
+    
+    @Autowired
+    @Qualifier("InSalesDataImporter")
+    private DataImporter inSalesDataImporter;
     
     @Autowired
     private ResourceLoader resourceLoader;
@@ -30,7 +36,8 @@ public class MainController {
      */
     @GetMapping("import/test")
     public String testImport() throws IOException {
-        dataImporter.importData(resourceLoader.getResource("classpath:data/test-price.xls").getInputStream());
+    	inSalesDataImporter.importData(resourceLoader.getResource("classpath:data/insales_export.csv").getInputStream());
+//        testDataImporter.importData(resourceLoader.getResource("classpath:data/test-price.xls").getInputStream());
         return "home";
     }
 

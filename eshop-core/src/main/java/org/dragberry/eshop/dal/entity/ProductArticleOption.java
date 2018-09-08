@@ -26,7 +26,7 @@ import lombok.Setter;
 		allocationSize = 1)
 @Setter
 @Getter
-@EqualsAndHashCode(callSuper = false, of = { "entityKey" })
+//@EqualsAndHashCode(callSuper = false, of = { "entityKey" })
 public class ProductArticleOption extends BaseEntity {
 
 	private static final long serialVersionUID = 6817451222642163283L;

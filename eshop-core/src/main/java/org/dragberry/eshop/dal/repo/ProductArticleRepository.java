@@ -1,6 +1,7 @@
 package org.dragberry.eshop.dal.repo;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.dragberry.eshop.dal.entity.ProductArticle;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,7 +16,7 @@ public interface ProductArticleRepository extends JpaRepository<ProductArticle, 
 	 * @param article
 	 * @return
 	 */
-	ProductArticle findByArticle(String article);
+	Optional<ProductArticle> findByArticle(String article);
 
 	/**
 	 * Find by category reference

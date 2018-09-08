@@ -1,5 +1,6 @@
 package org.dragberry.eshop.dal.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -60,7 +61,7 @@ public class ProductArticle extends BaseEntity {
 	private String descriptionFull;
 	
 	@OneToMany(mappedBy = "productArticle")
-    private List<ProductArticleOption> options;
+    private List<ProductArticleOption> options = new ArrayList<>();;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "PRODUCT_ARTICLE_CATEGORY", 
@@ -69,6 +70,15 @@ public class ProductArticle extends BaseEntity {
 	private List<Category> categories;
 	
 	@OneToMany(mappedBy = "productArticle")
-	private List<Product> products;
+	private List<Product> products = new ArrayList<>();
+	
+	@Column(name = "TAG_TITLE")
+	private String tagTitle;
+	
+	@Column(name = "TAG_KEYWORDS")
+	private String tagKeywords;
+	
+	@Column(name = "TAG_DESCRIPTION")
+	private String tagDescription;
 	
 }
