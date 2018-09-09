@@ -119,13 +119,14 @@
 				</ul>
 				<div class="tab-content" id="productTabsContent">
 					<div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="descriptionTab">
-						<div th:utext="${product.descriptionFull}">Description</div>
+						<div th:if="${product.descriptionFull != null}" th:utext="${product.descriptionFull}">Description</div>
+						<div th:unless="${product.descriptionFull != null}" th:text="#{msg.common.noDescription}"></div>
 					</div>
 					<div class="tab-pane fade" id="attributes" role="tabpanel" aria-labelledby="attributesTab">
-						Attributes
+						<p th:text="#{msg.common.noInfo}"></p>
 					</div>
 					<div class="tab-pane fade" id="comments" role="tabpanel" aria-labelledby="commentsTab">
-						Comments
+						<p th:text="#{msg.common.noComments}"></p>
 					</div>
 				</div>
 				
