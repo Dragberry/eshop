@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.apache.commons.lang3.StringUtils;
+import org.dragberry.eshop.dal.entity.Image;
 import org.dragberry.eshop.dal.entity.Product;
 import org.dragberry.eshop.dal.entity.ProductArticle;
 import org.dragberry.eshop.dal.repo.CategoryRepository;
@@ -119,6 +120,8 @@ public class ProductServiceImpl implements ProductService {
         product.setDescriptionFull(article.getDescriptionFull());
         product.setMainImage(article.getMainImage() != null ? article.getMainImage().getEntityKey() : null);
        
+        product.setImages(article.getImages().stream().map(Image::getEntityKey).collect(Collectors.toList()));
+        
         Map<String, Set<KeyValue>> optionValues = new HashMap<>();
         Map<Long, Set<KeyValue>> productOptions = new HashMap<>();
         

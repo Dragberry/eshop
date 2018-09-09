@@ -234,34 +234,34 @@ public class InSalesDataImporter implements DataImporter {
 	private void processImages(String[] columns, ProductArticle pa) {
 		String[] imgs = columns[columnsMap.get(IMAGES)].split(" ");
 		for (int imgIndex = 0; imgIndex < imgs.length; imgIndex++) {
-//			String imgURL = imgs[imgIndex];
-//			log.info(MessageFormat.format("Image: {0}", imgURL));
-//			int lastIndexOfSlash = imgURL.lastIndexOf("/");
-//			String realURL = imgURL.substring(0, lastIndexOfSlash + 1) + URLEncoder.encode(imgURL.substring(lastIndexOfSlash + 1), StandardCharsets.UTF_8);
-//			try {
-//				URLConnection conn = new URL(realURL).openConnection();
-//				InputStream imgIS = conn.getInputStream();
+			String imgURL = imgs[imgIndex];
+			log.info(MessageFormat.format("Image: {0}", imgURL));
+			int lastIndexOfSlash = imgURL.lastIndexOf("/");
+			String realURL = imgURL.substring(0, lastIndexOfSlash + 1) + URLEncoder.encode(imgURL.substring(lastIndexOfSlash + 1), StandardCharsets.UTF_8);
+			try {
+				URLConnection conn = new URL(realURL).openConnection();
+				InputStream imgIS = conn.getInputStream();
 				if (imgIndex == 0) {
 					Image mainImage = new Image();
-//					mainImage.setContent(IOUtils.toByteArray(imgIS));
+					mainImage.setContent(IOUtils.toByteArray(imgIS));
 					mainImage.setName(pa.getArticle() + "-main");
-//					mainImage.setType("image/" + imgURL.substring(imgURL.lastIndexOf(".")));
+					mainImage.setType("image/" + imgURL.substring(imgURL.lastIndexOf(".") + 1));
 					imageRepo.save(mainImage);
 					pa.setMainImage(mainImage);
 				} else {
 					Image img = new Image();
-//					img.setContent(IOUtils.toByteArray(imgIS));
+					img.setContent(IOUtils.toByteArray(imgIS));
 					img.setName(pa.getArticle() + "-" + imgIndex);
-//					img.setType("image/" + imgURL.substring(imgURL.lastIndexOf(".")));
+					img.setType("image/" + imgURL.substring(imgURL.lastIndexOf(".")) + 1);
 					imageRepo.save(img);
 					pa.getImages().add(img);
 				}
-//				IOUtils.close(conn);
-//			} catch (MalformedURLException exc) {
-//				log.error("An error has occurred during loading image! Invalid URL!", exc);
-//			} catch (IOException exc) {
-//				log.error("An error has occurred during loading image! IO error!", exc);
-//			}
+				IOUtils.close(conn);
+			} catch (MalformedURLException exc) {
+				log.error("An error has occurred during loading image! Invalid URL!", exc);
+			} catch (IOException exc) {
+				log.error("An error has occurred during loading image! IO error!", exc);
+			}
 		}
 	}
 

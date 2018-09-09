@@ -42,10 +42,10 @@ public class ProductDetails implements ActualPriceHolder {
     private Map<Long, Set<KeyValue>> productOptions;
     
     private Long mainImage;
+    
+    private List<Long> images;
 
     private Map<String, Modifier> labels;
-    
-    private List<String> images;
     
     private String tagDescription;
     
