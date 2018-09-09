@@ -53,6 +53,12 @@ public class ProductArticle extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "MAIN_IMAGE_KEY", referencedColumnName = "IMAGE_KEY")
 	private Image mainImage;
+
+	@ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "PRODUCT_ARTICLE_IMAGE", 
+        joinColumns = @JoinColumn(name = "PRODUCT_ARTICLE_KEY", referencedColumnName = "PRODUCT_ARTICLE_KEY"), 
+        inverseJoinColumns = @JoinColumn(name = "IMAGE_KEY", referencedColumnName = "IMAGE_KEY"))
+	private List<Image> images = new ArrayList<>();
 	
 	@Column(name = "DESCRIPTION")
 	private String description;
@@ -67,7 +73,7 @@ public class ProductArticle extends BaseEntity {
     @JoinTable(name = "PRODUCT_ARTICLE_CATEGORY", 
         joinColumns = @JoinColumn(name = "PRODUCT_ARTICLE_KEY", referencedColumnName = "PRODUCT_ARTICLE_KEY"), 
         inverseJoinColumns = @JoinColumn(name = "CATEGORY_KEY", referencedColumnName = "CATEGORY_KEY"))
-	private List<Category> categories;
+	private List<Category> categories = new ArrayList<>();;
 	
 	@OneToMany(mappedBy = "productArticle")
 	private List<Product> products = new ArrayList<>();

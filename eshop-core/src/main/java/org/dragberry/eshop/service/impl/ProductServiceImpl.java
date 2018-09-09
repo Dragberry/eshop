@@ -116,6 +116,7 @@ public class ProductServiceImpl implements ProductService {
         product.setArticle(article.getArticle());
         product.setTitle(article.getTitle());
         product.setDescription(article.getDescription());
+        product.setDescriptionFull(article.getDescriptionFull());
         product.setMainImage(article.getMainImage() != null ? article.getMainImage().getEntityKey() : null);
        
         Map<String, Set<KeyValue>> optionValues = new HashMap<>();

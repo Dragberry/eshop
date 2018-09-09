@@ -28,6 +28,8 @@ public class ProductDetails implements ActualPriceHolder {
     private String title;
     
     private String description;
+    
+    private String descriptionFull;
 
     private String reference;
     

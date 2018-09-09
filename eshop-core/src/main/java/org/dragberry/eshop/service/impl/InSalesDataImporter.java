@@ -28,6 +28,7 @@ import org.dragberry.eshop.dal.entity.ProductArticle;
 import org.dragberry.eshop.dal.entity.ProductArticleOption;
 import org.dragberry.eshop.dal.entity.Product.SaleStatus;
 import org.dragberry.eshop.dal.repo.CategoryRepository;
+import org.dragberry.eshop.dal.repo.ImageRepository;
 import org.dragberry.eshop.dal.repo.ProductArticleOptionRepository;
 import org.dragberry.eshop.dal.repo.ProductArticleRepository;
 import org.dragberry.eshop.dal.repo.ProductRepository;
@@ -74,6 +75,9 @@ public class InSalesDataImporter implements DataImporter {
 	@Autowired
 	private CategoryRepository categoryRepo;
 
+	@Autowired
+	private ImageRepository imageRepo;
+	
 	@Autowired
 	private ProductRepository productRepo;
 	
@@ -168,7 +172,7 @@ public class InSalesDataImporter implements DataImporter {
 			pa.setTagKeywords(firstLine[columnsMap.get(TAG_KEYWORDS)]);
 			pa.setTagDescription(firstLine[columnsMap.get(TAG_DESCRIPTION)]);
 			
-//			processImages(firstLine, pa);
+			processImages(firstLine, pa);
 			
 			for (String[] line : rawArticle) {
 				pa.setCategories(new ArrayList<>());
@@ -230,26 +234,34 @@ public class InSalesDataImporter implements DataImporter {
 	private void processImages(String[] columns, ProductArticle pa) {
 		String[] imgs = columns[columnsMap.get(IMAGES)].split(" ");
 		for (int imgIndex = 0; imgIndex < imgs.length; imgIndex++) {
-			String imgURL = imgs[imgIndex];
-			log.info(MessageFormat.format("Image: {0}", imgURL));
-			int lastIndexOfSlash = imgURL.lastIndexOf("/");
-			String realURL = imgURL.substring(0, lastIndexOfSlash + 1) + URLEncoder.encode(imgURL.substring(lastIndexOfSlash + 1), StandardCharsets.UTF_8);
-			try {
-				URLConnection conn = new URL(realURL).openConnection();
-				InputStream imgIS = conn.getInputStream();
+//			String imgURL = imgs[imgIndex];
+//			log.info(MessageFormat.format("Image: {0}", imgURL));
+//			int lastIndexOfSlash = imgURL.lastIndexOf("/");
+//			String realURL = imgURL.substring(0, lastIndexOfSlash + 1) + URLEncoder.encode(imgURL.substring(lastIndexOfSlash + 1), StandardCharsets.UTF_8);
+//			try {
+//				URLConnection conn = new URL(realURL).openConnection();
+//				InputStream imgIS = conn.getInputStream();
 				if (imgIndex == 0) {
 					Image mainImage = new Image();
-					mainImage.setContent(IOUtils.toByteArray(imgIS));
-					mainImage.setName(pa.getArticle());
-					mainImage.setType("image/" + imgURL.substring(imgURL.lastIndexOf(".")));
+//					mainImage.setContent(IOUtils.toByteArray(imgIS));
+					mainImage.setName(pa.getArticle() + "-main");
+//					mainImage.setType("image/" + imgURL.substring(imgURL.lastIndexOf(".")));
+					imageRepo.save(mainImage);
 					pa.setMainImage(mainImage);
+				} else {
+					Image img = new Image();
+//					img.setContent(IOUtils.toByteArray(imgIS));
+					img.setName(pa.getArticle() + "-" + imgIndex);
+//					img.setType("image/" + imgURL.substring(imgURL.lastIndexOf(".")));
+					imageRepo.save(img);
+					pa.getImages().add(img);
 				}
-				IOUtils.close(conn);
-			} catch (MalformedURLException exc) {
-				log.error("An error has occurred during loading image! Invalid URL!", exc);
-			} catch (IOException exc) {
-				log.error("An error has occurred during loading image! IO error!", exc);
-			}
+//				IOUtils.close(conn);
+//			} catch (MalformedURLException exc) {
+//				log.error("An error has occurred during loading image! Invalid URL!", exc);
+//			} catch (IOException exc) {
+//				log.error("An error has occurred during loading image! IO error!", exc);
+//			}
 		}
 	}
 
