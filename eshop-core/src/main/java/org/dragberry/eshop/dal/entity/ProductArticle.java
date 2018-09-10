@@ -12,8 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
@@ -50,7 +50,7 @@ public class ProductArticle extends BaseEntity {
 	@Column(name = "REFERENCE")
 	private String reference;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn(name = "MAIN_IMAGE_KEY", referencedColumnName = "IMAGE_KEY")
 	private Image mainImage;
 
@@ -67,13 +67,13 @@ public class ProductArticle extends BaseEntity {
 	private String descriptionFull;
 	
 	@OneToMany(mappedBy = "productArticle")
-    private List<ProductArticleOption> options = new ArrayList<>();;
+    private List<ProductArticleOption> options = new ArrayList<>();
 	
 	@ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "PRODUCT_ARTICLE_CATEGORY", 
         joinColumns = @JoinColumn(name = "PRODUCT_ARTICLE_KEY", referencedColumnName = "PRODUCT_ARTICLE_KEY"), 
         inverseJoinColumns = @JoinColumn(name = "CATEGORY_KEY", referencedColumnName = "CATEGORY_KEY"))
-	private List<Category> categories = new ArrayList<>();;
+	private List<Category> categories = new ArrayList<>();
 	
 	@OneToMany(mappedBy = "productArticle")
 	private List<Product> products = new ArrayList<>();

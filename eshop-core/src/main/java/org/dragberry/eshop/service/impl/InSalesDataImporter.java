@@ -172,6 +172,7 @@ public class InSalesDataImporter implements DataImporter {
 			pa.setTagKeywords(firstLine[columnsMap.get(TAG_KEYWORDS)]);
 			pa.setTagDescription(firstLine[columnsMap.get(TAG_DESCRIPTION)]);
 			
+			List<Image> oldImages = new ArrayList<>(pa.getImages());
 			processImages(firstLine, pa);
 			
 			for (String[] line : rawArticle) {
@@ -185,6 +186,8 @@ public class InSalesDataImporter implements DataImporter {
 			}
 			
 			pa = productArticleRepo.save(pa);
+			
+			imageRepo.deleteAll(oldImages);
 			
 			for (String[] line: rawArticle) {
 				Set<ProductArticleOption> options = new HashSet<>();
@@ -232,6 +235,7 @@ public class InSalesDataImporter implements DataImporter {
 	}
 
 	private void processImages(String[] columns, ProductArticle pa) {
+	    pa.getImages().clear();
 		String[] imgs = columns[columnsMap.get(IMAGES)].split(" ");
 		for (int imgIndex = 0; imgIndex < imgs.length; imgIndex++) {
 			String imgURL = imgs[imgIndex];
@@ -252,7 +256,7 @@ public class InSalesDataImporter implements DataImporter {
 					Image img = new Image();
 					img.setContent(IOUtils.toByteArray(imgIS));
 					img.setName(pa.getArticle() + "-" + imgIndex);
-					img.setType("image/" + imgURL.substring(imgURL.lastIndexOf(".")) + 1);
+					img.setType("image/" + imgURL.substring(imgURL.lastIndexOf(".") + 1));
 					imageRepo.save(img);
 					pa.getImages().add(img);
 				}

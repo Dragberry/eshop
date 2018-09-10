@@ -80,7 +80,7 @@
 			 	 </div>
 			 	 <div class="row">
 					<div th:each="ov : ${product.optionValues}" class="form-group col-md-4">
-				    	<label th:for="${ov.key}" th:text="${ov.key}">Option name</label>
+				    	<label th:for="${ov.key}"><strong th:text="${ov.key}">Option name</strong></label>
 				   		<select th:data-option-name="${ov.key}" class="product-option form-control">
 				   			<option th:each="v : ${ov.value}" th:value="${v.key}" th:text="${v.value}">Option value</option>
 				      	</select>
