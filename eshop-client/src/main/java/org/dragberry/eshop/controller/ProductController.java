@@ -2,11 +2,18 @@ package org.dragberry.eshop.controller;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.dragberry.eshop.controller.exception.ResourceNotFoundException;
+import org.dragberry.eshop.model.BreadcrumbLink;
 import org.dragberry.eshop.model.product.ProductCategory;
 import org.dragberry.eshop.model.product.ProductSearchQuery;
 import org.dragberry.eshop.service.ProductService;
@@ -60,16 +67,40 @@ public class ProductController {
      * Return a product page
      * @return
      */
-    @GetMapping({"${url.product}/{productReference}"})
-    public ModelAndView product(@PathVariable String productReference) {
+    @GetMapping({"${url.catalog}/{categoryReference}/{productReference}"})
+    public ModelAndView product(@PathVariable String categoryReference, @PathVariable String productReference) {
         if (productReference != null) {
-            var product = productService.getProductArticleDetails(productReference);
+            var product = productService.getProductArticleDetails(categoryReference, productReference);
             if (product != null) {
                 var mv = new ModelAndView("pages/products/product");
                 mv.addObject("product", product);
+                Breadcrumb bc = new Breadcrumb();
+                bc.append("Каталог", "katalog");
+                bc.append(product.getCategory().getName(), categoryReference);
+                bc.append(product.getTitle(), productReference);
+                mv.addObject("breadcrumb", bc.getLinks());
                 return mv;
             }
         }
         throw new ResourceNotFoundException();
+    }
+    
+    class Breadcrumb {
+        
+        private final static String SLASH = "/";
+        private LinkedList<BreadcrumbLink> links = new LinkedList<>();
+        private String fullRefernce = StringUtils.EMPTY;
+        
+        public void append(String name, String reference) {
+            if (!links.isEmpty()) {
+                links.getLast().setActive(false);
+            }
+            fullRefernce += (SLASH + reference);
+            links.add(new BreadcrumbLink(name, fullRefernce, true));
+        }
+        
+        public List<BreadcrumbLink> getLinks() {
+            return links;
+        }
     }
 }

@@ -27,11 +27,13 @@ public interface ProductArticleRepository extends JpaRepository<ProductArticle, 
     List<ProductArticle> findByCategoryReference(String categoryReference);
 
 	/**
-	 * Find an entity by reference
+	 * Find an entity by reference and category reference
+	 * @param categoryReference
 	 * @param productReference
 	 * @return
 	 */
-    ProductArticle findByReference(String productReference);
+	@Query("select pa from ProductArticle pa join pa.categories c where pa.reference = :productReference and c.reference = :categoryReference")
+    ProductArticle findByReferenceAndCategoryReference(String categoryReference, String productReference);
     
     @Query("select pa.mainImage.entityKey from ProductArticle pa where pa.entityKey = :productArticleId")
     Long findMainImageKey(Long productArticleId);

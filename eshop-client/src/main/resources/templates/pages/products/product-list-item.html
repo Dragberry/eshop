@@ -11,14 +11,14 @@
 			<span th:each="label : ${product.labels}"  th:text="${label.key}"
 				class="product-label badge" th:classappend="|badge-${label.value.value}|">Label</span>
 		</div>
-		<a th:href="@{|${@environment.getProperty('url.product')}/${product.reference}|}">
+		<a th:href="@{|${@environment.getProperty('url.catalog')}/${product.category.reference}/${product.reference}|}">
 			<img class="img-fluid" th:title="${product.title}" th:alt="${product.title}"
 				th:src="${product.mainImage} ? @{|${@environment.getProperty('url.products-images')}/${product.id}/${product.mainImage}/${product.article}|} : ${@environment.getProperty('url.no-image')}">
 		</a>
 		<div class="container">
 			<div class="row">
 				<div class="col-6">
-					<a th:href="@{|${@environment.getProperty('url.product')}/${product.reference}|}" th:title="${product.title}">
+					<a th:href="@{|${@environment.getProperty('url.catalog')}/${product.category.reference}/${product.reference}|}" th:title="${product.title}">
 						<span th:text="${product.title}">Product title</span>
 					</a>
 				</div>

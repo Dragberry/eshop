@@ -33,4 +33,6 @@ public class ProductListItem implements ActualPriceHolder {
 	private Map<String, Modifier> labels;
 	
 	private Long mainImage;
+	
+	private CategoryItem category;
 }

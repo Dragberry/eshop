@@ -30,11 +30,11 @@
 				<tr th:each="product,iter : ${order.products}" th:data-product-id=${product.key.productId}>
 					<th scope="row" th:text="${iter.index + 1}" th:data-index="${iter.index + 1}">1</th>
 					<td class="align-middle">
-						<a th:href="@{|${@environment.getProperty('url.product')}/${product.key.reference}|}">
+						<a th:href="@{|${@environment.getProperty('url.catalog')}/${product.key.category.reference}/${product.key.reference}|}">
 							<img class="cart-image img-fluid img-thumbnail float-left" th:title="${product.key.title}" th:alt="${product.key.title}"
 							 	th:src="${product.key.mainImage} ? @{|${@environment.getProperty('url.products-images')}/${product.key.productArticleId}/${product.key.mainImage}/${product.key.article}|} : ${@environment.getProperty('url.no-image')}">
 						</a>
-						<a th:href="@{|${@environment.getProperty('url.product')}/${product.key.reference}|}">
+						<a th:href="@{|${@environment.getProperty('url.catalog')}/${product.key.category.reference}/${product.key.reference}|}">
 							<span class="d-block" th:text="${product.key.fullTitle}">Title</span>
 						</a>
 						<span class="d-block" th:text="|#{msg.common.productArticle}: ${product.key.article}|">Article</span>

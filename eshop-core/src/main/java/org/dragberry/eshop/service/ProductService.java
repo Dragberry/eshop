@@ -25,10 +25,11 @@ public interface ProductService {
 
 	/**
 	 * Get the product details
+	 * @param categoryReference
 	 * @param productReference
 	 * @return
 	 */
-    ProductDetails getProductArticleDetails(String productReference);
+    ProductDetails getProductArticleDetails(String categoryReference, String productReference);
 
     /**
      * Get the product

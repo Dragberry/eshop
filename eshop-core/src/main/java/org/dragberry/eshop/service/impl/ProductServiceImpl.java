@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.apache.commons.lang3.StringUtils;
+import org.dragberry.eshop.dal.entity.Category;
 import org.dragberry.eshop.dal.entity.Image;
 import org.dragberry.eshop.dal.entity.Product;
 import org.dragberry.eshop.dal.entity.ProductArticle;
@@ -23,6 +24,7 @@ import org.dragberry.eshop.model.common.KeyValue;
 import org.dragberry.eshop.model.common.Modifier;
 import org.dragberry.eshop.model.product.ProductListItem;
 import org.dragberry.eshop.model.product.ActualPriceHolder;
+import org.dragberry.eshop.model.product.CategoryItem;
 import org.dragberry.eshop.model.product.ProductCategory;
 import org.dragberry.eshop.model.product.ProductDetails;
 import org.dragberry.eshop.model.product.ProductSearchQuery;
@@ -68,6 +70,8 @@ public class ProductServiceImpl implements ProductService {
 			product.setTitle(article.getTitle());
 			product.setArticle(article.getArticle());
 			product.setReference(article.getReference());
+			Category ctg = article.getCategories().get(0);
+	        product.setCategory(new CategoryItem(ctg.getEntityKey(), ctg.getName(), ctg.getReference()));
 			product.setMainImage(article.getMainImage() != null ? article.getMainImage().getEntityKey() : null);
 			setLowestPrice(article, product);
 			
@@ -107,8 +111,8 @@ public class ProductServiceImpl implements ProductService {
     }
 	
     @Override
-    public ProductDetails getProductArticleDetails(String productReference) {
-        var article = productArticleRepo.findByReference(productReference);
+    public ProductDetails getProductArticleDetails(String categoryReference, String productReference) {
+        var article = productArticleRepo.findByReferenceAndCategoryReference(categoryReference, productReference);
         if (article == null) {
             return null;
         }
@@ -118,6 +122,8 @@ public class ProductServiceImpl implements ProductService {
         product.setTitle(article.getTitle());
         product.setDescription(article.getDescription());
         product.setDescriptionFull(article.getDescriptionFull());
+        Category ctg = article.getCategories().get(0);
+        product.setCategory(new CategoryItem(ctg.getEntityKey(), ctg.getName(), ctg.getReference()));
         product.setMainImage(article.getMainImage() != null ? article.getMainImage().getEntityKey() : null);
        
         product.setImages(article.getImages().stream().map(Image::getEntityKey).collect(Collectors.toList()));
@@ -169,6 +175,8 @@ public class ProductServiceImpl implements ProductService {
         capturedProduct.setPrice(product.getActualPrice() != null ? product.getActualPrice() : product.getPrice());
         capturedProduct.setOptions(product.getOptions().stream().map(o -> new KeyValue(o.getName(), o.getValue())).collect(Collectors.toSet()));
         capturedProduct.setMainImage(productArticleRepo.findMainImageKey(capturedProduct.getProductArticleId()));
+        Category ctg = product.getProductArticle().getCategories().get(0);
+        capturedProduct.setCategory(new CategoryItem(ctg.getEntityKey(), ctg.getName(), ctg.getReference()));
         capturedProduct.updateFullTitle();
         return capturedProduct;
     }

@@ -37,6 +37,8 @@ public class ProductDetails implements ActualPriceHolder {
     
     private BigDecimal price;
     
+    private CategoryItem category;
+    
     private Map<String, Set<KeyValue>> optionValues;
     
     private Map<Long, Set<KeyValue>> productOptions;

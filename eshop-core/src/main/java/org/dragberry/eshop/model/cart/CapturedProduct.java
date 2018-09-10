@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.dragberry.eshop.model.common.KeyValue;
+import org.dragberry.eshop.model.product.CategoryItem;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -33,6 +34,8 @@ public class CapturedProduct {
     private Integer quantity;
     
     private BigDecimal totalPrice;
+    
+    private CategoryItem category;
     
     private Set<KeyValue> options  = new HashSet<>();
     
