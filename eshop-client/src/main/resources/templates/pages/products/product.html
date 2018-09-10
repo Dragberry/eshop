@@ -2,150 +2,143 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{layouts/template}">
+	layout:decorate="~{layouts/template-with-breadcrumb}">
 <head>
 	<title th:text="${product.tagTitle != null ? product.tagTitle : product.title}">Product title</title>
 	<meta name="keywords" th:content="${product.tagKeywords}">
 	<meta name="description" th:content="${product.tagDescription}">
 	<meta name="product-id" th:content="${product.id}">
 </head>
-<body>
-	<div layout:fragment="content">
-		<div class="row">
-			<div class="col-12" th:insert="layouts/breadcrumb">
-				Breadcrumb
-			</div>
-			<div class="col-md-5">
-				<div class="card">
-					<div class="h5 text-right">
-						<span th:each="label : ${product.labels}"  th:text="${label.key}"
-							class="product-label badge" th:classappend="|badge-${label.value.value}|">Label</span>
+	<th:block layout:fragment="main-content">
+		<div class="col-md-5">
+			<div class="card">
+				<div class="h5 text-right">
+					<span th:each="label : ${product.labels}"  th:text="${label.key}"
+						class="product-label badge" th:classappend="|badge-${label.value.value}|">Label</span>
+				</div>
+				<div id="productCarouselIndicators" class="carousel slide" data-ride="carousel">
+					<ol class="carousel-indicators">
+					    <li data-target="#productCarouselIndicators" data-slide-to="0" class="active"></li>
+					    <li th:each="img,iter : ${product.images}"
+					    	data-target="#productCarouselIndicators" th:data-slide-to="${iter.index + 1}">
+					    	<img class="d-block w-100" th:title="${product.title}" th:alt="${product.title}"
+					    		th:src="@{|${@environment.getProperty('url.products-images')}/${product.id}/${img}/${product.article}-${iter.index + 1}|}">
+					    
+					    </li>
+				  	</ol>
+				  	<div class="carousel-inner">
+					    <div class="carousel-item active">
+					    	<img class="d-block w-100" th:title="${product.title}" th:alt="${product.title}"
+					    		th:src="${product.mainImage} ? @{|${@environment.getProperty('url.products-images')}/${product.id}/${product.mainImage}/${product.article}|} : ${@environment.getProperty('url.no-image')}">
+					    </div>
+					    <div th:each="img,iter : ${product.images}" class="carousel-item">
+					    	<img class="d-block w-100" th:title="${product.title}" th:alt="${product.title}"
+					    		th:src="@{|${@environment.getProperty('url.products-images')}/${product.id}/${img}/${product.article}-${iter.index + 1}|}">
+					    </div>
 					</div>
-					<div id="productCarouselIndicators" class="carousel slide" data-ride="carousel">
-						<ol class="carousel-indicators">
-						    <li data-target="#productCarouselIndicators" data-slide-to="0" class="active"></li>
-						    <li th:each="img,iter : ${product.images}"
-						    	data-target="#productCarouselIndicators" th:data-slide-to="${iter.index + 1}">
-						    	<img class="d-block w-100" th:title="${product.title}" th:alt="${product.title}"
-						    		th:src="@{|${@environment.getProperty('url.products-images')}/${product.id}/${img}/${product.article}-${iter.index + 1}|}">
-						    
-						    </li>
-					  	</ol>
-					  	<div class="carousel-inner">
-						    <div class="carousel-item active">
-						    	<img class="d-block w-100" th:title="${product.title}" th:alt="${product.title}"
-						    		th:src="${product.mainImage} ? @{|${@environment.getProperty('url.products-images')}/${product.id}/${product.mainImage}/${product.article}|} : ${@environment.getProperty('url.no-image')}">
-						    </div>
-						    <div th:each="img,iter : ${product.images}" class="carousel-item">
-						    	<img class="d-block w-100" th:title="${product.title}" th:alt="${product.title}"
-						    		th:src="@{|${@environment.getProperty('url.products-images')}/${product.id}/${img}/${product.article}-${iter.index + 1}|}">
-						    </div>
-						</div>
-						<a class="carousel-control-prev" href="#productCarouselIndicators" role="button" data-slide="prev">
-							<span class="carousel-control-prev-icon" aria-hidden="true"></span>
-					    	<span class="sr-only">Previous</span>
-						</a>
-						<a class="carousel-control-next" href="#productCarouselIndicators" role="button" data-slide="next">
-						    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-						    <span class="sr-only">Next</span>
-						</a>
-					</div>
+					<a class="carousel-control-prev" href="#productCarouselIndicators" role="button" data-slide="prev">
+						<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+				    	<span class="sr-only">Previous</span>
+					</a>
+					<a class="carousel-control-next" href="#productCarouselIndicators" role="button" data-slide="next">
+					    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+					    <span class="sr-only">Next</span>
+					</a>
 				</div>
 			</div>
-			<div class="col-md-7">
-				<h1 th:text="${product.title}">Title</h1>
-				<div>
-					<h6 th:text="|#{msg.common.productArticle}: ${product.article}|">Article</h6>
-				</div>
-				<div class="row">
-					<th:block th:is="${product.actualPrice}">
-						<div class="col-12">
-							<div class="alert alert-danger">
-								<span class="d-block h5">
-									<span class="badge badge-danger product-price-label">
-										[[#{msg.common.priceAction}]]: [[${product.actualPrice}]] [[#{|msg.currency.${appInfo.currency}|}]]</span>
-									</span>
-								<span class="d-block h6">[[#{msg.common.priceOld}]]: <del>[[${product.price}]] [[#{|msg.currency.${appInfo.currency}|}]]</del></span>
-							</div>
-						</div>
-					</th:block>
-					<th:block th:unless="${product.actualPrice}">
-						<div class="col-md-12">
-							<div class="alert alert-info">
-								<span class="d-block h5">
-									<span class="badge badge-info product-price-label">
-										[[#{msg.common.price}]]: [[${product.price}]] [[#{|msg.currency.${appInfo.currency}|}]]
-									</span>
-								</span>
-							</div>
-						</div>
-				 	</th:block>
-			 	 </div>
-			 	 <div class="row">
-					<div th:each="ov : ${product.optionValues}" class="form-group col-md-4">
-				    	<label th:for="${ov.key}"><strong th:text="${ov.key}">Option name</strong></label>
-				   		<select th:data-option-name="${ov.key}" class="product-option form-control">
-				   			<option th:each="v : ${ov.value}" th:value="${v.key}" th:text="${v.value}">Option value</option>
-				      	</select>
-			      	</div>
-				</div>
-				<div class="row">
+		</div>
+		<div class="col-md-7">
+			<h1 th:text="${product.title}">Title</h1>
+			<div>
+				<h6 th:text="|#{msg.common.productArticle}: ${product.article}|">Article</h6>
+			</div>
+			<div class="row">
+				<th:block th:is="${product.actualPrice}">
 					<div class="col-12">
-						<p class="text-justify" th:text="${product.description}">Description</p>
+						<div class="alert alert-danger">
+							<span class="d-block h5">
+								<span class="badge badge-danger product-price-label">
+									[[#{msg.common.priceAction}]]: [[${product.actualPrice}]] [[#{|msg.currency.${appInfo.currency}|}]]</span>
+								</span>
+							<span class="d-block h6">[[#{msg.common.priceOld}]]: <del>[[${product.price}]] [[#{|msg.currency.${appInfo.currency}|}]]</del></span>
+						</div>
 					</div>
-				</div>
-				 <div class="row">
-				 	<div class="col-md-6">
-				 		<button id="addToCartButton" type="button" class="btn btn-success btn-block">
-				 			<span class="fa fa-cart-plus fa-lg"></span>
-				 			<span th:text="#{msg.common.addToCart}">Add to cart</span>
-				 		</button>
-				 	</div>
-				 	<div class="col-md-6">
-				 		<button id="singleClickBuyButton" type="button" class="btn btn-info btn-block">
-				 			<span class="fa fa-cart-arrow-down fa-lg"></span>
-				 			<span th:text="#{msg.common.singleClickBuy}">Single click buy</span>
-				 		</button>
-				 	</div>
+				</th:block>
+				<th:block th:unless="${product.actualPrice}">
+					<div class="col-md-12">
+						<div class="alert alert-info">
+							<span class="d-block h5">
+								<span class="badge badge-info product-price-label">
+									[[#{msg.common.price}]]: [[${product.price}]] [[#{|msg.currency.${appInfo.currency}|}]]
+								</span>
+							</span>
+						</div>
+					</div>
+			 	</th:block>
+		 	 </div>
+		 	 <div class="row">
+				<div th:each="ov : ${product.optionValues}" class="form-group col-md-4">
+			    	<label th:for="${ov.key}"><strong th:text="${ov.key}">Option name</strong></label>
+			   		<select th:data-option-name="${ov.key}" class="product-option form-control">
+			   			<option th:each="v : ${ov.value}" th:value="${v.key}" th:text="${v.value}">Option value</option>
+			      	</select>
+		      	</div>
+			</div>
+			<div class="row">
+				<div class="col-12">
+					<p class="text-justify" th:text="${product.description}">Description</p>
 				</div>
 			</div>
-			<div class="col-12">
-				<hr/>
+			 <div class="row">
+			 	<div class="col-md-6">
+			 		<button id="addToCartButton" type="button" class="btn btn-success btn-block">
+			 			<span class="fa fa-cart-plus fa-lg"></span>
+			 			<span th:text="#{msg.common.addToCart}">Add to cart</span>
+			 		</button>
+			 	</div>
+			 	<div class="col-md-6">
+			 		<button id="singleClickBuyButton" type="button" class="btn btn-info btn-block">
+			 			<span class="fa fa-cart-arrow-down fa-lg"></span>
+			 			<span th:text="#{msg.common.singleClickBuy}">Single click buy</span>
+			 		</button>
+			 	</div>
 			</div>
-			<div class="col-12">
-				<ul class="nav nav-tabs" id="productTabs" role="tablist">
-					<li class="nav-item">
-						<a class="nav-link active" id="descriptionTab" href="#description"
-							data-toggle="tab" role="tab" aria-controls="description" aria-selected="true">
-							<span th:text="#{msg.common.description}">Description</span>	
-						</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" id="attributesTab" href="#attributes"
-						 	data-toggle="tab" role="tab" aria-controls="attributes" aria-selected="false">
-						 	<span th:text="#{msg.common.attributes}">Attributes</span>
-						 </a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" id="commentsTab" href="#comments"
-						 	data-toggle="tab" role="tab" aria-controls="comments" aria-selected="false">
-						 	<span th:text="#{msg.common.comments}">Comments</span>	
-						 </a>
-					</li>
-				</ul>
-				<div class="tab-content" id="productTabsContent">
-					<div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="descriptionTab">
-						<div th:if="${product.descriptionFull != null}" th:utext="${product.descriptionFull}">Description</div>
-						<div th:unless="${product.descriptionFull != null}" th:text="#{msg.common.noDescription}"></div>
-					</div>
-					<div class="tab-pane fade" id="attributes" role="tabpanel" aria-labelledby="attributesTab">
-						<p th:text="#{msg.common.noInfo}"></p>
-					</div>
-					<div class="tab-pane fade" id="comments" role="tabpanel" aria-labelledby="commentsTab">
-						<p th:text="#{msg.common.noComments}"></p>
-					</div>
+		</div>
+		<div class="col-12">
+			<hr/>
+		</div>
+		<div class="col-12">
+			<ul class="nav nav-tabs" id="productTabs" role="tablist">
+				<li class="nav-item">
+					<a class="nav-link active" id="descriptionTab" href="#description"
+						data-toggle="tab" role="tab" aria-controls="description" aria-selected="true">
+						<span th:text="#{msg.common.description}">Description</span>	
+					</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" id="attributesTab" href="#attributes"
+					 	data-toggle="tab" role="tab" aria-controls="attributes" aria-selected="false">
+					 	<span th:text="#{msg.common.attributes}">Attributes</span>
+					 </a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" id="commentsTab" href="#comments"
+					 	data-toggle="tab" role="tab" aria-controls="comments" aria-selected="false">
+					 	<span th:text="#{msg.common.comments}">Comments</span>	
+					 </a>
+				</li>
+			</ul>
+			<div class="tab-content" id="productTabsContent">
+				<div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="descriptionTab">
+					<div th:if="${product.descriptionFull != null}" th:utext="${product.descriptionFull}">Description</div>
+					<div th:unless="${product.descriptionFull != null}" th:text="#{msg.common.noDescription}"></div>
 				</div>
-				
+				<div class="tab-pane fade" id="attributes" role="tabpanel" aria-labelledby="attributesTab">
+					<p th:text="#{msg.common.noInfo}"></p>
+				</div>
+				<div class="tab-pane fade" id="comments" role="tabpanel" aria-labelledby="commentsTab">
+					<p th:text="#{msg.common.noComments}"></p>
+				</div>
 			</div>
 		</div>
 		
@@ -192,8 +185,8 @@
 		    	</div>
 		  	</div>
 		</div>
+	</th:block>	
 		
-	</div>
 	<th:block layout:fragment="page_scripts">
 		<script th:inline="javascript">
 			/*<![CDATA[*/

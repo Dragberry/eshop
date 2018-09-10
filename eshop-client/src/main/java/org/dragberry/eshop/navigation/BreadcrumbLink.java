@@ -1,4 +1,4 @@
-package org.dragberry.eshop.model;
+package org.dragberry.eshop.navigation;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,4 +14,6 @@ public class BreadcrumbLink {
     private String url;
     
     private boolean active;
+    
+    private boolean i18n;
 }

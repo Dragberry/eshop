@@ -2,22 +2,20 @@ package org.dragberry.eshop.controller;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dragberry.eshop.controller.exception.ResourceNotFoundException;
-import org.dragberry.eshop.model.BreadcrumbLink;
 import org.dragberry.eshop.model.product.ProductCategory;
+import org.dragberry.eshop.model.product.ProductDetails;
 import org.dragberry.eshop.model.product.ProductSearchQuery;
+import org.dragberry.eshop.navigation.Breadcrumb;
 import org.dragberry.eshop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +23,19 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class ProductController {
+	
+	private static final String MODEL_CATEGORY = "category";
+
+	private static final String MODEL_PRODUCT_LIST = "productList";
+
+	private static final String MODEL_CATEGORY_LIST = "categoryList";
+
+	private static final String MODEL_BREADCRUMB = "breadcrumb";
+
+	private static final String MSG_MENU_CATALOG = "msg.menu.catalog";
+
+	@Value("${url.catalog}")
+	private String catelogReference;
 	
 	@Autowired
 	private ProductService productService;
@@ -53,13 +64,24 @@ public class ProductController {
 	@GetMapping({"${url.catalog}", "${url.catalog}/{selectedCategory}"})
 	public ModelAndView catalog(@PathVariable(required = false) String selectedCategory) {
 		ModelAndView mv = new ModelAndView("pages/products/product-list");
-		var categoryList = productService.getCategoryList();
-		mv.addObject("categoryList", categoryList);
-		var category = categoryList.stream().filter(c -> c.getReference().equals(selectedCategory)).findFirst().orElse(new ProductCategory(0L, "all", "Все товары"));
-		mv.addObject("category", category);
-		var query = new ProductSearchQuery();
+		List<ProductCategory> categoryList = productService.getCategoryList();
+		ProductSearchQuery query = new ProductSearchQuery();
 		query.setCategoryReference(selectedCategory);
-		mv.addObject("productList", productService.getProductList(query));
+		if (StringUtils.isNotBlank(selectedCategory)) {
+			ProductCategory category = categoryList.stream().filter(c -> c.getReference().equals(selectedCategory)).findFirst().orElse(new ProductCategory(0L, "all", "Все товары"));
+			if (category == null) {
+				throw new ResourceNotFoundException();
+			}
+			mv.addObject(MODEL_CATEGORY, category);
+			mv.addObject(MODEL_BREADCRUMB, Breadcrumb.builder()
+		     		.append(MSG_MENU_CATALOG, catelogReference, true)
+		     		.append(category.getName(), selectedCategory));
+		} else {
+			mv.addObject(MODEL_BREADCRUMB, Breadcrumb.builder()
+		     		.append(MSG_MENU_CATALOG, catelogReference, true));
+		}
+		mv.addObject(MODEL_CATEGORY_LIST, categoryList);
+		mv.addObject(MODEL_PRODUCT_LIST, productService.getProductList(query));
 		return mv;
 	}
 
@@ -70,37 +92,17 @@ public class ProductController {
     @GetMapping({"${url.catalog}/{categoryReference}/{productReference}"})
     public ModelAndView product(@PathVariable String categoryReference, @PathVariable String productReference) {
         if (productReference != null) {
-            var product = productService.getProductArticleDetails(categoryReference, productReference);
+            ProductDetails product = productService.getProductArticleDetails(categoryReference, productReference);
             if (product != null) {
-                var mv = new ModelAndView("pages/products/product");
+            	ModelAndView mv = new ModelAndView("pages/products/product");
                 mv.addObject("product", product);
-                Breadcrumb bc = new Breadcrumb();
-                bc.append("Каталог", "katalog");
-                bc.append(product.getCategory().getName(), categoryReference);
-                bc.append(product.getTitle(), productReference);
-                mv.addObject("breadcrumb", bc.getLinks());
+                mv.addObject(MODEL_BREADCRUMB, Breadcrumb.builder()
+                		.append(MSG_MENU_CATALOG, catelogReference, true)
+                		.append(product.getCategory().getName(), categoryReference)
+                		.append(product.getTitle(), productReference));
                 return mv;
             }
         }
         throw new ResourceNotFoundException();
-    }
-    
-    class Breadcrumb {
-        
-        private final static String SLASH = "/";
-        private LinkedList<BreadcrumbLink> links = new LinkedList<>();
-        private String fullRefernce = StringUtils.EMPTY;
-        
-        public void append(String name, String reference) {
-            if (!links.isEmpty()) {
-                links.getLast().setActive(false);
-            }
-            fullRefernce += (SLASH + reference);
-            links.add(new BreadcrumbLink(name, fullRefernce, true));
-        }
-        
-        public List<BreadcrumbLink> getLinks() {
-            return links;
-        }
     }
 }

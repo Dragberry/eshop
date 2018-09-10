@@ -10,9 +10,9 @@
 		    <li class="breadcrumb-item">
 		    	<a th:href="${@environment.getProperty('url.home')}" th:text="#{msg.menu.home}">Home</a>
 		    </li>
-		    <li th:each="link : ${breadcrumb}" class="breadcrumb-item" th:classappend="${link.active ? 'active' : ''}" th:aria-current="${link.active ? 'page' : ''}">
-		    	<a th:unless="${link.active}" th:href="@{${link.url}}" th:text="${link.name}">Link text</a>
-		    	<strong th:if="${link.active}" th:text="${link.name}">Link text</strong>
+		    <li th:each="link : ${breadcrumb.links}" class="breadcrumb-item" th:classappend="${link.active ? 'active' : ''}" th:aria-current="${link.active ? 'page' : ''}">
+		    	<a th:unless="${link.active}" th:href="@{${link.url}}" th:text="${link.i18n} ? #{${link.name}} : ${link.name}">Link text</a>
+		    	<strong th:if="${link.active}" th:text="${link.i18n} ? #{${link.name}} : ${link.name}">Link text</strong>
 		    </li>
 	  	</ol>
 	</nav>
