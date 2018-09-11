@@ -147,6 +147,7 @@ public class ProductServiceImpl implements ProductService {
         product.setTagDescription(article.getTagDescription());
         product.setTagTitle(article.getTagTitle());
         setLowestPrice(article, product);
+        
         // test data
         product.setLabels(Map.of("Скидка", Modifier.INFO, "20%", Modifier.DANGER));
         return product;

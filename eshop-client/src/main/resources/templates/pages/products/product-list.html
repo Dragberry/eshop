@@ -9,7 +9,72 @@
 <body>
 	<th:block layout:fragment="main-content">
 		<div class="col-md-3">
-			<nav th:replace="pages/products/categories-side-menu :: categories-side-menu(selectedCategory = ${selectedCategory})"></nav>
+			<div class="container">
+				<div class="row">
+					<nav th:replace="pages/products/categories-side-menu :: categories-side-menu(selectedCategory = ${selectedCategory})"></nav>
+				</div>
+				<div class="row mt-2">
+					<th:block th:insert="pages/products/product-filters :: amount-filter(id = 'price', label = 'Price')"></th:block>
+					<div class="product-attribute-filter row mt-2">
+						<div class="col-12">
+							<strong>Цвет</strong>
+						</div>
+						<div class="product-attribute-filter-checkox col-12">
+							<div class="form-check form-check-sm">
+								<input class="form-check-input" type="checkbox" id="color1">
+							  	<label class="form-check-label" for="color1">
+							  		Белый
+							  	</label>
+							</div>
+							<div class="form-check">
+							 	<input class="form-check-input" type="checkbox" id="color2">
+							  	<label class="form-check-label" for="color2">
+							    	Черный
+							  	</label>
+							</div>
+							<div class="form-check">
+							 	<input class="form-check-input" type="checkbox" id="color3">
+							  	<label class="form-check-label" for="color3">
+							    	Серый
+							  	</label>
+							</div>
+							<div class="form-check">
+							 	<input class="form-check-input" type="checkbox" id="color4">
+							  	<label class="form-check-label" for="color4">
+							    	Красный
+							  	</label>
+							</div>
+							<div class="form-check">
+							 	<input class="form-check-input" type="checkbox" id="color5">
+							  	<label class="form-check-label" for="color5">
+							    	Зеленый
+							  	</label>
+							</div>
+						</div>
+					</div>
+					<div class="product-attribute-filter row mt-2">
+						<div class="col-12">
+							<strong>Размер экрана, дюймы.</strong>
+						</div>
+						<div class="col-6">
+						    <div class="input-group input-group-sm">
+						   		<div class="input-group-prepend">
+    								<span class="input-group-text" id="minScreenSizeLbl">От:</span>
+  								</div>
+						    	<input type="text" class="form-control" id="minScreenSize" aria-describedby="minScreenSizeLbl">
+							</div>
+						</div>
+						<div class="col-6">
+							<div class="input-group input-group-sm">
+								<div class="input-group-prepend">
+    								<span class="input-group-text" id="maxScreenSizeLbl">До:</span>
+  								</div>
+						    	<input type="text" class="form-control" id="maxScreenSize" aria-describedby="maxScreenSizeLbl">
+							</div>
+						</div>
+					</div>
+				</div>	
+			</div>
 		</div>
 		<div class="col-md-9">
 			<h1 th:text="${category} ? ${category.name} : #{msg.common.allProducts}"></h1>

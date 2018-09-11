@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<body>
+	<th:block th:fragment="amount-filter">
+		<div class="product-attribute-filter row mt-2">
+			<div class="col-12">
+				<strong>[[${label}]]</strong>
+			</div>
+			<div class="col-6">
+			    <div class="input-group input-group-sm">
+			   		<div class="input-group-prepend">
+						<span class="input-group-text" th:id="|${id}MinLabel|">От:</span>
+					</div>
+			    	<input type="text" class="form-control" th:id="|${id}Min|" th:aria-describedby="|${id}MinLabel|">
+				</div>
+			</div>
+			<div class="col-6">
+				<div class="input-group input-group-sm">
+					<div class="input-group-prepend">
+						<span class="input-group-text" th:id="|${id}MaxLabel|">До:</span>
+					</div>
+			    	<input type="text" class="form-control" th:id="|${id}Max|" th:aria-describedby="|${id}MaxLabel|">
+				</div>
+			</div>
+		</div>
+	</th:block>
+</body>
+</html>
