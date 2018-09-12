@@ -14,7 +14,7 @@ public class ProductCategory {
 	
 	private String name;
 	
-	private List<CategoryAttribute> attributes = new ArrayList<>();
+	private List<Filter> filters = new ArrayList<>();
 
 	public ProductCategory(Long id, String reference, String name) {
 		this.id = id;

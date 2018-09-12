@@ -59,7 +59,7 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public List<ProductListItem> getProductList(ProductSearchQuery query) {
 	    List<ProductArticle> searchResult;
-	    if (StringUtils.isBlank(query.getCategoryReference())) {
+	    if (query == null || StringUtils.isBlank(query.getCategoryReference())) {
 	        searchResult = productArticleRepo.findAll();
 	    } else {
 	        searchResult = productArticleRepo.findByCategoryReference(query.getCategoryReference());

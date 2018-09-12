@@ -9,9 +9,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dragberry.eshop.controller.exception.ResourceNotFoundException;
+import org.dragberry.eshop.model.product.Filter;
+import org.dragberry.eshop.model.product.ListFilter;
 import org.dragberry.eshop.model.product.ProductCategory;
 import org.dragberry.eshop.model.product.ProductDetails;
 import org.dragberry.eshop.model.product.ProductSearchQuery;
+import org.dragberry.eshop.model.product.RangeFilter;
 import org.dragberry.eshop.navigation.Breadcrumb;
 import org.dragberry.eshop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +60,14 @@ public class ProductController {
         }
     }
 	
+    @GetMapping({"${url.catalog}/search"})
+    public ModelAndView search() {
+    	ModelAndView mv = new ModelAndView("pages/products/product-list :: products");
+    	mv.addObject(MODEL_PRODUCT_LIST, productService.getProductList(null));
+    	return mv;
+    }
+    
+    
 	/**
 	 * Return a list of products
 	 * @return
@@ -71,6 +82,18 @@ public class ProductController {
 			ProductCategory category = categoryList.stream().filter(c -> c.getReference().equals(selectedCategory)).findFirst().orElse(new ProductCategory(0L, "all", "Все товары"));
 			if (category == null) {
 				throw new ResourceNotFoundException();
+			} else {
+				RangeFilter filter = new RangeFilter();
+				filter.setId("price");
+				filter.setName("msg.common.price");
+				filter.setMask("#.##0,00");
+				category.getFilters().add(filter);
+				
+				ListFilter lFilter = new ListFilter();
+				lFilter.setId("Color");
+				lFilter.setName("Color");
+				lFilter.setAttributes(List.of("Red", "Green", "Blue", "Yellow", "Black"));
+				category.getFilters().add(lFilter);
 			}
 			mv.addObject(MODEL_CATEGORY, category);
 			mv.addObject(MODEL_BREADCRUMB, Breadcrumb.builder()

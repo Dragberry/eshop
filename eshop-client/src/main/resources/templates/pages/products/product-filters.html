@@ -3,25 +3,50 @@
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <body>
-	<th:block th:fragment="amount-filter">
+	<th:block th:fragment="range-filter">
 		<div class="product-attribute-filter row mt-2">
 			<div class="col-12">
-				<strong>[[${label}]]</strong>
+				<strong>[[${#strings.isEmpty(#messages.msgOrNull(filter.name)) ? filter.name : #messages.msg(filter.name)}]]</strong>
 			</div>
 			<div class="col-6">
 			    <div class="input-group input-group-sm">
 			   		<div class="input-group-prepend">
-						<span class="input-group-text" th:id="|${id}MinLabel|">От:</span>
+						<span class="input-group-text" th:id="|${filter.id}MinLabel|">От:</span>
 					</div>
-			    	<input type="text" class="form-control" th:id="|${id}Min|" th:aria-describedby="|${id}MinLabel|">
+			    	<input type="text" class="form-control"
+			    		th:name="|${filter.id}[from]|" th:id="|${filter.id}[from]|"
+			    		th:aria-describedby="|${filter.id}[from]|"
+			    		th:data-mask="${filter.mask}" data-mask-reverse="true"
+			    		onkeyup="doSearch(this.id, this.value)">
 				</div>
 			</div>
 			<div class="col-6">
 				<div class="input-group input-group-sm">
 					<div class="input-group-prepend">
-						<span class="input-group-text" th:id="|${id}MaxLabel|">До:</span>
+						<span class="input-group-text" th:id="|${filter.id}MaxLabel|">До:</span>
 					</div>
-			    	<input type="text" class="form-control" th:id="|${id}Max|" th:aria-describedby="|${id}MaxLabel|">
+			    	<input type="text" class="form-control"
+			    		th:name="|${filter.id}[to]|" th:id="|${filter.id}[to]|"
+			    		th:aria-describedby="|${filter.id}[to]|"
+			    		th:data-mask="${filter.mask}" data-mask-reverse="true"
+			    		onkeyup="doSearch(this.id, this.value)">
+				</div>
+			</div>
+		</div>
+	</th:block>
+	
+	<th:block th:fragment="list-filter">
+		<div class="product-attribute-filter row mt-2">
+			<div class="col-12">
+				<strong>[[${#strings.isEmpty(#messages.msgOrNull(filter.name)) ? filter.name : #messages.msg(filter.name)}]]</strong>
+			</div>
+			<div class="product-attribute-filter-checkox col-12">
+				<div th:each="attr, iter : ${filter.attributes}" class="form-check">
+					<input class="form-check-input" type="checkbox"
+						th:name="|${filter.id}|" th:id="|${attr}ListItem|" th:value="${attr}">
+				  	<label class="form-check-label" th:for="|${attr}ListItem|">
+				  		[[${attr}]]
+				  	</label>
 				</div>
 			</div>
 		</div>
