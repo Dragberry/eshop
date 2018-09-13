@@ -213,7 +213,7 @@ public class ProductServiceImpl implements ProductService {
 		priceFilter.setId("price");
 		priceFilter.setName("msg.common.price");
 		priceFilter.setMask("# ##0.00");
-    	return Stream.concat(Stream.of(priceFilter), categoryRepo.getOptionFilters(1000L).stream()
+    	return Stream.concat(Stream.of(priceFilter), categoryRepo.getOptionFilters(categoryId).stream()
 		        .sorted(Comparator.comparing(kv -> kv.getValue().toString()))
 		        .collect(groupingBy(kv -> kv.getKey().toString(), mapping(kv -> kv.getValue().toString(), toList())))
 		        .entrySet().stream().map(entry -> {

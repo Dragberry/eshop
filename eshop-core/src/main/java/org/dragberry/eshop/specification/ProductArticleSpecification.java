@@ -5,11 +5,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -35,31 +37,36 @@ public class ProductArticleSpecification implements Specification<ProductArticle
     @Override
     public Predicate toPredicate(Root<ProductArticle> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
         var productRoot = root.join("products");
-        var optionRoot = productRoot.join("options");
         var categoryRoot = root.join("categories");
+        Join<?, ?> optionRoot = null;
         List<Predicate> where = new ArrayList<>();
         if (StringUtils.isNotBlank(categoryReference)) {
             where.add(cb.equal(categoryRoot.get("reference"), categoryReference));
         }
-        searchParams.forEach((name, values) -> {
+        for (Entry<String, String[]> entry : searchParams.entrySet()) {
+        	var name = entry.getKey();
+        	var values = entry.getValue();
             if ("from[price]".equals(name) && values.length == 1) {
                 try {
                     where.add(cb.greaterThanOrEqualTo(productRoot.get("actualPrice"), new BigDecimal(values[0].replaceAll(" ", ""))));
                 } catch (Exception exc) {}
-                return;
+                continue;
             } 
             if ("to[price]".equals(name) && values.length == 1) {
                 try {
                     where.add(cb.lessThanOrEqualTo(productRoot.get("actualPrice"), new BigDecimal(values[0].replaceAll(" ", ""))));
                 } catch (Exception exc) {}
-                return;
+                continue;
             }
             Matcher optionMatcher = OPTION_PATTERN.matcher(name);
 			if (optionMatcher.find() && values.length > 0) {
+				if (optionRoot == null) {
+					optionRoot = productRoot.join("options");
+				}
             	where.add(cb.equal(optionRoot.get("name"), optionMatcher.group(1)));
             	where.add(optionRoot.get("value").in(Arrays.asList(values)));
             }
-        });
+        }
         query.distinct(true);
         return cb.and(where.toArray(new Predicate[] {}));
     }

@@ -17,6 +17,7 @@
 					<form id="filtersForm" th:action="|${@environment.getProperty('url.catalog.filter')}/${selectedCategory}|" method="GET">
 						<th:block th:each="filter : ${category.filters}">
 							<th:block th:replace="__${filter.template}__"></th:block>
+							<hr/>
 						</th:block>
 					</form>
 				</div>	
