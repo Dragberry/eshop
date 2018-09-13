@@ -33,6 +33,7 @@ import org.dragberry.eshop.dal.repo.ProductArticleOptionRepository;
 import org.dragberry.eshop.dal.repo.ProductArticleRepository;
 import org.dragberry.eshop.dal.repo.ProductRepository;
 import org.dragberry.eshop.service.DataImporter;
+import org.dragberry.eshop.service.TransliteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -87,6 +88,9 @@ public class InSalesDataImporter implements DataImporter {
 	@Autowired
 	private ProductArticleOptionRepository paoRepo;
 	
+	@Autowired
+	private TransliteService transliteService;
+	
 	private Map<String, Integer> columnsMap = new HashMap<>();
 	
 	private Map<String, String> optionsMap = new HashMap<>();
@@ -113,7 +117,7 @@ public class InSalesDataImporter implements DataImporter {
 				ctg = categoryMap.put(externalName, categoryRepo.findByName(name).orElseGet(() -> {
 					Category newCtg = new Category();
 					newCtg.setName(name);
-					newCtg.setReference(name);
+					newCtg.setReference(transliteService.transformToId(name));
 					newCtg.setOrder(order);
 					return categoryRepo.save(newCtg);
 				}));
@@ -165,7 +169,7 @@ public class InSalesDataImporter implements DataImporter {
 			String[] firstLine = rawArticle.get(0);
 			pa.setArticle(article);
 			pa.setTitle(firstLine[columnsMap.get(PRODUCT_TITLE)]);
-			pa.setReference(firstLine[columnsMap.get(PRODUCT_REFERENCE)]);
+			pa.setReference(transliteService.transformToId(firstLine[columnsMap.get(PRODUCT_REFERENCE)]));
 			pa.setDescription(firstLine[columnsMap.get(PRODUCT_DESCRIPTION)]);
 			pa.setDescriptionFull(firstLine[columnsMap.get(PRODUCT_DESCRIPTION_FULL)]);
 			pa.setTagTitle(firstLine[columnsMap.get(TAG_TITLE)]);

@@ -54,3 +54,8 @@
 .form-check-label {
 	width: 100%;
 }
+
+.product-attribute-filter .product-attribute-list-filter {
+	max-height: 7rem;
+    overflow-y: auto;
+}

@@ -4,7 +4,7 @@
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <body>
 	<th:block th:fragment="range-filter">
-		<div class="product-attribute-filter product-attribute-range-filter row mt-2">
+		<div class="product-attribute-filter product-attribute-range-filter row mt-3">
 			<div class="col-12">
 				<strong>[[${#strings.isEmpty(#messages.msgOrNull(filter.name)) ? filter.name : #messages.msg(filter.name)}]]</strong>
 			</div>
@@ -36,7 +36,7 @@
 	</th:block>
 	
 	<th:block th:fragment="list-filter">
-		<div class="product-attribute-filter row mt-2">
+		<div class="product-attribute-filter row mt-3">
 			<div class="col-12">
 				<strong>[[${#strings.isEmpty(#messages.msgOrNull(filter.name)) ? filter.name : #messages.msg(filter.name)}]]</strong>
 			</div>
