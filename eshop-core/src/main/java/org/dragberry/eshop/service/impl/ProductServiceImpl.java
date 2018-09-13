@@ -3,6 +3,7 @@ package org.dragberry.eshop.service.impl;
 import static java.util.stream.Collectors.*;
 
 import java.math.BigDecimal;
+import java.text.MessageFormat;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.apache.commons.lang3.StringUtils;
@@ -28,9 +30,12 @@ import org.dragberry.eshop.model.common.Modifier;
 import org.dragberry.eshop.model.product.ProductListItem;
 import org.dragberry.eshop.model.product.ActualPriceHolder;
 import org.dragberry.eshop.model.product.CategoryItem;
+import org.dragberry.eshop.model.product.Filter;
+import org.dragberry.eshop.model.product.ListFilter;
 import org.dragberry.eshop.model.product.ProductCategory;
 import org.dragberry.eshop.model.product.ProductDetails;
 import org.dragberry.eshop.model.product.ProductSearchQuery;
+import org.dragberry.eshop.model.product.RangeFilter;
 import org.dragberry.eshop.service.ProductService;
 import org.dragberry.eshop.specification.ProductArticleSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,11 +58,9 @@ public class ProductServiceImpl implements ProductService {
     
     @Override
 	public List<ProductCategory> getCategoryList() {
-		Map<String, List<String>> opts = categoryRepo.getOptionFilters(1000L).stream()
-		        .sorted(Comparator.comparing(kv -> kv.getValue().toString()))
-		        .collect(groupingBy(kv -> kv.getKey().toString(), mapping(kv -> kv.getValue().toString(), toList())));
-        return StreamSupport.stream(categoryRepo.findAllByOrderByOrder().spliterator(), false).map(category -> {
+		return StreamSupport.stream(categoryRepo.findAllByOrderByOrder().spliterator(), false).map(category -> {
 			ProductCategory pc = new ProductCategory();
+			pc.setId(category.getEntityKey());
 			pc.setName(category.getName());
 			pc.setReference(category.getReference());
 			return pc;
@@ -69,6 +72,7 @@ public class ProductServiceImpl implements ProductService {
         Optional<Category> category = categoryRepo.findByReference(categoryReference);
         if (category.isPresent()) {
             ProductCategory pc = new ProductCategory();
+            pc.setId(category.get().getEntityKey());
             pc.setName(category.get().getName());
             pc.setReference(category.get().getReference());
             return pc;
@@ -201,5 +205,23 @@ public class ProductServiceImpl implements ProductService {
         capturedProduct.setCategory(new CategoryItem(ctg.getEntityKey(), ctg.getName(), ctg.getReference()));
         capturedProduct.updateFullTitle();
         return capturedProduct;
+    }
+    
+    @Override
+    public List<Filter> getCategoryFilters(Long categoryId) {
+    	RangeFilter priceFilter = new RangeFilter();
+		priceFilter.setId("price");
+		priceFilter.setName("msg.common.price");
+		priceFilter.setMask("# ##0.00");
+    	return Stream.concat(Stream.of(priceFilter), categoryRepo.getOptionFilters(1000L).stream()
+		        .sorted(Comparator.comparing(kv -> kv.getValue().toString()))
+		        .collect(groupingBy(kv -> kv.getKey().toString(), mapping(kv -> kv.getValue().toString(), toList())))
+		        .entrySet().stream().map(entry -> {
+		        	ListFilter optFilter = new ListFilter();
+		        	optFilter.setId(MessageFormat.format("option[{0}]", entry.getKey()));
+		        	optFilter.setName(entry.getKey());
+		        	optFilter.setAttributes(entry.getValue());
+		        	return optFilter;
+		        })).collect(toList());
     }
 }

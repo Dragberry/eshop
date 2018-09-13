@@ -4,7 +4,7 @@
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <body>
 	<th:block th:fragment="range-filter">
-		<div class="product-attribute-filter row mt-2">
+		<div class="product-attribute-filter product-attribute-range-filter row mt-2">
 			<div class="col-12">
 				<strong>[[${#strings.isEmpty(#messages.msgOrNull(filter.name)) ? filter.name : #messages.msg(filter.name)}]]</strong>
 			</div>
@@ -17,7 +17,7 @@
 			    		th:name="|from[${filter.id}]|" th:id="|from[${filter.id}]|"
 			    		th:aria-describedby="|from[${filter.id}]|"
 			    		th:data-mask="${filter.mask}" data-mask-reverse="true"
-			    		onkeyup="doSearch(this.id, this.value)">
+			    		onkeyup="doSearch()">
 				</div>
 			</div>
 			<div class="col-6">
@@ -29,7 +29,7 @@
 			    		th:name="|to[${filter.id}]|" th:id="|to[${filter.id}]|"
 			    		th:aria-describedby="|to[${filter.id}]|"
 			    		th:data-mask="${filter.mask}" data-mask-reverse="true"
-			    		onkeyup="doSearch(this.id, this.value)">
+			    		onkeyup="doSearch()">
 				</div>
 			</div>
 		</div>
@@ -40,10 +40,11 @@
 			<div class="col-12">
 				<strong>[[${#strings.isEmpty(#messages.msgOrNull(filter.name)) ? filter.name : #messages.msg(filter.name)}]]</strong>
 			</div>
-			<div class="product-attribute-filter-checkox col-12">
+			<div class="product-attribute-list-filter col-12">
 				<div th:each="attr, iter : ${filter.attributes}" class="form-check">
 					<input class="form-check-input" type="checkbox"
-						th:name="|${filter.id}|" th:id="|${attr}ListItem|" th:value="${attr}">
+						th:name="|${filter.id}|" th:id="|${attr}ListItem|" th:value="${attr}"
+						onchange="doSearch()">
 				  	<label class="form-check-label" th:for="|${attr}ListItem|">
 				  		[[${attr}]]
 				  	</label>

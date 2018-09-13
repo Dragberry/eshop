@@ -34,10 +34,9 @@
 	<th:block layout:fragment="page_scripts">
 		<script>
 			var delayTimer;
-			function doSearch(id, value) {
+			function doSearch() {
 				clearTimeout(delayTimer);
 				delayTimer = setTimeout(function() {
-					console.log('Do search:', id, value);
 					var form = $('#filtersForm');
 				    var url = form.attr('action');
 				    $.ajax({

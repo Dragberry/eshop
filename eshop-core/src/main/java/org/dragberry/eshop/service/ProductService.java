@@ -5,6 +5,7 @@ import java.util.List;
 import org.dragberry.eshop.model.product.ProductListItem;
 import org.dragberry.eshop.model.cart.CapturedProduct;
 import org.dragberry.eshop.model.common.ImageModel;
+import org.dragberry.eshop.model.product.Filter;
 import org.dragberry.eshop.model.product.ProductCategory;
 import org.dragberry.eshop.model.product.ProductDetails;
 import org.dragberry.eshop.model.product.ProductSearchQuery;
@@ -52,5 +53,12 @@ public interface ProductService {
      * @return
      */
     ProductCategory findCategory(String categoryReference);
+
+    /**
+     * Get filters for the given categoryId
+     * @param categoryId
+     * @return
+     */
+	List<Filter> getCategoryFilters(Long categoryId);
 
 }

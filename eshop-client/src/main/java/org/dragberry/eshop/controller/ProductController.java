@@ -91,17 +91,7 @@ public class ProductController {
 			if (category == null) {
 				throw new ResourceNotFoundException();
 			} else {
-				RangeFilter filter = new RangeFilter();
-				filter.setId("price");
-				filter.setName("msg.common.price");
-				filter.setMask("# ##0.00");
-				category.getFilters().add(filter);
-				
-				ListFilter lFilter = new ListFilter();
-				lFilter.setId("Color");
-				lFilter.setName("Color");
-				lFilter.setAttributes(List.of("Red", "Green", "Blue", "Yellow", "Black"));
-				category.getFilters().add(lFilter);
+				category.setFilters(productService.getCategoryFilters(category.getId()));
 			}
 			mv.addObject(MODEL_CATEGORY, category);
 			mv.addObject(MODEL_BREADCRUMB, Breadcrumb.builder()
