@@ -22,4 +22,11 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 	 */
 	List<Category> findAllByOrderByOrder();
 
+	/**
+	 * Find category by reference
+	 * @param categoryReference
+	 * @return
+	 */
+    Optional<Category> findByReference(String categoryReference);
+
 }

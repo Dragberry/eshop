@@ -46,4 +46,11 @@ public interface ProductService {
      */
     CapturedProduct getProductCartDetails(Long productId);
 
+    /**
+     * Find a category by reference
+     * @param categoryReference
+     * @return
+     */
+    ProductCategory findCategory(String categoryReference);
+
 }

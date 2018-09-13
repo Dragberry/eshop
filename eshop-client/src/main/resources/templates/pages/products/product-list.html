@@ -13,8 +13,8 @@
 				<div class="row">
 					<nav th:replace="pages/products/categories-side-menu :: categories-side-menu(selectedCategory = ${selectedCategory})"></nav>
 				</div>
-				<div class="row mt-2">
-					<form id="filtersForm" th:action="|${@environment.getProperty('url.catalog')}/search|" method="GET">
+				<div th:if="${selectedCategory}" class="row mt-2">
+					<form id="filtersForm" th:action="|${@environment.getProperty('url.catalog.filter')}/${selectedCategory}|" method="GET">
 						<th:block th:each="filter : ${category.filters}">
 							<th:block th:replace="__${filter.template}__"></th:block>
 						</th:block>

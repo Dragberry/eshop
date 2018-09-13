@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -29,6 +30,7 @@ import org.dragberry.eshop.model.product.ProductCategory;
 import org.dragberry.eshop.model.product.ProductDetails;
 import org.dragberry.eshop.model.product.ProductSearchQuery;
 import org.dragberry.eshop.service.ProductService;
+import org.dragberry.eshop.specification.ProductArticleSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +49,7 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductRepository productRepo;
     
+    @Override
 	public List<ProductCategory> getCategoryList() {
 		return StreamSupport.stream(categoryRepo.findAllByOrderByOrder().spliterator(), false).map(category -> {
 			ProductCategory pc = new ProductCategory();
@@ -55,6 +58,18 @@ public class ProductServiceImpl implements ProductService {
 			return pc;
 		}).collect(Collectors.toList());
 	}
+    
+    @Override
+    public ProductCategory findCategory(String categoryReference) {
+        Optional<Category> category = categoryRepo.findByReference(categoryReference);
+        if (category.isPresent()) {
+            ProductCategory pc = new ProductCategory();
+            pc.setName(category.get().getName());
+            pc.setReference(category.get().getReference());
+            return pc;
+        }
+        return null;
+    }
 
 	@Override
 	public List<ProductListItem> getProductList(ProductSearchQuery query) {
@@ -62,7 +77,8 @@ public class ProductServiceImpl implements ProductService {
 	    if (query == null || StringUtils.isBlank(query.getCategoryReference())) {
 	        searchResult = productArticleRepo.findAll();
 	    } else {
-	        searchResult = productArticleRepo.findByCategoryReference(query.getCategoryReference());
+	        searchResult = productArticleRepo.findAll(
+	                new ProductArticleSpecification(query.getCategoryReference(), query.getSearchParams()));
 	    }
 		return searchResult.stream().map(article -> {
 			ProductListItem product = new ProductListItem();

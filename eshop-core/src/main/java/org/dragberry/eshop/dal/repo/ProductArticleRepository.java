@@ -5,11 +5,12 @@ import java.util.Optional;
 
 import org.dragberry.eshop.dal.entity.ProductArticle;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ProductArticleRepository extends JpaRepository<ProductArticle, Long> {
+public interface ProductArticleRepository extends JpaRepository<ProductArticle, Long>, JpaSpecificationExecutor<ProductArticle> {
 
 	/**
 	 * Find by article

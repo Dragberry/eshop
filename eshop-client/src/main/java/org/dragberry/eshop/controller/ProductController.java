@@ -4,12 +4,12 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dragberry.eshop.controller.exception.ResourceNotFoundException;
-import org.dragberry.eshop.model.product.Filter;
 import org.dragberry.eshop.model.product.ListFilter;
 import org.dragberry.eshop.model.product.ProductCategory;
 import org.dragberry.eshop.model.product.ProductDetails;
@@ -60,10 +60,18 @@ public class ProductController {
         }
     }
 	
-    @GetMapping({"${url.catalog}/search"})
-    public ModelAndView search() {
-    	ModelAndView mv = new ModelAndView("pages/products/product-list :: products");
-    	mv.addObject(MODEL_PRODUCT_LIST, productService.getProductList(null));
+    @GetMapping("${url.catalog.filter}/{selectedCategory}")
+    public ModelAndView search(HttpServletRequest request, @PathVariable String selectedCategory) {
+    	ProductCategory category = productService.findCategory(selectedCategory);
+    	if (category == null) {
+    	    throw new ResourceNotFoundException();
+    	}
+        ModelAndView mv = new ModelAndView("pages/products/product-list :: products");
+    	ProductSearchQuery query = new ProductSearchQuery();
+    	query.setCategoryReference(selectedCategory);
+    	query.setSearchParams(request.getParameterMap());
+    	mv.addObject(MODEL_CATEGORY, category);
+        mv.addObject(MODEL_PRODUCT_LIST, productService.getProductList(query));
     	return mv;
     }
     
@@ -86,7 +94,7 @@ public class ProductController {
 				RangeFilter filter = new RangeFilter();
 				filter.setId("price");
 				filter.setName("msg.common.price");
-				filter.setMask("#.##0,00");
+				filter.setMask("# ##0.00");
 				category.getFilters().add(filter);
 				
 				ListFilter lFilter = new ListFilter();
