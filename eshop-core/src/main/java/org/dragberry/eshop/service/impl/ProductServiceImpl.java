@@ -1,13 +1,15 @@
 package org.dragberry.eshop.service.impl;
 
+import static java.util.stream.Collectors.*;
+
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.apache.commons.lang3.StringUtils;
@@ -51,12 +53,15 @@ public class ProductServiceImpl implements ProductService {
     
     @Override
 	public List<ProductCategory> getCategoryList() {
-		return StreamSupport.stream(categoryRepo.findAllByOrderByOrder().spliterator(), false).map(category -> {
+		Map<String, List<String>> opts = categoryRepo.getOptionFilters(1000L).stream()
+		        .sorted(Comparator.comparing(kv -> kv.getValue().toString()))
+		        .collect(groupingBy(kv -> kv.getKey().toString(), mapping(kv -> kv.getValue().toString(), toList())));
+        return StreamSupport.stream(categoryRepo.findAllByOrderByOrder().spliterator(), false).map(category -> {
 			ProductCategory pc = new ProductCategory();
 			pc.setName(category.getName());
 			pc.setReference(category.getReference());
 			return pc;
-		}).collect(Collectors.toList());
+		}).collect(toList());
 	}
     
     @Override
@@ -96,7 +101,7 @@ public class ProductServiceImpl implements ProductService {
 			product.setLabels(Map.of("Скидка", Modifier.INFO, "20%", Modifier.DANGER));
 			product.setRating(3.3);
 			return product;
-		}).collect(Collectors.toList());
+		}).collect(toList());
 	}
 
     private void setLowestPrice(ProductArticle article, ActualPriceHolder product) {
@@ -142,7 +147,7 @@ public class ProductServiceImpl implements ProductService {
         product.setCategory(new CategoryItem(ctg.getEntityKey(), ctg.getName(), ctg.getReference()));
         product.setMainImage(article.getMainImage() != null ? article.getMainImage().getEntityKey() : null);
        
-        product.setImages(article.getImages().stream().map(Image::getEntityKey).collect(Collectors.toList()));
+        product.setImages(article.getImages().stream().map(Image::getEntityKey).collect(toList()));
         
         Map<String, Set<KeyValue>> optionValues = new HashMap<>();
         Map<Long, Set<KeyValue>> productOptions = new HashMap<>();
@@ -155,7 +160,7 @@ public class ProductServiceImpl implements ProductService {
             });
             productOptions.put(
             		p.getEntityKey(),
-                    p.getOptions().stream().map(o -> new KeyValue(o.getName(), o.getEntityKey())).collect(Collectors.toSet()));
+                    p.getOptions().stream().map(o -> new KeyValue(o.getName(), o.getEntityKey())).collect(toSet()));
         });
         product.setOptionValues(optionValues);
         product.setProductOptions(productOptions);
@@ -190,7 +195,7 @@ public class ProductServiceImpl implements ProductService {
         capturedProduct.setTitle(product.getProductArticle().getTitle());
         capturedProduct.setReference(product.getProductArticle().getReference());
         capturedProduct.setPrice(product.getActualPrice() != null ? product.getActualPrice() : product.getPrice());
-        capturedProduct.setOptions(product.getOptions().stream().map(o -> new KeyValue(o.getName(), o.getValue())).collect(Collectors.toSet()));
+        capturedProduct.setOptions(product.getOptions().stream().map(o -> new KeyValue(o.getName(), o.getValue())).collect(toSet()));
         capturedProduct.setMainImage(productArticleRepo.findMainImageKey(capturedProduct.getProductArticleId()));
         Category ctg = product.getProductArticle().getCategories().get(0);
         capturedProduct.setCategory(new CategoryItem(ctg.getEntityKey(), ctg.getName(), ctg.getReference()));
