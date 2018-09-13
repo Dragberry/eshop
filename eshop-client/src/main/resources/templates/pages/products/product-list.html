@@ -47,6 +47,8 @@
 				        success: function(data)  {
 				        	$('#productList').fadeOut('normal', function() {
 				        		$(this).replaceWith(data);
+				        		calculateRatings();
+				        		updateCommentsCount();
 				        	});
 				        }
 				   	});
