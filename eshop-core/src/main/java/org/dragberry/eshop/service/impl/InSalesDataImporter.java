@@ -26,6 +26,8 @@ import org.dragberry.eshop.dal.entity.Image;
 import org.dragberry.eshop.dal.entity.Product;
 import org.dragberry.eshop.dal.entity.ProductArticle;
 import org.dragberry.eshop.dal.entity.ProductArticleOption;
+import org.dragberry.eshop.dal.entity.ProductAttributeBoolean;
+import org.dragberry.eshop.dal.entity.ProductAttributeNumeric;
 import org.dragberry.eshop.dal.entity.Product.SaleStatus;
 import org.dragberry.eshop.dal.repo.CategoryRepository;
 import org.dragberry.eshop.dal.repo.ImageRepository;
@@ -73,6 +75,8 @@ public class InSalesDataImporter implements DataImporter {
 	
 	private static final String OPTION = "Свойство:";
 	
+	private static final String ATTRIBUTE = "Параметр:";
+	
 	@Autowired
 	private CategoryRepository categoryRepo;
 
@@ -94,6 +98,8 @@ public class InSalesDataImporter implements DataImporter {
 	private Map<String, Integer> columnsMap = new HashMap<>();
 	
 	private Map<String, String> optionsMap = new HashMap<>();
+	
+	private Map<String, String> attributeMap = new HashMap<>();
 	
 	private Map<String, Category> categoryMap = new HashMap<>();
 	
@@ -176,6 +182,14 @@ public class InSalesDataImporter implements DataImporter {
 			pa.setTagKeywords(firstLine[columnsMap.get(TAG_KEYWORDS)]);
 			pa.setTagDescription(firstLine[columnsMap.get(TAG_DESCRIPTION)]);
 			
+			for (Entry<String, String> entry : attributeMap.entrySet()) {
+                Integer columnNumber = columnsMap.get(entry.getKey());
+                String attrValue = firstLine.length > columnNumber ? firstLine[columnNumber] : StringUtils.EMPTY;
+                if (StringUtils.isNotBlank(attrValue)) {
+                    log.info("Attr: " + entry.getKey() + "; value: "+ attrValue);
+                }
+            }
+			
 			List<Image> oldImages = new ArrayList<>(pa.getImages());
 			processImages(firstLine, pa);
 			
@@ -190,6 +204,18 @@ public class InSalesDataImporter implements DataImporter {
 			}
 			
 			pa = productArticleRepo.save(pa);
+			
+			ProductAttributeBoolean bool = new ProductAttributeBoolean();
+            bool.setName("Bool");
+            bool.setValue(true);
+            bool.setProductArticle(pa);
+            ProductAttributeNumeric num = new ProductAttributeNumeric();
+            num.setName("Num");
+            num.setValue(new BigDecimal("1"));
+            num.setUnit("Unit");
+            num.setProductArticle(pa);
+            pa.setAttributes(List.of(bool, num));
+            pa = productArticleRepo.save(pa);
 			
 			imageRepo.deleteAll(oldImages);
 			
@@ -283,6 +309,10 @@ public class InSalesDataImporter implements DataImporter {
 				String optionName = StringUtils.trim(str.substring(str.lastIndexOf(":") + 1));
 				optionsMap.put(str, optionName);
 			}
+			if (str.startsWith(ATTRIBUTE)) {
+                String attributeName = StringUtils.trim(str.substring(str.lastIndexOf(":") + 1));
+                attributeMap.put(str, attributeName);
+            }
 		}
 		
 	}

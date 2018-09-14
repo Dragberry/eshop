@@ -56,5 +56,5 @@ public class ProductDetails implements ActualPriceHolder {
     
     private String tagTitle;
     
-    private Map<String, String> attributes = new LinkedHashMap<>();
+    private Map<String, List<KeyValue>> attributes = new LinkedHashMap<>();
 }

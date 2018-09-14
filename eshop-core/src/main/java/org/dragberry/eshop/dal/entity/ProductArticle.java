@@ -3,6 +3,7 @@ package org.dragberry.eshop.dal.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -87,4 +88,6 @@ public class ProductArticle extends BaseEntity {
 	@Column(name = "TAG_DESCRIPTION")
 	private String tagDescription;
 	
+	@OneToMany(mappedBy= "productArticle", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private List<ProductAttribute<?>> attributes = new ArrayList<>();
 }

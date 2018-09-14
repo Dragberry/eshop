@@ -7,6 +7,7 @@ import java.text.MessageFormat;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -172,6 +173,19 @@ public class ProductServiceImpl implements ProductService {
         product.setTagDescription(article.getTagDescription());
         product.setTagTitle(article.getTagTitle());
         setLowestPrice(article, product);
+        
+        Map<String, List<KeyValue>> attibuteGroups = new LinkedHashMap<>();
+        attibuteGroups.put("Основные", List.of(
+                new KeyValue("Поддержка SIM-карты", "есть (1-micro-SIM)"),
+                new KeyValue("Совместимость", "Android iOS"),
+                new KeyValue("Связь", "2G GSM / GPRS, Bluetooth 3.0")));
+        attibuteGroups.put("Экран", List.of(
+                new KeyValue("Размер экрана", "1.54\""),
+                new KeyValue("Тип экрана", "Цветной сенсорный TFT-дисплей 240х240")));
+        attibuteGroups.put("Фитнес-функции", List.of(
+                new KeyValue("Контроль физической активности", "Есть"),
+                new KeyValue("Мониторинг сна", "Есть")));
+        product.setAttributes(attibuteGroups);
         
         // test data
         product.setLabels(Map.of("Скидка", Modifier.INFO, "20%", Modifier.DANGER));
