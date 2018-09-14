@@ -26,6 +26,7 @@ import org.dragberry.eshop.dal.entity.Image;
 import org.dragberry.eshop.dal.entity.Product;
 import org.dragberry.eshop.dal.entity.ProductArticle;
 import org.dragberry.eshop.dal.entity.ProductArticleOption;
+import org.dragberry.eshop.dal.entity.ProductAttribute;
 import org.dragberry.eshop.dal.entity.ProductAttributeBoolean;
 import org.dragberry.eshop.dal.entity.ProductAttributeNumeric;
 import org.dragberry.eshop.dal.entity.Product.SaleStatus;
@@ -182,13 +183,47 @@ public class InSalesDataImporter implements DataImporter {
 			pa.setTagKeywords(firstLine[columnsMap.get(TAG_KEYWORDS)]);
 			pa.setTagDescription(firstLine[columnsMap.get(TAG_DESCRIPTION)]);
 			
+			List<ProductAttribute<?>> attributes = new ArrayList<>();
 			for (Entry<String, String> entry : attributeMap.entrySet()) {
                 Integer columnNumber = columnsMap.get(entry.getKey());
                 String attrValue = firstLine.length > columnNumber ? firstLine[columnNumber] : StringUtils.EMPTY;
                 if (StringUtils.isNotBlank(attrValue)) {
-                    log.info("Attr: " + entry.getKey() + "; value: "+ attrValue);
+                    switch (entry.getValue()) {
+                    	case "Тип аккумулятора":
+                    		String[] acc = attrValue.split("[^A-Za-z0-9]+");
+                    		attributes.add(ProductAttributeNumeric.of(
+                    				pa, entry.getValue(), new BigDecimal(acc[0]), acc[1]));
+                    		break;
+                    	case "Оперативная память":
+                    		String[] ram = attrValue.split("\\s+");
+                    		attributes.add(ProductAttributeNumeric.of(
+                    				pa, entry.getValue(), new BigDecimal(ram[0]), ram[1]));
+                    		break;
+                    	case "Встроенная память":
+                    		String[] rom = attrValue.split("\\s+");
+                    		attributes.add(ProductAttributeNumeric.of(
+                    				pa, entry.getValue(), new BigDecimal(rom[0]), rom[1]));
+                    		break;
+                    	case "Громкая связь​":
+                    		attributes.add(ProductAttributeBoolean.of(pa, entry.getValue(), Boolean.FALSE));
+                    		break;
+                    	case "Съемный ремешок":
+                    		attributes.add(ProductAttributeBoolean.of(pa, entry.getValue(), Boolean.FALSE));
+                    		break;
+                    	case "Влагозащита, защита от ударов":
+                    		attributes.add(ProductAttributeBoolean.of(pa, entry.getValue(), Boolean.FALSE));
+                    		break;
+                    	default:
+                    		break;
+                    }
+                	log.info("Attr: " + entry.getValue() + "; value: "+ attrValue);
                 }
             }
+			pa.getAttributes().clear();
+			if (!attributes.isEmpty()) {
+				productArticleRepo.flush();
+				pa.getAttributes().addAll(attributes);
+			}
 			
 			List<Image> oldImages = new ArrayList<>(pa.getImages());
 			processImages(firstLine, pa);
@@ -203,20 +238,8 @@ public class InSalesDataImporter implements DataImporter {
 				}
 			}
 			
-			pa = productArticleRepo.save(pa);
-			
-			ProductAttributeBoolean bool = new ProductAttributeBoolean();
-            bool.setName("Bool");
-            bool.setValue(true);
-            bool.setProductArticle(pa);
-            ProductAttributeNumeric num = new ProductAttributeNumeric();
-            num.setName("Num");
-            num.setValue(new BigDecimal("1"));
-            num.setUnit("Unit");
-            num.setProductArticle(pa);
-            pa.setAttributes(List.of(bool, num));
             pa = productArticleRepo.save(pa);
-			
+            
 			imageRepo.deleteAll(oldImages);
 			
 			for (String[] line: rawArticle) {

@@ -20,4 +20,12 @@ public class ProductAttributeBoolean  extends ProductAttribute<Boolean> {
     public void setValue(Boolean value) {
         this.value = value;
     }
+    
+    public static ProductAttributeBoolean of(ProductArticle productArticle, String name, Boolean value) {
+    	var entity = new ProductAttributeBoolean();
+    	entity.setProductArticle(productArticle);
+    	entity.setName(name);
+    	entity.setValue(value);
+    	return entity;
+    }
 }

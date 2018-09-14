@@ -88,6 +88,6 @@ public class ProductArticle extends BaseEntity {
 	@Column(name = "TAG_DESCRIPTION")
 	private String tagDescription;
 	
-	@OneToMany(mappedBy= "productArticle", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy= "productArticle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ProductAttribute<?>> attributes = new ArrayList<>();
 }
