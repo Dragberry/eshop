@@ -48,13 +48,21 @@ public class ProductArticleSpecification implements Specification<ProductArticle
         	var values = entry.getValue();
             if ("from[price]".equals(name) && values.length == 1) {
                 try {
-                    where.add(cb.greaterThanOrEqualTo(productRoot.get("actualPrice"), new BigDecimal(values[0].replaceAll(" ", ""))));
+                    where.add(cb.or(
+                            cb.and(cb.isNotNull(productRoot.get("actualPrice")),
+                                    cb.greaterThanOrEqualTo(productRoot.get("actualPrice"), new BigDecimal(values[0].replaceAll(" ", "")))),
+                            cb.and(cb.isNull(productRoot.get("actualPrice")),
+                                    cb.greaterThanOrEqualTo(productRoot.get("price"), new BigDecimal(values[0].replaceAll(" ", ""))))));
                 } catch (Exception exc) {}
                 continue;
             } 
             if ("to[price]".equals(name) && values.length == 1) {
                 try {
-                    where.add(cb.lessThanOrEqualTo(productRoot.get("actualPrice"), new BigDecimal(values[0].replaceAll(" ", ""))));
+                    where.add(cb.or(
+                            cb.and(cb.isNotNull(productRoot.get("actualPrice")),
+                                    cb.lessThanOrEqualTo(productRoot.get("actualPrice"), new BigDecimal(values[0].replaceAll(" ", "")))),
+                            cb.and(cb.isNull(productRoot.get("actualPrice")),
+                                    cb.lessThanOrEqualTo(productRoot.get("price"), new BigDecimal(values[0].replaceAll(" ", ""))))));
                 } catch (Exception exc) {}
                 continue;
             }
