@@ -175,9 +175,9 @@ public class ProductServiceImpl implements ProductService {
         product.setTagTitle(article.getTagTitle());
         setLowestPrice(article, product);
         
-        product.setAttributes(article.getAttributes().stream().map(attr -> new KeyValue(attr.getName(), attr.getStingValue()))
-            	.collect(groupingBy(attr -> "Основные")));
-        
+        product.setAttributes(article.getAttributes().stream()
+        		.collect(groupingBy(ProductAttribute::getGroup, LinkedHashMap::new,
+        				mapping(attr -> new KeyValue(attr.getName(), attr.getStringValue()), toList()))));
         // test data
         product.setLabels(Map.of("Скидка", Modifier.INFO, "20%", Modifier.DANGER));
         return product;

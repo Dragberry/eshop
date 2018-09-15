@@ -29,9 +29,10 @@ public class ProductAttributeBoolean  extends ProductAttribute<Boolean> {
         this.value = value;
     }
     
-    public static ProductAttributeBoolean of(ProductArticle productArticle, String name, Boolean value, String description, Integer order) {
+    public static ProductAttributeBoolean of(ProductArticle productArticle, String group, String name, Boolean value, String description, Integer order) {
     	var entity = new ProductAttributeBoolean();
     	entity.setProductArticle(productArticle);
+    	entity.setGroup(group);
     	entity.setName(name);
     	entity.setValue(value);
     	entity.setDescription(description);
@@ -39,12 +40,12 @@ public class ProductAttributeBoolean  extends ProductAttribute<Boolean> {
     	return entity;
     }
     
-    public static ProductAttributeBoolean of(ProductArticle productArticle, String name, Boolean value, Integer order) {
-    	return of(productArticle, name, value, null, order);
+    public static ProductAttributeBoolean of(ProductArticle productArticle, String group, String name, Boolean value, Integer order) {
+    	return of(productArticle, group, name, value, null, order);
     }
     
     @Override
-    public String getStingValue() {
+    public String getStringValue() {
     	return description != null ? description : value ? "msg.common.true" : "msg.common.false";
     }
 }

@@ -21,9 +21,10 @@ public class ProductAttributeString  extends ProductAttribute<String> {
         this.value = value;
     }
     
-    public static ProductAttributeString of(ProductArticle productArticle, String name, String value, Integer order) {
+    public static ProductAttributeString of(ProductArticle productArticle, String group, String name, String value, Integer order) {
     	var entity = new ProductAttributeString();
     	entity.setProductArticle(productArticle);
+    	entity.setGroup(group);
     	entity.setName(name);
     	entity.setValue(value);
     	entity.setOrder(order);
@@ -31,7 +32,7 @@ public class ProductAttributeString  extends ProductAttribute<String> {
     }
     
     @Override
-    public String getStingValue() {
+    public String getStringValue() {
     	return value;
     }
 }

@@ -28,9 +28,10 @@ public class ProductAttributeList  extends ProductAttribute<List<String>> {
         this.value = value;
     }
     
-    public static ProductAttributeList of(ProductArticle productArticle, String name, List<String> value, Integer order) {
+    public static ProductAttributeList of(ProductArticle productArticle, String group, String name, List<String> value, Integer order) {
     	var entity = new ProductAttributeList();
     	entity.setProductArticle(productArticle);
+    	entity.setGroup(group);
     	entity.setName(name);
     	entity.setValue(value);
     	entity.setOrder(order);
@@ -38,7 +39,7 @@ public class ProductAttributeList  extends ProductAttribute<List<String>> {
     }
     
     @Override
-    public String getStingValue() {
+    public String getStringValue() {
     	return value.stream().collect(Collectors.joining(", "));
     }
 }

@@ -41,6 +41,9 @@ public abstract class ProductAttribute<T> {
     @Column(name = "NAME")
     private String name;
     
+    @Column(name = "`GROUP`")
+    private String group;
+    
     @Column(name = "`ORDER`")
     private Integer order;
     
@@ -48,6 +51,6 @@ public abstract class ProductAttribute<T> {
     
     public abstract void setValue(T value);
     
-    public abstract String getStingValue();
+    public abstract String getStringValue();
     
 }

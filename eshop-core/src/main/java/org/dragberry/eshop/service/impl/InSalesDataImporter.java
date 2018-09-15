@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -82,6 +83,16 @@ public class InSalesDataImporter implements DataImporter {
 	private static final String ATTRIBUTE = "Параметр:";
 	
 	private static final Pattern SIM_PATTERN = Pattern.compile("есть \\((.*?)\\)$");
+	
+	private static final String GRP_ATTR_GENERAL = "Основные";
+	
+	private static final String GRP_ATTR_INTERFACES = "Интерфейсы";
+	
+	private static final String GRP_ATTR_FUNCTIONS= "Функции";
+	
+	private static final String GRP_ATTR_CONSTRUCTION= "Конструкция";
+	
+	private static final String GRP_ATTR_ACCUM = "Аккумулятор и время работы";
 	
 	@Autowired
 	private CategoryRepository categoryRepo;
@@ -259,13 +270,19 @@ public class InSalesDataImporter implements DataImporter {
 		
 	}
 	
-	private static void processListAttribute(String name, String attrValue, ProductArticle pa, List<ProductAttribute<?>> attributes, Integer order) {
+	private static void processListAttribute(String group, String name, String attrValue, ProductArticle pa, List<ProductAttribute<?>> attributes, Integer order) {
 		String[] values = attrValue.split("##");
 		if (values.length > 0) {
 			List<String> valueList = new ArrayList<>();
 			valueList.addAll(List.of(values));
-			attributes.add(ProductAttributeList.of(pa, name, valueList, order));
+			attributes.add(ProductAttributeList.of(pa, group, name, valueList, order));
 		}
+	}
+	
+	private static void processListOfBoolAttribute(String group, String name, String attrValue, ProductArticle pa, List<ProductAttribute<?>> attributes, Integer order) {
+		Stream.of(attrValue.split("##")).forEach(attr -> {
+			attributes.add(ProductAttributeBoolean.of(pa, group, attr, Boolean.TRUE, order));
+		});
 	}
 
 	private List<ProductAttribute<?>> processAttributes(ProductArticle pa, String[] firstLine) {
@@ -278,23 +295,23 @@ public class InSalesDataImporter implements DataImporter {
 		        	case "Тип аккумулятора":
 		        		String[] acc = attrValue.split("[^A-Za-z0-9]+");
 		        		attributes.add(ProductAttributeNumeric.of(
-		        				pa, entry.getValue(), new BigDecimal(acc[0]), acc[1], 1));
+		        				pa, GRP_ATTR_ACCUM, entry.getValue(), new BigDecimal(acc[0]), acc[1], 300));
 		        		break;
 		        	case "Оперативная память":
 		        		String[] ram = attrValue.split("\\s+");
 		        		attributes.add(ProductAttributeNumeric.of(
-		        				pa, entry.getValue(), new BigDecimal(ram[0]), ram[1], 0));
+		        				pa, GRP_ATTR_GENERAL, entry.getValue(), new BigDecimal(ram[0]), ram[1], 1));
 		        		break;
 		        	case "Встроенная память":
 		        		String[] rom = attrValue.split("\\s+");
 		        		attributes.add(ProductAttributeNumeric.of(
-		        				pa, entry.getValue(), new BigDecimal(rom[0]), rom[1], 2));
+		        				pa, GRP_ATTR_GENERAL, entry.getValue(), new BigDecimal(rom[0]), rom[1], 2));
 		        		break;
 		        	case "Совместимость":
-		        		processListAttribute(entry.getValue(), attrValue, pa, attributes, 2);
+		        		processListAttribute(GRP_ATTR_GENERAL, entry.getValue(), attrValue, pa, attributes, 0);
 		        		break;
 		        	case "Связь":
-		        		processListAttribute(entry.getValue(), attrValue, pa, attributes, 2);
+		        		processListOfBoolAttribute(GRP_ATTR_INTERFACES, entry.getValue(), attrValue, pa, attributes, 100);
 		        		break;
 		        	case "Поддержка SIM-карты":
 	        			String desc = null;
@@ -302,24 +319,30 @@ public class InSalesDataImporter implements DataImporter {
 		        		if (simMatcher.find()) {
 		        			desc = simMatcher.group(1);
 		        		}
-		        		attributes.add(ProductAttributeBoolean.of(pa, entry.getValue(), desc != null, desc, 6));
+		        		attributes.add(ProductAttributeBoolean.of(pa, GRP_ATTR_CONSTRUCTION, entry.getValue(), desc != null, desc, 200));
 		        		break;
 		        	case "Вес":
 		        		String[] weight = attrValue.split("\\s+");
 		        		attributes.add(ProductAttributeNumeric.of(
-		        				pa, entry.getValue(), new BigDecimal(weight[0]), weight[1], 3));
+		        				pa, GRP_ATTR_CONSTRUCTION, entry.getValue(), new BigDecimal(weight[0]), weight[1], 201));
 		        		break;
 		        	case "Встроенные приложения":
-		        		processListAttribute(entry.getValue(), attrValue, pa, attributes, 7);
+		        		processListAttribute(GRP_ATTR_FUNCTIONS, entry.getValue(), attrValue, pa, attributes, 501);
 		    			break;
 		        	case "Громкая связь​":
-		        		attributes.add(ProductAttributeBoolean.of(pa, entry.getValue(), "есть".equals(attrValue.toLowerCase()), 4));
+		        		attributes.add(ProductAttributeBoolean.of(pa, GRP_ATTR_FUNCTIONS, entry.getValue(), "есть".equalsIgnoreCase(attrValue), 500));
 		        		break;
 		        	case "Съемный ремешок":
-		        		attributes.add(ProductAttributeBoolean.of(pa, entry.getValue(), "есть".equals(attrValue.toLowerCase()), 5));
+		        		attributes.add(ProductAttributeBoolean.of(pa, GRP_ATTR_CONSTRUCTION, entry.getValue(), "есть".equalsIgnoreCase(attrValue), 50));
 		        		break;
 		        	case "Влагозащита, защита от ударов":
-		        		attributes.add(ProductAttributeBoolean.of(pa, entry.getValue(), "есть".equals(attrValue.toLowerCase()), 6));
+		        		attributes.add(ProductAttributeBoolean.of(pa, GRP_ATTR_CONSTRUCTION, "Влагозащита", "есть".equalsIgnoreCase(attrValue), 201));
+		        		attributes.add(ProductAttributeBoolean.of(pa, GRP_ATTR_CONSTRUCTION, "Защита от ударов", "есть".equalsIgnoreCase(attrValue), 202));
+		        		break;
+		        	case "Поддержка карт памяти":
+					boolean exists = attrValue.startsWith("есть");
+					attributes.add(ProductAttributeBoolean.of(pa, GRP_ATTR_CONSTRUCTION, entry.getValue(),
+		        				exists, exists ? attrValue.substring(attrValue.lastIndexOf(", ") + 1).trim() : null, 202));
 		        		break;
 		        	default:
 		        		break;
