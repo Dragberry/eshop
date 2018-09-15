@@ -15,6 +15,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
@@ -88,6 +89,7 @@ public class ProductArticle extends BaseEntity {
 	@Column(name = "TAG_DESCRIPTION")
 	private String tagDescription;
 	
+	@OrderBy("`ORDER`")
 	@OneToMany(mappedBy= "productArticle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ProductAttribute<?>> attributes = new ArrayList<>();
 }

@@ -31,12 +31,18 @@ public class ProductAttributeNumeric  extends ProductAttribute<BigDecimal> {
         this.value = value;
     }
     
-    public static ProductAttributeNumeric of(ProductArticle productArticle, String name, BigDecimal value, String unit) {
+    public static ProductAttributeNumeric of(ProductArticle productArticle, String name, BigDecimal value, String unit, Integer order) {
     	var entity = new ProductAttributeNumeric();
     	entity.setProductArticle(productArticle);
     	entity.setName(name);
     	entity.setValue(value);
     	entity.setUnit(unit);
+    	entity.setOrder(order);
     	return entity;
+    }
+    
+    @Override
+    public String getStingValue() {
+    	return value.stripTrailingZeros().toPlainString() + " " + unit;
     }
 }

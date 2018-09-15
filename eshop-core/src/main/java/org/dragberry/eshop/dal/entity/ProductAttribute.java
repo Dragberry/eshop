@@ -41,8 +41,13 @@ public abstract class ProductAttribute<T> {
     @Column(name = "NAME")
     private String name;
     
-    protected abstract T getValue();
+    @Column(name = "`ORDER`")
+    private Integer order;
     
-    protected abstract void setValue(T value);
+    public abstract T getValue();
+    
+    public abstract void setValue(T value);
+    
+    public abstract String getStingValue();
     
 }

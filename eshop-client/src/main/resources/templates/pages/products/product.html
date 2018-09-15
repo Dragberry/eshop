@@ -147,7 +147,7 @@
 										</tr>
 										<tr th:each="attr: ${group.value}">
 											<td><span th:text="${attr.key}"></span></td>
-											<td><span th:text="${attr.value}"></span></td>
+											<td><span th:text="${#strings.isEmpty(#messages.msgOrNull(attr.value)) ? attr.value : #messages.msg(attr.value)}"></span></td>
 										</tr>
 									</tbody>
 								</table>							

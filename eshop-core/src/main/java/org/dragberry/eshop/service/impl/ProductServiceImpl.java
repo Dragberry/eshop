@@ -20,6 +20,7 @@ import org.dragberry.eshop.dal.entity.Category;
 import org.dragberry.eshop.dal.entity.Image;
 import org.dragberry.eshop.dal.entity.Product;
 import org.dragberry.eshop.dal.entity.ProductArticle;
+import org.dragberry.eshop.dal.entity.ProductAttribute;
 import org.dragberry.eshop.dal.repo.CategoryRepository;
 import org.dragberry.eshop.dal.repo.ImageRepository;
 import org.dragberry.eshop.dal.repo.ProductArticleRepository;
@@ -174,18 +175,8 @@ public class ProductServiceImpl implements ProductService {
         product.setTagTitle(article.getTagTitle());
         setLowestPrice(article, product);
         
-        Map<String, List<KeyValue>> attibuteGroups = new LinkedHashMap<>();
-        attibuteGroups.put("Основные", List.of(
-                new KeyValue("Поддержка SIM-карты", "есть (1-micro-SIM)"),
-                new KeyValue("Совместимость", "Android iOS"),
-                new KeyValue("Связь", "2G GSM / GPRS, Bluetooth 3.0")));
-        attibuteGroups.put("Экран", List.of(
-                new KeyValue("Размер экрана", "1.54\""),
-                new KeyValue("Тип экрана", "Цветной сенсорный TFT-дисплей 240х240")));
-        attibuteGroups.put("Фитнес-функции", List.of(
-                new KeyValue("Контроль физической активности", "Есть"),
-                new KeyValue("Мониторинг сна", "Есть")));
-        product.setAttributes(attibuteGroups);
+        product.setAttributes(article.getAttributes().stream().map(attr -> new KeyValue(attr.getName(), attr.getStingValue()))
+            	.collect(groupingBy(attr -> "Основные")));
         
         // test data
         product.setLabels(Map.of("Скидка", Modifier.INFO, "20%", Modifier.DANGER));

@@ -15,6 +15,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -28,6 +30,7 @@ import org.dragberry.eshop.dal.entity.ProductArticle;
 import org.dragberry.eshop.dal.entity.ProductArticleOption;
 import org.dragberry.eshop.dal.entity.ProductAttribute;
 import org.dragberry.eshop.dal.entity.ProductAttributeBoolean;
+import org.dragberry.eshop.dal.entity.ProductAttributeList;
 import org.dragberry.eshop.dal.entity.ProductAttributeNumeric;
 import org.dragberry.eshop.dal.entity.Product.SaleStatus;
 import org.dragberry.eshop.dal.repo.CategoryRepository;
@@ -77,6 +80,8 @@ public class InSalesDataImporter implements DataImporter {
 	private static final String OPTION = "Свойство:";
 	
 	private static final String ATTRIBUTE = "Параметр:";
+	
+	private static final Pattern SIM_PATTERN = Pattern.compile("есть \\((.*?)\\)$");
 	
 	@Autowired
 	private CategoryRepository categoryRepo;
@@ -183,42 +188,7 @@ public class InSalesDataImporter implements DataImporter {
 			pa.setTagKeywords(firstLine[columnsMap.get(TAG_KEYWORDS)]);
 			pa.setTagDescription(firstLine[columnsMap.get(TAG_DESCRIPTION)]);
 			
-			List<ProductAttribute<?>> attributes = new ArrayList<>();
-			for (Entry<String, String> entry : attributeMap.entrySet()) {
-                Integer columnNumber = columnsMap.get(entry.getKey());
-                String attrValue = firstLine.length > columnNumber ? firstLine[columnNumber] : StringUtils.EMPTY;
-                if (StringUtils.isNotBlank(attrValue)) {
-                    switch (entry.getValue()) {
-                    	case "Тип аккумулятора":
-                    		String[] acc = attrValue.split("[^A-Za-z0-9]+");
-                    		attributes.add(ProductAttributeNumeric.of(
-                    				pa, entry.getValue(), new BigDecimal(acc[0]), acc[1]));
-                    		break;
-                    	case "Оперативная память":
-                    		String[] ram = attrValue.split("\\s+");
-                    		attributes.add(ProductAttributeNumeric.of(
-                    				pa, entry.getValue(), new BigDecimal(ram[0]), ram[1]));
-                    		break;
-                    	case "Встроенная память":
-                    		String[] rom = attrValue.split("\\s+");
-                    		attributes.add(ProductAttributeNumeric.of(
-                    				pa, entry.getValue(), new BigDecimal(rom[0]), rom[1]));
-                    		break;
-                    	case "Громкая связь​":
-                    		attributes.add(ProductAttributeBoolean.of(pa, entry.getValue(), Boolean.FALSE));
-                    		break;
-                    	case "Съемный ремешок":
-                    		attributes.add(ProductAttributeBoolean.of(pa, entry.getValue(), Boolean.FALSE));
-                    		break;
-                    	case "Влагозащита, защита от ударов":
-                    		attributes.add(ProductAttributeBoolean.of(pa, entry.getValue(), Boolean.FALSE));
-                    		break;
-                    	default:
-                    		break;
-                    }
-                	log.info("Attr: " + entry.getValue() + "; value: "+ attrValue);
-                }
-            }
+			List<ProductAttribute<?>> attributes = processAttributes(pa, firstLine);
 			pa.getAttributes().clear();
 			if (!attributes.isEmpty()) {
 				productArticleRepo.flush();
@@ -238,6 +208,8 @@ public class InSalesDataImporter implements DataImporter {
 				}
 			}
 			
+			productRepo.deleteAll(pa.getProducts());
+			pa.getProducts().clear();
             pa = productArticleRepo.save(pa);
             
 			imageRepo.deleteAll(oldImages);
@@ -285,6 +257,77 @@ public class InSalesDataImporter implements DataImporter {
 			}
 		}
 		
+	}
+	
+	private static void processListAttribute(String name, String attrValue, ProductArticle pa, List<ProductAttribute<?>> attributes, Integer order) {
+		String[] values = attrValue.split("##");
+		if (values.length > 0) {
+			List<String> valueList = new ArrayList<>();
+			valueList.addAll(List.of(values));
+			attributes.add(ProductAttributeList.of(pa, name, valueList, order));
+		}
+	}
+
+	private List<ProductAttribute<?>> processAttributes(ProductArticle pa, String[] firstLine) {
+		List<ProductAttribute<?>> attributes = new ArrayList<>();
+		for (Entry<String, String> entry : attributeMap.entrySet()) {
+		    Integer columnNumber = columnsMap.get(entry.getKey());
+		    String attrValue = firstLine.length > columnNumber ? firstLine[columnNumber] : StringUtils.EMPTY;
+		    if (StringUtils.isNotBlank(attrValue)) {
+		        switch (entry.getValue()) {
+		        	case "Тип аккумулятора":
+		        		String[] acc = attrValue.split("[^A-Za-z0-9]+");
+		        		attributes.add(ProductAttributeNumeric.of(
+		        				pa, entry.getValue(), new BigDecimal(acc[0]), acc[1], 1));
+		        		break;
+		        	case "Оперативная память":
+		        		String[] ram = attrValue.split("\\s+");
+		        		attributes.add(ProductAttributeNumeric.of(
+		        				pa, entry.getValue(), new BigDecimal(ram[0]), ram[1], 0));
+		        		break;
+		        	case "Встроенная память":
+		        		String[] rom = attrValue.split("\\s+");
+		        		attributes.add(ProductAttributeNumeric.of(
+		        				pa, entry.getValue(), new BigDecimal(rom[0]), rom[1], 2));
+		        		break;
+		        	case "Совместимость":
+		        		processListAttribute(entry.getValue(), attrValue, pa, attributes, 2);
+		        		break;
+		        	case "Связь":
+		        		processListAttribute(entry.getValue(), attrValue, pa, attributes, 2);
+		        		break;
+		        	case "Поддержка SIM-карты":
+	        			String desc = null;
+	        			Matcher simMatcher = SIM_PATTERN.matcher(attrValue);
+		        		if (simMatcher.find()) {
+		        			desc = simMatcher.group(1);
+		        		}
+		        		attributes.add(ProductAttributeBoolean.of(pa, entry.getValue(), desc != null, desc, 6));
+		        		break;
+		        	case "Вес":
+		        		String[] weight = attrValue.split("\\s+");
+		        		attributes.add(ProductAttributeNumeric.of(
+		        				pa, entry.getValue(), new BigDecimal(weight[0]), weight[1], 3));
+		        		break;
+		        	case "Встроенные приложения":
+		        		processListAttribute(entry.getValue(), attrValue, pa, attributes, 7);
+		    			break;
+		        	case "Громкая связь​":
+		        		attributes.add(ProductAttributeBoolean.of(pa, entry.getValue(), "есть".equals(attrValue.toLowerCase()), 4));
+		        		break;
+		        	case "Съемный ремешок":
+		        		attributes.add(ProductAttributeBoolean.of(pa, entry.getValue(), "есть".equals(attrValue.toLowerCase()), 5));
+		        		break;
+		        	case "Влагозащита, защита от ударов":
+		        		attributes.add(ProductAttributeBoolean.of(pa, entry.getValue(), "есть".equals(attrValue.toLowerCase()), 6));
+		        		break;
+		        	default:
+		        		break;
+		        }
+		    	log.info("Attr: " + entry.getValue() + "; value: "+ attrValue);
+		    }
+		}
+		return attributes;
 	}
 
 	private void processImages(String[] columns, ProductArticle pa) {
