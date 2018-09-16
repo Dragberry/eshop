@@ -33,6 +33,7 @@ import org.dragberry.eshop.dal.entity.ProductAttribute;
 import org.dragberry.eshop.dal.entity.ProductAttributeBoolean;
 import org.dragberry.eshop.dal.entity.ProductAttributeList;
 import org.dragberry.eshop.dal.entity.ProductAttributeNumeric;
+import org.dragberry.eshop.dal.entity.ProductAttributeString;
 import org.dragberry.eshop.dal.entity.Product.SaleStatus;
 import org.dragberry.eshop.dal.repo.CategoryRepository;
 import org.dragberry.eshop.dal.repo.ImageRepository;
@@ -82,15 +83,21 @@ public class InSalesDataImporter implements DataImporter {
 	
 	private static final String ATTRIBUTE = "Параметр:";
 	
-	private static final Pattern SIM_PATTERN = Pattern.compile("есть \\((.*?)\\)$");
+	private static final Pattern PATTERN_EXISTS = Pattern.compile("есть \\((.*?)\\)$");
+
+	private static final Pattern PATTERN_EXISTS_VALUES = Pattern.compile("есть \\((.*?) (.*?)\\)$");
+	
+	private static final Pattern PATTERN_SCREEN = Pattern.compile("(цветной)?\\s*(сенсорный)?\\s*(TFT|AMOLED|IPS|ЖК)?[- ]?дисплей?\\s*(.*)");
 	
 	private static final String GRP_ATTR_GENERAL = "Основные";
 	
 	private static final String GRP_ATTR_INTERFACES = "Интерфейсы";
 	
-	private static final String GRP_ATTR_FUNCTIONS= "Функции";
+	private static final String GRP_ATTR_FUNCTIONS = "Функции";
 	
-	private static final String GRP_ATTR_CONSTRUCTION= "Конструкция";
+	private static final String GRP_ATTR_CONSTRUCTION = "Конструкция";
+	
+	private static final String GRP_ATTR_SCREEN = "Экран";
 	
 	private static final String GRP_ATTR_ACCUM = "Аккумулятор и время работы";
 	
@@ -315,11 +322,17 @@ public class InSalesDataImporter implements DataImporter {
 		        		break;
 		        	case "Поддержка SIM-карты":
 	        			String desc = null;
-	        			Matcher simMatcher = SIM_PATTERN.matcher(attrValue);
+	        			Matcher simMatcher = PATTERN_EXISTS.matcher(attrValue);
 		        		if (simMatcher.find()) {
 		        			desc = simMatcher.group(1);
 		        		}
 		        		attributes.add(ProductAttributeBoolean.of(pa, GRP_ATTR_CONSTRUCTION, entry.getValue(), desc != null, desc, 200));
+		        		break;
+		        	case "Материал корпуса":
+		        		attributes.add(ProductAttributeString.of(pa, GRP_ATTR_CONSTRUCTION, entry.getValue(), attrValue, 204));
+		        		break;
+		        	case "Материал ремешка":
+		        		attributes.add(ProductAttributeString.of(pa, GRP_ATTR_CONSTRUCTION, entry.getValue(), attrValue, 205));
 		        		break;
 		        	case "Вес":
 		        		String[] weight = attrValue.split("\\s+");
@@ -329,6 +342,24 @@ public class InSalesDataImporter implements DataImporter {
 		        	case "Встроенные приложения":
 		        		processListAttribute(GRP_ATTR_FUNCTIONS, entry.getValue(), attrValue, pa, attributes, 501);
 		    			break;
+		        	case "Фитнес-функции":
+		        		processListAttribute(GRP_ATTR_FUNCTIONS, entry.getValue(), attrValue, pa, attributes, 502);
+		    			break;
+		        	case "Синхронизация с телефоном":
+		        		processListAttribute(GRP_ATTR_FUNCTIONS, entry.getValue(), attrValue, pa, attributes, 503);
+		    			break;
+		        	case "Управление входящими и исходящими вызовами":
+		        		processListAttribute(GRP_ATTR_FUNCTIONS, entry.getValue(), attrValue, pa, attributes, 504);
+		        		break;
+		        	case "Управление входящими и исходящими SMS":
+		        		processListAttribute(GRP_ATTR_FUNCTIONS, entry.getValue(), attrValue, pa, attributes, 505);
+		        		break;
+		        	case "Уведомления событий телефона (входящий звонок, SMS, соц. сети и др)":
+		        		attributes.add(ProductAttributeBoolean.of(pa, GRP_ATTR_FUNCTIONS, "Уведомления событий телефона", "есть".equalsIgnoreCase(attrValue), 506));
+		        		break;
+		        	case "Тип оповещения":
+		        		processListAttribute(GRP_ATTR_FUNCTIONS, entry.getValue(), attrValue, pa, attributes, 505);
+		        		break;
 		        	case "Громкая связь​":
 		        		attributes.add(ProductAttributeBoolean.of(pa, GRP_ATTR_FUNCTIONS, entry.getValue(), "есть".equalsIgnoreCase(attrValue), 500));
 		        		break;
@@ -336,13 +367,38 @@ public class InSalesDataImporter implements DataImporter {
 		        		attributes.add(ProductAttributeBoolean.of(pa, GRP_ATTR_CONSTRUCTION, entry.getValue(), "есть".equalsIgnoreCase(attrValue), 50));
 		        		break;
 		        	case "Влагозащита, защита от ударов":
-		        		attributes.add(ProductAttributeBoolean.of(pa, GRP_ATTR_CONSTRUCTION, "Влагозащита", "есть".equalsIgnoreCase(attrValue), 201));
-		        		attributes.add(ProductAttributeBoolean.of(pa, GRP_ATTR_CONSTRUCTION, "Защита от ударов", "есть".equalsIgnoreCase(attrValue), 202));
+					boolean def = !"нет".equalsIgnoreCase(attrValue);
+					attributes.add(ProductAttributeBoolean.of(pa, GRP_ATTR_CONSTRUCTION, entry.getValue(), def, def ? attrValue : null, 201));
 		        		break;
 		        	case "Поддержка карт памяти":
-					boolean exists = attrValue.startsWith("есть");
-					attributes.add(ProductAttributeBoolean.of(pa, GRP_ATTR_CONSTRUCTION, entry.getValue(),
+		        		boolean exists = attrValue.startsWith("есть");
+		        		attributes.add(ProductAttributeBoolean.of(pa, GRP_ATTR_CONSTRUCTION, entry.getValue(),
 		        				exists, exists ? attrValue.substring(attrValue.lastIndexOf(", ") + 1).trim() : null, 202));
+		        		break;
+		        	case "Встроенная камера и кол-во точек":
+	        			Matcher cameraMatcher = PATTERN_EXISTS_VALUES.matcher(attrValue);
+		        		if (cameraMatcher.find()) {
+		        			attributes.add(ProductAttributeNumeric.of(pa, GRP_ATTR_CONSTRUCTION, "Встроенная камера",
+			        				new BigDecimal(cameraMatcher.group(1).replaceAll(",",  ".")), cameraMatcher.group(2), 203));
+		        		}
+		        		break;
+		        	case "Размер экрана":
+		        		attributes.add(ProductAttributeNumeric.of(pa, GRP_ATTR_SCREEN, entry.getValue(),
+		        				new BigDecimal(attrValue.substring(1, attrValue.length() - 3).replaceAll(",", "")),
+		        				"\"", 600));
+		        	case "Тип экрана":
+		        		Matcher screenMatcher = PATTERN_SCREEN.matcher(attrValue);
+		        		if (screenMatcher.find()) {
+		        			attributes.add(ProductAttributeBoolean.of(pa, GRP_ATTR_SCREEN, "Дисплей", screenMatcher.group(1) != null,
+			        				screenMatcher.group(1), 601));
+		        			attributes.add(ProductAttributeBoolean.of(pa, GRP_ATTR_SCREEN, "Сенсорный", screenMatcher.group(2) != null, 602));
+		        			if (screenMatcher.group(3) != null) {
+		        				attributes.add(ProductAttributeString.of(pa, GRP_ATTR_SCREEN, "Технология", screenMatcher.group(3), 603));
+		        			}
+		        			if (screenMatcher.group(4) != null) {
+		        				attributes.add(ProductAttributeString.of(pa, GRP_ATTR_SCREEN, "Разрешение", screenMatcher.group(4), 603));
+		        			}
+		        		}
 		        		break;
 		        	default:
 		        		break;
@@ -411,4 +467,19 @@ public class InSalesDataImporter implements DataImporter {
 		return index < columns.length ? columns[index] : null;
 	}
 
+	public static void main(String[] args) {
+		Pattern p = Pattern.compile("(цветной)?\\s*(сенсорный)?\\s*(TFT|AMOLED|IPS|ЖК)?[- ]?дисплей?\\s*(.*)?");
+		String str = "цветной сенсорный  TFT-дисплей  128х128";
+		String str1 = "цветной сенсорный IPS-дисплей 320х240";
+		String str2 = "цветной сенсорный AMOLED дисплей 400х400";
+		String str3 = "ЖК-дисплей";
+		Matcher m = p.matcher(str3);
+		if (m.find()) {
+			for (int group = 1; group <= m.groupCount(); group++) {
+				System.out.println(m.group(group));
+			}
+		}
+		
+	}
+	
 }
