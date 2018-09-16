@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.dragberry.eshop.dal.entity.Category;
+import org.dragberry.eshop.dal.entity.ProductAttribute;
 import org.dragberry.eshop.model.common.KeyValue;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -35,4 +36,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     @Query("select new org.dragberry.eshop.model.common.KeyValue(o.name, o.value) from ProductArticle pa join pa.categories c join pa.products p join p.options o where c.entityKey = :categoryId")
     Set<KeyValue> getOptionFilters(Long categoryId);
 
+    @Query("select attr from ProductArticle pa join pa.categories c join pa.attributes attr where c.entityKey = :categoryId and attr.name = :attributeName")
+    List<ProductAttribute<?>> getAttributeFilter(Long categoryId, String attributeName);
 }

@@ -15,12 +15,15 @@ import java.util.Set;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import javax.management.AttributeList;
+
 import org.apache.commons.lang3.StringUtils;
 import org.dragberry.eshop.dal.entity.Category;
 import org.dragberry.eshop.dal.entity.Image;
 import org.dragberry.eshop.dal.entity.Product;
 import org.dragberry.eshop.dal.entity.ProductArticle;
 import org.dragberry.eshop.dal.entity.ProductAttribute;
+import org.dragberry.eshop.dal.entity.ProductAttributeString;
 import org.dragberry.eshop.dal.repo.CategoryRepository;
 import org.dragberry.eshop.dal.repo.ImageRepository;
 import org.dragberry.eshop.dal.repo.ProductArticleRepository;
@@ -214,19 +217,35 @@ public class ProductServiceImpl implements ProductService {
     
     @Override
     public List<Filter> getCategoryFilters(Long categoryId) {
+    	List<String> attrFilters = List.of("Технология", "Разрешение", "Материал ремешка");
+    	
     	RangeFilter priceFilter = new RangeFilter();
 		priceFilter.setId("price");
 		priceFilter.setName("msg.common.price");
 		priceFilter.setMask("# ##0.00");
-    	return Stream.concat(Stream.of(priceFilter), categoryRepo.getOptionFilters(categoryId).stream()
-		        .sorted(Comparator.comparing(kv -> kv.getValue().toString()))
-		        .collect(groupingBy(kv -> kv.getKey().toString(), mapping(kv -> kv.getValue().toString(), toList())))
-		        .entrySet().stream().map(entry -> {
-		        	ListFilter optFilter = new ListFilter();
-		        	optFilter.setId(MessageFormat.format("option[{0}]", entry.getKey()));
-		        	optFilter.setName(entry.getKey());
-		        	optFilter.setAttributes(entry.getValue());
-		        	return optFilter;
-		        })).collect(toList());
+    	return Stream.concat(
+    			Stream.of(priceFilter),
+    			
+    			Stream.concat(
+	    			categoryRepo.getOptionFilters(categoryId).stream()
+			        .sorted(Comparator.comparing(kv -> kv.getValue().toString()))
+			        .collect(groupingBy(kv -> kv.getKey().toString(), mapping(kv -> kv.getValue().toString(), toList())))
+			        .entrySet().stream().map(entry -> {
+			        	ListFilter optFilter = new ListFilter();
+			        	optFilter.setId(MessageFormat.format("option[{0}]", entry.getKey()));
+			        	optFilter.setName(entry.getKey());
+			        	optFilter.setAttributes(entry.getValue());
+			        	return optFilter;
+			        }),
+			    
+			        attrFilters.stream().map(attrName -> {
+			    		List<ProductAttribute<?>> attrList = categoryRepo.getAttributeFilter(categoryId, attrName);
+			    		ListFilter attrFilter = new ListFilter();
+			        	attrFilter.setId(MessageFormat.format("attribute[{0}]", attrName));
+			        	attrFilter.setName(attrName);
+			        	attrFilter.setAttributes(attrList.stream().map(ProductAttribute::getStringValue).collect(toList()));
+			        	return attrFilter;
+			    	}))
+    			).collect(toList());
     }
 }
