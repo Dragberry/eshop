@@ -8,7 +8,7 @@ import javax.persistence.Table;
 @Table(name = "PRODUCT_ATTRIBUTE_STRING")
 public class ProductAttributeString  extends ProductAttribute<String> {
 
-    @Column(name = "VALUE")
+    @Column(name = "VALUE_STRING")
     private String value;
     
     @Override

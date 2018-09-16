@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 public class ProductAttributeBoolean  extends ProductAttribute<Boolean> {
 
-    @Column(name = "VALUE")
+    @Column(name = "VALUE_BOOLEAN")
     private Boolean value;
     
     @Column(name = "DESCRIPTION")

@@ -15,7 +15,7 @@ import lombok.Setter;
 @Setter
 public class ProductAttributeNumeric  extends ProductAttribute<BigDecimal> {
 
-    @Column(name = "VALUE")
+    @Column(name = "VALUE_NUMERIC")
     private BigDecimal value;
     
     @Column(name = "UNIT")
