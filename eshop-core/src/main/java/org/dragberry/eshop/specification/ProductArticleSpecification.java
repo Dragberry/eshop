@@ -8,15 +8,18 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 
 import org.apache.commons.lang3.StringUtils;
 import org.dragberry.eshop.dal.entity.ProductArticle;
+import org.dragberry.eshop.dal.entity.ProductAttributeBoolean;
 import org.springframework.data.jpa.domain.Specification;
 
 public class ProductArticleSpecification implements Specification<ProductArticle> {
@@ -29,6 +32,9 @@ public class ProductArticleSpecification implements Specification<ProductArticle
     
     private final Map<String, String[]> searchParams;
     
+    
+    
+    
     public ProductArticleSpecification(String categoryReference, Map<String, String[]> searchParams) {
         this.categoryReference = categoryReference;
         this.searchParams = searchParams;
@@ -39,6 +45,13 @@ public class ProductArticleSpecification implements Specification<ProductArticle
         var productRoot = root.join("products");
         var categoryRoot = root.join("categories");
         Join<?, ?> optionRoot = null;
+        Join<?, ?> attributesRoot = null;
+        
+        Subquery<ProductAttributeBoolean> sqPAB = query.subquery(ProductAttributeBoolean.class);
+        Root<ProductAttributeBoolean> fromPAB = sqPAB.from(ProductAttributeBoolean.class);
+        sqPAB.select(fromPAB.get("productArticle").get("entityKey"));
+        List<Predicate> wherePAB = new ArrayList<>();
+        
         List<Predicate> where = new ArrayList<>();
         if (StringUtils.isNotBlank(categoryReference)) {
             where.add(cb.equal(categoryRoot.get("reference"), categoryReference));
@@ -73,10 +86,34 @@ public class ProductArticleSpecification implements Specification<ProductArticle
 				}
             	where.add(cb.equal(optionRoot.get("name"), optionMatcher.group(1)));
             	where.add(optionRoot.get("value").in(Arrays.asList(values)));
+            	continue;
+			}
+			
+			Pattern attrPattern = Pattern.compile("attribute\\[(.*?)\\]$");
+			Matcher attrMatcher = attrPattern.matcher(name);
+			if (attrMatcher.find() && values.length > 0) {
+    			Predicate attrPredicate = cb.equal(fromPAB.get("name"), attrMatcher.group(1));
+    			List<Predicate> orList = new ArrayList<>();
+    			for (String value : values) {
+    			    if (Boolean.FALSE.toString().equalsIgnoreCase(value) || (Boolean.TRUE.toString().equalsIgnoreCase(value))) {
+    			        orList.add(cb.equal(fromPAB.get("value"), Boolean.parseBoolean(value)));
+    			    } else {
+    			        orList.add(cb.and(cb.equal(fromPAB.get("value"), true), cb.and(cb.equal(fromPAB.get("description"), value))));
+    			    }
+    			}
+    			wherePAB.add(cb.and(attrPredicate, cb.or(orList.toArray(new Predicate[orList.size()]))));
+			}
+        }
+        
+        if (!wherePAB.isEmpty()) {
+            if (attributesRoot == null) {
+                attributesRoot = productRoot.join("attributes");
             }
+            where.add(attributesRoot.in(
+                    sqPAB.select(fromPAB).where(wherePAB.toArray(new Predicate[wherePAB.size()]))));
         }
         query.distinct(true);
-        return cb.and(where.toArray(new Predicate[] {}));
+        return cb.and(where.toArray(new Predicate[where.size()]));
     }
 
 }

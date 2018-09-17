@@ -23,6 +23,7 @@ import org.dragberry.eshop.dal.entity.Image;
 import org.dragberry.eshop.dal.entity.Product;
 import org.dragberry.eshop.dal.entity.ProductArticle;
 import org.dragberry.eshop.dal.entity.ProductAttribute;
+import org.dragberry.eshop.dal.entity.ProductAttributeBoolean;
 import org.dragberry.eshop.dal.entity.ProductAttributeString;
 import org.dragberry.eshop.dal.repo.CategoryRepository;
 import org.dragberry.eshop.dal.repo.ImageRepository;
@@ -36,6 +37,7 @@ import org.dragberry.eshop.model.product.ProductListItem;
 import org.dragberry.eshop.model.product.ActualPriceHolder;
 import org.dragberry.eshop.model.product.CategoryItem;
 import org.dragberry.eshop.model.product.Filter;
+import org.dragberry.eshop.model.product.GroupFilter;
 import org.dragberry.eshop.model.product.ListFilter;
 import org.dragberry.eshop.model.product.ProductCategory;
 import org.dragberry.eshop.model.product.ProductDetails;
@@ -217,7 +219,7 @@ public class ProductServiceImpl implements ProductService {
     
     @Override
     public List<Filter> getCategoryFilters(Long categoryId) {
-    	List<String> attrFilters = List.of("Технология", "Разрешение", "Материал ремешка");
+    	List<String> attrFilters = List.of("Технология", "Разрешение", "Материал ремешка", "Поддержка SIM-карты", "Интерфейсы");
     	
     	RangeFilter priceFilter = new RangeFilter();
 		priceFilter.setId("price");
@@ -229,7 +231,7 @@ public class ProductServiceImpl implements ProductService {
     			Stream.concat(
 	    			categoryRepo.getOptionFilters(categoryId).stream()
 			        .sorted(Comparator.comparing(kv -> kv.getValue().toString()))
-			        .collect(groupingBy(kv -> kv.getKey().toString(), mapping(kv -> kv.getValue().toString(), toList())))
+			        .collect(groupingBy(kv -> kv.getKey().toString(), mapping(kv -> new KeyValue(kv.getValue(), kv.getValue()), toList())))
 			        .entrySet().stream().map(entry -> {
 			        	ListFilter optFilter = new ListFilter();
 			        	optFilter.setId(MessageFormat.format("option[{0}]", entry.getKey()));
@@ -239,13 +241,66 @@ public class ProductServiceImpl implements ProductService {
 			        }),
 			    
 			        attrFilters.stream().map(attrName -> {
-			    		List<ProductAttribute<?>> attrList = categoryRepo.getAttributeFilter(categoryId, attrName);
-			    		ListFilter attrFilter = new ListFilter();
-			        	attrFilter.setId(MessageFormat.format("attribute[{0}]", attrName));
-			        	attrFilter.setName(attrName);
-			        	attrFilter.setAttributes(attrList.stream().map(ProductAttribute::getStringValue).collect(toList()));
-			        	return attrFilter;
+			            List<ProductAttribute<?>> attrGroupList = categoryRepo.getAttributeFilterByGroup(categoryId, attrName);
+			            if (!attrGroupList.isEmpty()) {
+			                GroupFilter attrFilter = new GroupFilter();
+                            attrFilter.setId(MessageFormat.format("attribute", attrName));
+                            attrFilter.setName(attrName);
+                            attrFilter.setAttributes(attrGroupList.stream().map(pa -> new KeyValue(pa.getName(), true)).collect(toList()));
+                            return attrFilter;
+			            }
+			            
+			    		List<ProductAttribute<?>> attrList = categoryRepo.getAttributeFilterByName(categoryId, attrName);
+			    		if (!attrList.isEmpty() && attrList.get(0) instanceof ProductAttributeBoolean) {
+			    		    ListFilter attrFilter = new ListFilter();
+	                        attrFilter.setId(MessageFormat.format("attribute[{0}]", attrName));
+	                        attrFilter.setName(attrName);
+	                        attrFilter.setAttributes(Stream.concat(Stream.of(new KeyValue("msg.common.false", false)),
+                                    attrList.stream().map(pa -> (ProductAttributeBoolean) pa).filter(ProductAttributeBoolean::getValue)
+                                    .map(pa -> new KeyValue(pa.getStringValue(), pa.getStringValue()))).collect(toList()));
+	                        return attrFilter;
+			    		} else {
+			    		    ListFilter attrFilter = new ListFilter();
+	                        attrFilter.setId(MessageFormat.format("attribute[{0}]", attrName));
+	                        attrFilter.setName(attrName);
+	                        attrFilter.setAttributes(attrList.stream().map(pa -> new KeyValue(pa.getStringValue(), pa.getStringValue())).collect(toList()));
+	                        return attrFilter;
+			    		}
 			    	}))
     			).collect(toList());
     }
+}
+
+abstract class AttributeFilter {
+    
+    protected String name;
+    
+    protected Long categoryId;
+    
+    public abstract Filter buildFilter();
+}
+
+class ListAttributeFilter extends AttributeFilter {
+
+    @Override
+    public Filter buildFilter() {
+        ListFilter filter = new ListFilter();
+        filter.setId(MessageFormat.format("attribute[{0}]", name));
+        filter.setName(name);
+        return filter;
+    }
+    
+}
+
+class RangeAttributeFilter extends AttributeFilter {
+
+    @Override
+    public Filter buildFilter() {
+        RangeFilter filter = new RangeFilter();
+        filter.setId(MessageFormat.format("attribute[{0}]", name));
+        filter.setName(name);
+        filter.setMask("##0");
+        return filter;
+    }
+    
 }

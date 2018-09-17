@@ -43,10 +43,28 @@
 			<div class="product-attribute-list-filter col-12">
 				<div th:each="attr, iter : ${filter.attributes}" class="form-check">
 					<input class="form-check-input" type="checkbox"
-						th:name="|${filter.id}|" th:id="|${attr}ListItem|" th:value="${attr}"
+						th:name="|${filter.id}|" th:id="|${filter.id}${attr.value}|" th:value="${attr.value}"
 						onchange="doSearch()">
-				  	<label class="form-check-label" th:for="|${attr}ListItem|">
-				  		[[${attr}]]
+				  	<label class="form-check-label" th:for="|${filter.id}${attr.value}|">
+				  		[[${#strings.isEmpty(#messages.msgOrNull(attr.key)) ? attr.key : #messages.msg(attr.key)}]]
+				  	</label>
+				</div>
+			</div>
+		</div>
+	</th:block>
+	
+	<th:block th:fragment="group-filter">
+		<div class="product-attribute-filter row mt-3">
+			<div class="col-12">
+				<strong>[[${#strings.isEmpty(#messages.msgOrNull(filter.name)) ? filter.name : #messages.msg(filter.name)}]]</strong>
+			</div>
+			<div class="product-attribute-list-filter col-12">
+				<div th:each="attr, iter : ${filter.attributes}" class="form-check">
+					<input class="form-check-input" type="checkbox"
+						th:name="|${filter.id}[${attr.key}]|" th:id="|${filter.id}[${attr.key}]|" th:value="${attr.value}"
+						onchange="doSearch()">
+				  	<label class="form-check-label" th:for="|${filter.id}[${attr.key}]|">
+				  		[[${#strings.isEmpty(#messages.msgOrNull(attr.key)) ? attr.key : #messages.msg(attr.key)}]]
 				  	</label>
 				</div>
 			</div>

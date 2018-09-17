@@ -10,13 +10,13 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ListFilter extends Filter {
+public class GroupFilter extends Filter {
 
-	private static final String TEMPLATE_NAME = "list-filter";
+	private static final String TEMPLATE_NAME = "group-filter";
 	
 	private List<KeyValue> attributes = new ArrayList<>();
 
-	public ListFilter() {
+	public GroupFilter() {
 		super(TEMPLATE_NAME);
 	}
 }
