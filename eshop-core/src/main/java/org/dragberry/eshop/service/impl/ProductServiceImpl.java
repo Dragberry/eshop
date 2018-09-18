@@ -253,7 +253,7 @@ public class ProductServiceImpl implements ProductService {
 			    		List<ProductAttribute<?>> attrList = categoryRepo.getAttributeFilterByName(categoryId, attrName);
 			    		if (!attrList.isEmpty() && attrList.get(0) instanceof ProductAttributeBoolean) {
 			    		    ListFilter attrFilter = new ListFilter();
-	                        attrFilter.setId(MessageFormat.format("attribute[{0}]", attrName));
+	                        attrFilter.setId(MessageFormat.format("attribute[{0}][{1}]", attrName, "is"));
 	                        attrFilter.setName(attrName);
 	                        attrFilter.setAttributes(Stream.concat(Stream.of(new KeyValue("msg.common.false", false)),
                                     attrList.stream().map(pa -> (ProductAttributeBoolean) pa).filter(ProductAttributeBoolean::getValue)
@@ -261,7 +261,7 @@ public class ProductServiceImpl implements ProductService {
 	                        return attrFilter;
 			    		} else {
 			    		    ListFilter attrFilter = new ListFilter();
-	                        attrFilter.setId(MessageFormat.format("attribute[{0}]", attrName));
+	                        attrFilter.setId(MessageFormat.format("attribute[{0}][{1}]", attrName, "all"));
 	                        attrFilter.setName(attrName);
 	                        attrFilter.setAttributes(attrList.stream().map(pa -> new KeyValue(pa.getStringValue(), pa.getStringValue())).collect(toList()));
 	                        return attrFilter;

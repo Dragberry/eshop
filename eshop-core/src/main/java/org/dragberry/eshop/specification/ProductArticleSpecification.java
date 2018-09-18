@@ -19,15 +19,21 @@ import javax.persistence.criteria.Subquery;
 import org.apache.commons.lang3.StringUtils;
 import org.dragberry.eshop.dal.entity.ProductArticle;
 import org.dragberry.eshop.dal.entity.ProductAttributeBoolean;
+import org.dragberry.eshop.dal.entity.ProductAttributeList;
+import org.dragberry.eshop.dal.entity.ProductAttributeString;
 import org.springframework.data.jpa.domain.Specification;
 
 public class ProductArticleSpecification implements Specification<ProductArticle> {
 
     private static final long serialVersionUID = 1408556421987136103L;
     
+    private enum AttributeAction {
+    	ANY, ALL, IS, FROM, TO
+    }
+    
     private static final Pattern OPTION_PATTERN = Pattern.compile("option\\[(.*?)\\]$");
 
-    private static final Pattern ATTRIBUTE_PATTERN = Pattern.compile("attribute\\[(.*?)\\]$");
+    private static final Pattern ATTRIBUTE_PATTERN = Pattern.compile("attribute\\[(.*?)\\]\\[(in|any|all|from|to)\\]$");
     
     private final String categoryReference;
     
@@ -83,7 +89,23 @@ public class ProductArticleSpecification implements Specification<ProductArticle
             }
             Matcher attrMatcher;
             if ((attrMatcher = ATTRIBUTE_PATTERN.matcher(name)).find()) {
-            	where.addAll(getAttributeExpressions(attrMatcher.group(1), values, root, query, cb));
+            	switch (AttributeAction.valueOf(attrMatcher.group(2).toUpperCase())) {
+				case ALL:
+					where.addAll(attributeAll(attrMatcher.group(1), values, root, query, cb));
+					break;
+				case ANY:
+					where.addAll(attributeAny(attrMatcher.group(1), values, root, query, cb));
+					break;
+				case FROM:
+					break;
+				case IS:
+					where.addAll(attributeIs(attrMatcher.group(1), values, root, query, cb));
+					break;
+				case TO:
+					break;
+				default:
+					break;
+            	}
             	continue;
             }
         }
@@ -103,7 +125,40 @@ public class ProductArticleSpecification implements Specification<ProductArticle
 		return List.of();
     }
     
-    private List<Predicate> getAttributeExpressions(String attributeName, String[] values, Root<ProductArticle> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+    private List<Predicate> attributeAny(String attributeName, String[] values, Root<ProductArticle> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+		if (values.length > 0) {
+	    	Subquery<Long> sqPAS = query.subquery(Long.class);
+	        Root<ProductAttributeString> fromPAS = sqPAS.from(ProductAttributeString.class);
+	        return List.of(cb.exists(sqPAS.select(fromPAS.get("entityKey")).where(
+	        		cb.equal(root, fromPAS.get("productArticle")),
+	        		cb.equal(fromPAS.get("name"), attributeName),
+	        		fromPAS.get("value").in(List.of(values)))));
+		}
+    	return List.of();
+    }
+    
+    private List<Predicate> attributeAll(String attributeName, String[] values, Root<ProductArticle> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+  		if (values.length > 0) {
+  	    	Subquery<Long> sqPAL = query.subquery(Long.class);
+  	        Root<ProductAttributeList> fromPAL = sqPAL.from(ProductAttributeList.class);
+  	        
+  	        Predicate[] restrictions = new Predicate[values.length];
+  	        for (int i = 0; i < values.length; i++) {
+  	        	Subquery<String> sqPALV = sqPAL.subquery(String.class);
+  	        	Root<ProductAttributeList> fromPALV = sqPALV.from(ProductAttributeList.class);
+  	        	Join<Object, String> joinValues = fromPALV.join("value");
+  	        	restrictions[i] = cb.exists(sqPALV.select(joinValues).where(cb.equal(joinValues, values[i])));;
+  	        }
+  	        
+  	        return List.of(cb.exists(sqPAL.select(fromPAL.get("entityKey")).where(
+  	        		cb.equal(root, fromPAL.get("productArticle")),
+  	        		cb.equal(fromPAL.get("name"), attributeName),
+  	        		cb.and(restrictions))));
+  		}
+      	return List.of();
+      }
+    
+    private List<Predicate> attributeIs(String attributeName, String[] values, Root<ProductArticle> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 		if (values.length > 0) {
 			List<Predicate> predicates = new ArrayList<>(values.length);
 			for (String value : values) {
@@ -117,11 +172,11 @@ public class ProductArticleSpecification implements Specification<ProductArticle
 			    } else {
 			    	Subquery<Long> sqPAB = query.subquery(Long.class);
 			        Root<ProductAttributeBoolean> fromPAB = sqPAB.from(ProductAttributeBoolean.class);
-			        predicates.add(cb.exists(sqPAB.select(fromPAB.get("entityKey")).where(
+			        predicates.add(cb.exists(sqPAB.select(fromPAB.get("entityKey")).where(cb.or(
 			        		cb.equal(root, fromPAB.get("productArticle")),
 			        		cb.equal(fromPAB.get("name"), attributeName),
 			        		cb.equal(fromPAB.get("value"), true),
-			        		cb.and(cb.equal(fromPAB.get("description"), value)))));
+			        		cb.equal(fromPAB.get("description"), value)))));
 			    }
 			}
 			return predicates;
@@ -129,4 +184,14 @@ public class ProductArticleSpecification implements Specification<ProductArticle
     	return List.of();
     }
 
+    public static void main(String[] args) {
+    	String str1 = "attribute[техно][asll]";
+    	Matcher attrMatcher = ATTRIBUTE_PATTERN.matcher(str1);
+    	if (attrMatcher.find()) {
+    		for (int i = 1; i <= attrMatcher.groupCount(); i++) {
+    			System.out.println(attrMatcher.group(i));
+    		}
+    	}
+    }
+    
 }
