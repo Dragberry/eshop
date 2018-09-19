@@ -21,15 +21,12 @@ import org.dragberry.eshop.dal.entity.ProductArticle;
 import org.dragberry.eshop.dal.entity.ProductAttributeBoolean;
 import org.dragberry.eshop.dal.entity.ProductAttributeList;
 import org.dragberry.eshop.dal.entity.ProductAttributeString;
+import org.dragberry.eshop.service.filter.AttributeFilterAction;
 import org.springframework.data.jpa.domain.Specification;
 
 public class ProductArticleSpecification implements Specification<ProductArticle> {
 
     private static final long serialVersionUID = 1408556421987136103L;
-    
-    private enum AttributeAction {
-    	ANY, ALL, IS, FROM, TO
-    }
     
     private static final Pattern OPTION_PATTERN = Pattern.compile("option\\[(.*?)\\]$");
 
@@ -89,7 +86,7 @@ public class ProductArticleSpecification implements Specification<ProductArticle
             }
             Matcher attrMatcher;
             if ((attrMatcher = ATTRIBUTE_PATTERN.matcher(name)).find()) {
-            	switch (AttributeAction.valueOf(attrMatcher.group(2).toUpperCase())) {
+            	switch (AttributeFilterAction.valueOf(attrMatcher.group(2).toUpperCase())) {
 				case ALL:
 					where.addAll(attributeAll(attrMatcher.group(1), values, root, query, cb));
 					break;
@@ -147,7 +144,8 @@ public class ProductArticleSpecification implements Specification<ProductArticle
   	        	Subquery<String> sqPALV = sqPAL.subquery(String.class);
   	        	Root<ProductAttributeList> fromPALV = sqPALV.from(ProductAttributeList.class);
   	        	Join<Object, String> joinValues = fromPALV.join("value");
-  	        	restrictions[i] = cb.exists(sqPALV.select(joinValues).where(cb.equal(joinValues, values[i])));;
+  	        	restrictions[i] = cb.exists(sqPALV.select(joinValues)
+  	        	        .where(cb.equal(fromPAL, fromPALV), cb.equal(joinValues, values[i])));;
   	        }
   	        
   	        return List.of(cb.exists(sqPAL.select(fromPAL.get("entityKey")).where(

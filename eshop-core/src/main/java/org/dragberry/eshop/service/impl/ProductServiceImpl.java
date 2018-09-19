@@ -44,6 +44,8 @@ import org.dragberry.eshop.model.product.ProductDetails;
 import org.dragberry.eshop.model.product.ProductSearchQuery;
 import org.dragberry.eshop.model.product.RangeFilter;
 import org.dragberry.eshop.service.ProductService;
+import org.dragberry.eshop.service.filter.AttributeFilter;
+import org.dragberry.eshop.service.filter.AttributeFilterAction;
 import org.dragberry.eshop.specification.ProductArticleSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -219,6 +221,12 @@ public class ProductServiceImpl implements ProductService {
     
     @Override
     public List<Filter> getCategoryFilters(Long categoryId) {
+        List<AttributeFilter> filters = List.of(
+                new AttributeFilter("Технология", AttributeFilterAction.ANY),
+                new AttributeFilter("Интерфейсы", AttributeFilterAction.ALL),
+                new AttributeFilter("Разрешение", AttributeFilterAction.ANY),
+                new AttributeFilter("Материал ремешка", AttributeFilterAction.ANY),
+                new AttributeFilter("Поддержка SIM-карты", AttributeFilterAction.ANY));
     	List<String> attrFilters = List.of("Технология", "Разрешение", "Материал ремешка", "Поддержка SIM-карты", "Интерфейсы");
     	
     	RangeFilter priceFilter = new RangeFilter();
@@ -269,38 +277,4 @@ public class ProductServiceImpl implements ProductService {
 			    	}))
     			).collect(toList());
     }
-}
-
-abstract class AttributeFilter {
-    
-    protected String name;
-    
-    protected Long categoryId;
-    
-    public abstract Filter buildFilter();
-}
-
-class ListAttributeFilter extends AttributeFilter {
-
-    @Override
-    public Filter buildFilter() {
-        ListFilter filter = new ListFilter();
-        filter.setId(MessageFormat.format("attribute[{0}]", name));
-        filter.setName(name);
-        return filter;
-    }
-    
-}
-
-class RangeAttributeFilter extends AttributeFilter {
-
-    @Override
-    public Filter buildFilter() {
-        RangeFilter filter = new RangeFilter();
-        filter.setId(MessageFormat.format("attribute[{0}]", name));
-        filter.setName(name);
-        filter.setMask("##0");
-        return filter;
-    }
-    
 }
