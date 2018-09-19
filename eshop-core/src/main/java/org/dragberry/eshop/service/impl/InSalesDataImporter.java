@@ -25,6 +25,9 @@ import javax.annotation.PostConstruct;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dragberry.eshop.dal.entity.Category;
+import org.dragberry.eshop.dal.entity.CategoryFilter;
+import org.dragberry.eshop.dal.entity.CategoryFilterAllList;
+import org.dragberry.eshop.dal.entity.CategoryFilterAnyString;
 import org.dragberry.eshop.dal.entity.Image;
 import org.dragberry.eshop.dal.entity.Product;
 import org.dragberry.eshop.dal.entity.ProductArticle;
@@ -149,6 +152,30 @@ public class InSalesDataImporter implements DataImporter {
 					newCtg.setName(name);
 					newCtg.setReference(transliteService.transformToId(name));
 					newCtg.setOrder(order);
+					List<CategoryFilter<?,?,?>> filters = new ArrayList<>();
+					CategoryFilterAnyString tech = new CategoryFilterAnyString();
+					tech.setCategory(newCtg);
+					tech.setName("Технология дисплея");
+					tech.setOrder(0);
+					filters.add(tech);
+					CategoryFilterAnyString dim = new CategoryFilterAnyString();
+					dim.setCategory(newCtg);
+					dim.setName("Разрешение дисплея");
+					dim.setOrder(1);
+					filters.add(dim);
+					newCtg.setFilters(filters);
+					CategoryFilterAllList ff = new CategoryFilterAllList();
+					ff.setCategory(newCtg);
+					ff.setName("Фитнес-функции");
+					ff.setOrder(2);
+					filters.add(ff);
+					newCtg.setFilters(filters);
+					CategoryFilterAllList aps = new CategoryFilterAllList();
+					aps.setCategory(newCtg);
+					aps.setName("Встроенные приложения");
+					aps.setOrder(3);
+					filters.add(aps);
+					newCtg.setFilters(filters);
 					return categoryRepo.save(newCtg);
 				}));
 			} catch (Exception exc) {
@@ -393,10 +420,10 @@ public class InSalesDataImporter implements DataImporter {
 			        				screenMatcher.group(1), 601));
 		        			attributes.add(ProductAttributeBoolean.of(pa, GRP_ATTR_SCREEN, "Сенсорный", screenMatcher.group(2) != null, 602));
 		        			if (screenMatcher.group(3) != null) {
-		        				attributes.add(ProductAttributeString.of(pa, GRP_ATTR_SCREEN, "Технология", screenMatcher.group(3), 603));
+		        				attributes.add(ProductAttributeString.of(pa, GRP_ATTR_SCREEN, "Технология дисплея", screenMatcher.group(3), 603));
 		        			}
 		        			if (screenMatcher.group(4) != null) {
-		        				attributes.add(ProductAttributeString.of(pa, GRP_ATTR_SCREEN, "Разрешение", screenMatcher.group(4), 603));
+		        				attributes.add(ProductAttributeString.of(pa, GRP_ATTR_SCREEN, "Разрешение дисплея", screenMatcher.group(4), 603));
 		        			}
 		        		}
 		        		break;

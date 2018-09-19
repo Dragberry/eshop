@@ -44,15 +44,17 @@ import org.dragberry.eshop.model.product.ProductDetails;
 import org.dragberry.eshop.model.product.ProductSearchQuery;
 import org.dragberry.eshop.model.product.RangeFilter;
 import org.dragberry.eshop.service.ProductService;
-import org.dragberry.eshop.service.filter.AttributeFilter;
-import org.dragberry.eshop.service.filter.AttributeFilterAction;
 import org.dragberry.eshop.specification.ProductArticleSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ProductServiceImpl implements ProductService {
 
+	@Autowired
+	private ApplicationContext applicationContext;
+	
     @Autowired
     private CategoryRepository categoryRepo;
     
@@ -221,14 +223,6 @@ public class ProductServiceImpl implements ProductService {
     
     @Override
     public List<Filter> getCategoryFilters(Long categoryId) {
-        List<AttributeFilter> filters = List.of(
-                new AttributeFilter("Технология", AttributeFilterAction.ANY),
-                new AttributeFilter("Интерфейсы", AttributeFilterAction.ALL),
-                new AttributeFilter("Разрешение", AttributeFilterAction.ANY),
-                new AttributeFilter("Материал ремешка", AttributeFilterAction.ANY),
-                new AttributeFilter("Поддержка SIM-карты", AttributeFilterAction.ANY));
-    	List<String> attrFilters = List.of("Технология", "Разрешение", "Материал ремешка", "Поддержка SIM-карты", "Интерфейсы");
-    	
     	RangeFilter priceFilter = new RangeFilter();
 		priceFilter.setId("price");
 		priceFilter.setName("msg.common.price");
@@ -248,33 +242,7 @@ public class ProductServiceImpl implements ProductService {
 			        	return optFilter;
 			        }),
 			    
-			        attrFilters.stream().map(attrName -> {
-			            List<ProductAttribute<?>> attrGroupList = categoryRepo.getAttributeFilterByGroup(categoryId, attrName);
-			            if (!attrGroupList.isEmpty()) {
-			                GroupFilter attrFilter = new GroupFilter();
-                            attrFilter.setId(MessageFormat.format("attribute", attrName));
-                            attrFilter.setName(attrName);
-                            attrFilter.setAttributes(attrGroupList.stream().map(pa -> new KeyValue(pa.getName(), true)).collect(toList()));
-                            return attrFilter;
-			            }
-			            
-			    		List<ProductAttribute<?>> attrList = categoryRepo.getAttributeFilterByName(categoryId, attrName);
-			    		if (!attrList.isEmpty() && attrList.get(0) instanceof ProductAttributeBoolean) {
-			    		    ListFilter attrFilter = new ListFilter();
-	                        attrFilter.setId(MessageFormat.format("attribute[{0}][{1}]", attrName, "is"));
-	                        attrFilter.setName(attrName);
-	                        attrFilter.setAttributes(Stream.concat(Stream.of(new KeyValue("msg.common.false", false)),
-                                    attrList.stream().map(pa -> (ProductAttributeBoolean) pa).filter(ProductAttributeBoolean::getValue)
-                                    .map(pa -> new KeyValue(pa.getStringValue(), pa.getStringValue()))).collect(toList()));
-	                        return attrFilter;
-			    		} else {
-			    		    ListFilter attrFilter = new ListFilter();
-	                        attrFilter.setId(MessageFormat.format("attribute[{0}][{1}]", attrName, "all"));
-	                        attrFilter.setName(attrName);
-	                        attrFilter.setAttributes(attrList.stream().map(pa -> new KeyValue(pa.getStringValue(), pa.getStringValue())).collect(toList()));
-	                        return attrFilter;
-			    		}
-			    	}))
-    			).collect(toList());
+			        categoryRepo.getCategoryFilters(categoryId).stream().map(ctgFilter -> ctgFilter.buildFilter(applicationContext)))
+			     ).collect(toList());
     }
 }
