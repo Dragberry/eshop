@@ -30,7 +30,7 @@ public class ProductArticleSpecification implements Specification<ProductArticle
     
     private static final Pattern OPTION_PATTERN = Pattern.compile("option\\[(.*?)\\]$");
 
-    private static final Pattern ATTRIBUTE_PATTERN = Pattern.compile("attribute\\[(.*?)\\]\\[(in|any|all|from|to)\\]$");
+    private static final Pattern ATTRIBUTE_PATTERN = Pattern.compile("attribute\\[(.*?)\\]\\[(is|any|all|from|to)\\]$");
     
     private final String categoryReference;
     

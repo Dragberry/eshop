@@ -61,9 +61,9 @@
 			<div class="product-attribute-list-filter col-12">
 				<div th:each="attr, iter : ${filter.attributes}" class="form-check">
 					<input class="form-check-input" type="checkbox"
-						th:name="|${filter.id}[${attr.key}]|" th:id="|${filter.id}[${attr.key}]|" th:value="${attr.value}"
+						th:name="${attr.value}" th:id="|${filter.id}[${attr.value}]|" th:value="true"
 						onchange="doSearch()">
-				  	<label class="form-check-label" th:for="|${filter.id}[${attr.key}]|">
+				  	<label class="form-check-label" th:for="|${filter.id}[${attr.value}]|">
 				  		[[${#strings.isEmpty(#messages.msgOrNull(attr.key)) ? attr.key : #messages.msg(attr.key)}]]
 				  	</label>
 				</div>
