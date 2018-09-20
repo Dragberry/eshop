@@ -45,12 +45,14 @@
 			<artifactId>eshop-client</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<!-- 
 		<dependency>
 			<groupId>org.dragberry.eshop</groupId>
 			<artifactId>eshop-cms-client</artifactId>
 			<version>${project.version}</version>
 			<scope>runtime</scope>
 		</dependency>
+		 -->
 	</dependencies>
 
 	<repositories>

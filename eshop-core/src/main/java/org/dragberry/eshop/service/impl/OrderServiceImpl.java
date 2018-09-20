@@ -17,6 +17,7 @@ import org.dragberry.eshop.dal.entity.Order;
 import org.dragberry.eshop.dal.entity.Order.OrderStatus;
 import org.dragberry.eshop.dal.entity.OrderItem;
 import org.dragberry.eshop.dal.entity.PaymentMethod;
+import org.dragberry.eshop.dal.entity.Product;
 import org.dragberry.eshop.dal.repo.ShippingMethodRepository;
 import org.dragberry.eshop.dal.repo.OrderRepository;
 import org.dragberry.eshop.dal.repo.PaymentMethodRepository;
@@ -94,10 +95,17 @@ public class OrderServiceImpl implements OrderService {
     			item.setPrice(cp.getValue().getPrice());
     			item.setQuantity(cp.getValue().getQuantity());
     			item.setTotalAmount(cp.getValue().getTotalAmount());
-//    			Optional.ofNullable(cp.getKey().getProductId()).ifPresentOrElse(productId -> {
-//    			    productRepo.findById(productId).ifPresentOrElse(product -> item.setProduct(product),
-//    			            () -> issues.add(Issues.error("msg.error.productIsUnknown", cp.getKey())));
-//    		        }, () -> issues.add(Issues.error("msg.error.productIsNull", cp.getKey())));
+    			Long productId = cp.getKey().getProductId();
+    			if (productId != null) {
+    				Optional<Product> product = productRepo.findById(productId);
+    				if (product.isPresent()) {
+    					item.setProduct(product.get());
+    				} else {
+    					issues.add(Issues.error("msg.error.productIsUnknown", cp.getKey()));
+    				}
+    			} else {
+    				issues.add(Issues.error("msg.error.productIsNull", cp.getKey()));
+    			}
     			return item;
     		}).collect(Collectors.toList()));
     		order.setShippingMethod(shippingMethod);
