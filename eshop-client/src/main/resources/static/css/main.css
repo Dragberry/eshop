@@ -59,3 +59,19 @@
 	max-height: 7rem;
     overflow-y: auto;
 }
+
+.reset-filter-button {
+	color: red;
+	padding: 0.2rem;
+	border-radius: 50%;
+}
+
+.reset-filter-button:hover {
+	color: white;
+    background-color: red;
+}
+
+.reset-filter-button:active {
+	color: red;
+    background-color: red;
+}

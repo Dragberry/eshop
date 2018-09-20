@@ -7,6 +7,7 @@
 		<div class="product-attribute-filter product-attribute-range-filter row mt-3">
 			<div class="col-12">
 				<strong>[[${#strings.isEmpty(#messages.msgOrNull(filter.name)) ? filter.name : #messages.msg(filter.name)}]]</strong>
+				<span class="fa fa-times fa-xs reset-filter-button" th:title="#{msg.common.resetFilter}"></span>
 			</div>
 			<div class="col-6">
 			    <div class="input-group input-group-sm">
@@ -39,6 +40,7 @@
 		<div class="product-attribute-filter row mt-3">
 			<div class="col-12">
 				<strong>[[${#strings.isEmpty(#messages.msgOrNull(filter.name)) ? filter.name : #messages.msg(filter.name)}]]</strong>
+				<span class="fa fa-times fa-xs reset-filter-button" th:title="#{msg.common.resetFilter}"></span>
 			</div>
 			<div class="product-attribute-list-filter col-12">
 				<div th:each="attr, iter : ${filter.attributes}" class="form-check">
@@ -57,6 +59,7 @@
 		<div class="product-attribute-filter row mt-3">
 			<div class="col-12">
 				<strong>[[${#strings.isEmpty(#messages.msgOrNull(filter.name)) ? filter.name : #messages.msg(filter.name)}]]</strong>
+				<span class="fa fa-times fa-xs reset-filter-button" th:title="#{msg.common.resetFilter}"></span>
 			</div>
 			<div class="product-attribute-list-filter col-12">
 				<div th:each="attr, iter : ${filter.attributes}" class="form-check">
