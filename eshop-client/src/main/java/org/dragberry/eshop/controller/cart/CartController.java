@@ -140,12 +140,12 @@ public class CartController {
         ResultTO<OrderDetails> result = orderService.createOrder(order);
         List<IssueTO> issues = result.getIssues();
         if (issues.isEmpty()) {
-            Map<String, Object> notificationParams = Map.of(
-                    "order", cartState.getValue(),
-                    "totalProductAmount", cartState.getTotalProductAmount(),
-                    "shippingCost", cartState.getShippingCost(),
-                    "totalAmount", cartState.getTotalAmount(),
-                    "shopName", appInfoService.shopName());
+            Map<String, Object> notificationParams = new HashMap<>();
+            	notificationParams.put("order", cartState.getValue());
+            	notificationParams.put("totalProductAmount", cartState.getTotalProductAmount());
+    			notificationParams.put("shippingCost", cartState.getShippingCost());
+    			notificationParams.put("totalAmount", cartState.getTotalAmount());
+    			notificationParams.put("shopName", appInfoService.shopName());
             notificationService.sendNotification(appInfoService.getSystemInfo().getEmail(), "order-report", notificationParams);
             if (StringUtils.isNotBlank(order.getEmail())) {
                 notificationService.sendNotification(order.getEmail(), "order-customer-report", notificationParams);
