@@ -108,7 +108,10 @@ public class ProductServiceImpl implements ProductService {
 			
 			// Test data
 			product.setCommentsCount(3);
-			product.setLabels(Map.of("Скидка", Modifier.INFO, "20%", Modifier.DANGER));
+			Map<String, Modifier> labels = new HashMap<>();
+			labels.put("Скидка", Modifier.INFO);
+			labels.put("20%", Modifier.DANGER);
+			product.setLabels(labels);
 			product.setRating(3.3);
 			return product;
 		}).collect(toList());
@@ -183,7 +186,10 @@ public class ProductServiceImpl implements ProductService {
         		.collect(groupingBy(ProductAttribute::getGroup, LinkedHashMap::new,
         				mapping(attr -> new KeyValue(attr.getName(), attr.getStringValue()), toList()))));
         // test data
-        product.setLabels(Map.of("Скидка", Modifier.INFO, "20%", Modifier.DANGER));
+        Map<String, Modifier> labels = new HashMap<>();
+		labels.put("Скидка", Modifier.INFO);
+		labels.put("20%", Modifier.DANGER);
+		product.setLabels(labels);
         return product;
     }
     

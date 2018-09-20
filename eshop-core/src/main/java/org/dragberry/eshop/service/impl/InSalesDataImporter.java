@@ -2,6 +2,7 @@ package org.dragberry.eshop.service.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -242,7 +243,7 @@ public class InSalesDataImporter implements DataImporter {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	public void processRawArticle(String article, List<String[]> rawArticle) {
+	public void processRawArticle(String article, List<String[]> rawArticle) throws UnsupportedEncodingException {
 		if (!rawArticle.isEmpty()) {
 			ProductArticle pa = productArticleRepo.findByArticle(article).orElse(new ProductArticle());
 			String[] firstLine = rawArticle.get(0);
@@ -458,14 +459,14 @@ public class InSalesDataImporter implements DataImporter {
 		return attributes;
 	}
 
-	private void processImages(String[] columns, ProductArticle pa) {
+	private void processImages(String[] columns, ProductArticle pa) throws UnsupportedEncodingException {
 	    pa.getImages().clear();
 		String[] imgs = columns[columnsMap.get(IMAGES)].split(" ");
 		for (int imgIndex = 0; imgIndex < imgs.length; imgIndex++) {
 			String imgURL = imgs[imgIndex];
 			log.info(MessageFormat.format("Image: {0}", imgURL));
 			int lastIndexOfSlash = imgURL.lastIndexOf("/");
-			String realURL = imgURL.substring(0, lastIndexOfSlash + 1) + URLEncoder.encode(imgURL.substring(lastIndexOfSlash + 1), StandardCharsets.UTF_8);
+			String realURL = imgURL.substring(0, lastIndexOfSlash + 1) + URLEncoder.encode(imgURL.substring(lastIndexOfSlash + 1), StandardCharsets.UTF_8.name());
 			try {
 				URLConnection conn = new URL(realURL).openConnection();
 				InputStream imgIS = conn.getInputStream();

@@ -2,6 +2,8 @@ package org.dragberry.eshop.service.impl;
 
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -38,8 +40,8 @@ public class NotificationServiceImpl implements NotificationService {
 	        Context ctx = new Context();
 	        objects.forEach(ctx::setVariable);
             send(recipient,
-                    () -> templateEngine.process(template, Set.of("message-body") , ctx),
-                    () -> templateEngine.process(template, Set.of("message-subject") , ctx));
+                    () -> templateEngine.process(template, new HashSet<>(Arrays.asList("message-body")) , ctx),
+                    () -> templateEngine.process(template, new HashSet<>(Arrays.asList("message-subject")) , ctx));
         }
 	    
 	    <T> void send(String recipient, Supplier<String> bodyProvider, Supplier<String> headerProvider) {

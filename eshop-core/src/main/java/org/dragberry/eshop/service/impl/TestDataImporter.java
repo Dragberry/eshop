@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -138,7 +139,7 @@ public class TestDataImporter implements DataImporter {
 					p.setPrice(new BigDecimal(row.getCell(10).getNumericCellValue()));
 					p.setActualPrice(new BigDecimal(row.getCell(10).getNumericCellValue() * 0.8));
 					p.setProductArticle(pa);
-					p.setOptions(Set.of(option));
+					p.setOptions(new HashSet<>(Arrays.asList(option)));
 					p.setQuantity(1);	
 					p.setSaleStatus(SaleStatus.EXPOSED);
 					productRepo.save(p);

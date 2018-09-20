@@ -94,10 +94,10 @@ public class OrderServiceImpl implements OrderService {
     			item.setPrice(cp.getValue().getPrice());
     			item.setQuantity(cp.getValue().getQuantity());
     			item.setTotalAmount(cp.getValue().getTotalAmount());
-    			Optional.ofNullable(cp.getKey().getProductId()).ifPresentOrElse(productId -> {
-    			    productRepo.findById(productId).ifPresentOrElse(product -> item.setProduct(product),
-    			            () -> issues.add(Issues.error("msg.error.productIsUnknown", cp.getKey())));
-    		        }, () -> issues.add(Issues.error("msg.error.productIsNull", cp.getKey())));
+//    			Optional.ofNullable(cp.getKey().getProductId()).ifPresentOrElse(productId -> {
+//    			    productRepo.findById(productId).ifPresentOrElse(product -> item.setProduct(product),
+//    			            () -> issues.add(Issues.error("msg.error.productIsUnknown", cp.getKey())));
+//    		        }, () -> issues.add(Issues.error("msg.error.productIsNull", cp.getKey())));
     			return item;
     		}).collect(Collectors.toList()));
     		order.setShippingMethod(shippingMethod);
