@@ -10,6 +10,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -329,7 +330,7 @@ public class InSalesDataImporter implements DataImporter {
 		String[] values = attrValue.split("##");
 		if (values.length > 0) {
 			List<String> valueList = new ArrayList<>();
-			valueList.addAll(List.of(values));
+			valueList.addAll(Arrays.asList(values));
 			attributes.add(ProductAttributeList.of(pa, group, name, valueList, order));
 		}
 	}

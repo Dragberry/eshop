@@ -86,7 +86,7 @@ public class TestDataImporter implements DataImporter {
 			pa = new ProductArticle();
 			pa.setArticle(article);
 			pa.setTitle(title);
-			pa.setCategories(List.of(category));
+			pa.setCategories(Arrays.asList(category));
 			pa.setReference(article);
 			pa.setDescription(row.getCell(6).getStringCellValue());
 			pa.setDescriptionFull(row.getCell(7).getStringCellValue());

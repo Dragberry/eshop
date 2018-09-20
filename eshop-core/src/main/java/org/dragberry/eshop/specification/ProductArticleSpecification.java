@@ -127,11 +127,11 @@ public class ProductArticleSpecification implements Specification<ProductArticle
 			if (optionRoot == null) {
 				optionRoot = productRoot.join("options");
 			}
-			return List.of(
+			return Arrays.asList(
 					cb.equal(optionRoot.get("name"), optionName),
 					optionRoot.get("value").in(Arrays.asList(values)));
 		}
-		return List.of();
+		return Arrays.asList();
     }
     
     private List<Predicate> attributeFrom(String attributeName, String[] values, Root<ProductArticle> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
@@ -139,13 +139,13 @@ public class ProductArticleSpecification implements Specification<ProductArticle
             try {
                 Subquery<Long> sqPAN = query.subquery(Long.class);
                 Root<ProductAttributeNumeric> fromPAN = sqPAN.from(ProductAttributeNumeric.class);
-                return List.of(cb.exists(sqPAN.select(fromPAN.get("entityKey")).where(
+                return Arrays.asList(cb.exists(sqPAN.select(fromPAN.get("entityKey")).where(
                         cb.equal(root, fromPAN.get("productArticle")),
                         cb.equal(fromPAN.get("name"), attributeName),
                         cb.greaterThanOrEqualTo(fromPAN.get("value"), extractNumberParam(values)))));
             } catch (Exception exc) {}
         }
-        return List.of();
+        return Arrays.asList();
     }
     
     private List<Predicate> attributeTo(String attributeName, String[] values, Root<ProductArticle> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
@@ -153,13 +153,13 @@ public class ProductArticleSpecification implements Specification<ProductArticle
             try {
                 Subquery<Long> sqPAN = query.subquery(Long.class);
                 Root<ProductAttributeNumeric> fromPAN = sqPAN.from(ProductAttributeNumeric.class);
-                return List.of(cb.exists(sqPAN.select(fromPAN.get("entityKey")).where(
+                return Arrays.asList(cb.exists(sqPAN.select(fromPAN.get("entityKey")).where(
                         cb.equal(root, fromPAN.get("productArticle")),
                         cb.equal(fromPAN.get("name"), attributeName),
                         cb.lessThanOrEqualTo(fromPAN.get("value"), extractNumberParam(values)))));
             } catch (Exception exc) {}
         }
-        return List.of();
+        return Arrays.asList();
     }
 
     private static BigDecimal extractNumberParam(String[] values) {
@@ -170,12 +170,12 @@ public class ProductArticleSpecification implements Specification<ProductArticle
 		if (values.length > 0) {
 	    	Subquery<Long> sqPAS = query.subquery(Long.class);
 	        Root<ProductAttributeString> fromPAS = sqPAS.from(ProductAttributeString.class);
-	        return List.of(cb.exists(sqPAS.select(fromPAS.get("entityKey")).where(
+	        return Arrays.asList(cb.exists(sqPAS.select(fromPAS.get("entityKey")).where(
 	        		cb.equal(root, fromPAS.get("productArticle")),
 	        		cb.equal(fromPAS.get("name"), attributeName),
-	        		fromPAS.get("value").in(List.of(values)))));
+	        		fromPAS.get("value").in(Arrays.asList(values)))));
 		}
-    	return List.of();
+    	return Arrays.asList();
     }
     
     private List<Predicate> attributeAll(String attributeName, String[] values, Root<ProductArticle> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
@@ -192,12 +192,12 @@ public class ProductArticleSpecification implements Specification<ProductArticle
   	        	        .where(cb.equal(fromPAL, fromPALV), cb.equal(joinValues, values[i])));;
   	        }
   	        
-  	        return List.of(cb.exists(sqPAL.select(fromPAL.get("entityKey")).where(
+  	        return Arrays.asList(cb.exists(sqPAL.select(fromPAL.get("entityKey")).where(
   	        		cb.equal(root, fromPAL.get("productArticle")),
   	        		cb.equal(fromPAL.get("name"), attributeName),
   	        		cb.and(restrictions))));
   		}
-      	return List.of();
+      	return Arrays.asList();
       }
     
     private List<Predicate> attributeBAny(String attributeName, String[] values, Root<ProductArticle> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
@@ -231,9 +231,9 @@ public class ProductArticleSpecification implements Specification<ProductArticle
                        cb.equal(fromPAB.get("value"), true),
                        fromPAB.get("description").in(trueValues)));
            }
-           return List.of(cb.or(predicates));
+           return Arrays.asList(cb.or(predicates));
         }
-        return List.of();
+        return Arrays.asList();
     }
     
     private List<Predicate> attributeBAll(String attributeName, String[] values, Root<ProductArticle> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
@@ -251,7 +251,7 @@ public class ProductArticleSpecification implements Specification<ProductArticle
 			}
 			return predicates;
 		}
-    	return List.of();
+    	return Arrays.asList();
     }
 
 }
