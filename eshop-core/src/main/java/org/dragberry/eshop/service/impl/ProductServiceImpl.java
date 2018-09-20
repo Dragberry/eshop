@@ -220,8 +220,9 @@ public class ProductServiceImpl implements ProductService {
     public List<Filter> getCategoryFilters(Long categoryId) {
     	RangeFilter priceFilter = new RangeFilter();
 		priceFilter.setId("price");
+		priceFilter.setFromId("price[from]");
+		priceFilter.setToId("price[to]");
 		priceFilter.setName("msg.common.price");
-		priceFilter.setMask("# ##0.00");
     	return Stream.concat(
     			Stream.of(priceFilter),
     			

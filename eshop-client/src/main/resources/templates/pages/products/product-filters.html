@@ -11,11 +11,11 @@
 			<div class="col-6">
 			    <div class="input-group input-group-sm">
 			   		<div class="input-group-prepend">
-						<span class="input-group-text" th:id="|${filter.id}MinLabel|">От:</span>
+						<span class="input-group-text" th:id="|${filter.fromId}From|">[[#{msg.common.from}]]:</span>
 					</div>
 			    	<input type="text" class="form-control"
-			    		th:name="|from[${filter.id}]|" th:id="|from[${filter.id}]|"
-			    		th:aria-describedby="|from[${filter.id}]|"
+			    		th:name="${filter.fromId}" th:id="${filter.fromId}"
+			    		th:aria-describedby="|${filter.fromId}From|"
 			    		th:data-mask="${filter.mask}" data-mask-reverse="true"
 			    		onkeyup="doSearch()">
 				</div>
@@ -23,11 +23,11 @@
 			<div class="col-6">
 				<div class="input-group input-group-sm">
 					<div class="input-group-prepend">
-						<span class="input-group-text" th:id="|${filter.id}MaxLabel|">До:</span>
+						<span class="input-group-text" th:id="|${filter.toId}To|">[[#{msg.common.to}]]:</span>
 					</div>
 			    	<input type="text" class="form-control"
-			    		th:name="|to[${filter.id}]|" th:id="|to[${filter.id}]|"
-			    		th:aria-describedby="|to[${filter.id}]|"
+			    		th:name="${filter.toId}" th:id="${filter.toId}"
+			    		th:aria-describedby="|${filter.toId}To|"
 			    		th:data-mask="${filter.mask}" data-mask-reverse="true"
 			    		onkeyup="doSearch()">
 				</div>

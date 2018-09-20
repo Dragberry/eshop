@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.dragberry.eshop.dal.entity.ProductArticle;
 import org.dragberry.eshop.dal.entity.ProductAttributeBoolean;
 import org.dragberry.eshop.dal.entity.ProductAttributeList;
+import org.dragberry.eshop.dal.entity.ProductAttributeNumeric;
 import org.dragberry.eshop.dal.entity.ProductAttributeString;
 import org.dragberry.eshop.service.filter.FilterTypes;
 import org.springframework.data.jpa.domain.Specification;
@@ -64,23 +65,23 @@ public class ProductArticleSpecification implements Specification<ProductArticle
         for (Entry<String, String[]> entry : searchParams.entrySet()) {
         	var name = entry.getKey();
         	var values = entry.getValue();
-            if ("from[price]".equals(name) && values.length == 1) {
+            if ("price[from]".equals(name) && values.length == 1) {
                 try {
                     where.add(cb.or(
                             cb.and(cb.isNotNull(productRoot.get("actualPrice")),
-                                    cb.greaterThanOrEqualTo(productRoot.get("actualPrice"), new BigDecimal(values[0].replaceAll(" ", "")))),
+                                    cb.greaterThanOrEqualTo(productRoot.get("actualPrice"), extractNumberParam(values))),
                             cb.and(cb.isNull(productRoot.get("actualPrice")),
-                                    cb.greaterThanOrEqualTo(productRoot.get("price"), new BigDecimal(values[0].replaceAll(" ", ""))))));
+                                    cb.greaterThanOrEqualTo(productRoot.get("price"), extractNumberParam(values)))));
                 } catch (Exception exc) {}
                 continue;
             } 
-            if ("to[price]".equals(name) && values.length == 1) {
+            if ("price[to]".equals(name) && values.length == 1) {
                 try {
                     where.add(cb.or(
                             cb.and(cb.isNotNull(productRoot.get("actualPrice")),
-                                    cb.lessThanOrEqualTo(productRoot.get("actualPrice"), new BigDecimal(values[0].replaceAll(" ", "")))),
+                                    cb.lessThanOrEqualTo(productRoot.get("actualPrice"), extractNumberParam(values))),
                             cb.and(cb.isNull(productRoot.get("actualPrice")),
-                                    cb.lessThanOrEqualTo(productRoot.get("price"), new BigDecimal(values[0].replaceAll(" ", ""))))));
+                                    cb.lessThanOrEqualTo(productRoot.get("price"), extractNumberParam(values)))));
                 } catch (Exception exc) {}
                 continue;
             }
@@ -106,8 +107,10 @@ public class ProductArticleSpecification implements Specification<ProductArticle
                     where.addAll(attributeBAny(attrMatcher.group(1), values, root, query, cb));
                     break;
 				case FilterTypes.FROM:
+				    where.addAll(attributeFrom(attrMatcher.group(1), values, root, query, cb));
 					break;
 				case FilterTypes.TO:
+				    where.addAll(attributeTo(attrMatcher.group(1), values, root, query, cb));
                     break;
 				default:
 					break;
@@ -129,6 +132,38 @@ public class ProductArticleSpecification implements Specification<ProductArticle
 					optionRoot.get("value").in(Arrays.asList(values)));
 		}
 		return List.of();
+    }
+    
+    private List<Predicate> attributeFrom(String attributeName, String[] values, Root<ProductArticle> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+        if (values.length > 0) {
+            try {
+                Subquery<Long> sqPAN = query.subquery(Long.class);
+                Root<ProductAttributeNumeric> fromPAN = sqPAN.from(ProductAttributeNumeric.class);
+                return List.of(cb.exists(sqPAN.select(fromPAN.get("entityKey")).where(
+                        cb.equal(root, fromPAN.get("productArticle")),
+                        cb.equal(fromPAN.get("name"), attributeName),
+                        cb.greaterThanOrEqualTo(fromPAN.get("value"), extractNumberParam(values)))));
+            } catch (Exception exc) {}
+        }
+        return List.of();
+    }
+    
+    private List<Predicate> attributeTo(String attributeName, String[] values, Root<ProductArticle> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+        if (values.length > 0) {
+            try {
+                Subquery<Long> sqPAN = query.subquery(Long.class);
+                Root<ProductAttributeNumeric> fromPAN = sqPAN.from(ProductAttributeNumeric.class);
+                return List.of(cb.exists(sqPAN.select(fromPAN.get("entityKey")).where(
+                        cb.equal(root, fromPAN.get("productArticle")),
+                        cb.equal(fromPAN.get("name"), attributeName),
+                        cb.lessThanOrEqualTo(fromPAN.get("value"), extractNumberParam(values)))));
+            } catch (Exception exc) {}
+        }
+        return List.of();
+    }
+
+    private static BigDecimal extractNumberParam(String[] values) {
+        return new BigDecimal(values[0].replaceAll(" ", ""));
     }
     
     private List<Predicate> attributeAny(String attributeName, String[] values, Root<ProductArticle> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
@@ -219,14 +254,4 @@ public class ProductArticleSpecification implements Specification<ProductArticle
     	return List.of();
     }
 
-    public static void main(String[] args) {
-    	String str1 = "attribute[техно][asll]";
-    	Matcher attrMatcher = ATTRIBUTE_PATTERN.matcher(str1);
-    	if (attrMatcher.find()) {
-    		for (int i = 1; i <= attrMatcher.groupCount(); i++) {
-    			System.out.println(attrMatcher.group(i));
-    		}
-    	}
-    }
-    
 }

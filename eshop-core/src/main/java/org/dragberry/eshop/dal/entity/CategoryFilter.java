@@ -66,8 +66,12 @@ public abstract class CategoryFilter<V, A extends ProductAttribute<V>, R extends
 	private final String operator;
 	
 	protected String getAttribute(String value) {
-	    return MessageFormat.format(ATTR_TEMPLATE, value, operator);
+	    return getAttribute(value, operator);
 	}
+	
+	protected String getAttribute(String value, String operator) {
+        return MessageFormat.format(ATTR_TEMPLATE, value, operator);
+    }
 
 	public CategoryFilter(Class<R> repoClass, String operator) {
 		this.repoClass = repoClass;
