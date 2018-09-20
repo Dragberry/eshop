@@ -1,5 +1,7 @@
 package org.dragberry.eshop.dal.entity;
 
+import java.text.MessageFormat;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
@@ -39,6 +41,8 @@ import lombok.Setter;
 public abstract class CategoryFilter<V, A extends ProductAttribute<V>, R extends ProductAttributeRepository<V, A>> extends BaseEntity {
 	
 	private static final long serialVersionUID = 1261949029541186996L;
+	
+	private static final String ATTR_TEMPLATE = "attribute[{0}][{1}]";
 
 	@Id
 	@Column(name = "CATEGORY_FILTER_KEY")
@@ -57,9 +61,17 @@ public abstract class CategoryFilter<V, A extends ProductAttribute<V>, R extends
 	
 	@Transient
 	private final Class<R> repoClass;
+	
+	@Transient
+	private final String operator;
+	
+	protected String getAttribute(String value) {
+	    return MessageFormat.format(ATTR_TEMPLATE, value, operator);
+	}
 
-	public CategoryFilter(Class<R> repoClass) {
+	public CategoryFilter(Class<R> repoClass, String operator) {
 		this.repoClass = repoClass;
+		this.operator = operator;
 	}
 	
 	public Filter buildFilter(ApplicationContext appContext) {

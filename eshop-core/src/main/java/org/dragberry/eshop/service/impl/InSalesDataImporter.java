@@ -28,6 +28,7 @@ import org.dragberry.eshop.dal.entity.Category;
 import org.dragberry.eshop.dal.entity.CategoryFilter;
 import org.dragberry.eshop.dal.entity.CategoryFilterAllBoolean;
 import org.dragberry.eshop.dal.entity.CategoryFilterAllList;
+import org.dragberry.eshop.dal.entity.CategoryFilterAnyBoolean;
 import org.dragberry.eshop.dal.entity.CategoryFilterAnyString;
 import org.dragberry.eshop.dal.entity.Image;
 import org.dragberry.eshop.dal.entity.Product;
@@ -183,6 +184,12 @@ public class InSalesDataImporter implements DataImporter {
 					ifs.setOrder(4);
 					filters.add(ifs);
 					newCtg.setFilters(filters);
+					CategoryFilterAnyBoolean sim = new CategoryFilterAnyBoolean();
+                    sim.setCategory(newCtg);
+                    sim.setName("Поддержка SIM-карты");
+                    sim.setOrder(5);
+                    filters.add(sim);
+                    newCtg.setFilters(filters);
 					return categoryRepo.save(newCtg);
 				}));
 			} catch (Exception exc) {

@@ -1,6 +1,5 @@
 package org.dragberry.eshop.dal.entity;
 
-import java.text.MessageFormat;
 import java.util.stream.Collectors;
 
 import javax.persistence.DiscriminatorValue;
@@ -10,15 +9,16 @@ import org.dragberry.eshop.dal.repo.ProductAttributeBooleanRepository;
 import org.dragberry.eshop.model.common.KeyValue;
 import org.dragberry.eshop.model.product.Filter;
 import org.dragberry.eshop.model.product.GroupFilter;
+import org.dragberry.eshop.service.filter.FilterTypes;
 
 @Entity
-@DiscriminatorValue("bAll")
+@DiscriminatorValue(FilterTypes.B_ALL)
 public class CategoryFilterAllBoolean extends CategoryFilter<Boolean, ProductAttributeBoolean, ProductAttributeBooleanRepository> {
 
 	private static final long serialVersionUID = 3389528340207234584L;
-
+	
 	public CategoryFilterAllBoolean() {
-		super(ProductAttributeBooleanRepository.class);
+		super(ProductAttributeBooleanRepository.class, FilterTypes.B_ALL);
 	}
 
 	@Override
@@ -27,7 +27,7 @@ public class CategoryFilterAllBoolean extends CategoryFilter<Boolean, ProductAtt
 		filter.setId(name);
 		filter.setName(name);
 		filter.setAttributes(repo.findByGroupAndCategory(name, category).stream()
-				.map(pa -> new KeyValue(pa, MessageFormat.format("attribute[{0}][is]", pa))).collect(Collectors.toList()));
+				.map(pa -> new KeyValue(pa, getAttribute(pa))).collect(Collectors.toList()));
 		return filter;
 	}
 

@@ -1,6 +1,7 @@
 package org.dragberry.eshop.specification;
 
 import java.math.BigDecimal;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -8,7 +9,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -21,7 +21,7 @@ import org.dragberry.eshop.dal.entity.ProductArticle;
 import org.dragberry.eshop.dal.entity.ProductAttributeBoolean;
 import org.dragberry.eshop.dal.entity.ProductAttributeList;
 import org.dragberry.eshop.dal.entity.ProductAttributeString;
-import org.dragberry.eshop.service.filter.AttributeFilterAction;
+import org.dragberry.eshop.service.filter.FilterTypes;
 import org.springframework.data.jpa.domain.Specification;
 
 public class ProductArticleSpecification implements Specification<ProductArticle> {
@@ -30,7 +30,13 @@ public class ProductArticleSpecification implements Specification<ProductArticle
     
     private static final Pattern OPTION_PATTERN = Pattern.compile("option\\[(.*?)\\]$");
 
-    private static final Pattern ATTRIBUTE_PATTERN = Pattern.compile("attribute\\[(.*?)\\]\\[(is|any|all|from|to)\\]$");
+    private static final Pattern ATTRIBUTE_PATTERN = Pattern.compile(MessageFormat.format("attribute\\[(.*?)\\]\\[({0})\\]$", StringUtils.join(new String[] {
+            FilterTypes.B_ALL,
+            FilterTypes.B_ANY,
+            FilterTypes.L_ALL,
+            FilterTypes.S_ANY,
+            FilterTypes.FROM,
+            FilterTypes.TO }, "|")));
     
     private final String categoryReference;
     
@@ -86,20 +92,23 @@ public class ProductArticleSpecification implements Specification<ProductArticle
             }
             Matcher attrMatcher;
             if ((attrMatcher = ATTRIBUTE_PATTERN.matcher(name)).find()) {
-            	switch (AttributeFilterAction.valueOf(attrMatcher.group(2).toUpperCase())) {
-				case ALL:
+            	switch (attrMatcher.group(2)) {
+				case FilterTypes.L_ALL:
 					where.addAll(attributeAll(attrMatcher.group(1), values, root, query, cb));
 					break;
-				case ANY:
+				case FilterTypes.S_ANY:
 					where.addAll(attributeAny(attrMatcher.group(1), values, root, query, cb));
 					break;
-				case FROM:
+				case FilterTypes.B_ALL:
+                    where.addAll(attributeBAll(attrMatcher.group(1), values, root, query, cb));
+                    break;
+				case FilterTypes.B_ANY:
+                    where.addAll(attributeBAny(attrMatcher.group(1), values, root, query, cb));
+                    break;
+				case FilterTypes.FROM:
 					break;
-				case IS:
-					where.addAll(attributeIs(attrMatcher.group(1), values, root, query, cb));
-					break;
-				case TO:
-					break;
+				case FilterTypes.TO:
+                    break;
 				default:
 					break;
             	}
@@ -156,7 +165,43 @@ public class ProductArticleSpecification implements Specification<ProductArticle
       	return List.of();
       }
     
-    private List<Predicate> attributeIs(String attributeName, String[] values, Root<ProductArticle> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+    private List<Predicate> attributeBAny(String attributeName, String[] values, Root<ProductArticle> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+        if (values.length > 0) {
+            List<String> trueValues = new ArrayList<>(values.length);
+            boolean falsePresent = false;
+            for (String value : values) {
+                if (Boolean.FALSE.toString().equalsIgnoreCase(value)) {
+                    falsePresent = true;
+                } else {
+                    trueValues.add(value);
+                }
+            }
+           Predicate[] predicates = new Predicate[(falsePresent ? 1 : 0) + (trueValues.isEmpty() ? 0 : 1)];
+           int index = 0;
+           if (falsePresent) {
+               Subquery<Long> sqPAB = query.subquery(Long.class);
+               Root<ProductAttributeBoolean> fromPAB = sqPAB.from(ProductAttributeBoolean.class);
+               predicates[index] = cb.exists(sqPAB.select(fromPAB.get("entityKey")).where(
+                       cb.equal(root, fromPAB.get("productArticle")),
+                       cb.equal(fromPAB.get("name"), attributeName),
+                       cb.equal(fromPAB.get("value"), false)));
+               index++;
+           }
+           if (!trueValues.isEmpty()) {
+               Subquery<Long> sqPAB = query.subquery(Long.class);
+               Root<ProductAttributeBoolean> fromPAB = sqPAB.from(ProductAttributeBoolean.class);
+               predicates[index] = cb.exists(sqPAB.select(fromPAB.get("entityKey")).where(
+                       cb.equal(root, fromPAB.get("productArticle")),
+                       cb.equal(fromPAB.get("name"), attributeName),
+                       cb.equal(fromPAB.get("value"), true),
+                       fromPAB.get("description").in(trueValues)));
+           }
+           return List.of(cb.or(predicates));
+        }
+        return List.of();
+    }
+    
+    private List<Predicate> attributeBAll(String attributeName, String[] values, Root<ProductArticle> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 		if (values.length > 0) {
 			List<Predicate> predicates = new ArrayList<>(values.length);
 			for (String value : values) {
@@ -167,14 +212,6 @@ public class ProductArticleSpecification implements Specification<ProductArticle
 			        		cb.equal(root, fromPAB.get("productArticle")),
 			        		cb.equal(fromPAB.get("name"), attributeName),
 			        		cb.equal(fromPAB.get("value"), Boolean.parseBoolean(value)))));
-			    } else {
-			    	Subquery<Long> sqPAB = query.subquery(Long.class);
-			        Root<ProductAttributeBoolean> fromPAB = sqPAB.from(ProductAttributeBoolean.class);
-			        predicates.add(cb.exists(sqPAB.select(fromPAB.get("entityKey")).where(cb.or(
-			        		cb.equal(root, fromPAB.get("productArticle")),
-			        		cb.equal(fromPAB.get("name"), attributeName),
-			        		cb.equal(fromPAB.get("value"), true),
-			        		cb.equal(fromPAB.get("description"), value)))));
 			    }
 			}
 			return predicates;
