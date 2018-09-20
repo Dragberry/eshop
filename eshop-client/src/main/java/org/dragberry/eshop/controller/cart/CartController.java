@@ -217,7 +217,7 @@ public class CartController {
      * @param value
      */
     private <T> CartState<T> updateCartState(T value) {
-        var cartState = new CartState<T>();
+        CartState<T> cartState = new CartState<T>();
         int quantity = order.getProducts().values().stream()
                 .mapToInt(CapturedProductState::getQuantity).sum();
         BigDecimal totalProductAmount = order.getProducts().values().stream()

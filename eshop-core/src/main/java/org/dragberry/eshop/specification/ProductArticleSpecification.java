@@ -63,8 +63,8 @@ public class ProductArticleSpecification implements Specification<ProductArticle
             where.add(cb.equal(categoryRoot.get("reference"), categoryReference));
         }
         for (Entry<String, String[]> entry : searchParams.entrySet()) {
-        	var name = entry.getKey();
-        	var values = entry.getValue();
+        	String name = entry.getKey();
+        	String[] values = entry.getValue();
             if ("price[from]".equals(name) && values.length == 1) {
                 try {
                     where.add(cb.or(

@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dragberry.eshop.controller.exception.ResourceNotFoundException;
+import org.dragberry.eshop.model.common.ImageModel;
 import org.dragberry.eshop.model.product.ProductCategory;
 import org.dragberry.eshop.model.product.ProductDetails;
 import org.dragberry.eshop.model.product.ProductSearchQuery;
@@ -51,7 +52,7 @@ public class ProductController {
             @PathVariable Long productKey,
             @PathVariable Long imageKey,
             @PathVariable String imageName) throws IOException {
-        var img = productService.getProductImage(productKey, imageKey);
+        ImageModel img = productService.getProductImage(productKey, imageKey);
         if (img != null) {
             response.setContentType(img.getType());
             IOUtils.copy(new ByteArrayInputStream(img.getContent()), response.getOutputStream());

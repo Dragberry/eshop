@@ -81,7 +81,7 @@ public class TestDataImporter implements DataImporter {
     }
 
     private ProductArticle findOrCreateArticle(String article, String title, Category category, Row row) {
-    	var pa = productArticleRepo.findByArticle(article).orElse(new ProductArticle());
+    	ProductArticle pa = productArticleRepo.findByArticle(article).orElse(new ProductArticle());
 		if (pa == null) {
 			pa = new ProductArticle();
 			pa.setArticle(article);
@@ -111,7 +111,7 @@ public class TestDataImporter implements DataImporter {
 		String article = row.getCell(3).getStringCellValue();
 		String title = row.getCell(2).getStringCellValue();
 		if (StringUtils.isNotBlank(article) && StringUtils.isNoneBlank(title)) {
-			var pa = findOrCreateArticle(article, title, category, row);
+			ProductArticle pa = findOrCreateArticle(article, title, category, row);
 			List<ProductArticleOption> options = Arrays.stream(row.getCell(9).getStringCellValue().split(";")).map(String::trim).map(color -> {
 				ProductArticleOption pao = productArticleOptionRepo.findByProductArticleAndNameAndValue(pa, "Цвет", color);
 				if (pao == null) {

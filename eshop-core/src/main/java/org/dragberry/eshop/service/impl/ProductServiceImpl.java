@@ -118,7 +118,7 @@ public class ProductServiceImpl implements ProductService {
         Product lowerPriceProduct = null;
         BigDecimal lowerPrice = null;
         BigDecimal lowerActualPrice = null;
-        for (var p : article.getProducts()) {
+        for (Product p : article.getProducts()) {
             if (lowerPriceProduct == null && p.getPrice() != null) {
                 lowerPriceProduct = p;
                 lowerPrice = p.getPrice();
@@ -143,7 +143,7 @@ public class ProductServiceImpl implements ProductService {
 	
     @Override
     public ProductDetails getProductArticleDetails(String categoryReference, String productReference) {
-        var article = productArticleRepo.findByReferenceAndCategoryReference(categoryReference, productReference);
+        ProductArticle article = productArticleRepo.findByReferenceAndCategoryReference(categoryReference, productReference);
         if (article == null) {
             return null;
         }
@@ -189,7 +189,7 @@ public class ProductServiceImpl implements ProductService {
     
     @Override
     public ImageModel getProductImage(Long productKey, Long imageKey) {
-        var image = imageRepo.findById(imageKey).get();
+        Image image = imageRepo.findById(imageKey).get();
         ImageModel img = new ImageModel();
         img.setContent(image.getContent());
         img.setId(image.getEntityKey());

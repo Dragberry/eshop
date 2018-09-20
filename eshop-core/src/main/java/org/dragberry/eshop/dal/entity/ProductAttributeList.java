@@ -29,7 +29,7 @@ public class ProductAttributeList  extends ProductAttribute<List<String>> {
     }
     
     public static ProductAttributeList of(ProductArticle productArticle, String group, String name, List<String> value, Integer order) {
-    	var entity = new ProductAttributeList();
+    	ProductAttributeList entity = new ProductAttributeList();
     	entity.setProductArticle(productArticle);
     	entity.setGroup(group);
     	entity.setName(name);

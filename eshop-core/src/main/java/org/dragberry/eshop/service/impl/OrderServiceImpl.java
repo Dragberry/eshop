@@ -79,7 +79,7 @@ public class OrderServiceImpl implements OrderService {
         }
         
         if (issues.isEmpty()) {
-    		var order = new Order();
+    		Order order = new Order();
     		order.setOrderStatus(OrderStatus.NEW);
     		order.setTotalProductAmount(orderDetails.getTotalProductAmount());
     		order.setShippingCost(orderDetails.getShippingCost());
@@ -89,7 +89,7 @@ public class OrderServiceImpl implements OrderService {
     		order.setAddress(orderDetails.getAddress());
     		order.setEmail(orderDetails.getEmail());
     		order.setItems(orderDetails.getProducts().entrySet().stream().map(cp -> {
-    		    var item = new OrderItem();
+    		    OrderItem item = new OrderItem();
     			item.setOrder(order);
     			item.setPrice(cp.getValue().getPrice());
     			item.setQuantity(cp.getValue().getQuantity());
@@ -102,7 +102,7 @@ public class OrderServiceImpl implements OrderService {
     		}).collect(Collectors.toList()));
     		order.setShippingMethod(shippingMethod);
     		order.setPaymentMethod(paymentMethod);
-    		var newOrder = orderRepo.save(order);
+    		Order newOrder = orderRepo.save(order);
     		orderDetails.setId(newOrder.getEntityKey());
         }
 		return Results.create(orderDetails, issues);

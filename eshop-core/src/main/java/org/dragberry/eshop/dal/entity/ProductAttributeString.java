@@ -22,7 +22,7 @@ public class ProductAttributeString  extends ProductAttribute<String> {
     }
     
     public static ProductAttributeString of(ProductArticle productArticle, String group, String name, String value, Integer order) {
-    	var entity = new ProductAttributeString();
+    	ProductAttributeString entity = new ProductAttributeString();
     	entity.setProductArticle(productArticle);
     	entity.setGroup(group);
     	entity.setName(name);

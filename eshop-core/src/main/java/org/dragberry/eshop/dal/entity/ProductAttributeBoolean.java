@@ -30,7 +30,7 @@ public class ProductAttributeBoolean  extends ProductAttribute<Boolean> {
     }
     
     public static ProductAttributeBoolean of(ProductArticle productArticle, String group, String name, Boolean value, String description, Integer order) {
-    	var entity = new ProductAttributeBoolean();
+    	ProductAttributeBoolean entity = new ProductAttributeBoolean();
     	entity.setProductArticle(productArticle);
     	entity.setGroup(group);
     	entity.setName(name);

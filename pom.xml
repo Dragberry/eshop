@@ -22,7 +22,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>10</java.version>
+		<java.version>8</java.version>
 		<commons-collections4.version>4.0</commons-collections4.version>
 		<commons-io.version>2.6</commons-io.version>
 		<commons-validator.version>1.6</commons-validator.version>
@@ -82,7 +82,9 @@
 
 	<modules>
 		<module>eshop-core</module>
+		<!-- 
 		<module>eshop-cms-client</module>
+		 -->
 		<module>eshop-client</module>
 		<module>eshop-backend</module>
 	</modules>
