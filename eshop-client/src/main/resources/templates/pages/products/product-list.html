@@ -11,15 +11,21 @@
 		<div class="col-md-3">
 			<div class="container">
 				<div class="row">
-					<nav th:replace="pages/products/categories-side-menu :: categories-side-menu(selectedCategory = ${selectedCategory})"></nav>
+					<th:block th:replace="pages/products/categories-side-menu :: categories-side-menu(selectedCategory = ${selectedCategory})"></th:block>
 				</div>
 				<div th:if="${selectedCategory}" class="row mt-2">
-					<form id="filtersForm" th:action="|${@environment.getProperty('url.catalog.filter')}/${selectedCategory}|" method="GET">
-						<th:block th:each="filter : ${category.filters}">
-							<th:block th:replace="__${filter.template}__"></th:block>
-							<hr/>
-						</th:block>
-					</form>
+					<button class="btn btn-block btn-secondary btn-sm btn-side-menu" type="button" data-toggle="collapse"
+						data-target="#filtersForm" aria-expanded="false" aria-controls="filtersForm">
+						<span>Filters</span>
+					</button>
+					<div class="content-side-menu collapse show">
+						<form id="filtersForm" th:action="|${@environment.getProperty('url.catalog.filter')}/${selectedCategory}|" method="GET">
+							<th:block th:each="filter : ${category.filters}">
+								<th:block th:replace="__${filter.template}__"></th:block>
+								<hr/>
+							</th:block>
+						</form>
+					</div>
 				</div>	
 			</div>
 		</div>

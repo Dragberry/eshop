@@ -7,7 +7,17 @@
 }
 
 #categories-side-menu {
-	top: 50px;
+	width: 100%;
+}
+
+.btn.btn-side-menu {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    margin-bottom: 0;
+}
+
+.content-side-menu {
+	padding: .5rem 1rem;
 }
 
 .star-rating .fa-star.active {

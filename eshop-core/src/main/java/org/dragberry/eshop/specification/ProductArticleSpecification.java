@@ -73,26 +73,13 @@ public class ProductArticleSpecification implements Specification<ProductArticle
         	String name = entry.getKey();
         	String[] values = entry.getValue();
             if ("price[from]".equals(name) && values.length == 1) {
-                try {
-                    where.add(cb.or(
-                            cb.and(cb.isNotNull(productRoot.get("actualPrice")),
-                                    cb.greaterThanOrEqualTo(productRoot.get("actualPrice"), extractNumberParam(values))),
-                            cb.and(cb.isNull(productRoot.get("actualPrice")),
-                                    cb.greaterThanOrEqualTo(productRoot.get("price"), extractNumberParam(values)))));
-                } catch (Exception exc) {}
+                try { where.add(priceFrom(cb, values)); } catch (Exception exc) {}
                 continue;
             } 
             if ("price[to]".equals(name) && values.length == 1) {
-                try {
-                    where.add(cb.or(
-                            cb.and(cb.isNotNull(productRoot.get("actualPrice")),
-                                    cb.lessThanOrEqualTo(productRoot.get("actualPrice"), extractNumberParam(values))),
-                            cb.and(cb.isNull(productRoot.get("actualPrice")),
-                                    cb.lessThanOrEqualTo(productRoot.get("price"), extractNumberParam(values)))));
-                } catch (Exception exc) {}
+                try { where.add(priceTo(cb, values)); } catch (Exception exc) {}
                 continue;
             }
-            
             Matcher optionMatcher;
             if ((optionMatcher = OPTION_PATTERN.matcher(name)).find()) {
             	where.addAll(getOptionExpressions(optionMatcher.group(1), values, root, query, cb));
@@ -125,30 +112,49 @@ public class ProductArticleSpecification implements Specification<ProductArticle
             	continue;
             }
             if (SORT_PARAM.equals(name)) {
-                if (values.length > 0) {
-                    Matcher orderMatcher;
-                    if ((orderMatcher = SORT_PATTERN.matcher(values[0])).find()) {
-                        if ("price".equals(orderMatcher.group(1))) {
-                            Direction.fromOptionalString(orderMatcher.group(2)).ifPresent(direction -> {
-                                switch (direction) {
-                                case ASC:
-                                    query.orderBy(cb.asc(productRoot.get("actualPrice")));
-                                    break;
-                                case DESC:
-                                    query.orderBy(cb.desc(productRoot.get("actualPrice")));
-                                    break;
-                                default:
-                                    break;
-                                }
-                            });
-                        }
-                    }
-                }
-                
+                sort(query, cb, values);
             }
         }
         query.distinct(true);
         return cb.and(where.toArray(new Predicate[where.size()]));
+    }
+
+    private void sort(CriteriaQuery<?> query, CriteriaBuilder cb, String[] values) {
+        if (values.length > 0) {
+            Matcher orderMatcher;
+            if ((orderMatcher = SORT_PATTERN.matcher(values[0])).find()) {
+                if ("price".equals(orderMatcher.group(1))) {
+                    Direction.fromOptionalString(orderMatcher.group(2)).ifPresent(direction -> {
+                        switch (direction) {
+                        case ASC:
+                            query.orderBy(cb.asc(productRoot.get("actualPrice")));
+                            break;
+                        case DESC:
+                            query.orderBy(cb.desc(productRoot.get("actualPrice")));
+                            break;
+                        default:
+                            break;
+                        }
+                    });
+                }
+            }
+        }
+    }
+
+    private Predicate priceFrom(CriteriaBuilder cb, String[] values) {
+        return cb.or(
+                cb.and(cb.isNotNull(productRoot.get("actualPrice")),
+                        cb.greaterThanOrEqualTo(productRoot.get("actualPrice"), extractNumberParam(values))),
+                cb.and(cb.isNull(productRoot.get("actualPrice")),
+                        cb.greaterThanOrEqualTo(productRoot.get("price"), extractNumberParam(values))));
+    }
+
+    private Predicate priceTo(CriteriaBuilder cb, String[] values) {
+        return cb.or(
+                cb.and(cb.isNotNull(productRoot.get("actualPrice")),
+                        cb.lessThanOrEqualTo(productRoot.get("actualPrice"), extractNumberParam(values))),
+                cb.and(cb.isNull(productRoot.get("actualPrice")),
+                        cb.lessThanOrEqualTo(productRoot.get("price"), extractNumberParam(values))));
     }
     
     private List<Predicate> getOptionExpressions(String optionName, String[] values, Root<ProductArticle> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
