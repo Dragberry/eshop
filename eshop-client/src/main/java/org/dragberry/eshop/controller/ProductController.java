@@ -2,6 +2,7 @@ package org.dragberry.eshop.controller;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,6 +12,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dragberry.eshop.controller.exception.ResourceNotFoundException;
 import org.dragberry.eshop.model.common.ImageModel;
+import org.dragberry.eshop.model.common.KeyValue;
 import org.dragberry.eshop.model.product.ProductCategory;
 import org.dragberry.eshop.model.product.ProductDetails;
 import org.dragberry.eshop.model.product.ProductSearchQuery;
@@ -31,6 +33,8 @@ public class ProductController {
 	private static final String MODEL_PRODUCT_LIST = "productList";
 
 	private static final String MODEL_CATEGORY_LIST = "categoryList";
+	
+	private static final String MODEL_SORTIN_OPTION_LIST = "sortingOptionList";
 
 	private static final String MODEL_BREADCRUMB = "breadcrumb";
 
@@ -41,6 +45,14 @@ public class ProductController {
 	
 	@Autowired
 	private ProductService productService;
+	
+	private static final List<KeyValue> SORTIN_OPTION_LIST = new ArrayList<>(); {
+	    SORTIN_OPTION_LIST.add(new KeyValue("msg.common.sort.popular.desc", "popular[desc]"));
+	    SORTIN_OPTION_LIST.add(new KeyValue("msg.common.sort.date.desc", "date[desc]"));
+	    SORTIN_OPTION_LIST.add(new KeyValue("msg.common.sort.price.asc", "price[desc]"));
+	    SORTIN_OPTION_LIST.add(new KeyValue("msg.common.sort.price.desc", "price[asc]"));
+	    SORTIN_OPTION_LIST.add(new KeyValue("msg.common.sort.rated.desc", "rated[desc]"));
+	}
 	
 	/**
      * Serves images
@@ -100,6 +112,7 @@ public class ProductController {
 			mv.addObject(MODEL_BREADCRUMB, Breadcrumb.builder()
 		     		.append(MSG_MENU_CATALOG, catelogReference, true));
 		}
+		mv.addObject(MODEL_SORTIN_OPTION_LIST, SORTIN_OPTION_LIST);
 		mv.addObject(MODEL_CATEGORY_LIST, categoryList);
 		mv.addObject(MODEL_PRODUCT_LIST, productService.getProductList(query));
 		return mv;
