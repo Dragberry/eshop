@@ -17,7 +17,7 @@
 .product-label {
 	margin-right: 0.25rem;
   	position: relative;
-    z-index: 1000;
+    z-index: 1;
 }
 
 .product-price-label {

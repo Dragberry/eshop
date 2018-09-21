@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
@@ -23,6 +24,8 @@ import org.dragberry.eshop.dal.entity.ProductAttributeList;
 import org.dragberry.eshop.dal.entity.ProductAttributeNumeric;
 import org.dragberry.eshop.dal.entity.ProductAttributeString;
 import org.dragberry.eshop.service.filter.FilterTypes;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 
 public class ProductArticleSpecification implements Specification<ProductArticle> {
@@ -30,6 +33,10 @@ public class ProductArticleSpecification implements Specification<ProductArticle
     private static final long serialVersionUID = 1408556421987136103L;
     
     private static final Pattern OPTION_PATTERN = Pattern.compile("option\\[(.*?)\\]$");
+    
+    private static final Pattern SORT_PATTERN = Pattern.compile("(.*?)\\[(.*?)\\]$");
+    
+    private static final String SORT_PARAM = "sort";
 
     private static final Pattern ATTRIBUTE_PATTERN = Pattern.compile(MessageFormat.format("attribute\\[(.*?)\\]\\[({0})\\]$", StringUtils.join(new String[] {
             FilterTypes.B_ALL,
@@ -116,6 +123,28 @@ public class ProductArticleSpecification implements Specification<ProductArticle
 					break;
             	}
             	continue;
+            }
+            if (SORT_PARAM.equals(name)) {
+                if (values.length > 0) {
+                    Matcher orderMatcher;
+                    if ((orderMatcher = SORT_PATTERN.matcher(values[0])).find()) {
+                        if ("price".equals(orderMatcher.group(1))) {
+                            Direction.fromOptionalString(orderMatcher.group(2)).ifPresent(direction -> {
+                                switch (direction) {
+                                case ASC:
+                                    query.orderBy(cb.asc(productRoot.get("actualPrice")));
+                                    break;
+                                case DESC:
+                                    query.orderBy(cb.desc(productRoot.get("actualPrice")));
+                                    break;
+                                default:
+                                    break;
+                                }
+                            });
+                        }
+                    }
+                }
+                
             }
         }
         query.distinct(true);
