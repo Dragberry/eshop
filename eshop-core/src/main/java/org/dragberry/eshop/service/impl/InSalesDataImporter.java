@@ -36,13 +36,13 @@ import org.dragberry.eshop.dal.entity.CategoryFilterRange;
 import org.dragberry.eshop.dal.entity.Image;
 import org.dragberry.eshop.dal.entity.Product;
 import org.dragberry.eshop.dal.entity.ProductArticle;
+import org.dragberry.eshop.dal.entity.ProductArticle.SaleStatus;
 import org.dragberry.eshop.dal.entity.ProductArticleOption;
 import org.dragberry.eshop.dal.entity.ProductAttribute;
 import org.dragberry.eshop.dal.entity.ProductAttributeBoolean;
 import org.dragberry.eshop.dal.entity.ProductAttributeList;
 import org.dragberry.eshop.dal.entity.ProductAttributeNumeric;
 import org.dragberry.eshop.dal.entity.ProductAttributeString;
-import org.dragberry.eshop.dal.entity.Product.SaleStatus;
 import org.dragberry.eshop.dal.repo.CategoryRepository;
 import org.dragberry.eshop.dal.repo.ImageRepository;
 import org.dragberry.eshop.dal.repo.ProductArticleOptionRepository;
@@ -255,6 +255,7 @@ public class InSalesDataImporter implements DataImporter {
 			pa.setTagTitle(firstLine[columnsMap.get(TAG_TITLE)]);
 			pa.setTagKeywords(firstLine[columnsMap.get(TAG_KEYWORDS)]);
 			pa.setTagDescription(firstLine[columnsMap.get(TAG_DESCRIPTION)]);
+			pa.setSaleStatus(SaleStatus.EXPOSED);
 			
 			List<ProductAttribute<?>> attributes = processAttributes(pa, firstLine);
 			pa.getAttributes().clear();
@@ -300,7 +301,6 @@ public class InSalesDataImporter implements DataImporter {
 				}
 				
 				Product product = new Product();
-				product.setSaleStatus(SaleStatus.EXPOSED);
 				product.setProductArticle(pa);
 				product.setOptions(options);
 				try {

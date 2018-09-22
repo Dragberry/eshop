@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.Set;
 
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -15,8 +14,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-
-import org.dragberry.eshop.dal.entity.converter.SaleStatusConverter;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -61,35 +58,4 @@ public class Product extends BaseEntity {
 	@Column(name = "QUANTITY")
 	private Integer quantity;
 	
-	@Column(name = "SALE_STATUS")
-    @Convert(converter = SaleStatusConverter.class)
-	private SaleStatus saleStatus;
-
-	public static enum SaleStatus implements BaseEnum<Character> {
-
-	    EXPOSED ('E'), IN_STOCK('S'), OUT_OF_STOCK('O');
-	    
-	    public final Character value;
-	    
-	    private SaleStatus(Character value) {
-	        this.value = value;
-	    }
-	    
-	    public static SaleStatus valueOf(Character value) {
-	        if (value == null) {
-	            throw BaseEnum.npeException(SaleStatus.class);
-	        }
-	        for (SaleStatus status : SaleStatus.values()) {
-	            if (value.equals(status.value)) {
-	                return status;
-	            }
-	        }
-	        throw BaseEnum.unknownValueException(SaleStatus.class, value);
-	    }
-	    
-	    @Override
-	    public Character getValue() {
-	        return value;
-	    }
-	}
 }

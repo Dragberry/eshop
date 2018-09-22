@@ -39,4 +39,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     @Query("select cf from CategoryFilter cf where cf.category.entityKey = :categoryId order by cf.order")
     List<CategoryFilter<?, ?, ?>> getCategoryFilters(Long categoryId);
     
+    @Query("select c from ProductArticle pa join pa.categories c where pa.entityKey = :productId")
+    List<Category> findByProductId(Long productId);
 }

@@ -11,7 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.dragberry.eshop.dal.entity.Product.SaleStatus;
 import org.dragberry.eshop.dal.entity.converter.ShippingMethodStatusConverter;
 
 import lombok.Getter;
@@ -66,7 +65,7 @@ public class ShippingMethod extends BaseEntity {
 	    
 	    public static Status valueOf(Character value) {
 	        if (value == null) {
-	            throw BaseEnum.npeException(SaleStatus.class);
+	            throw BaseEnum.npeException(Status.class);
 	        }
 	        for (Status status : Status.values()) {
 	            if (value.equals(status.value)) {

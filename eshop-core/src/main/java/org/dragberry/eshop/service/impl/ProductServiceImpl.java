@@ -15,7 +15,6 @@ import java.util.Set;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.apache.commons.lang3.StringUtils;
 import org.dragberry.eshop.dal.entity.Category;
 import org.dragberry.eshop.dal.entity.Image;
 import org.dragberry.eshop.dal.entity.Product;
@@ -39,13 +38,14 @@ import org.dragberry.eshop.model.product.ProductDetails;
 import org.dragberry.eshop.model.product.ProductSearchQuery;
 import org.dragberry.eshop.model.product.RangeFilter;
 import org.dragberry.eshop.service.ProductService;
-import org.dragberry.eshop.specification.ProductArticleSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ProductServiceImpl implements ProductService {
+	
+	private static final String ORDER_BY_PRICE = "price";
 
 	@Autowired
 	private ApplicationContext applicationContext;
@@ -88,33 +88,27 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public List<ProductListItem> getProductList(ProductSearchQuery query) {
-	    List<ProductArticle> searchResult;
-	    if (query == null || StringUtils.isBlank(query.getCategoryReference())) {
-	        searchResult = productArticleRepo.findAll();
-	    } else {
-	        searchResult = productArticleRepo.findAll(
-	                new ProductArticleSpecification(query.getCategoryReference(), query.getSearchParams()));
-	    }
-		return searchResult.stream().map(article -> {
-			ProductListItem product = new ProductListItem();
-			product.setId(article.getEntityKey());
-			product.setTitle(article.getTitle());
-			product.setArticle(article.getArticle());
-			product.setReference(article.getReference());
-			Category ctg = article.getCategories().get(0);
-	        product.setCategory(new CategoryItem(ctg.getEntityKey(), ctg.getName(), ctg.getReference()));
-			product.setMainImage(article.getMainImage() != null ? article.getMainImage().getEntityKey() : null);
-			setLowestPrice(article, product);
-			
+		return productArticleRepo.search(query.getCategoryReference(), query.getSearchParams()).stream()
+	    .map(dto -> {
+	    	ProductListItem product = new ProductListItem();
+	    	product.setId(dto.getId());
+			product.setTitle(dto.getTitle());
+			product.setArticle(dto.getArticle());
+			product.setReference(dto.getReference());
+			product.setMainImage(dto.getMainImage());
+			product.setActualPrice(dto.getActualPrice());
+			product.setPrice(dto.getPrice());
+			Category ctg = categoryRepo.findAllByOrderByOrder().get(0);
+			product.setCategory(new CategoryItem(ctg.getEntityKey(), ctg.getName(), ctg.getReference()));
 			// Test data
-			product.setCommentsCount(3);
 			Map<String, Modifier> labels = new HashMap<>();
 			labels.put("Скидка", Modifier.INFO);
 			labels.put("20%", Modifier.DANGER);
 			product.setLabels(labels);
 			product.setRating(3.3);
-			return product;
-		}).collect(toList());
+	    	return product;
+	    }).collect(toList());
+		
 	}
 
     private void setLowestPrice(ProductArticle article, ActualPriceHolder product) {
@@ -225,7 +219,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Filter> getCategoryFilters(Long categoryId) {
     	RangeFilter priceFilter = new RangeFilter();
-		priceFilter.setId("price");
+		priceFilter.setId(ORDER_BY_PRICE);
 		priceFilter.setFromId("price[from]");
 		priceFilter.setToId("price[to]");
 		priceFilter.setName("msg.common.price");

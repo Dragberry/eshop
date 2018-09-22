@@ -20,7 +20,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.dragberry.eshop.dal.entity.Category;
 import org.dragberry.eshop.dal.entity.Image;
 import org.dragberry.eshop.dal.entity.Product;
-import org.dragberry.eshop.dal.entity.Product.SaleStatus;
+import org.dragberry.eshop.dal.entity.ProductArticle.SaleStatus;
 import org.dragberry.eshop.dal.entity.ProductArticle;
 import org.dragberry.eshop.dal.entity.ProductArticleOption;
 import org.dragberry.eshop.dal.repo.CategoryRepository;
@@ -91,6 +91,7 @@ public class TestDataImporter implements DataImporter {
 			pa.setReference(article);
 			pa.setDescription(row.getCell(6).getStringCellValue());
 			pa.setDescriptionFull(row.getCell(7).getStringCellValue());
+			pa.setSaleStatus(SaleStatus.EXPOSED);
 			try {
 			    InputStream is = resourceLoader.getResource(MessageFormat.format("classpath:data/{0}_main.png", article)).getInputStream();
 			    Image img = new Image();
@@ -131,7 +132,6 @@ public class TestDataImporter implements DataImporter {
 				p.setActualPrice(new BigDecimal(row.getCell(10).getNumericCellValue() * 0.8));
 				p.setProductArticle(pa);
 				p.setQuantity(1);
-				p.setSaleStatus(SaleStatus.EXPOSED);
 				p = productRepo.save(p);
 			} else {
 				options.forEach(option -> {
@@ -141,7 +141,6 @@ public class TestDataImporter implements DataImporter {
 					p.setProductArticle(pa);
 					p.setOptions(new HashSet<>(Arrays.asList(option)));
 					p.setQuantity(1);	
-					p.setSaleStatus(SaleStatus.EXPOSED);
 					productRepo.save(p);
 				});
 				return;

@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -18,6 +19,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+
+import org.dragberry.eshop.dal.entity.converter.SaleStatusConverter;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -92,4 +95,36 @@ public class ProductArticle extends BaseEntity {
 	@OrderBy("`ORDER`")
 	@OneToMany(mappedBy= "productArticle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ProductAttribute<?>> attributes = new ArrayList<>();
+	
+	@Column(name = "SALE_STATUS")
+    @Convert(converter = SaleStatusConverter.class)
+	private SaleStatus saleStatus;
+
+	public static enum SaleStatus implements BaseEnum<Character> {
+
+	    EXPOSED ('E'), IN_STOCK('S'), OUT_OF_STOCK('O');
+	    
+	    public final Character value;
+	    
+	    private SaleStatus(Character value) {
+	        this.value = value;
+	    }
+	    
+	    public static SaleStatus valueOf(Character value) {
+	        if (value == null) {
+	            throw BaseEnum.npeException(SaleStatus.class);
+	        }
+	        for (SaleStatus status : SaleStatus.values()) {
+	            if (value.equals(status.value)) {
+	                return status;
+	            }
+	        }
+	        throw BaseEnum.unknownValueException(SaleStatus.class, value);
+	    }
+	    
+	    @Override
+	    public Character getValue() {
+	        return value;
+	    }
+	}
 }

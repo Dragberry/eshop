@@ -16,7 +16,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.dragberry.eshop.dal.entity.Product.SaleStatus;
 import org.dragberry.eshop.dal.entity.converter.OrderStatusConverter;
 
 import lombok.Getter;
@@ -94,7 +93,7 @@ public class Order extends BaseEntity {
 	    
 	    public static OrderStatus valueOf(Character value) {
 	        if (value == null) {
-	            throw BaseEnum.npeException(SaleStatus.class);
+	            throw BaseEnum.npeException(OrderStatus.class);
 	        }
 	        for (OrderStatus status : OrderStatus.values()) {
 	            if (value.equals(status.value)) {
