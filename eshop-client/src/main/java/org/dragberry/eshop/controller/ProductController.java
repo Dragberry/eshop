@@ -86,6 +86,15 @@ public class ProductController {
     	return mv;
     }
     
+    @GetMapping("${url.catalog.filter}")
+    public ModelAndView searchAll(HttpServletRequest request) {
+        ModelAndView mv = new ModelAndView("pages/products/product-list :: products");
+    	ProductSearchQuery query = new ProductSearchQuery();
+    	query.setSearchParams(request.getParameterMap());
+        mv.addObject(MODEL_PRODUCT_LIST, productService.getProductList(query));
+    	return mv;
+    }
+    
     
 	/**
 	 * Return a list of products

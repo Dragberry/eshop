@@ -13,20 +13,22 @@
 				<div class="row">
 					<th:block th:replace="pages/products/categories-side-menu :: categories-side-menu(selectedCategory = ${selectedCategory})"></th:block>
 				</div>
-				<div th:if="${selectedCategory}" class="row mt-2">
-					<button class="btn btn-block btn-secondary btn-sm btn-side-menu" type="button" data-toggle="collapse"
-						data-target="#filtersForm" aria-expanded="false" aria-controls="filtersForm">
-						<span th:text="#{msg.common.filters}">Filters</span>
-					</button>
-					<div class="content-side-menu collapse show">
-						<form id="filtersForm" th:action="|${@environment.getProperty('url.catalog.filter')}/${selectedCategory}|" method="GET">
-							<th:block th:each="filter : ${category.filters}">
-								<th:block th:replace="__${filter.template}__"></th:block>
-								<hr/>
-							</th:block>
-						</form>
-					</div>
-				</div>	
+				<form th:if="${selectedCategory}" id="filtersForm" th:action="|${@environment.getProperty('url.catalog.filter')}/${selectedCategory}|" method="GET">
+					<div class="row mt-2">
+						<button class="btn btn-block btn-secondary btn-sm btn-side-menu" type="button" data-toggle="collapse"
+							data-target="#filtersForm" aria-expanded="false" aria-controls="filtersForm">
+							<span th:text="#{msg.common.filters}">Filters</span>
+						</button>
+						<div class="content-side-menu collapse show">
+								<th:block th:each="filter : ${category.filters}">
+									<th:block th:replace="__${filter.template}__"></th:block>
+									<hr/>
+								</th:block>
+						</div>
+					</div>	
+				</form>
+				<form th:unless="${selectedCategory}" id="filtersForm" th:action="|${@environment.getProperty('url.catalog.filter')}|" method="GET">
+				</form>
 			</div>
 		</div>
 		<div class="col-md-9">

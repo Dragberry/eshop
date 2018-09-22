@@ -2,8 +2,13 @@ package org.dragberry.eshop.application;
 
 import java.util.concurrent.Executor;
 
+import org.dragberry.eshop.dal.entity.AbstractEntity;
+import org.dragberry.eshop.dal.repo.Repositories;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.thymeleaf.TemplateEngine;
@@ -15,6 +20,9 @@ import org.thymeleaf.templateresolver.StringTemplateResolver;
 
 @Configuration
 @EnableAsync
+@EnableJpaRepositories(basePackageClasses = Repositories.class)
+@EntityScan(basePackageClasses = AbstractEntity.class)
+@EnableJpaAuditing
 public class CoreConfig {
     
     private static final String EMAIL_TEMPLATE_ENCODING = "UTF-8";

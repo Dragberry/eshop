@@ -4,8 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.dragberry.eshop.controller.Controllers;
-import org.dragberry.eshop.dal.entity.AbstractEntity;
-import org.dragberry.eshop.dal.repo.Repositories;
 import org.dragberry.eshop.interceptor.AppInfoInterceptor;
 import org.dragberry.eshop.security.Security;
 import org.dragberry.eshop.service.impl.Services;
@@ -13,11 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.mobile.device.DeviceHandlerMethodArgumentResolver;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -31,8 +27,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableTransactionManagement
 @EnableAutoConfiguration
 @EnableWebMvc
-@EnableJpaRepositories(basePackageClasses = Repositories.class)
-@EntityScan(basePackageClasses = AbstractEntity.class)
 public class Application implements WebMvcConfigurer {
 
     private static final String[] CLASSPATH_RESOURCE_LOCATIONS = { "classpath:/META-INF/resources/",

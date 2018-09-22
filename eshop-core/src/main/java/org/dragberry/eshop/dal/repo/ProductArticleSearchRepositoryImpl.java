@@ -303,20 +303,32 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
 	        if (values.length > 0) {
 	            Matcher orderMatcher;
 	            if ((orderMatcher = SORT_PATTERN.matcher(values[0])).find()) {
-	                if ("price".equals(orderMatcher.group(1))) {
-	                    Direction.fromOptionalString(orderMatcher.group(2)).ifPresent(direction -> {
-	                        switch (direction) {
-	                        case ASC:
-	                            query.orderBy(cb.asc(cb.min(productRoot.get("actualPrice"))));
-	                            break;
-	                        case DESC:
-	                            query.orderBy(cb.desc(cb.min(productRoot.get("actualPrice"))));
-	                            break;
-	                        default:
-	                            break;
-	                        }
-	                    });
-	                }
+	            	Direction.fromOptionalString(orderMatcher.group(2)).ifPresent(direction -> {
+                        switch (direction) {
+                        case ASC:
+                        	switch (orderMatcher.group(1)) {
+                        	case "price":	
+                        		query.orderBy(cb.asc(cb.min(productRoot.get("actualPrice"))));
+                        		break;
+                        	default:
+                        		break;
+                        	}
+                            break;
+                        case DESC:
+                        	switch (orderMatcher.group(1)) {
+                        	case "price":	
+                        		query.orderBy(cb.desc(cb.min(productRoot.get("actualPrice"))));
+                        		break;
+                        	case "date":
+                        		query.orderBy(cb.desc(root.get("modifiedDate")));
+                        	default:
+                        		break;
+                        	}
+                            break;
+                        default:
+                            break;
+                        }
+                    });
 	            }
 	        }
 	    }	

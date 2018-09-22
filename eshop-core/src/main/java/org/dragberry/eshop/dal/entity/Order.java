@@ -33,7 +33,7 @@ import lombok.Setter;
 		allocationSize = 1)
 @Setter
 @Getter
-public class Order extends BaseEntity {
+public class Order extends AuditableEntity {
 
 	private static final long serialVersionUID = 6817451222642163283L;
 
