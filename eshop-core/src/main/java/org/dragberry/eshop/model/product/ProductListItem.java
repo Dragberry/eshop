@@ -26,9 +26,9 @@ public class ProductListItem implements ActualPriceHolder {
 	
 	private BigDecimal price;
 	
-	private int commentsCount;
+	private Long commentsCount;
 	
-	private double rating;
+	private Double rating;
 	
 	private Map<String, Modifier> labels;
 	

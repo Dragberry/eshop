@@ -61,6 +61,7 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
 		Root<ProductArticle> root;
 		Join<?, ?> categoryRoot;
 		Join<?, ?>  productRoot;
+		Join<?, ?>  productCommentRoot;
 		List<Predicate> where;
 		
 		ProductSearchQuery() {
@@ -69,6 +70,7 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
 			root = query.from(ProductArticle.class);
 			categoryRoot = root.join("categories");
 			productRoot = root.join("products");
+			productCommentRoot = root.join("comments", JoinType.LEFT);
 			where = new ArrayList<>();
 		}
 
@@ -97,7 +99,9 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
 					root.get("reference"),
 					root.get("mainImage").get("entityKey"),
 					cb.min(productRoot.get("actualPrice")),
-					cb.min(productRoot.get("price")))
+					cb.min(productRoot.get("price")),
+					cb.countDistinct(productCommentRoot),
+					cb.avg(productCommentRoot.get("mark")))
 			.groupBy(
 					root.get("entityKey"))
 			.where(where.toArray(new Predicate[where.size()]));
@@ -328,6 +332,9 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
                         		break;
                         	case "date":
                         		query.orderBy(cb.desc(root.get("modifiedDate")));
+                        	case "rated":
+                        		query.orderBy(cb.desc(cb.avg(productCommentRoot.get("mark"))));
+                        		break;
                         	default:
                         		break;
                         	}

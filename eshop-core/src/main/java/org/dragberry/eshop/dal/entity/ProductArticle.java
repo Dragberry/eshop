@@ -93,13 +93,25 @@ public class ProductArticle extends AuditableEntity {
 	private String tagDescription;
 	
 	@OrderBy("`ORDER`")
-	@OneToMany(mappedBy= "productArticle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "productArticle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ProductAttribute<?>> attributes = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "productArticle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ProductComment> comments = new ArrayList<>();
 	
 	@Column(name = "SALE_STATUS")
     @Convert(converter = SaleStatusConverter.class)
 	private SaleStatus saleStatus;
 
+	public void addComment(Comment comment, Integer mark) {
+		ProductComment pComment = new ProductComment();
+		pComment.setProductArticle(this);
+		pComment.setEntityKey(new ProductCommentId(entityKey, comment.getEntityKey()));
+		pComment.setComment(comment);
+		pComment.setMark(mark);
+		comments.add(pComment);
+	}
+	
 	public static enum SaleStatus implements BaseEnum<Character> {
 
 	    EXPOSED ('E'), IN_STOCK('S'), OUT_OF_STOCK('O');

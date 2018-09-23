@@ -98,14 +98,16 @@ public class ProductServiceImpl implements ProductService {
 			product.setMainImage(dto.getMainImage());
 			product.setActualPrice(dto.getActualPrice());
 			product.setPrice(dto.getPrice());
+			product.setRating(dto.getAverageMark());
+			product.setCommentsCount(dto.getCommentsCount());
 			Category ctg = categoryRepo.findAllByOrderByOrder().get(0);
 			product.setCategory(new CategoryItem(ctg.getEntityKey(), ctg.getName(), ctg.getReference()));
+			
 			// Test data
 			Map<String, Modifier> labels = new HashMap<>();
 			labels.put("Скидка", Modifier.INFO);
 			labels.put("20%", Modifier.DANGER);
 			product.setLabels(labels);
-			product.setRating(3.3);
 	    	return product;
 	    }).collect(toList());
 		

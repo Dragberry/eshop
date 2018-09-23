@@ -33,6 +33,7 @@ import org.dragberry.eshop.dal.entity.CategoryFilterAllList;
 import org.dragberry.eshop.dal.entity.CategoryFilterAnyBoolean;
 import org.dragberry.eshop.dal.entity.CategoryFilterAnyString;
 import org.dragberry.eshop.dal.entity.CategoryFilterRange;
+import org.dragberry.eshop.dal.entity.Comment;
 import org.dragberry.eshop.dal.entity.Image;
 import org.dragberry.eshop.dal.entity.Product;
 import org.dragberry.eshop.dal.entity.ProductArticle;
@@ -43,7 +44,10 @@ import org.dragberry.eshop.dal.entity.ProductAttributeBoolean;
 import org.dragberry.eshop.dal.entity.ProductAttributeList;
 import org.dragberry.eshop.dal.entity.ProductAttributeNumeric;
 import org.dragberry.eshop.dal.entity.ProductAttributeString;
+import org.dragberry.eshop.dal.entity.ProductComment;
+import org.dragberry.eshop.dal.entity.ProductCommentId;
 import org.dragberry.eshop.dal.repo.CategoryRepository;
+import org.dragberry.eshop.dal.repo.CommentRepository;
 import org.dragberry.eshop.dal.repo.ImageRepository;
 import org.dragberry.eshop.dal.repo.ProductArticleOptionRepository;
 import org.dragberry.eshop.dal.repo.ProductArticleRepository;
@@ -108,6 +112,9 @@ public class InSalesDataImporter implements DataImporter {
 	private static final String GRP_ATTR_SCREEN = "Экран";
 	
 	private static final String GRP_ATTR_ACCUM = "Аккумулятор и время работы";
+	
+	@Autowired
+	private CommentRepository commentRepo;
 	
 	@Autowired
 	private CategoryRepository categoryRepo;
@@ -280,6 +287,18 @@ public class InSalesDataImporter implements DataImporter {
 			productRepo.deleteAll(pa.getProducts());
 			pa.getProducts().clear();
             pa = productArticleRepo.save(pa);
+            
+            pa.getComments().clear();
+            int commentCount = 5 + (int) (Math.random() * 5);
+            for (int i = 0; i < commentCount; i++) {
+            	Comment comment = new Comment();
+    			comment.setUserIP("127.0.0.1");
+    			comment.setText("This is a good thing");
+    			comment.setStatus(Comment.Status.ACTIVE);
+    			comment = commentRepo.save(comment);
+    			pa.addComment(comment, ((int) (Math.random() * 5)) + 1);
+            }
+			pa = productArticleRepo.save(pa);
             
 			imageRepo.deleteAll(oldImages);
 			

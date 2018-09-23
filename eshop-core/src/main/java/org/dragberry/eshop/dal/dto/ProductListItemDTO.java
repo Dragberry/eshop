@@ -25,4 +25,8 @@ public class ProductListItemDTO {
 	
 	private BigDecimal price;
 	
+	private Long commentsCount;
+	
+	private Double averageMark;
+	
 }
