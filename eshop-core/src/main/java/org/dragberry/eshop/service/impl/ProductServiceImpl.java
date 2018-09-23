@@ -100,7 +100,7 @@ public class ProductServiceImpl implements ProductService {
 			product.setPrice(dto.getPrice());
 			product.setRating(dto.getAverageMark());
 			product.setCommentsCount(dto.getCommentsCount());
-			Category ctg = categoryRepo.findAllByOrderByOrder().get(0);
+			Category ctg = categoryRepo.findByProductId(dto.getId()).get(0);
 			product.setCategory(new CategoryItem(ctg.getEntityKey(), ctg.getName(), ctg.getReference()));
 			
 			// Test data
