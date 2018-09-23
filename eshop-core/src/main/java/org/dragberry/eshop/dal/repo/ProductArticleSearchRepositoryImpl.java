@@ -15,6 +15,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
@@ -316,6 +317,9 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
                             break;
                         case DESC:
                         	switch (orderMatcher.group(1)) {
+                        	case "popular":
+                        		query.orderBy(cb.desc(cb.count(productRoot.join("orderItems", JoinType.LEFT).get("quantity"))));
+                        		break;
                         	case "price":	
                         		query.orderBy(cb.desc(cb.min(productRoot.get("actualPrice"))));
                         		break;
@@ -330,6 +334,9 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
                         }
                     });
 	            }
+	        }
+	        if (query.getOrderList().isEmpty()) {
+	        	query.orderBy(cb.desc(cb.count(productRoot.join("orderItems", JoinType.LEFT).get("quantity"))));
 	        }
 	    }	
 		
