@@ -50,8 +50,8 @@
 				</div>
 			</div>
 			<div class="tab-pane fade" id="comments" role="tabpanel" aria-labelledby="commentsTab">
-				<button type="button" class="btn btn-success m-4">
-					Add comment	
+				<button type="button" class="btn btn-success mt-4 mb-4">
+					[[#{msg.common.addComment}]]	
 				</button>
 				<div th:if="${#lists.isEmpty(product.comments)}">
 					<p th:text="#{msg.common.noComments}"></p>
