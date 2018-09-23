@@ -10,8 +10,13 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
+@Getter
+@Setter
 public abstract class AuditableEntity extends BaseEntity {
 
 	private static final long serialVersionUID = -8952555002443715114L;

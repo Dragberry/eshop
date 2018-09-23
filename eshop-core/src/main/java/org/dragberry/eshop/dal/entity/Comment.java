@@ -35,6 +35,9 @@ public class Comment extends AuditableEntity {
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "COMMENT_GEN")
 	private Long entityKey;
 
+	@Column(name = "USER_NAME")
+    private String userName;
+	
 	@Column(name = "USER_IP")
     private String userIP;
 	

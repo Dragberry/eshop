@@ -1,6 +1,7 @@
 package org.dragberry.eshop.model.product;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,4 +58,6 @@ public class ProductDetails implements ActualPriceHolder {
     private String tagTitle;
     
     private Map<String, List<KeyValue>> attributes = new LinkedHashMap<>();
+    
+    private List<CommentDetails> comments = new ArrayList<>(); 
 }

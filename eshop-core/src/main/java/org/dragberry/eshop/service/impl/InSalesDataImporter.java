@@ -293,6 +293,7 @@ public class InSalesDataImporter implements DataImporter {
             for (int i = 0; i < commentCount; i++) {
             	Comment comment = new Comment();
     			comment.setUserIP("127.0.0.1");
+    			comment.setUserName("Maksim");
     			comment.setText("This is a good thing");
     			comment.setStatus(Comment.Status.ACTIVE);
     			comment = commentRepo.save(comment);

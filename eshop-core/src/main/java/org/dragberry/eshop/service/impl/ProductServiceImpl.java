@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.dragberry.eshop.dal.entity.Category;
+import org.dragberry.eshop.dal.entity.Comment.Status;
 import org.dragberry.eshop.dal.entity.Image;
 import org.dragberry.eshop.dal.entity.Product;
 import org.dragberry.eshop.dal.entity.ProductArticle;
@@ -31,6 +32,7 @@ import org.dragberry.eshop.model.common.Modifier;
 import org.dragberry.eshop.model.product.ProductListItem;
 import org.dragberry.eshop.model.product.ActualPriceHolder;
 import org.dragberry.eshop.model.product.CategoryItem;
+import org.dragberry.eshop.model.product.CommentDetails;
 import org.dragberry.eshop.model.product.Filter;
 import org.dragberry.eshop.model.product.ListFilter;
 import org.dragberry.eshop.model.product.ProductCategory;
@@ -181,6 +183,19 @@ public class ProductServiceImpl implements ProductService {
         product.setAttributes(article.getAttributes().stream()
         		.collect(groupingBy(ProductAttribute::getGroup, LinkedHashMap::new,
         				mapping(attr -> new KeyValue(attr.getName(), attr.getStringValue()), toList()))));
+        
+        product.setComments(article.getComments().stream()
+        		.filter(entity -> Status.ACTIVE.equals(entity.getComment().getStatus()))
+        		.map(entity -> {
+		        	CommentDetails comment = new CommentDetails();
+		        	comment.setId(entity.getEntityKey().getCommentId());
+		        	comment.setName(entity.getComment().getUserName());
+		        	comment.setText(entity.getComment().getText());
+		        	comment.setDate(entity.getComment().getCreatedDate());
+		        	comment.setMark(entity.getMark());
+		        	return comment;
+        }).collect(toList()));
+        
         // test data
         Map<String, Modifier> labels = new HashMap<>();
 		labels.put("Скидка", Modifier.INFO);

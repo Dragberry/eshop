@@ -136,7 +136,7 @@ public class ProductController {
         if (productReference != null) {
             ProductDetails product = productService.getProductArticleDetails(categoryReference, productReference);
             if (product != null) {
-            	ModelAndView mv = new ModelAndView("pages/products/product");
+            	ModelAndView mv = new ModelAndView("pages/products/details/product-details");
                 mv.addObject("product", product);
                 mv.addObject(MODEL_BREADCRUMB, Breadcrumb.builder()
                 		.append(MSG_MENU_CATALOG, catelogReference, true)
