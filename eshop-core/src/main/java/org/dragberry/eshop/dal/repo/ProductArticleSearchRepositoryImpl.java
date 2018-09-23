@@ -87,6 +87,9 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
 	                sort(values);
 	            }
 	        }
+	        if (query.getOrderList().isEmpty()) {
+	        	query.orderBy(cb.desc(cb.count(productRoot.join("orderItems", JoinType.LEFT).get("quantity"))));
+	        }
 			query.multiselect(
 					root.get("entityKey"),
 					root.get("title"),
@@ -334,9 +337,6 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
                         }
                     });
 	            }
-	        }
-	        if (query.getOrderList().isEmpty()) {
-	        	query.orderBy(cb.desc(cb.count(productRoot.join("orderItems", JoinType.LEFT).get("quantity"))));
 	        }
 	    }	
 		
