@@ -11,9 +11,13 @@ public class CommentDetails {
 	
 	private String name;
 	
+	private String email;
+	
 	private String text;
 	
 	private LocalDateTime date;
 
 	private Integer mark;
+	
+	private String ip;
 }

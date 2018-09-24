@@ -2,6 +2,7 @@ package org.dragberry.eshop.controller;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,9 +11,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.dragberry.eshop.common.ResultTO;
+import org.dragberry.eshop.common.Results;
+import org.dragberry.eshop.controller.exception.BadRequestException;
 import org.dragberry.eshop.controller.exception.ResourceNotFoundException;
 import org.dragberry.eshop.model.common.ImageModel;
 import org.dragberry.eshop.model.common.KeyValue;
+import org.dragberry.eshop.model.product.CommentDetails;
 import org.dragberry.eshop.model.product.ProductCategory;
 import org.dragberry.eshop.model.product.ProductDetails;
 import org.dragberry.eshop.model.product.ProductSearchQuery;
@@ -23,8 +28,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.ibm.icu.text.MessageFormat;
+
+import lombok.extern.log4j.Log4j;
+
+@Log4j
 @Controller
 public class ProductController {
 	
@@ -146,5 +158,26 @@ public class ProductController {
             }
         }
         throw new ResourceNotFoundException();
+    }
+    
+    @PostMapping("${url.product.add-comment}")
+    public ModelAndView addComment(HttpServletRequest request) {
+    	log.info("IP address: " + request.getRemoteAddr());
+    	CommentDetails comment = new CommentDetails();
+    	comment.setId(1L);
+    	comment.setDate(LocalDateTime.now());
+    	comment.setIp(request.getRemoteAddr());
+    	comment.setName(request.getParameter("name"));
+    	comment.setText(request.getParameter("text"));
+    	comment.setEmail(request.getParameter("email"));
+    	String mark =request.getParameter("productRating");
+    	try {
+    		comment.setMark(Integer.parseInt(mark));
+    	} catch (NumberFormatException e) {
+			throw new BadRequestException(MessageFormat.format("Invalid mark {0}", mark));
+		}
+    	ModelAndView mv = new ModelAndView("pages/products/details/product-details-tab-panel :: product-comment");
+    	mv.addObject("comment", comment);
+		return mv;
     }
 }

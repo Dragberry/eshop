@@ -50,27 +50,38 @@
 				</div>
 			</div>
 			<div class="tab-pane fade" id="comments" role="tabpanel" aria-labelledby="commentsTab">
-				<button type="button" class="btn btn-success mt-4 mb-4"
+				<button id="addCommentButton" type="button" class="btn btn-success mt-4 mb-4"
 					data-toggle="collapse" data-target="#addComment" role="button" aria-expanded="false" aria-controls="addComment">
 					[[#{msg.common.addComment}]]	
 				</button>
-				<div id="addComment" class="col-md-6 card collapse">
+				<div id="addComment" class="col-md-6 mb-4 card collapse">
 				  	<div class="card-body">
-				  		<form id="addCommentForm">
+				  		<form id="addCommentForm" th:action="${@environment.getProperty('url.product.add-comment')}" method="POST">
 				  			<div class="form-group">
-							    <label for="name" class="font-weight-bold">Name</label>
+							    <label for="name" class="font-weight-bold">[[#{msg.common.yourName}]]</label>
 							    <input type="text" name="name" class="form-control form-control-sm" id="addCommentName">
 							</div>
 							<div class="form-group">
-							    <label for="addCommentEmail" class="font-weight-bold">E-mail</label>
+							    <label for="addCommentEmail" class="font-weight-bold">[[#{msg.common.email}]]</label>
 							    <input type="text" name="email" class="form-control form-control-sm" id="addCommentEmail">
 							</div>
 							<div class="form-group">
-							    <label for="addCommentText" class="font-weight-bold">Comment</label>
+								<label for="addCommentRating" class="font-weight-bold">[[#{msg.common.rateProduct}]]</label>
+								<div id="product-rate" class="star-rating product-star-rating" th:onmouseleave="|onInterruptedRate()|">
+							       	<span th:each="i : ${#numbers.sequence(1, 5)}" class="fa fa-star fa-2x"
+							       		th:data-rating="${i}"
+							       		th:onmouseover="|onHoverRate($(this))|"
+							       		th:onclick="|onProductRate(${i})|">
+							       	</span>
+							   		<input type="hidden" id="addCommentRating" name="productRating" class="rating-value" value="0">
+							  	</div>
+							</div>
+							<div class="form-group">
+							    <label for="addCommentText" class="font-weight-bold">[[#{msg.common.yourComment}]]</label>
 							    <textarea name="text" class="form-control form-control-sm" id="addCommentText"></textarea>
 							</div>
-					    	<button type="button" class="btn btn-success mt-4">
-								[[#{msg.common.addComment}]]	
+					    	<button type="submit" class="btn btn-success mt-4">
+								[[#{msg.common.submitComment}]]	
 							</button>
 					    </form>
 				  	</div>
@@ -79,24 +90,27 @@
 					<p th:text="#{msg.common.noComments}"></p>
 				</div>
 				<div th:unless="${#lists.isEmpty(product.comments)}" class="list-group small">
-					<div th:each="comment : ${product.comments}" class="list-group-item">
-				 		<div class="row">
-				 			<div class="col-6 text-left">
-				 				<div>
-				 					<span class="fa fa-user fa-xs"></span>
-									<span class="font-weight-bold mr-4">[[${comment.name}]]</span>
-								</div>
-								<span th:replace="components/rating :: rating(name = ${comment.id}, value = ${comment.mark})">Rating</span>
-				 			</div>
-				 			<div class="col-6 text-right">
-				 				<span class="fa fa-calendar fa-xs"></span>
-				 				<span class="font-weight-italic">[[${#temporals.format(comment.date, 'yyyy-MM-dd hh:mm:ss')}]]</span>	
-				 			</div>
-				 			<div class="col-12">
-				 				<span>[[${comment.text}]]</span>
-				 			</div>
-		 				</div>
-			 		</div>
+					<div id="productCommentZero" class="d-none"></div>
+					<th:block th:each="comment, iter : ${product.comments}">
+						<div th:fragment="product-comment" class="list-group-item">
+					 		<div class="row">
+					 			<div class="col-6 text-left">
+					 				<div>
+					 					<span class="fa fa-user fa-xs"></span>
+										<span class="font-weight-bold mr-4">[[${comment.name}]]</span>
+									</div>
+									<span th:replace="components/rating :: rating(name = ${comment.id}, value = ${comment.mark})">Rating</span>
+					 			</div>
+					 			<div class="col-6 text-right">
+					 				<span class="fa fa-calendar fa-xs"></span>
+					 				<span class="font-weight-italic">[[${#temporals.format(comment.date, 'yyyy-MM-dd hh:mm:ss')}]]</span>	
+					 			</div>
+					 			<div class="col-12">
+					 				<span>[[${comment.text}]]</span>
+					 			</div>
+			 				</div>
+				 		</div>
+					</th:block>
 				</div>
 			</div>
 		</div>

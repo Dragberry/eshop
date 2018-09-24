@@ -24,6 +24,10 @@
 	color: orange;
 }
 
+.star-rating .fa-star.active:active {
+	color: yellow;
+}
+
 .product-label {
 	margin-right: 0.25rem;
   	position: relative;
