@@ -1,6 +1,7 @@
 package org.dragberry.eshop.common;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ResultTO<T> implements Serializable {
@@ -13,7 +14,7 @@ public class ResultTO<T> implements Serializable {
 	
 	public ResultTO(T object, List<IssueTO> issues) {
 		this.value = object;
-		this.issues = issues;
+		this.issues = issues != null ? issues : new ArrayList<>();
 	}
 
 	public T getValue() {
@@ -22,6 +23,10 @@ public class ResultTO<T> implements Serializable {
 
 	public List<IssueTO> getIssues() {
 		return issues;
+	}
+	
+	public boolean hasIssues() {
+		return !issues.isEmpty();
 	}
 	
 }

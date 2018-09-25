@@ -186,6 +186,7 @@ public class ProductServiceImpl implements ProductService {
         
         product.setComments(article.getComments().stream()
         		.filter(entity -> Status.ACTIVE.equals(entity.getComment().getStatus()))
+        		.sorted((c1, c2) -> -c1.getComment().getCreatedDate().compareTo(c2.getComment().getCreatedDate()))
         		.map(entity -> {
 		        	CommentDetails comment = new CommentDetails();
 		        	comment.setId(entity.getEntityKey().getCommentId());

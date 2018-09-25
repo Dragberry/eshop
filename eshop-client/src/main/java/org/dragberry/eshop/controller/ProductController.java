@@ -4,6 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,8 +25,10 @@ import org.dragberry.eshop.model.product.ProductCategory;
 import org.dragberry.eshop.model.product.ProductDetails;
 import org.dragberry.eshop.model.product.ProductSearchQuery;
 import org.dragberry.eshop.navigation.Breadcrumb;
+import org.dragberry.eshop.service.CommentService;
 import org.dragberry.eshop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,12 +36,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import com.ibm.icu.text.MessageFormat;
 
-import lombok.extern.log4j.Log4j;
-
-@Log4j
 @Controller
 public class ProductController {
 	
@@ -55,6 +58,13 @@ public class ProductController {
 
 	@Value("${url.catalog}")
 	private String catelogReference;
+	
+	@Autowired
+	@Qualifier("templateEngine")
+	private TemplateEngine templateEngine;
+	
+	@Autowired
+	private CommentService commentService;
 	
 	@Autowired
 	private ProductService productService;
@@ -163,8 +173,7 @@ public class ProductController {
     
     @PostMapping("${url.product.add-comment}")
     @ResponseBody
-    public ResultTO<ProductCommentResponse> addComment(HttpServletRequest request) {
-    	log.info("IP address: " + request.getRemoteAddr());
+    public ResultTO<?> addComment(HttpServletRequest request) {
     	ProductCommentRequest cmtReq = new ProductCommentRequest();
     	String productId = request.getParameter("productId");
         try {
@@ -175,21 +184,22 @@ public class ProductController {
     	cmtReq.setDate(LocalDateTime.now());
     	cmtReq.setIp(request.getRemoteAddr());
     	cmtReq.setName(request.getParameter("name"));
-    	cmtReq.setText(request.getParameter("text"));
+    	cmtReq.setText(request.getParameter("comment"));
     	cmtReq.setEmail(request.getParameter("email"));
-    	String mark =request.getParameter("productRating");
+    	String mark = request.getParameter("productRating");
     	try {
     	    cmtReq.setMark(Integer.valueOf(mark));
     	} catch (NumberFormatException e) {
 			throw new BadRequestException(MessageFormat.format("Invalid mark {0}", mark));
 		}
-		ProductCommentResponse cmtResp = new ProductCommentResponse();
-		cmtResp.setId(1L);
-		cmtResp.setDate(cmtReq.getDate());
-		cmtResp.setName(cmtReq.getName());
-		cmtResp.setText(cmtReq.getText());
-		cmtResp.setMark(cmtReq.getMark());
-		cmtResp.setProductId(cmtReq.getProductId());
-        return Results.create(cmtResp);
+    	ResultTO<ProductCommentResponse> resp = commentService.createComment(cmtReq);
+    	if (resp.hasIssues()) {
+    		return resp;
+    	} else {
+    		Context context = new Context();
+    		context.setVariable("comment", resp.getValue());
+            return Results.create(templateEngine.process("pages/products/details/product-details-tab-panel",
+    				new HashSet<>(Arrays.asList("product-comment")), context));
+    	}
     }
 }

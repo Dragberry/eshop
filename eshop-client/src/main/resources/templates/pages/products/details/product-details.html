@@ -259,11 +259,11 @@
 							url: form.action,
 							type: form.method,
 							data: $(form).serialize(),
-							success: function(response) {
-								$('#addComment').collapse('hide');
-								$('#productCommentZero').after(response);
-								calculateRatings();
-								console.log(response);
+							success: function(result) {
+								if (result.issues.length === 0) {
+									$('#productCommentZero').after(result.value);
+									calculateRatings();
+								}
 							}
 						});
 					},
