@@ -213,9 +213,46 @@
 					debug: true,
 					errorClass: 'invalid-feedback',
 					validClass: 'valid-feedback',
+					ignore: [],
 					rules: {
+						name: {
+							required: true,
+							maxlength: 32
+						},
+						email: {
+							required: true,
+							email: true,
+							maxlength: 128
+						},
+						comment: {
+							required: true,
+							maxlength: 1024
+						},
+						productRating: {
+							required: true,
+							min: 1,
+							max: 5
+						}
 					},
 					messages: {
+						name: {
+							required: '[[#{msg.error.comment.name.required}]]',
+							maxlength: '[[#{msg.error.comment.name.tooLong}]]',
+						},
+						email: {
+							required: '[[#{msg.error.common.email.required}]]',
+							email: '[[#{msg.error.common.email.invalid}]]',
+							maxlength: '[[#{msg.error.common.email.tooLong}]]'
+						},
+						comment: {
+							required: '[[#{msg.comment.comment.required}]]',
+							maxlength: '[[#{msg.comment.comment.tooLong}]]'
+						},
+						productRating: {
+							required: '[[#{msg.error.comment.rating.required}]]',
+							min: '[[#{msg.error.comment.rating.invalid}]]',
+							max: '[[#{msg.error.comment.rating.invalid}]]',
+						}
 					},
 					submitHandler: function(form) {
 						$.ajax({

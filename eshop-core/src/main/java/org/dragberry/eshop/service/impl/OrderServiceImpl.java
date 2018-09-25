@@ -53,7 +53,7 @@ public class OrderServiceImpl implements OrderService {
 	    if (StringUtils.isNotBlank(orderDetails.getEmail()) 
 	    		&& !GenericValidator.maxLength(orderDetails.getEmail(), 128)
 	    		&& !EmailValidator.getInstance().isValid(orderDetails.getEmail())) {
-	        issues.add(Issues.error("msg.error.emailInvalid", "email"));
+	        issues.add(Issues.error("msg.error.common.email.invalid", "email"));
 	    }
 	    ShippingMethod shippingMethod = null;
 	    if (orderDetails.getShippingMethod() != null) {
