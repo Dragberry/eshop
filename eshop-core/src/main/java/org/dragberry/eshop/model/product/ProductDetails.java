@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.dragberry.eshop.model.comment.CommentDetails;
 import org.dragberry.eshop.model.common.KeyValue;
 import org.dragberry.eshop.model.common.Modifier;
 

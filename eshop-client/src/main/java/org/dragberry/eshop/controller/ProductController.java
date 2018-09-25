@@ -15,9 +15,10 @@ import org.dragberry.eshop.common.ResultTO;
 import org.dragberry.eshop.common.Results;
 import org.dragberry.eshop.controller.exception.BadRequestException;
 import org.dragberry.eshop.controller.exception.ResourceNotFoundException;
+import org.dragberry.eshop.model.comment.ProductCommentRequest;
+import org.dragberry.eshop.model.comment.ProductCommentResponse;
 import org.dragberry.eshop.model.common.ImageModel;
 import org.dragberry.eshop.model.common.KeyValue;
-import org.dragberry.eshop.model.product.CommentDetails;
 import org.dragberry.eshop.model.product.ProductCategory;
 import org.dragberry.eshop.model.product.ProductDetails;
 import org.dragberry.eshop.model.product.ProductSearchQuery;
@@ -161,23 +162,34 @@ public class ProductController {
     }
     
     @PostMapping("${url.product.add-comment}")
-    public ModelAndView addComment(HttpServletRequest request) {
+    @ResponseBody
+    public ResultTO<ProductCommentResponse> addComment(HttpServletRequest request) {
     	log.info("IP address: " + request.getRemoteAddr());
-    	CommentDetails comment = new CommentDetails();
-    	comment.setId(1L);
-    	comment.setDate(LocalDateTime.now());
-    	comment.setIp(request.getRemoteAddr());
-    	comment.setName(request.getParameter("name"));
-    	comment.setText(request.getParameter("text"));
-    	comment.setEmail(request.getParameter("email"));
+    	ProductCommentRequest cmtReq = new ProductCommentRequest();
+    	String productId = request.getParameter("productId");
+        try {
+            cmtReq.setProductId(Long.valueOf(productId));
+        } catch (NumberFormatException e) {
+            throw new BadRequestException(MessageFormat.format("Invalid productId {0}", productId));
+        }
+    	cmtReq.setDate(LocalDateTime.now());
+    	cmtReq.setIp(request.getRemoteAddr());
+    	cmtReq.setName(request.getParameter("name"));
+    	cmtReq.setText(request.getParameter("text"));
+    	cmtReq.setEmail(request.getParameter("email"));
     	String mark =request.getParameter("productRating");
     	try {
-    		comment.setMark(Integer.parseInt(mark));
+    	    cmtReq.setMark(Integer.valueOf(mark));
     	} catch (NumberFormatException e) {
 			throw new BadRequestException(MessageFormat.format("Invalid mark {0}", mark));
 		}
-    	ModelAndView mv = new ModelAndView("pages/products/details/product-details-tab-panel :: product-comment");
-    	mv.addObject("comment", comment);
-		return mv;
+		ProductCommentResponse cmtResp = new ProductCommentResponse();
+		cmtResp.setId(1L);
+		cmtResp.setDate(cmtReq.getDate());
+		cmtResp.setName(cmtReq.getName());
+		cmtResp.setText(cmtReq.getText());
+		cmtResp.setMark(cmtReq.getMark());
+		cmtResp.setProductId(cmtReq.getProductId());
+        return Results.create(cmtResp);
     }
 }

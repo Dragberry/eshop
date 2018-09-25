@@ -80,6 +80,7 @@
 							    <label for="addCommentText" class="font-weight-bold">[[#{msg.common.yourComment}]]</label>
 							    <textarea name="text" class="form-control form-control-sm" id="addCommentText"></textarea>
 							</div>
+							<input type="hidden" name="productId" th:value="${product.id}">
 					    	<button type="submit" class="btn btn-success mt-4">
 								[[#{msg.common.submitComment}]]	
 							</button>
@@ -114,6 +115,7 @@
 				</div>
 			</div>
 		</div>
+		
 	</th:block>
 </body>
 </html>

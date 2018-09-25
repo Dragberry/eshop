@@ -1,4 +1,4 @@
-package org.dragberry.eshop.model.product;
+package org.dragberry.eshop.model.comment;
 
 import java.time.LocalDateTime;
 
@@ -11,13 +11,10 @@ public class CommentDetails {
 	
 	private String name;
 	
-	private String email;
-	
 	private String text;
 	
 	private LocalDateTime date;
 
 	private Integer mark;
 	
-	private String ip;
 }
