@@ -1,12 +1,18 @@
 package org.dragberry.eshop.dal.entity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.Convert;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,6 +20,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
@@ -102,6 +109,13 @@ public class ProductArticle extends AuditableEntity {
 	@Column(name = "SALE_STATUS")
     @Convert(converter = SaleStatusConverter.class)
 	private SaleStatus saleStatus;
+	
+	@ElementCollection
+	@CollectionTable(name = "PRODUCT_LABEL", joinColumns = @JoinColumn(name = "PRODUCT_ARTICLE_KEY"))
+	@MapKeyColumn(name = "LABEL")
+	@Column(name = "TYPE")
+	@Enumerated(EnumType.STRING)
+	private Map<String, ProductLabelType> labels = new HashMap<>();
 
 	public void addComment(Comment comment, Integer mark) {
 		ProductComment pComment = new ProductComment();

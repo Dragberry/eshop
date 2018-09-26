@@ -2,7 +2,6 @@ package org.dragberry.eshop.dal.repo;
 
 import java.util.List;
 import java.util.Optional;
-
 import org.dragberry.eshop.dal.entity.ProductArticle;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -35,7 +34,20 @@ public interface ProductArticleRepository extends ProductArticleSearchRepository
 	@Query("select pa from ProductArticle pa join pa.categories c left join fetch pa.attributes attr where pa.reference = :productReference and c.reference = :categoryReference")
     ProductArticle findByReferenceAndCategoryReference(String categoryReference, String productReference);
     
+	/**
+	 * Find the mainImageKey for the given product article
+	 * @param productArticleId
+	 * @return
+	 */
     @Query("select pa.mainImage.entityKey from ProductArticle pa where pa.entityKey = :productArticleId")
     Long findMainImageKey(Long productArticleId);
+
+    /**
+     * Find all labels for the given product article
+     * @param productArticleId
+     * @return
+     */
+    @Query("select entry(l) from ProductArticle pa join pa.labels l where pa.entityKey = :productArticleId")
+	List<Object> findLabels(Long productArticleId);
     
 }

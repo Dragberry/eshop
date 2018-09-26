@@ -10,8 +10,10 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -21,6 +23,7 @@ import org.dragberry.eshop.dal.entity.Image;
 import org.dragberry.eshop.dal.entity.Product;
 import org.dragberry.eshop.dal.entity.ProductArticle;
 import org.dragberry.eshop.dal.entity.ProductAttribute;
+import org.dragberry.eshop.dal.entity.ProductLabelType;
 import org.dragberry.eshop.dal.repo.CategoryRepository;
 import org.dragberry.eshop.dal.repo.ImageRepository;
 import org.dragberry.eshop.dal.repo.ProductArticleRepository;
@@ -88,6 +91,7 @@ public class ProductServiceImpl implements ProductService {
         return null;
     }
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<ProductListItem> getProductList(ProductSearchQuery query) {
 		return productArticleRepo.search(query.getCategoryReference(), query.getSearchParams()).stream()
@@ -104,12 +108,8 @@ public class ProductServiceImpl implements ProductService {
 			product.setCommentsCount(dto.getCommentsCount());
 			Category ctg = categoryRepo.findByProductId(dto.getId()).get(0);
 			product.setCategory(new CategoryItem(ctg.getEntityKey(), ctg.getName(), ctg.getReference()));
-			
-			// Test data
-			Map<String, Modifier> labels = new HashMap<>();
-			labels.put("Скидка", Modifier.INFO);
-			labels.put("20%", Modifier.DANGER);
-			product.setLabels(labels);
+			product.setLabels(productArticleRepo.findLabels(dto.getId()).stream()
+					.map(entry -> (Entry<String, ProductLabelType>) entry).collect(labelCollector()));
 	    	return product;
 	    }).collect(toList());
 		
@@ -197,12 +197,24 @@ public class ProductServiceImpl implements ProductService {
 		        	return comment;
         }).collect(toList()));
         
-        // test data
-        Map<String, Modifier> labels = new HashMap<>();
-		labels.put("Скидка", Modifier.INFO);
-		labels.put("20%", Modifier.DANGER);
-		product.setLabels(labels);
+		product.setLabels(article.getLabels().entrySet().stream().collect(labelCollector()));
         return product;
+    }
+    
+    private Collector<Entry<String, ProductLabelType>, ?, Map<String, Modifier>> labelCollector() {
+    	return toMap(
+    			(Entry<String, ProductLabelType> entry) -> entry.getKey(),
+				(Entry<String, ProductLabelType> entry) -> {
+					switch (entry.getValue()) {
+					case A:
+						return Modifier.DANGER;
+					case B:
+						return Modifier.SUCCESS;
+					case C:
+					default:
+						return Modifier.PRIMARY;
+					}
+				});
     }
     
     @Override

@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.Set;
 
@@ -44,8 +45,7 @@ import org.dragberry.eshop.dal.entity.ProductAttributeBoolean;
 import org.dragberry.eshop.dal.entity.ProductAttributeList;
 import org.dragberry.eshop.dal.entity.ProductAttributeNumeric;
 import org.dragberry.eshop.dal.entity.ProductAttributeString;
-import org.dragberry.eshop.dal.entity.ProductComment;
-import org.dragberry.eshop.dal.entity.ProductCommentId;
+import org.dragberry.eshop.dal.entity.ProductLabelType;
 import org.dragberry.eshop.dal.repo.CategoryRepository;
 import org.dragberry.eshop.dal.repo.CommentRepository;
 import org.dragberry.eshop.dal.repo.ImageRepository;
@@ -94,6 +94,8 @@ public class InSalesDataImporter implements DataImporter {
 	private static final String OPTION = "Свойство:";
 	
 	private static final String ATTRIBUTE = "Параметр:";
+	
+	private static final String LABEL = "Параметр: Метка";
 	
 	private static final Pattern PATTERN_EXISTS = Pattern.compile("есть \\((.*?)\\)$");
 
@@ -263,6 +265,25 @@ public class InSalesDataImporter implements DataImporter {
 			pa.setTagKeywords(firstLine[columnsMap.get(TAG_KEYWORDS)]);
 			pa.setTagDescription(firstLine[columnsMap.get(TAG_DESCRIPTION)]);
 			pa.setSaleStatus(SaleStatus.EXPOSED);
+			
+			pa.setLabels(Arrays.stream(getProperty(firstLine, LABEL).split("##")).filter(StringUtils::isNotBlank).collect(Collectors.toMap(lbl -> {
+				if ("новое поступление".equals(lbl)) {
+					return "Новинка";
+				}
+				return StringUtils.capitalize(lbl);
+			}, lbl -> {
+				switch (lbl) {
+				case "Скидка":
+					return ProductLabelType.A;
+				case "Хит продаж":
+					return ProductLabelType.B;
+				case "новое поступление":
+					return ProductLabelType.C;
+				default:
+					return ProductLabelType.C;
+				}
+			})));
+			
 			
 			List<ProductAttribute<?>> attributes = processAttributes(pa, firstLine);
 			pa.getAttributes().clear();
@@ -534,7 +555,7 @@ public class InSalesDataImporter implements DataImporter {
 	
 	private String getProperty(String[] columns, String columnName) {
 		Integer index = columnsMap.get(columnName);
-		return index < columns.length ? columns[index] : null;
+		return index < columns.length ? columns[index] : StringUtils.EMPTY;
 	}
 
 	public static void main(String[] args) {
