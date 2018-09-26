@@ -5,6 +5,9 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import lombok.Data;
+
+@Data
 public class IssueTO implements Serializable {
 
 	private static final long serialVersionUID = -3093436226923145667L;
@@ -16,6 +19,8 @@ public class IssueTO implements Serializable {
 	private final IssueType type;
 	
 	private final String fieldId;
+	
+	private String message;
 
 	public IssueTO(String errorCode, IssueType type, Object... params) {
 		this(errorCode, null, type, params);
@@ -28,22 +33,6 @@ public class IssueTO implements Serializable {
 		this.type = type;
 	}
 
-	public String getErrorCode() {
-		return errorCode;
-	}
-	
-	public IssueType getType() {
-		return type;
-	}
-
-	public List<Object> getParams() {
-		return params;
-	}
-	
-	public String getFieldId() {
-		return fieldId;
-	}
-	
 	@Override
 	public String toString() {
 		StringBuffer sb =  new StringBuffer("Issue[").append(getType()).append("]: {errorCode: ").append(errorCode);

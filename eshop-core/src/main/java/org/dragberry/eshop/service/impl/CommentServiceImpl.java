@@ -1,5 +1,6 @@
 package org.dragberry.eshop.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -37,55 +38,60 @@ public class CommentServiceImpl implements CommentService {
 	public ResultTO<ProductCommentResponse> createComment(ProductCommentRequest comment) {
 		List<IssueTO> issues = new ArrayList<>();
 		if (StringUtils.isBlank(comment.getName())) {
-			issues.add(Issues.error("msg.error.comment.name.required", "name"));
+			issues.add(Issues.error("msg.error.comment.name.required", "addCommentName"));
 		} else if (!GenericValidator.maxLength(comment.getName(), 32)) {
-			issues.add(Issues.error("msg.error.comment.name.tooLong", "name"));
+			issues.add(Issues.error("msg.error.comment.name.tooLong", "addCommentName"));
 		}
 		
 		if (StringUtils.isBlank(comment.getEmail())) {
-			issues.add(Issues.error("msg.error.common.email.required", "email"));
+			issues.add(Issues.error("msg.error.common.email.required", "addCommentEmail"));
 		} else if (!GenericValidator.maxLength(comment.getEmail(), 128)) {
-			issues.add(Issues.error("msg.error.common.email.tooLong", "email"));
+			issues.add(Issues.error("msg.error.common.email.tooLong", "addCommentEmail"));
 		} else if (!EmailValidator.getInstance().isValid(comment.getEmail())) {
-			issues.add(Issues.error("msg.error.common.email.invalid", "email"));
+			issues.add(Issues.error("msg.error.common.email.invalid", "addCommentEmail"));
 		}
 		
 		if (StringUtils.isBlank(comment.getText())) {
-			issues.add(Issues.error("msg.comment.comment.required", "comment"));
+			issues.add(Issues.error("msg.comment.comment.required", "addCommentText"));
 		} else if (!GenericValidator.maxLength(comment.getText(), 1024)) {
-			issues.add(Issues.error("msg.comment.comment.tooLong", "comment"));
+			issues.add(Issues.error("msg.comment.comment.tooLong", "addCommentText"));
 		}
 		
 		if (comment.getMark() == null) {
-			issues.add(Issues.error("msg.error.comment.rating.required", "productRating"));
+			issues.add(Issues.error("msg.error.comment.rating.required", "addCommentRating"));
 		} else if (!GenericValidator.isInRange(comment.getMark(), 1, 5)) {
-			issues.add(Issues.error("msg.error.comment.rating.invalid", "productRating"));
+			issues.add(Issues.error("msg.error.comment.rating.invalid", "addCommentRating"));
 		}
 		
 		if (comment.getProductId() == null) {
-			issues.add(Issues.error("msg.error.comment.product.required", "productId"));
+			issues.add(Issues.error("msg.error.comment.product.required", "addCommentProduct"));
 		} else {
-			Optional<ProductArticle> paOpt = productArticleRepo.findById(comment.getProductId());
-			if (!paOpt.isPresent()) {
-				issues.add(Issues.error("msg.error.comment.product.invalid", "productId"));
-			} else if (issues.isEmpty()) {
-				Comment cmt = new Comment();
-				cmt.setStatus(Status.ACTIVE);
-				cmt.setText(comment.getText());
-				cmt.setUserIP(comment.getIp());
-				cmt.setUserName(comment.getName());
-				cmt = commentRepo.save(cmt);
-				ProductArticle pa = paOpt.get();
-				pa.addComment(cmt, comment.getMark());
-				pa = productArticleRepo.save(pa);
-				ProductCommentResponse resp = new ProductCommentResponse();
-				resp.setDate(cmt.getCreatedDate());
-				resp.setId(cmt.getEntityKey());
-				resp.setMark(comment.getMark());
-				resp.setName(cmt.getUserName());
-				resp.setText(cmt.getText());
-				resp.setProductId(pa.getEntityKey());
-				return Results.create(resp);
+		    LocalDateTime lastCommentTime = commentRepo.findLastUserComment(comment.getIp());
+		    if (lastCommentTime != null && LocalDateTime.now().minusMinutes(2).isBefore(lastCommentTime)) {
+		        issues.add(Issues.error("msg.error.comment.tooEarly", "addCommentProduct"));
+		    } else {
+    			Optional<ProductArticle> paOpt = productArticleRepo.findById(comment.getProductId());
+    			if (!paOpt.isPresent()) {
+    				issues.add(Issues.error("msg.error.comment.product.invalid", "addCommentProduct"));
+    			} else if (issues.isEmpty()) {
+    				Comment cmt = new Comment();
+    				cmt.setStatus(Status.ACTIVE);
+    				cmt.setText(comment.getText());
+    				cmt.setUserIP(comment.getIp());
+    				cmt.setUserName(comment.getName());
+    				cmt = commentRepo.save(cmt);
+    				ProductArticle pa = paOpt.get();
+    				pa.addComment(cmt, comment.getMark());
+    				pa = productArticleRepo.save(pa);
+    				ProductCommentResponse resp = new ProductCommentResponse();
+    				resp.setDate(cmt.getCreatedDate());
+    				resp.setId(cmt.getEntityKey());
+    				resp.setMark(comment.getMark());
+    				resp.setName(cmt.getUserName());
+    				resp.setText(cmt.getText());
+    				resp.setProductId(pa.getEntityKey());
+    				return Results.create(resp);
+    			}
 			}
 		}
 		return Results.create(null, issues);

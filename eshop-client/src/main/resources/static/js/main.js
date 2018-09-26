@@ -14,6 +14,29 @@ $(document).ready(function() {
 
 $(document).ajaxError(showServerErrorModal);
 
+/*
+ * This method should be used as success ajax function when server can return validation errors
+ */
+function processResult(result, success) {
+	if (result.issues.length === 0) {
+		success(result.value);
+	} else {
+		showValidationErrors(result.issues);
+	}
+}
+
+/* Show server validation messages */
+function showValidationErrors(issues) {
+	issues.forEach(function(issue) {
+		$fieldId = $('#' + issue.fieldId).addClass('is-invalid');
+		$fieldId.after($('<label></label>')
+			.attr('id', $fieldId.attr('id') + '-error')
+			.attr('for', $fieldId.attr('id'))
+			.addClass('invalid-feedback d-block')
+			.text(issue.message));
+	});
+}
+
 /* Update body margin on screen resize */
 function onPageResize() {
 	var bodyMargin = $('body').css('margin-bottom');
@@ -67,3 +90,4 @@ function updateCommentsCount() {
 function showServerErrorModal() {
 	$('#serverErrorModal').modal('show');
 }
+

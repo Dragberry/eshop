@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,6 +31,7 @@ import org.dragberry.eshop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -58,6 +60,9 @@ public class ProductController {
 
 	@Value("${url.catalog}")
 	private String catelogReference;
+	
+	@Autowired
+	private MessageSource messageSource;
 	
 	@Autowired
 	@Qualifier("templateEngine")
@@ -173,7 +178,7 @@ public class ProductController {
     
     @PostMapping("${url.product.add-comment}")
     @ResponseBody
-    public ResultTO<?> addComment(HttpServletRequest request) {
+    public ResultTO<?> addComment(HttpServletRequest request, Locale locale) {
     	ProductCommentRequest cmtReq = new ProductCommentRequest();
     	String productId = request.getParameter("productId");
         try {
@@ -194,6 +199,7 @@ public class ProductController {
 		}
     	ResultTO<ProductCommentResponse> resp = commentService.createComment(cmtReq);
     	if (resp.hasIssues()) {
+    	    resp.getIssues().forEach(issue -> issue.setMessage(messageSource.getMessage(issue.getErrorCode(), issue.getParams().toArray(), locale)));
     		return resp;
     	} else {
     		Context context = new Context();

@@ -245,8 +245,8 @@
 							maxlength: '[[#{msg.error.common.email.tooLong}]]'
 						},
 						comment: {
-							required: '[[#{msg.comment.comment.required}]]',
-							maxlength: '[[#{msg.comment.comment.tooLong}]]'
+							required: '[[#{msg.error.comment.comment.required}]]',
+							maxlength: '[[#{msg.error.comment.comment.tooLong}]]'
 						},
 						productRating: {
 							required: '[[#{msg.error.comment.rating.required}]]',
@@ -255,15 +255,19 @@
 						}
 					},
 					submitHandler: function(form) {
+						$('#submitProductCommentButton').prop('disabled', true);
 						$.ajax({
 							url: form.action,
 							type: form.method,
 							data: $(form).serialize(),
 							success: function(result) {
-								if (result.issues.length === 0) {
+								processResult(result, function(value) {
 									$('#productCommentZero').after(result.value);
 									calculateRatings();
-								}
+								});
+							},
+							complete: function() {
+								$('#submitProductCommentButton').prop('disabled', false);
 							}
 						});
 					},
