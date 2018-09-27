@@ -1,7 +1,8 @@
 package org.dragberry.eshop.controller;
 
-import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,8 +42,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import com.ibm.icu.text.MessageFormat;
-
 @Controller
 public class ProductController {
 	
@@ -58,6 +57,9 @@ public class ProductController {
 
 	private static final String MSG_MENU_CATALOG = "msg.menu.catalog";
 
+	@Value("${db.images.products}")
+    private String dbImagesProducts;
+	
 	@Value("${url.catalog}")
 	private String catelogReference;
 	
@@ -94,8 +96,10 @@ public class ProductController {
             @PathVariable String imageName) throws IOException {
         ImageModel img = productService.getProductImage(productKey, imageKey);
         if (img != null) {
-            response.setContentType(img.getType());
-            IOUtils.copy(new ByteArrayInputStream(img.getContent()), response.getOutputStream());
+            try (FileInputStream fis = new FileInputStream(dbImagesProducts + img.getName())) {
+                response.setContentType(img.getType());
+                IOUtils.copy(fis, response.getOutputStream());
+            }
         }
     }
 	

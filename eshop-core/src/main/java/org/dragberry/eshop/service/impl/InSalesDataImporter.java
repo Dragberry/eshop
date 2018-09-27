@@ -2,13 +2,14 @@ package org.dragberry.eshop.service.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,7 +55,10 @@ import org.dragberry.eshop.dal.repo.ProductArticleRepository;
 import org.dragberry.eshop.dal.repo.ProductRepository;
 import org.dragberry.eshop.service.DataImporter;
 import org.dragberry.eshop.service.TransliteService;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -114,6 +118,9 @@ public class InSalesDataImporter implements DataImporter {
 	private static final String GRP_ATTR_SCREEN = "Экран";
 	
 	private static final String GRP_ATTR_ACCUM = "Аккумулятор и время работы";
+	
+	@Value("${db.images.products}")
+	private String dbImagesProducts;
 	
 	@Autowired
 	private CommentRepository commentRepo;
@@ -252,7 +259,7 @@ public class InSalesDataImporter implements DataImporter {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	public void processRawArticle(String article, List<String[]> rawArticle) throws UnsupportedEncodingException {
+	public void processRawArticle(String article, List<String[]> rawArticle) throws IOException {
 		if (!rawArticle.isEmpty()) {
 			ProductArticle pa = productArticleRepo.findByArticle(article).orElse(new ProductArticle());
 			String[] firstLine = rawArticle.get(0);
@@ -260,30 +267,16 @@ public class InSalesDataImporter implements DataImporter {
 			pa.setTitle(firstLine[columnsMap.get(PRODUCT_TITLE)]);
 			pa.setReference(transliteService.transformToId(firstLine[columnsMap.get(PRODUCT_REFERENCE)]));
 			pa.setDescription(firstLine[columnsMap.get(PRODUCT_DESCRIPTION)]);
-			pa.setDescriptionFull(firstLine[columnsMap.get(PRODUCT_DESCRIPTION_FULL)]);
+			
+			String fulldesc = processFullDescription(firstLine[columnsMap.get(PRODUCT_DESCRIPTION_FULL)]);
+			
+			pa.setDescriptionFull(fulldesc);
 			pa.setTagTitle(firstLine[columnsMap.get(TAG_TITLE)]);
 			pa.setTagKeywords(firstLine[columnsMap.get(TAG_KEYWORDS)]);
 			pa.setTagDescription(firstLine[columnsMap.get(TAG_DESCRIPTION)]);
 			pa.setSaleStatus(SaleStatus.EXPOSED);
 			
-			pa.setLabels(Arrays.stream(getProperty(firstLine, LABEL).split("##")).filter(StringUtils::isNotBlank).collect(Collectors.toMap(lbl -> {
-				if ("новое поступление".equals(lbl)) {
-					return "Новинка";
-				}
-				return StringUtils.capitalize(lbl);
-			}, lbl -> {
-				switch (lbl) {
-				case "Скидка":
-					return ProductLabelType.A;
-				case "Хит продаж":
-					return ProductLabelType.B;
-				case "новое поступление":
-					return ProductLabelType.C;
-				default:
-					return ProductLabelType.C;
-				}
-			})));
-			
+			pa.setLabels(processLabels(firstLine));
 			
 			List<ProductAttribute<?>> attributes = processAttributes(pa, firstLine);
 			pa.getAttributes().clear();
@@ -367,6 +360,46 @@ public class InSalesDataImporter implements DataImporter {
 		}
 		
 	}
+	
+	private String processFullDescription(String input) {
+//	    Document doc = Jsoup.parseBodyFragment(input);
+//	    Elements el = doc.getAllElements();
+//	    List<String>  attToRemove = new ArrayList<>();
+//	    for (Element e : el) {
+//	        Attributes at = e.attributes();
+//	        for (Attribute a : at) {
+//	            attToRemove.add(a.getKey());
+//	        }
+//
+//	        for(String att : attToRemove) {
+//	            e.removeAttr(att);
+//	        }
+//	    }
+	    Whitelist wl = Whitelist.simpleText();
+	    wl.addTags("div", "span", "table", "tr", "th", "td", "li", "ul", "ol");
+	    wl.addAttributes("img", "src");
+        return Jsoup.clean(input, wl);
+	}
+
+    private Map<String, ProductLabelType> processLabels(String[] firstLine) {
+        return Arrays.stream(getProperty(firstLine, LABEL).split("##")).filter(StringUtils::isNotBlank).collect(Collectors.toMap(lbl -> {
+        	if ("новое поступление".equals(lbl)) {
+        		return "Новинка";
+        	}
+        	return StringUtils.capitalize(lbl);
+        }, lbl -> {
+        	switch (lbl) {
+        	case "Скидка":
+        		return ProductLabelType.A;
+        	case "Хит продаж":
+        		return ProductLabelType.B;
+        	case "новое поступление":
+        		return ProductLabelType.C;
+        	default:
+        		return ProductLabelType.C;
+        	}
+        }));
+    }
 	
 	private static void processListAttribute(String group, String name, String attrValue, ProductArticle pa, List<ProductAttribute<?>> attributes, Integer order) {
 		String[] values = attrValue.split("##");
@@ -500,39 +533,47 @@ public class InSalesDataImporter implements DataImporter {
 		return attributes;
 	}
 
-	private void processImages(String[] columns, ProductArticle pa) throws UnsupportedEncodingException {
+	private void processImages(String[] columns, ProductArticle pa) throws IOException {
 	    pa.getImages().clear();
 		String[] imgs = columns[columnsMap.get(IMAGES)].split(" ");
-		for (int imgIndex = 0; imgIndex < imgs.length; imgIndex++) {
-			String imgURL = imgs[imgIndex];
-			log.info(MessageFormat.format("Image: {0}", imgURL));
-			int lastIndexOfSlash = imgURL.lastIndexOf("/");
-			String realURL = imgURL.substring(0, lastIndexOfSlash + 1) + URLEncoder.encode(imgURL.substring(lastIndexOfSlash + 1), StandardCharsets.UTF_8.name());
-			try {
-				URLConnection conn = new URL(realURL).openConnection();
-				InputStream imgIS = conn.getInputStream();
-				if (imgIndex == 0) {
-					Image mainImage = new Image();
-					mainImage.setContent(IOUtils.toByteArray(imgIS));
-					mainImage.setName(pa.getArticle() + "-main");
-					mainImage.setType("image/" + imgURL.substring(imgURL.lastIndexOf(".") + 1));
-					imageRepo.save(mainImage);
-					pa.setMainImage(mainImage);
-				} else {
-					Image img = new Image();
-					img.setContent(IOUtils.toByteArray(imgIS));
-					img.setName(pa.getArticle() + "-" + imgIndex);
-					img.setType("image/" + imgURL.substring(imgURL.lastIndexOf(".") + 1));
-					imageRepo.save(img);
-					pa.getImages().add(img);
-				}
-				IOUtils.close(conn);
-			} catch (MalformedURLException exc) {
-				log.error("An error has occurred during loading image! Invalid URL!", exc);
-			} catch (IOException exc) {
-				log.error("An error has occurred during loading image! IO error!", exc);
-			}
-		}
+		
+		Path productDir = Paths.get(dbImagesProducts, pa.getArticle());
+        if (!Files.exists(productDir)) {
+            Files.createDirectory(productDir);
+        } else {
+            productDir.forEach(file -> {
+                try {
+                    Files.deleteIfExists(file);
+                } catch (IOException exc) {
+                    log.error(MessageFormat.format("An error occured during deleting image for {0}", pa.getArticle()), exc);
+                }
+            });
+        }
+        
+        for (int imgIndex = 0; imgIndex < imgs.length; imgIndex++) {
+            String imgURL = imgs[imgIndex];
+            log.info(MessageFormat.format("Image: {0}", imgURL));
+            int lastIndexOfSlash = imgURL.lastIndexOf("/");
+            String realURL = imgURL.substring(0, lastIndexOfSlash + 1) + URLEncoder.encode(imgURL.substring(lastIndexOfSlash + 1), StandardCharsets.UTF_8.name());
+            String imageExt = imgURL.substring(imgURL.lastIndexOf("."));
+            String imageName = (imgIndex == 0 ? pa.getArticle() + "-main" : pa.getArticle() + "-" + imgIndex) + imageExt;
+            Path imgPath = productDir.resolve(imageName);
+            if (!Files.exists(imgPath)) {
+                try (InputStream imgIS = new URL(realURL).openConnection().getInputStream();
+                    OutputStream imgIs = Files.newOutputStream(Files.createFile(imgPath))) {
+                    IOUtils.copy(imgIS, imgIs);
+                    Image img = new Image();
+                    img.setName(imageName);
+                    img.setType("image/" + imageExt);
+                    imageRepo.save(img);
+                    if (imgIndex == 0) {
+                        pa.setMainImage(img);
+                    } else {
+                        pa.getImages().add(img);
+                    }
+                }
+            }
+        }
 	}
 
 	private void processFirstLine(String line) {
