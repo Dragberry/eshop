@@ -1,10 +1,11 @@
 package org.dragberry.eshop.service;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import org.dragberry.eshop.model.product.ProductListItem;
 import org.dragberry.eshop.model.cart.CapturedProduct;
-import org.dragberry.eshop.model.common.ImageModel;
 import org.dragberry.eshop.model.product.Filter;
 import org.dragberry.eshop.model.product.ProductCategory;
 import org.dragberry.eshop.model.product.ProductDetails;
@@ -33,12 +34,14 @@ public interface ProductService {
     ProductDetails getProductArticleDetails(String categoryReference, String productReference);
 
     /**
-     * Get the product
+     * Get the product image
      * @param productKey
-     * @param imageKey 
+     * @param productArticle
+     * @param imageName 
      * @return
+     * @throws IOException 
      */
-    ImageModel getProductImage(Long productKey, Long imageKey);
+    InputStream getProductImage(Long productKey, String productArticle, String imageName) throws IOException;
 
     /**
      * Get details for captured product

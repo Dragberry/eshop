@@ -119,8 +119,8 @@ public class InSalesDataImporter implements DataImporter {
 	
 	private static final String GRP_ATTR_ACCUM = "Аккумулятор и время работы";
 	
-	@Value("${db.images.products}")
-	private String dbImagesProducts;
+	@Value("${db.images}")
+	private String dbImages;
 	
 	@Autowired
 	private CommentRepository commentRepo;
@@ -537,7 +537,7 @@ public class InSalesDataImporter implements DataImporter {
 	    pa.getImages().clear();
 		String[] imgs = columns[columnsMap.get(IMAGES)].split(" ");
 		
-		Path productDir = Paths.get(dbImagesProducts, pa.getArticle());
+		Path productDir = Paths.get(dbImages, "products", pa.getArticle());
         if (!Files.exists(productDir)) {
             Files.createDirectory(productDir);
         } else {
@@ -552,6 +552,9 @@ public class InSalesDataImporter implements DataImporter {
         
         for (int imgIndex = 0; imgIndex < imgs.length; imgIndex++) {
             String imgURL = imgs[imgIndex];
+            if (StringUtils.isBlank(imgURL)) {
+            	continue;
+            }
             log.info(MessageFormat.format("Image: {0}", imgURL));
             int lastIndexOfSlash = imgURL.lastIndexOf("/");
             String realURL = imgURL.substring(0, lastIndexOfSlash + 1) + URLEncoder.encode(imgURL.substring(lastIndexOfSlash + 1), StandardCharsets.UTF_8.name());

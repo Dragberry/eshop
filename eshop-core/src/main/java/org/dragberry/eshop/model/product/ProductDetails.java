@@ -46,9 +46,9 @@ public class ProductDetails implements ActualPriceHolder {
     
     private Map<Long, Set<KeyValue>> productOptions;
     
-    private Long mainImage;
+    private String mainImage;
     
-    private List<Long> images;
+    private List<String> images;
 
     private Map<String, Modifier> labels;
     

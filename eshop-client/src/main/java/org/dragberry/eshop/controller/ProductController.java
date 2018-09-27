@@ -1,7 +1,7 @@
 package org.dragberry.eshop.controller;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,7 +21,6 @@ import org.dragberry.eshop.controller.exception.BadRequestException;
 import org.dragberry.eshop.controller.exception.ResourceNotFoundException;
 import org.dragberry.eshop.model.comment.ProductCommentRequest;
 import org.dragberry.eshop.model.comment.ProductCommentResponse;
-import org.dragberry.eshop.model.common.ImageModel;
 import org.dragberry.eshop.model.common.KeyValue;
 import org.dragberry.eshop.model.product.ProductCategory;
 import org.dragberry.eshop.model.product.ProductDetails;
@@ -57,8 +56,8 @@ public class ProductController {
 
 	private static final String MSG_MENU_CATALOG = "msg.menu.catalog";
 
-	@Value("${db.images.products}")
-    private String dbImagesProducts;
+	@Value("${db.images}")
+    private String dbImages;
 	
 	@Value("${url.catalog}")
 	private String catelogReference;
@@ -89,17 +88,13 @@ public class ProductController {
      * @return
 	 * @throws IOException 
      */
-    @GetMapping({"${url.products-images}/{productKey}/{imageKey}/{imageName}"})
+    @GetMapping({"${url.images}/{productKey}/{productArticle}/{imageName:.+}"})
     public void productMainImage(HttpServletResponse response,
             @PathVariable Long productKey,
-            @PathVariable Long imageKey,
+            @PathVariable String productArticle,
             @PathVariable String imageName) throws IOException {
-        ImageModel img = productService.getProductImage(productKey, imageKey);
-        if (img != null) {
-            try (FileInputStream fis = new FileInputStream(dbImagesProducts + img.getName())) {
-                response.setContentType(img.getType());
-                IOUtils.copy(fis, response.getOutputStream());
-            }
+        try (InputStream is = productService.getProductImage(productKey, productArticle, imageName)) {
+            IOUtils.copy(is, response.getOutputStream());
         }
     }
 	

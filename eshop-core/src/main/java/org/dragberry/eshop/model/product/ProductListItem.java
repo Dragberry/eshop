@@ -32,7 +32,7 @@ public class ProductListItem implements ActualPriceHolder {
 	
 	private Map<String, Modifier> labels;
 	
-	private Long mainImage;
+	private String mainImage;
 	
 	private CategoryItem category;
 }

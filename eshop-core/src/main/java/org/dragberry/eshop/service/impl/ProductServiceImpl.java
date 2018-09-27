@@ -2,7 +2,13 @@ package org.dragberry.eshop.service.impl;
 
 import static java.util.stream.Collectors.*;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -13,24 +19,22 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.dragberry.eshop.dal.entity.Category;
 import org.dragberry.eshop.dal.entity.Comment.Status;
-import org.dragberry.eshop.dal.entity.Image;
 import org.dragberry.eshop.dal.entity.Product;
 import org.dragberry.eshop.dal.entity.ProductArticle;
 import org.dragberry.eshop.dal.entity.ProductAttribute;
 import org.dragberry.eshop.dal.entity.ProductLabelType;
 import org.dragberry.eshop.dal.repo.CategoryRepository;
-import org.dragberry.eshop.dal.repo.ImageRepository;
 import org.dragberry.eshop.dal.repo.ProductArticleRepository;
 import org.dragberry.eshop.dal.repo.ProductRepository;
 import org.dragberry.eshop.model.cart.CapturedProduct;
 import org.dragberry.eshop.model.comment.CommentDetails;
-import org.dragberry.eshop.model.common.ImageModel;
 import org.dragberry.eshop.model.common.KeyValue;
 import org.dragberry.eshop.model.common.Modifier;
 import org.dragberry.eshop.model.product.ProductListItem;
@@ -44,22 +48,30 @@ import org.dragberry.eshop.model.product.ProductSearchQuery;
 import org.dragberry.eshop.model.product.RangeFilter;
 import org.dragberry.eshop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.log4j.Log4j;
+
+@Log4j
 @Service
 public class ProductServiceImpl implements ProductService {
 	
 	private static final String ORDER_BY_PRICE = "price";
-
+	
+	private static final String PRODUCTS_DIR = "products";
+	
+	private static final Pattern MAIN_IMG_PATTERN = Pattern.compile("(.*?)-(main)\\.(.*?)");
+	
+	@Value("${db.images}")
+    private String dbImages;
+	
 	@Autowired
 	private ApplicationContext applicationContext;
 	
     @Autowired
     private CategoryRepository categoryRepo;
-    
-    @Autowired
-    private ImageRepository imageRepo;
     
     @Autowired
     private ProductArticleRepository productArticleRepo;
@@ -101,7 +113,6 @@ public class ProductServiceImpl implements ProductService {
 			product.setTitle(dto.getTitle());
 			product.setArticle(dto.getArticle());
 			product.setReference(dto.getReference());
-			product.setMainImage(dto.getMainImage());
 			product.setActualPrice(dto.getActualPrice());
 			product.setPrice(dto.getPrice());
 			product.setRating(dto.getAverageMark());
@@ -110,7 +121,19 @@ public class ProductServiceImpl implements ProductService {
 			product.setCategory(new CategoryItem(ctg.getEntityKey(), ctg.getName(), ctg.getReference()));
 			product.setLabels(productArticleRepo.findLabels(dto.getId()).stream()
 					.map(entry -> (Entry<String, ProductLabelType>) entry).collect(labelCollector()));
-	    	return product;
+			Path imgDir = Paths.get(dbImages, PRODUCTS_DIR, dto.getArticle());
+			if (Files.exists(imgDir) && Files.isDirectory(imgDir)) {
+				try (DirectoryStream<Path> imgStream = Files.newDirectoryStream(imgDir)) {
+					imgStream.forEach(img -> {
+						if (MAIN_IMG_PATTERN.matcher(img.getFileName().toString()).matches()) {
+							product.setMainImage(img.getFileName().toString());
+						}
+					});
+				} catch (IOException exc) {
+					log.error("An error has occurred whle reading images for product article: " + dto.getId(), exc);
+				}
+			}
+			return product;
 	    }).collect(toList());
 		
 	}
@@ -156,9 +179,9 @@ public class ProductServiceImpl implements ProductService {
         product.setDescriptionFull(article.getDescriptionFull());
         Category ctg = article.getCategories().get(0);
         product.setCategory(new CategoryItem(ctg.getEntityKey(), ctg.getName(), ctg.getReference()));
-        product.setMainImage(article.getMainImage() != null ? article.getMainImage().getEntityKey() : null);
-       
-        product.setImages(article.getImages().stream().map(Image::getEntityKey).collect(toList()));
+//        product.setMainImage(article.getMainImage() != null ? article.getMainImage().getEntityKey() : null);
+//       
+//        product.setImages(article.getImages().stream().map(Image::getEntityKey).collect(toList()));
         
         Map<String, Set<KeyValue>> optionValues = new HashMap<>();
         Map<Long, Set<KeyValue>> productOptions = new HashMap<>();
@@ -218,14 +241,12 @@ public class ProductServiceImpl implements ProductService {
     }
     
     @Override
-    public ImageModel getProductImage(Long productKey, Long imageKey) {
-        Image image = imageRepo.findById(imageKey).get();
-        ImageModel img = new ImageModel();
-        img.setContent(image.getContent());
-        img.setId(image.getEntityKey());
-        img.setName(image.getName());
-        img.setType(image.getType());
-        return img;
+    public InputStream getProductImage(Long productKey, String article, String imageName) throws IOException {
+    	Path img = Paths.get(dbImages, PRODUCTS_DIR, article, imageName);
+		if (Files.exists(img)) {
+			return Files.newInputStream(img);
+		}
+		return null;
     }
     
     @Override
