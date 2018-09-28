@@ -5,7 +5,6 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Supplier;
 
 import javax.mail.MessagingException;

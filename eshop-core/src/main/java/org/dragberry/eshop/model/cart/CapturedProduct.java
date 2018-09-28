@@ -27,7 +27,7 @@ public class CapturedProduct {
     
     private String reference;
     
-    private Long mainImage;
+    private String mainImage;
     
     private BigDecimal price;
     

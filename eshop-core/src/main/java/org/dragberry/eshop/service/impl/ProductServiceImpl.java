@@ -1,14 +1,12 @@
 package org.dragberry.eshop.service.impl;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.mapping;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -19,7 +17,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
-import java.util.regex.Pattern;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -37,35 +34,25 @@ import org.dragberry.eshop.model.cart.CapturedProduct;
 import org.dragberry.eshop.model.comment.CommentDetails;
 import org.dragberry.eshop.model.common.KeyValue;
 import org.dragberry.eshop.model.common.Modifier;
-import org.dragberry.eshop.model.product.ProductListItem;
 import org.dragberry.eshop.model.product.ActualPriceHolder;
 import org.dragberry.eshop.model.product.CategoryItem;
 import org.dragberry.eshop.model.product.Filter;
 import org.dragberry.eshop.model.product.ListFilter;
 import org.dragberry.eshop.model.product.ProductCategory;
 import org.dragberry.eshop.model.product.ProductDetails;
+import org.dragberry.eshop.model.product.ProductListItem;
 import org.dragberry.eshop.model.product.ProductSearchQuery;
 import org.dragberry.eshop.model.product.RangeFilter;
+import org.dragberry.eshop.service.ImageService;
 import org.dragberry.eshop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
-import lombok.extern.log4j.Log4j;
-
-@Log4j
 @Service
 public class ProductServiceImpl implements ProductService {
 	
 	private static final String ORDER_BY_PRICE = "price";
-	
-	private static final String PRODUCTS_DIR = "products";
-	
-	private static final Pattern MAIN_IMG_PATTERN = Pattern.compile("(.*?)-(main)\\.(.*?)");
-	
-	@Value("${db.images}")
-    private String dbImages;
 	
 	@Autowired
 	private ApplicationContext applicationContext;
@@ -78,6 +65,9 @@ public class ProductServiceImpl implements ProductService {
     
     @Autowired
     private ProductRepository productRepo;
+    
+    @Autowired
+    private ImageService imageService;
     
     @Override
 	public List<ProductCategory> getCategoryList() {
@@ -121,22 +111,13 @@ public class ProductServiceImpl implements ProductService {
 			product.setCategory(new CategoryItem(ctg.getEntityKey(), ctg.getName(), ctg.getReference()));
 			product.setLabels(productArticleRepo.findLabels(dto.getId()).stream()
 					.map(entry -> (Entry<String, ProductLabelType>) entry).collect(labelCollector()));
-			Path imgDir = Paths.get(dbImages, PRODUCTS_DIR, dto.getArticle());
-			if (Files.exists(imgDir) && Files.isDirectory(imgDir)) {
-				try (DirectoryStream<Path> imgStream = Files.newDirectoryStream(imgDir)) {
-					imgStream.forEach(img -> {
-						if (MAIN_IMG_PATTERN.matcher(img.getFileName().toString()).matches()) {
-							product.setMainImage(img.getFileName().toString());
-						}
-					});
-				} catch (IOException exc) {
-					log.error("An error has occurred whle reading images for product article: " + dto.getId(), exc);
-				}
-			}
+			product.setMainImage(imageService.findMainImage(dto.getId(), dto.getArticle()));
 			return product;
 	    }).collect(toList());
 		
 	}
+
+   
 
     private void setLowestPrice(ProductArticle article, ActualPriceHolder product) {
         Product lowerPriceProduct = null;
@@ -179,9 +160,8 @@ public class ProductServiceImpl implements ProductService {
         product.setDescriptionFull(article.getDescriptionFull());
         Category ctg = article.getCategories().get(0);
         product.setCategory(new CategoryItem(ctg.getEntityKey(), ctg.getName(), ctg.getReference()));
-//        product.setMainImage(article.getMainImage() != null ? article.getMainImage().getEntityKey() : null);
-//       
-//        product.setImages(article.getImages().stream().map(Image::getEntityKey).collect(toList()));
+        product.setMainImage(imageService.findMainImage(article.getEntityKey(), article.getArticle()));
+        product.setImages(imageService.findProductImages(article.getEntityKey(), article.getArticle()));
         
         Map<String, Set<KeyValue>> optionValues = new HashMap<>();
         Map<Long, Set<KeyValue>> productOptions = new HashMap<>();
@@ -241,15 +221,6 @@ public class ProductServiceImpl implements ProductService {
     }
     
     @Override
-    public InputStream getProductImage(Long productKey, String article, String imageName) throws IOException {
-    	Path img = Paths.get(dbImages, PRODUCTS_DIR, article, imageName);
-		if (Files.exists(img)) {
-			return Files.newInputStream(img);
-		}
-		return null;
-    }
-    
-    @Override
     public CapturedProduct getProductCartDetails(Long productId) {
         Product product = productRepo.findById(productId).get();
         CapturedProduct capturedProduct = new CapturedProduct();
@@ -260,7 +231,7 @@ public class ProductServiceImpl implements ProductService {
         capturedProduct.setReference(product.getProductArticle().getReference());
         capturedProduct.setPrice(product.getActualPrice() != null ? product.getActualPrice() : product.getPrice());
         capturedProduct.setOptions(product.getOptions().stream().map(o -> new KeyValue(o.getName(), o.getValue())).collect(toSet()));
-        capturedProduct.setMainImage(productArticleRepo.findMainImageKey(capturedProduct.getProductArticleId()));
+        capturedProduct.setMainImage(imageService.findMainImage(capturedProduct.getProductArticleId(), capturedProduct.getArticle()));
         Category ctg = product.getProductArticle().getCategories().get(0);
         capturedProduct.setCategory(new CategoryItem(ctg.getEntityKey(), ctg.getName(), ctg.getReference()));
         capturedProduct.updateFullTitle();

@@ -22,7 +22,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -61,16 +60,6 @@ public class ProductArticle extends AuditableEntity {
 	
 	@Column(name = "REFERENCE")
 	private String reference;
-	
-	@OneToOne(fetch = FetchType.LAZY, orphanRemoval = true)
-	@JoinColumn(name = "MAIN_IMAGE_KEY", referencedColumnName = "IMAGE_KEY")
-	private Image mainImage;
-
-	@ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "PRODUCT_ARTICLE_IMAGE", 
-        joinColumns = @JoinColumn(name = "PRODUCT_ARTICLE_KEY", referencedColumnName = "PRODUCT_ARTICLE_KEY"), 
-        inverseJoinColumns = @JoinColumn(name = "IMAGE_KEY", referencedColumnName = "IMAGE_KEY"))
-	private List<Image> images = new ArrayList<>();
 	
 	@Column(name = "DESCRIPTION")
 	private String description;

@@ -97,7 +97,6 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
 					root.get("title"),
 					root.get("article"),
 					root.get("reference"),
-					root.get("mainImage").get("entityKey"),
 					cb.min(productRoot.get("actualPrice")),
 					cb.min(productRoot.get("price")),
 					cb.countDistinct(productCommentRoot),

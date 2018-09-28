@@ -27,6 +27,7 @@ import org.dragberry.eshop.model.product.ProductDetails;
 import org.dragberry.eshop.model.product.ProductSearchQuery;
 import org.dragberry.eshop.navigation.Breadcrumb;
 import org.dragberry.eshop.service.CommentService;
+import org.dragberry.eshop.service.ImageService;
 import org.dragberry.eshop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -73,6 +74,9 @@ public class ProductController {
 	private CommentService commentService;
 	
 	@Autowired
+	private ImageService imageService;
+	
+	@Autowired
 	private ProductService productService;
 	
 	private static final List<KeyValue> SORTIN_OPTION_LIST = new ArrayList<>(); {
@@ -93,7 +97,7 @@ public class ProductController {
             @PathVariable Long productKey,
             @PathVariable String productArticle,
             @PathVariable String imageName) throws IOException {
-        try (InputStream is = productService.getProductImage(productKey, productArticle, imageName)) {
+        try (InputStream is = imageService.getProductImage(productKey, productArticle, imageName)) {
             IOUtils.copy(is, response.getOutputStream());
         }
     }

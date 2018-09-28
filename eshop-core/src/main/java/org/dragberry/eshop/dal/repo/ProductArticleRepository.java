@@ -34,14 +34,6 @@ public interface ProductArticleRepository extends ProductArticleSearchRepository
 	@Query("select pa from ProductArticle pa join pa.categories c left join fetch pa.attributes attr where pa.reference = :productReference and c.reference = :categoryReference")
     ProductArticle findByReferenceAndCategoryReference(String categoryReference, String productReference);
     
-	/**
-	 * Find the mainImageKey for the given product article
-	 * @param productArticleId
-	 * @return
-	 */
-    @Query("select pa.mainImage.entityKey from ProductArticle pa where pa.entityKey = :productArticleId")
-    Long findMainImageKey(Long productArticleId);
-
     /**
      * Find all labels for the given product article
      * @param productArticleId

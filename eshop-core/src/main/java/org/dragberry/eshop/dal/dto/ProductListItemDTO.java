@@ -19,8 +19,6 @@ public class ProductListItemDTO {
 	
 	private String reference;
 	
-	private Long mainImage;
-	
 	private BigDecimal actualPrice;
 	
 	private BigDecimal price;

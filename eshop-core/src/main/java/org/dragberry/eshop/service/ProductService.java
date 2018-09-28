@@ -1,7 +1,5 @@
 package org.dragberry.eshop.service;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 import org.dragberry.eshop.model.product.ProductListItem;
@@ -32,16 +30,6 @@ public interface ProductService {
 	 * @return
 	 */
     ProductDetails getProductArticleDetails(String categoryReference, String productReference);
-
-    /**
-     * Get the product image
-     * @param productKey
-     * @param productArticle
-     * @param imageName 
-     * @return
-     * @throws IOException 
-     */
-    InputStream getProductImage(Long productKey, String productArticle, String imageName) throws IOException;
 
     /**
      * Get details for captured product

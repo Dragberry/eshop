@@ -2,14 +2,10 @@ package org.dragberry.eshop.service.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,7 +32,6 @@ import org.dragberry.eshop.dal.entity.CategoryFilterAnyBoolean;
 import org.dragberry.eshop.dal.entity.CategoryFilterAnyString;
 import org.dragberry.eshop.dal.entity.CategoryFilterRange;
 import org.dragberry.eshop.dal.entity.Comment;
-import org.dragberry.eshop.dal.entity.Image;
 import org.dragberry.eshop.dal.entity.Product;
 import org.dragberry.eshop.dal.entity.ProductArticle;
 import org.dragberry.eshop.dal.entity.ProductArticle.SaleStatus;
@@ -49,16 +44,15 @@ import org.dragberry.eshop.dal.entity.ProductAttributeString;
 import org.dragberry.eshop.dal.entity.ProductLabelType;
 import org.dragberry.eshop.dal.repo.CategoryRepository;
 import org.dragberry.eshop.dal.repo.CommentRepository;
-import org.dragberry.eshop.dal.repo.ImageRepository;
 import org.dragberry.eshop.dal.repo.ProductArticleOptionRepository;
 import org.dragberry.eshop.dal.repo.ProductArticleRepository;
 import org.dragberry.eshop.dal.repo.ProductRepository;
 import org.dragberry.eshop.service.DataImporter;
+import org.dragberry.eshop.service.ImageService;
 import org.dragberry.eshop.service.TransliteService;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -119,18 +113,12 @@ public class InSalesDataImporter implements DataImporter {
 	
 	private static final String GRP_ATTR_ACCUM = "Аккумулятор и время работы";
 	
-	@Value("${db.images}")
-	private String dbImages;
-	
 	@Autowired
 	private CommentRepository commentRepo;
 	
 	@Autowired
 	private CategoryRepository categoryRepo;
 
-	@Autowired
-	private ImageRepository imageRepo;
-	
 	@Autowired
 	private ProductRepository productRepo;
 	
@@ -142,6 +130,9 @@ public class InSalesDataImporter implements DataImporter {
 	
 	@Autowired
 	private TransliteService transliteService;
+	
+	@Autowired
+	private ImageService imageService;
 	
 	private Map<String, Integer> columnsMap = new HashMap<>();
 	
@@ -285,9 +276,6 @@ public class InSalesDataImporter implements DataImporter {
 				pa.getAttributes().addAll(attributes);
 			}
 			
-			List<Image> oldImages = new ArrayList<>(pa.getImages());
-			processImages(firstLine, pa);
-			
 			for (String[] line : rawArticle) {
 				pa.setCategories(new ArrayList<>());
 				String categoryLine = getProperty(line, CATEGORIES);
@@ -302,6 +290,8 @@ public class InSalesDataImporter implements DataImporter {
 			pa.getProducts().clear();
             pa = productArticleRepo.save(pa);
             
+            processImages(firstLine, pa);
+            
             pa.getComments().clear();
             int commentCount = 5 + (int) (Math.random() * 5);
             for (int i = 0; i < commentCount; i++) {
@@ -315,8 +305,6 @@ public class InSalesDataImporter implements DataImporter {
             }
 			pa = productArticleRepo.save(pa);
             
-			imageRepo.deleteAll(oldImages);
-			
 			for (String[] line: rawArticle) {
 				Set<ProductArticleOption> options = new HashSet<>();
 				for (Entry<String, String> entry : optionsMap.entrySet()) {
@@ -534,22 +522,8 @@ public class InSalesDataImporter implements DataImporter {
 	}
 
 	private void processImages(String[] columns, ProductArticle pa) throws IOException {
-	    pa.getImages().clear();
 		String[] imgs = columns[columnsMap.get(IMAGES)].split(" ");
-		
-		Path productDir = Paths.get(dbImages, "products", pa.getArticle());
-        if (!Files.exists(productDir)) {
-            Files.createDirectory(productDir);
-        } else {
-            productDir.forEach(file -> {
-                try {
-                    Files.deleteIfExists(file);
-                } catch (IOException exc) {
-                    log.error(MessageFormat.format("An error occured during deleting image for {0}", pa.getArticle()), exc);
-                }
-            });
-        }
-        
+		imageService.deleteProductImages(pa.getEntityKey(), pa.getArticle());
         for (int imgIndex = 0; imgIndex < imgs.length; imgIndex++) {
             String imgURL = imgs[imgIndex];
             if (StringUtils.isBlank(imgURL)) {
@@ -560,21 +534,8 @@ public class InSalesDataImporter implements DataImporter {
             String realURL = imgURL.substring(0, lastIndexOfSlash + 1) + URLEncoder.encode(imgURL.substring(lastIndexOfSlash + 1), StandardCharsets.UTF_8.name());
             String imageExt = imgURL.substring(imgURL.lastIndexOf("."));
             String imageName = (imgIndex == 0 ? pa.getArticle() + "-main" : pa.getArticle() + "-" + imgIndex) + imageExt;
-            Path imgPath = productDir.resolve(imageName);
-            if (!Files.exists(imgPath)) {
-                try (InputStream imgIS = new URL(realURL).openConnection().getInputStream();
-                    OutputStream imgIs = Files.newOutputStream(Files.createFile(imgPath))) {
-                    IOUtils.copy(imgIS, imgIs);
-                    Image img = new Image();
-                    img.setName(imageName);
-                    img.setType("image/" + imageExt);
-                    imageRepo.save(img);
-                    if (imgIndex == 0) {
-                        pa.setMainImage(img);
-                    } else {
-                        pa.getImages().add(img);
-                    }
-                }
+            try (InputStream imgIS = new URL(realURL).openConnection().getInputStream()) {
+                imageService.createProductImage(pa.getEntityKey(), pa.getArticle(), imageName, imgIS);
             }
         }
 	}

@@ -18,10 +18,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class MainController {
     
     @Autowired
-    @Qualifier("TestDataImporter")
-    private DataImporter testDataImporter;
-    
-    @Autowired
     @Qualifier("InSalesDataImporter")
     private DataImporter inSalesDataImporter;
     

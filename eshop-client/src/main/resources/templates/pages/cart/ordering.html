@@ -98,7 +98,7 @@
 									<tr th:each="product : ${order.products}" th:data-product-id=${product.key.productId}>
 										<td>
 											<img class="cart-image-small img-fluid img-thumbnail" th:title="${product.key.title}" th:alt="${product.key.title}"
-								 				th:src="${product.key.mainImage} ? @{|${@environment.getProperty('url.products-images')}/${product.key.productArticleId}/${product.key.mainImage}/${product.key.article}|} : ${@environment.getProperty('url.no-image')}">
+								 				th:src="${product.key.mainImage} ? @{|${@environment.getProperty('url.images')}/${product.key.productArticleId}/${product.key.article}/${product.key.mainImage}|} : ${@environment.getProperty('url.no-image')}">
 										</td>
 										<td class="align-bottom">
 											<span th:text="${product.key.fullTitle}">Title</span>
