@@ -33,6 +33,14 @@ public interface ImageService {
     InputStream getProductImage(Long productKey, String article, String imageName) throws IOException;
 
     /**
+     * Creates an product image
+     * @param prodiuctArticleId
+     * @param productArticle
+     * @throws IOException
+     */
+    void createProductImage(Long prodiuctArticleId, String productArticle, String imageName, InputStream imgIs) throws IOException;
+
+    /**
      * Deletes all product images
      * @param prodiuctArticleId
      * @param productArticle
@@ -40,12 +48,23 @@ public interface ImageService {
      */
     void deleteProductImages(Long prodiuctArticleId, String productArticle) throws IOException;
 
+    
     /**
-     * Creates an product image
-     * @param prodiuctArticleId
-     * @param productArticle
-     * @throws IOException
+     * Create an image
+     * @param imageName
+     * @param imgIS
+     * @return an image link
+     * @throws IOException 
      */
-    void createProductImage(Long prodiuctArticleId, String productArticle, String imageName, InputStream imgIs) throws IOException;
+    String createImage(String imageName, InputStream imgIS) throws IOException;
+
+    /**
+     * Get an image
+     * @param folder
+     * @param imageName
+     * @return
+     * @throws IOException 
+     */
+    InputStream getImage(String folder, String imageName) throws IOException;
 
 }

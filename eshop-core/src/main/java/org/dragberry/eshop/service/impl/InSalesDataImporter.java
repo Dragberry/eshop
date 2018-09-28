@@ -51,7 +51,10 @@ import org.dragberry.eshop.service.DataImporter;
 import org.dragberry.eshop.service.ImageService;
 import org.dragberry.eshop.service.TransliteService;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.safety.Whitelist;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -349,24 +352,22 @@ public class InSalesDataImporter implements DataImporter {
 		
 	}
 	
-	private String processFullDescription(String input) {
-//	    Document doc = Jsoup.parseBodyFragment(input);
-//	    Elements el = doc.getAllElements();
-//	    List<String>  attToRemove = new ArrayList<>();
-//	    for (Element e : el) {
-//	        Attributes at = e.attributes();
-//	        for (Attribute a : at) {
-//	            attToRemove.add(a.getKey());
-//	        }
-//
-//	        for(String att : attToRemove) {
-//	            e.removeAttr(att);
-//	        }
-//	    }
+	private String processFullDescription(String input) throws IOException {
 	    Whitelist wl = Whitelist.simpleText();
 	    wl.addTags("div", "span", "table", "tr", "th", "td", "li", "ul", "ol");
 	    wl.addAttributes("img", "src");
-        return Jsoup.clean(input, wl);
+        Document doc = Jsoup.parseBodyFragment(Jsoup.clean(input, wl));
+        Elements links = doc.select("img[src]");
+        for (Element link : links)  {
+            String imgLink = link.attr("src");
+            if (StringUtils.isNotBlank(imgLink)) {
+                try (InputStream imgIS = new URL(imgLink).openConnection().getInputStream()) {
+                    String imageName = imgLink.substring(imgLink.lastIndexOf("/") + 1);
+                    link.attr("src", imageService.createImage(imageName, imgIS));
+                }
+            }
+        }
+        return doc.html();
 	}
 
     private Map<String, ProductLabelType> processLabels(String[] firstLine) {

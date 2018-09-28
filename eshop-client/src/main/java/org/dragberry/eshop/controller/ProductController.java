@@ -57,9 +57,6 @@ public class ProductController {
 
 	private static final String MSG_MENU_CATALOG = "msg.menu.catalog";
 
-	@Value("${db.images}")
-    private String dbImages;
-	
 	@Value("${url.catalog}")
 	private String catelogReference;
 	
@@ -88,12 +85,26 @@ public class ProductController {
 	}
 	
 	/**
-     * Serves images
+     * Gen an image
+     * @return
+     * @throws IOException 
+     */
+    @GetMapping({"${url.images}/{folder}/{imageName:.+}"})
+    public void getImage(HttpServletResponse response,
+            @PathVariable String folder,
+            @PathVariable String imageName) throws IOException {
+        try (InputStream is = imageService.getImage(folder, imageName)) {
+            IOUtils.copy(is, response.getOutputStream());
+        }
+    }
+	
+	/**
+     * Get an product image
      * @return
 	 * @throws IOException 
      */
     @GetMapping({"${url.images}/{productKey}/{productArticle}/{imageName:.+}"})
-    public void productMainImage(HttpServletResponse response,
+    public void getProductImage(HttpServletResponse response,
             @PathVariable Long productKey,
             @PathVariable String productArticle,
             @PathVariable String imageName) throws IOException {

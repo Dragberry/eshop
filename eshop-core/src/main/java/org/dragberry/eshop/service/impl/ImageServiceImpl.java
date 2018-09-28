@@ -13,6 +13,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.io.IOUtils;
 import org.dragberry.eshop.service.ImageService;
@@ -36,8 +38,13 @@ public class ImageServiceImpl implements ImageService {
 
     private static final String PRODUCTS_DIR = "products";
     
+    private static final String OTHERS_DIR = "others";
+    
     @Value("${db.images}")
     private String dbImages;
+    
+    @Value("${url.images}")
+    private String urlImages;
 
     @Override
     public String findMainImage(Long prodiuctArticleId, String productArticle) {
@@ -112,6 +119,33 @@ public class ImageServiceImpl implements ImageService {
         }
     }
 
+    @Override
+    public String createImage(String imageName, InputStream imgIS) throws IOException {
+        Path folder = Paths.get(dbImages, OTHERS_DIR, String.valueOf(Math.abs(imageName.hashCode() % 64) + 1));
+        if (!Files.exists(folder)) {
+            Files.createDirectories(folder);
+        }
+        Path imgPath = folder.resolve(imageName);
+        if (!Files.exists(imgPath)) {
+            try (OutputStream imgOS = Files.newOutputStream(Files.createFile(imgPath))) {
+                IOUtils.copy(imgIS, imgOS);
+            }
+        }
+        return Stream.of(
+                urlImages,
+                folder.getFileName().toString(),
+                imageName).collect(Collectors.joining("/"));
+    }
+    
+@Override
+    public InputStream getImage(String folder, String imageName) throws IOException {
+    Path img = Paths.get(dbImages, OTHERS_DIR, folder, imageName);
+    if (Files.exists(img)) {
+        return Files.newInputStream(img);
+    }
+    return new ClassPathResource(NO_IMAGE).getInputStream();
+    }
+    
     private static String getImageName(Long prodiuctArticleId, String productArticle) {
         return MessageFormat.format(PRODUCT_IMG_TEMPLATE, productArticle, prodiuctArticleId.toString());
     }
