@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -75,6 +76,7 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
 		}
 
 		List<ProductListItemDTO> search(String categoryReference, Map<String, String[]> searchParams) {
+			Objects.requireNonNull(searchParams);
 			if (StringUtils.isNotBlank(categoryReference)) {
 	            where.add(cb.equal(categoryRoot.get("reference"), categoryReference));
 	        }

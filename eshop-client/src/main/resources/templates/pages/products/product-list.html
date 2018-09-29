@@ -15,10 +15,15 @@
 				</div>
 				<form th:if="${selectedCategory}" id="filtersForm" th:action="|${@environment.getProperty('url.catalog.filter')}/${selectedCategory}|" method="GET">
 					<div class="row mt-2">
-						<button class="btn btn-block btn-secondary btn-sm btn-side-menu" type="button" data-toggle="collapse"
-							data-target="#filters" aria-expanded="false" aria-controls="filters">
-							<span th:text="#{msg.common.filters}">Filters</span>
-						</button>
+						<div class="w-100 text-center">
+							<button class="btn btn-block btn-secondary btn-sm btn-side-menu" type="button" data-toggle="collapse"
+								data-target="#filters" aria-expanded="false" aria-controls="filters">
+								<span th:text="#{msg.common.filters}">Filters</span>
+							</button>
+							<button class="btn btn-link" type="button" onclick="resetForm()">
+								<span th:text="#{msg.common.resetAllFilter}">Reset</span>
+							</button>
+						</div>
 						<div id="filters" class="content-side-menu collapse show">
 							<th:block th:each="filter : ${category.filters}">
 								<th:block th:replace="__${filter.template}__"></th:block>
@@ -44,7 +49,10 @@
 					    	</div>
 					    </div>
 	    				<select form="filtersForm" name="sort" class="form-control form-control-sm" id="sorting" onchange="doSearch()">
-							<option th:each="opt : ${sortingOptionList}" th:value="${opt.value}" th:text="#{${opt.key}}"></option>
+							<option th:each="opt : ${sortingOptionList}" 
+								th:value="${opt.value}"
+								th:selected="${searchParams.get('sort') != null ? searchParams.get('sort')[0] == opt.value : false}"
+								th:text="#{${opt.key}}"></option>
 						</select>
 					</div>
 				</div>
@@ -77,6 +85,11 @@
 				        }
 				   	});
 				}, 1000);
+			}
+			
+			function resetForm() {
+				document.getElementById('filtersForm').reset();
+				doSearch();
 			}
 		</script>
 	</th:block>
