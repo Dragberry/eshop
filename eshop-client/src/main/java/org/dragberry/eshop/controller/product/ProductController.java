@@ -1,4 +1,4 @@
-package org.dragberry.eshop.controller;
+package org.dragberry.eshop.controller.product;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,8 +7,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,16 +36,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 @Controller
+@Scope(WebApplicationContext.SCOPE_SESSION)
 public class ProductController {
 	
 	private static final String MODEL_CATEGORY = "category";
@@ -76,6 +82,10 @@ public class ProductController {
 	@Autowired
 	private ProductService productService;
 	
+	private LinkedHashMap<String, ProductCategory> categories;
+	
+	private Set<Long> categoriesInitialized = new HashSet<>();
+
 	private static final List<KeyValue> SORTIN_OPTION_LIST = new ArrayList<>(); {
 	    SORTIN_OPTION_LIST.add(new KeyValue("msg.common.sort.popular.desc", "popular[desc]"));
 	    SORTIN_OPTION_LIST.add(new KeyValue("msg.common.sort.date.desc", "date[desc]"));
@@ -113,21 +123,70 @@ public class ProductController {
         }
     }
 	
-    @GetMapping("${url.catalog.filter}/{selectedCategory}")
-    public ModelAndView search(HttpServletRequest request, @PathVariable String selectedCategory) {
-    	ProductCategory category = productService.findCategory(selectedCategory);
+    /**
+     * Get category by reference
+     * @param selectedCategory
+     * @return
+     */
+    private ProductCategory getCategory(String selectedCategory) {
+    	if (categories == null) {
+			fetchCategories();
+		}
+    	ProductCategory category = categories.getOrDefault(selectedCategory, new ProductCategory(0L, "all", "Все товары"));
     	if (category == null) {
-    	    throw new ResourceNotFoundException();
-    	}
-        ModelAndView mv = new ModelAndView("pages/products/product-list :: products");
+			throw new ResourceNotFoundException();
+		} else {
+			if (!categoriesInitialized.contains(category.getId())) {
+				fetchCategoryDetails(category);
+				categoriesInitialized.add(category.getId());
+			}
+		}
+    	return category;
+    }
+    
+    /**
+	 * Fetches all category details
+	 * @param category
+	 */
+	private void fetchCategoryDetails(ProductCategory category) {
+		category.setFilters(productService.getCategoryFilters(category.getId()));
+	}
+
+	/**
+	 * Fetch all available categories
+	 */
+	private void fetchCategories() {
+		categories = productService.getCategoryList().stream().collect(Collectors.toMap(
+				ProductCategory::getReference,
+				ctg -> ctg,
+				(k, v) -> {
+					throw new IllegalStateException(MessageFormat.format("Duplicate key: {0}", k));
+				},
+				LinkedHashMap::new));
+	}
+    
+    /**
+     * Filter products for a category
+     * @param request
+     * @param selectedCategory
+     * @return
+     */
+    @GetMapping("${url.catalog.filter}/{selectedCategory}")
+    public ModelAndView search(HttpServletRequest request, @PathVariable(required = true) String selectedCategory) {
+    	ModelAndView mv = new ModelAndView("pages/products/product-list :: products");
+    	mv.addObject(MODEL_CATEGORY, getCategory(selectedCategory));
     	ProductSearchQuery query = new ProductSearchQuery();
     	query.setCategoryReference(selectedCategory);
     	query.setSearchParams(request.getParameterMap());
-    	mv.addObject(MODEL_CATEGORY, category);
-        mv.addObject(MODEL_PRODUCT_LIST, productService.getProductList(query));
+    	mv.addObject(MODEL_PRODUCT_LIST, productService.getProductList(query));
     	return mv;
     }
     
+    /** 
+     * Filter all products
+     * @param request
+     * @return
+     */
     @GetMapping("${url.catalog.filter}")
     public ModelAndView searchAll(HttpServletRequest request) {
         ModelAndView mv = new ModelAndView("pages/products/product-list :: products");
@@ -137,7 +196,6 @@ public class ProductController {
     	return mv;
     }
     
-    
 	/**
 	 * Return a list of products
 	 * @return
@@ -145,16 +203,8 @@ public class ProductController {
 	@GetMapping({"${url.catalog}", "${url.catalog}/{selectedCategory}"})
 	public ModelAndView catalog(@PathVariable(required = false) String selectedCategory) {
 		ModelAndView mv = new ModelAndView("pages/products/product-list");
-		List<ProductCategory> categoryList = productService.getCategoryList();
-		ProductSearchQuery query = new ProductSearchQuery();
-		query.setCategoryReference(selectedCategory);
 		if (StringUtils.isNotBlank(selectedCategory)) {
-			ProductCategory category = categoryList.stream().filter(c -> c.getReference().equals(selectedCategory)).findFirst().orElse(new ProductCategory(0L, "all", "Все товары"));
-			if (category == null) {
-				throw new ResourceNotFoundException();
-			} else {
-				category.setFilters(productService.getCategoryFilters(category.getId()));
-			}
+			ProductCategory category = getCategory(selectedCategory);
 			mv.addObject(MODEL_CATEGORY, category);
 			mv.addObject(MODEL_BREADCRUMB, Breadcrumb.builder()
 		     		.append(MSG_MENU_CATALOG, catelogReference, true)
@@ -164,7 +214,9 @@ public class ProductController {
 		     		.append(MSG_MENU_CATALOG, catelogReference, true));
 		}
 		mv.addObject(MODEL_SORTIN_OPTION_LIST, SORTIN_OPTION_LIST);
-		mv.addObject(MODEL_CATEGORY_LIST, categoryList);
+		mv.addObject(MODEL_CATEGORY_LIST, categories.values());
+		ProductSearchQuery query = new ProductSearchQuery();
+		query.setCategoryReference(selectedCategory);
 		mv.addObject(MODEL_PRODUCT_LIST, productService.getProductList(query));
 		return mv;
 	}
