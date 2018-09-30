@@ -9,7 +9,7 @@
 				<strong>
 					[[${#strings.isEmpty(#messages.msgOrNull(filter.name)) ? filter.name : #messages.msg(filter.name)}]]
 					<span class="fa fa-times fa-xs reset-filter-button" th:title="#{msg.common.resetFilter}"
-						th:onclick="|$('input[name=&quot;${filter.fromId}&quot;], input[name=&quot;${filter.toId}&quot;]').val('');doSearch();|"></span>
+						th:onclick="|$('input[name=&quot;${filter.fromId}&quot;], input[name=&quot;${filter.toId}&quot;]').val('');doFilter();|"></span>
 				</strong>
 			</div>
 			<div class="col-6">
@@ -22,7 +22,7 @@
 			    		th:name="${filter.fromId}" th:id="${filter.fromId}"
 			    		th:aria-describedby="|${filter.fromId}From|"
 			    		th:data-mask="${filter.mask}" data-mask-reverse="true"
-			    		onkeyup="doSearch()">
+			    		onkeyup="doFilter()">
 				</div>
 			</div>
 			<div class="col-6">
@@ -35,7 +35,7 @@
 			    		th:name="${filter.toId}" th:id="${filter.toId}"
 			    		th:aria-describedby="|${filter.toId}To|"
 			    		th:data-mask="${filter.mask}" data-mask-reverse="true"
-			    		onkeyup="doSearch()">
+			    		onkeyup="doFilter()">
 				</div>
 			</div>
 		</div>
@@ -46,7 +46,7 @@
 			<div class="col-12">
 				<strong>[[${#strings.isEmpty(#messages.msgOrNull(filter.name)) ? filter.name : #messages.msg(filter.name)}]]</strong>
 				<span class="fa fa-times fa-xs reset-filter-button" th:title="#{msg.common.resetFilter}"
-					th:onclick="|$('input[name=&quot;${filter.id}&quot;]').prop('checked', false);doSearch();|"></span>
+					th:onclick="|$('input[name=&quot;${filter.id}&quot;]').prop('checked', false);doFilter();|"></span>
 			</div>
 			<div class="product-attribute-list-filter col-12">
 				<div th:each="attr, iter : ${filter.attributes}" class="form-check">
@@ -55,7 +55,7 @@
 						th:id="|${filter.id}${attr.value}|" 
 						th:value="${attr.value}"
 						th:checked="${searchParams.get(filter.id) != null ? #lists.contains(searchParams.get(filter.id), #strings.toString(attr.value)) : false}"
-						onchange="doSearch()">
+						onchange="doFilter()">
 				  	<label class="form-check-label" th:for="|${filter.id}${attr.value}|">
 				  		[[${#strings.isEmpty(#messages.msgOrNull(attr.key)) ? attr.key : #messages.msg(attr.key)}]]
 				  	</label>
@@ -69,7 +69,7 @@
 			<div class="col-12">
 				<strong>[[${#strings.isEmpty(#messages.msgOrNull(filter.name)) ? filter.name : #messages.msg(filter.name)}]]</strong>
 				<span class="fa fa-times fa-xs reset-filter-button" th:title="#{msg.common.resetFilter}"
-					th:onclick="|$('input[id*=&quot;${filter.id}&quot;]').prop('checked', false);doSearch();|"></span>
+					th:onclick="|$('input[id*=&quot;${filter.id}&quot;]').prop('checked', false);doFilter();|"></span>
 			</div>
 			<div class="product-attribute-list-filter col-12">
 				<div th:each="attr, iter : ${filter.attributes}" class="form-check">
@@ -78,7 +78,7 @@
 						th:id="|${filter.id}[${attr.value}]|"
 						th:value="true"
 						th:checked="${searchParams.get(attr.value) != null ? searchParams.get(attr.value)[0] == 'true' : false}"
-						onchange="doSearch()">
+						onchange="doFilter()">
 				  	<label class="form-check-label" th:for="|${filter.id}[${attr.value}]|">
 				  		[[${#strings.isEmpty(#messages.msgOrNull(attr.key)) ? attr.key : #messages.msg(attr.key)}]]
 				  	</label>

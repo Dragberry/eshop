@@ -53,7 +53,7 @@
 					    		<span class="fa fa-sort fa-xs" th:title="#{msg.common.sorting}"></span>
 					    	</div>
 					    </div>
-	    				<select form="filtersForm" name="sort" class="form-control form-control-sm" id="sorting" onchange="doSearch()">
+	    				<select form="filtersForm" name="sort" class="form-control form-control-sm" id="sorting" onchange="doFilter()">
 							<option th:each="opt : ${sortingOptionList}" 
 								th:value="${opt.value}"
 								th:selected="${searchParams.get('sort') != null ? searchParams.get('sort')[0] == opt.value : false}"
@@ -72,7 +72,7 @@
 	<th:block layout:fragment="page_scripts">
 		<script>
 			var delayTimer;
-			function doSearch() {
+			function doFilter() {
 				countFilters();
 				clearTimeout(delayTimer);
 				delayTimer = setTimeout(function() {
@@ -98,7 +98,7 @@
 				$('#filtersForm input[type="text"]').val('');
 				$('#filtersForm input[type="checkbox"]').attr('checked', false);
 				$('#sorting').prop('selectedIndex', 0);
-				doSearch();
+				doFilter();
 			}
 			
 			function countFilters() {

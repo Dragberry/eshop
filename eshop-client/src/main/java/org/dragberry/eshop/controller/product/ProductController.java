@@ -31,6 +31,7 @@ import org.dragberry.eshop.model.comment.ProductCommentResponse;
 import org.dragberry.eshop.model.common.KeyValue;
 import org.dragberry.eshop.model.product.ProductCategory;
 import org.dragberry.eshop.model.product.ProductDetails;
+import org.dragberry.eshop.model.product.ProductListItem;
 import org.dragberry.eshop.model.product.ProductSearchQuery;
 import org.dragberry.eshop.navigation.Breadcrumb;
 import org.dragberry.eshop.service.CommentService;
@@ -45,12 +46,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import lombok.extern.log4j.Log4j;
+
+@Log4j
 @Controller
 @Scope(WebApplicationContext.SCOPE_SESSION)
 public class ProductController {
@@ -121,8 +126,15 @@ public class ProductController {
 		return categories.values();
 	}
 	
+	@GetMapping("${url.catalog.search}")
+	@ResponseBody
+	public List<ProductListItem> search(@RequestParam(required = true) String query) {
+		log.info("Search request: " + query);
+		return productService.getProductList(query);
+	}
+	
 	/**
-     * Gen an image
+     * Get an image
      * @return
      * @throws IOException 
      */

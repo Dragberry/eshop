@@ -52,4 +52,11 @@ public interface ProductService {
      */
 	List<Filter> getCategoryFilters(Long categoryId);
 
+	/**
+	 * Get the result of the search by string query
+	 * @param query
+	 * @return
+	 */
+	List<ProductListItem> getProductList(String query);
+
 }
