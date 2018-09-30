@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.dragberry.eshop.common.ResultTO;
 import org.dragberry.eshop.common.Results;
 import org.dragberry.eshop.controller.exception.BadRequestException;
@@ -66,9 +67,13 @@ public class ProductController {
 
 	private static final String MODEL_SEARCH_PARAMS = "searchParams"; 
 	
+	private static final String MODEL_SEARCH_PARAMS_COUNT = "searchParamsCount";
+	
 	private static final String MSG_MENU_CATALOG = "msg.menu.catalog";
 
 	private static final Long DEFAULT_CATEGORY_KEY = 0L;
+	
+	private static final String SORT_PARAM = "sort";
 	
 	@Value("${url.catalog}")
 	private String catelogReference;
@@ -243,6 +248,10 @@ public class ProductController {
 		query.setSearchParams(searchParams);
 		mv.addObject(MODEL_PRODUCT_LIST, productService.getProductList(query));
 		mv.addObject(MODEL_SEARCH_PARAMS, searchParams);
+		mv.addObject(MODEL_SEARCH_PARAMS_COUNT, searchParams.entrySet().stream()
+				.filter(params -> !SORT_PARAM.equals(params.getKey()))
+				.flatMap(params -> Arrays.stream(params.getValue()))
+				.filter(StringUtils::isNotBlank).count());
 		return mv;
 	}
 	
@@ -262,6 +271,7 @@ public class ProductController {
 		query.setSearchParams(searchParams);
 		mv.addObject(MODEL_PRODUCT_LIST, productService.getProductList(query));
 		mv.addObject(MODEL_SEARCH_PARAMS, searchParams);
+		mv.addObject(MODEL_SEARCH_PARAMS_COUNT, 0);
 		return mv;
 	}
 	

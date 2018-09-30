@@ -54,7 +54,7 @@
 						th:name="|${filter.id}|"
 						th:id="|${filter.id}${attr.value}|" 
 						th:value="${attr.value}"
-						th:checked="${searchParams.get(filter.id) != null ? #lists.contains(searchParams.get(filter.id), attr.value) : false}"
+						th:checked="${searchParams.get(filter.id) != null ? #lists.contains(searchParams.get(filter.id), #strings.toString(attr.value)) : false}"
 						onchange="doSearch()">
 				  	<label class="form-check-label" th:for="|${filter.id}${attr.value}|">
 				  		[[${#strings.isEmpty(#messages.msgOrNull(attr.key)) ? attr.key : #messages.msg(attr.key)}]]
