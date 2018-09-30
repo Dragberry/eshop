@@ -359,15 +359,36 @@ public class InSalesDataImporter implements DataImporter {
         Document doc = Jsoup.parseBodyFragment(Jsoup.clean(input, wl));
         Elements links = doc.select("img[src]");
         for (Element link : links)  {
-            String imgLink = link.attr("src");
-            if (StringUtils.isNotBlank(imgLink)) {
-                try (InputStream imgIS = new URL(imgLink).openConnection().getInputStream()) {
-                    String imageName = imgLink.substring(imgLink.lastIndexOf("/") + 1);
+            String imgURL = link.attr("src");
+            if (StringUtils.isNotBlank(imgURL)) {
+            	int lastIndexOfSlash = imgURL.lastIndexOf("/");
+                String realURL = imgURL.substring(0, lastIndexOfSlash + 1) + URLEncoder.encode(imgURL.substring(lastIndexOfSlash + 1), StandardCharsets.UTF_8.name());
+                try (InputStream imgIS = new URL(realURL).openConnection().getInputStream()) {
+                    String imageName = imgURL.substring(imgURL.lastIndexOf("/") + 1);
                     link.attr("src", imageService.createImage(imageName, imgIS));
                 }
             }
         }
         return doc.html();
+	}
+	
+	private void processImages(String[] columns, ProductArticle pa) throws IOException {
+		String[] imgs = columns[columnsMap.get(IMAGES)].split(" ");
+		imageService.deleteProductImages(pa.getEntityKey(), pa.getArticle());
+        for (int imgIndex = 0; imgIndex < imgs.length; imgIndex++) {
+            String imgURL = imgs[imgIndex];
+            if (StringUtils.isBlank(imgURL)) {
+            	continue;
+            }
+            log.info(MessageFormat.format("Image: {0}", imgURL));
+            int lastIndexOfSlash = imgURL.lastIndexOf("/");
+            String realURL = imgURL.substring(0, lastIndexOfSlash + 1) + URLEncoder.encode(imgURL.substring(lastIndexOfSlash + 1), StandardCharsets.UTF_8.name());
+            String imageExt = imgURL.substring(imgURL.lastIndexOf("."));
+            String imageName = (imgIndex == 0 ? pa.getArticle() + "-main" : pa.getArticle() + "-" + imgIndex) + imageExt;
+            try (InputStream imgIS = new URL(realURL).openConnection().getInputStream()) {
+                imageService.createProductImage(pa.getEntityKey(), pa.getArticle(), imageName, imgIS);
+            }
+        }
 	}
 
     private Map<String, ProductLabelType> processLabels(String[] firstLine) {
@@ -520,25 +541,6 @@ public class InSalesDataImporter implements DataImporter {
 		    }
 		}
 		return attributes;
-	}
-
-	private void processImages(String[] columns, ProductArticle pa) throws IOException {
-		String[] imgs = columns[columnsMap.get(IMAGES)].split(" ");
-		imageService.deleteProductImages(pa.getEntityKey(), pa.getArticle());
-        for (int imgIndex = 0; imgIndex < imgs.length; imgIndex++) {
-            String imgURL = imgs[imgIndex];
-            if (StringUtils.isBlank(imgURL)) {
-            	continue;
-            }
-            log.info(MessageFormat.format("Image: {0}", imgURL));
-            int lastIndexOfSlash = imgURL.lastIndexOf("/");
-            String realURL = imgURL.substring(0, lastIndexOfSlash + 1) + URLEncoder.encode(imgURL.substring(lastIndexOfSlash + 1), StandardCharsets.UTF_8.name());
-            String imageExt = imgURL.substring(imgURL.lastIndexOf("."));
-            String imageName = (imgIndex == 0 ? pa.getArticle() + "-main" : pa.getArticle() + "-" + imgIndex) + imageExt;
-            try (InputStream imgIS = new URL(realURL).openConnection().getInputStream()) {
-                imageService.createProductImage(pa.getEntityKey(), pa.getArticle(), imageName, imgIS);
-            }
-        }
 	}
 
 	private void processFirstLine(String line) {
