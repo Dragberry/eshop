@@ -2,9 +2,9 @@ package org.dragberry.eshop.service.impl;
 
 import java.time.DayOfWeek;
 import java.util.Arrays;
-import java.util.List;
 
 import org.dragberry.eshop.model.common.AppInfo;
+import org.dragberry.eshop.model.common.Features;
 import org.dragberry.eshop.model.common.Phone;
 import org.dragberry.eshop.model.common.SystemInfo;
 import org.dragberry.eshop.model.common.WorkingDay;
@@ -47,6 +47,11 @@ public class AppInfoServiceImpl implements AppInfoService {
         SystemInfo systemInfo = new SystemInfo();
         systemInfo.setEmail("max-hellfire@mail.ru");
         return systemInfo;
+    }
+    
+    @Override
+    public Features getFeatures() {
+    	return new Features();
     }
 
 }

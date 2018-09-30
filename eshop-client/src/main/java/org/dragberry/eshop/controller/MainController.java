@@ -33,7 +33,6 @@ public class MainController {
     @GetMapping("import/test")
     public String testImport() throws IOException {
     	inSalesDataImporter.importData(resourceLoader.getResource("classpath:data/insales_export.csv").getInputStream());
-//        testDataImporter.importData(resourceLoader.getResource("classpath:data/test-price.xls").getInputStream());
         return "home";
     }
 

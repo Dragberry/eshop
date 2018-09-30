@@ -20,11 +20,13 @@
 	 			<span class="fa fa-shopping-cart fa-lg"></span>
 	 			<span class="cart-product-count badge badge-success" th:text="${session != null && session.cartProductCount > 0} ? ${session.cartProductCount} : ''">0</span>
 	 		</a>
-			<a class="navbar-brand d-lg-none" th:href="${@environment.getProperty('url.compare')}" th:title="#{msg.common.comparasion}">
+			<a th:if="${features.comparasionEnabled}"
+				class="navbar-brand d-lg-none" th:href="${@environment.getProperty('url.compare')}" th:title="#{msg.common.comparasion}">
 	 			<span class="fa fa-columns fa-lg"></span>
-	 			<span class="badge badge-success">4</span>
+	 			<span class="badge badge-success">0</span>
 	 		</a>
-	 		<a class="navbar-brand d-lg-none" th:href="${@environment.getProperty('url.account')}" th:title="#{msg.menu.account}">
+	 		<a th:if="${features.userAccountEnabled}"
+	 			class="navbar-brand d-lg-none" th:href="${@environment.getProperty('url.account')}" th:title="#{msg.menu.account}">
 	 			<span class="fa fa-user fa-lg"></span>
 	 		</a>
 			<div class="collapse navbar-collapse" id="navbarCollapse">
@@ -52,11 +54,13 @@
 			 			<span class="fa fa-shopping-cart fa-lg"></span>
 			 			<span class="cart-product-count badge badge-success" th:text="${session != null && session.cartProductCount > 0} ? ${session.cartProductCount} : ''">0</span>
 			 		</a>
-					<a class="btn btn-secondary d-none d-lg-block" th:href="${@environment.getProperty('url.compare')}" th:title="#{msg.common.comparasion}">
+					<a th:if="${features.comparasionEnabled}"
+						class="btn btn-secondary d-none d-lg-block" th:href="${@environment.getProperty('url.compare')}" th:title="#{msg.common.comparasion}">
 			 			<span class="fa fa-columns fa-lg"></span>
 			 			<span class="badge badge-success">4</span>
 			 		</a>
-			 		<a class="btn btn-secondary d-none d-lg-block" th:href="${@environment.getProperty('url.account')}" th:title="#{msg.menu.account}">
+			 		<a th:if="${features.userAccountEnabled}"
+			 			class="btn btn-secondary d-none d-lg-block" th:href="${@environment.getProperty('url.account')}" th:title="#{msg.menu.account}">
 			 			<span class="fa fa-user fa-lg"></span>
 			 		</a>
 					<div class="input-group">
