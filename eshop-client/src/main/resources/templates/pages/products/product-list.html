@@ -97,6 +97,7 @@
 				$('#filtersForm input[type="text"]').val('');
 				$('#filtersForm input[type="checkbox"]').attr('checked', false);
 				$('#sorting').prop('selectedIndex', 0);
+				document.getElementById('filtersForm').reset()
 				doSearch();
 			}
 			
