@@ -31,6 +31,15 @@ public class AppInfoInterceptor extends HandlerInterceptorAdapter {
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
             ModelAndView modelAndView) throws Exception {
+        request.getRemoteAddr();
+        request.getRequestURI();
+        request.getSession().getId();
+        request.getLocale();
+        request.getCharacterEncoding();
+        request.getParameterMap();
+        request.getMethod();
+        request.getHeaderNames();
+        
     	if (appInfo == null) {
     		appInfo = appInfoService.getAppInfo();
     	}

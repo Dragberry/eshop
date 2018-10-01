@@ -11,7 +11,7 @@
 		<div class="col-md-3">
 			<div class="container">
 				<div class="row">
-					<th:block th:replace="pages/products/categories-side-menu :: categories-side-menu(selectedCategory = ${selectedCategory})"></th:block>
+					<th:block th:replace="pages/products/list/categories-side-menu :: categories-side-menu(selectedCategory = ${selectedCategory})"></th:block>
 				</div>
 			</div>
 		</div>
@@ -41,7 +41,7 @@
 			</div>
 			<div th:fragment="products" id="productList" class="row card-columns">
 				<div th:each="productItem : ${productList}" class="col-sm-6 col-md-6 col-lg-4 col-xl-4">
-					<div th:replace="pages/products/product-list-item :: product-list-item(product = ${productItem})">Product item</div>
+					<div th:replace="pages/products/list/product-list-item :: product-list-item(product = ${productItem})">Product item</div>
 				</div>
 			</div>
 		</div>

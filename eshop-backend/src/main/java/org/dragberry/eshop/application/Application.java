@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.dragberry.eshop.controller.Controllers;
 import org.dragberry.eshop.interceptor.AppInfoInterceptor;
+import org.dragberry.eshop.interceptor.AuditLogInterceptor;
 import org.dragberry.eshop.security.Security;
 import org.dragberry.eshop.service.impl.Services;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,12 +33,18 @@ public class Application implements WebMvcConfigurer {
     private static final String[] CLASSPATH_RESOURCE_LOCATIONS = { "classpath:/META-INF/resources/",
             "classpath:/resources/", "classpath:/static/", "classpath:/public/" };
 
+    private static final List<String> EXCLUDE_STATIC = Arrays.asList("/images/**", "/js/**", "/css/**", "/webfonts/**");
+    
     @Autowired
     private AppInfoInterceptor appInfoInterceptor;
+    
+    @Autowired
+    private AuditLogInterceptor auditLogInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(appInfoInterceptor);
+        registry.addInterceptor(auditLogInterceptor).excludePathPatterns(EXCLUDE_STATIC);
+        registry.addInterceptor(appInfoInterceptor).excludePathPatterns(EXCLUDE_STATIC);
     }
     
     @Override

@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public abstract class Filter {
 	
-	private static final String LOCATION = "pages/products/product-filters :: ";
+	private static final String LOCATION = "pages/products/list/product-filters :: ";
 	
 	private String id;
 	

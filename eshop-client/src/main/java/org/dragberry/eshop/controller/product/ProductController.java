@@ -257,7 +257,7 @@ public class ProductController {
      */
     @GetMapping("${url.catalog.filter}/{selectedCategory}")
     public ModelAndView filter(HttpServletRequest request, @PathVariable(required = true) String selectedCategory) {
-    	ModelAndView mv = new ModelAndView("pages/products/product-list :: products");
+    	ModelAndView mv = new ModelAndView("pages/products/list/product-list :: products");
     	ProductCategory category = getCategory(selectedCategory);
 		mv.addObject(MODEL_CATEGORY, category);
     	ProductSearchQuery query = new ProductSearchQuery();
@@ -276,7 +276,7 @@ public class ProductController {
      */
     @GetMapping("${url.catalog.filter}")
     public ModelAndView filterAll(HttpServletRequest request) {
-        ModelAndView mv = new ModelAndView("pages/products/product-list :: products");
+        ModelAndView mv = new ModelAndView("pages/products/list/product-list :: products");
     	ProductSearchQuery query = new ProductSearchQuery();
     	Map<String, String[]> searchParams = new HashMap<>(request.getParameterMap());
     	categorySearchParams.put(DEFAULT_CATEGORY_KEY, searchParams);
@@ -291,7 +291,7 @@ public class ProductController {
 	 */
 	@GetMapping({"${url.catalog}/{selectedCategory}"})
 	public ModelAndView catalog(@PathVariable String selectedCategory) {
-		ModelAndView mv = new ModelAndView("pages/products/product-list");
+		ModelAndView mv = new ModelAndView("pages/products/list/product-list");
 		ProductCategory category = getCategory(selectedCategory);
 		mv.addObject(MODEL_CATEGORY, category);
 		mv.addObject(MODEL_BREADCRUMB, Breadcrumb.builder()
@@ -318,7 +318,7 @@ public class ProductController {
 	 */
 	@GetMapping({"${url.catalog}"})
 	public ModelAndView catalogAll() {
-		ModelAndView mv = new ModelAndView("pages/products/product-list");
+		ModelAndView mv = new ModelAndView("pages/products/list/product-list");
 		mv.addObject(MODEL_BREADCRUMB, Breadcrumb.builder()
 				.append(MSG_MENU_CATALOG, StringUtils.EMPTY, true));
 		mv.addObject(MODEL_SORTING_OPTION_LIST, SORTING_OPTION_LIST);
