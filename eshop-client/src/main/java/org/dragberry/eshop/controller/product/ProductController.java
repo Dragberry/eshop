@@ -45,6 +45,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.WebApplicationContext;
@@ -364,25 +365,12 @@ public class ProductController {
     
     @PostMapping("${url.product.add-comment}")
     @ResponseBody
-    public ResultTO<?> addComment(HttpServletRequest request, Locale locale) {
-    	ProductCommentRequest cmtReq = new ProductCommentRequest();
-    	String productId = request.getParameter("productId");
-        try {
-            cmtReq.setProductId(Long.valueOf(productId));
-        } catch (NumberFormatException e) {
-            throw new BadRequestException(MessageFormat.format("Invalid productId {0}", productId));
-        }
+    public ResultTO<?> addComment(@RequestBody ProductCommentRequest cmtReq, HttpServletRequest request, Locale locale) {
+    	if (cmtReq == null) {
+    		throw new BadRequestException();
+    	}
     	cmtReq.setDate(LocalDateTime.now());
     	cmtReq.setIp(request.getRemoteAddr());
-    	cmtReq.setName(request.getParameter("name"));
-    	cmtReq.setText(request.getParameter("comment"));
-    	cmtReq.setEmail(request.getParameter("email"));
-    	String mark = request.getParameter("productRating");
-    	try {
-    	    cmtReq.setMark(Integer.valueOf(mark));
-    	} catch (NumberFormatException e) {
-			throw new BadRequestException(MessageFormat.format("Invalid mark {0}", mark));
-		}
     	ResultTO<ProductCommentResponse> resp = commentService.createComment(cmtReq);
     	if (resp.hasIssues()) {
     	    resp.getIssues().forEach(issue -> issue.setMessage(messageSource.getMessage(issue.getErrorCode(), issue.getParams().toArray(), locale)));

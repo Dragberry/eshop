@@ -141,10 +141,22 @@
 						}
 					},
 					submitHandler: function(form) {
+						
+						var orderDetails = {
+							'phone': $(form).find('input[name="phone"]').val(),
+							'fullName': $(form).find('input[name="fullName"]').val(),
+							'address': $(form).find('textarea[name="address"]').val(),
+							'email': $(form).find('input[name="email"]').val(),
+							'comment': $(form).find('textarea[name="comment"]').val(),
+							'shippingMethod': $(form).find('input[name="shippingMethod"]:checked').val(),
+							'paymentMethod': $(form).find('input[name="paymentMethod"]:checked').val()
+						}
+						
 						$.ajax({
 							url: form.action,
 							type: form.method,
-							data: $(form).serialize(),
+							data: JSON.stringify(orderDetails),
+							contentType: "application/json",
 							success: function(response) {
 								$('#cartContent').html(response);
 								prepareForm();

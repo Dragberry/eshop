@@ -258,10 +258,20 @@
 					},
 					submitHandler: function(form) {
 						$('#submitProductCommentButton').prop('disabled', true);
+						
+						var comment = {
+							'productId': $(form).find('input[name="productId"]').val(),
+							'name': $(form).find('input[name="name"]').val(),
+							'email': $(form).find('input[name="email"]').val(),
+							'text': $(form).find('textarea[name="comment"]').val(),
+							'mark': $(form).find('input[name="productRating"]').val()
+						}
+						
 						$.ajax({
 							url: form.action,
 							type: form.method,
-							data: $(form).serialize(),
+							data: JSON.stringify(comment),
+							contentType: "application/json",
 							success: function(result) {
 								processResult(result, function(value) {
 									$('#productCommentZero').after(result.value);

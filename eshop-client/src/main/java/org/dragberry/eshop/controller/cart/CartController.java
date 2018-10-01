@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
@@ -18,6 +17,7 @@ import org.dragberry.eshop.model.cart.CapturedProduct;
 import org.dragberry.eshop.model.cart.CapturedProductState;
 import org.dragberry.eshop.model.cart.CartState;
 import org.dragberry.eshop.model.cart.OrderDetails;
+import org.dragberry.eshop.model.cart.OrderDetailsForm;
 import org.dragberry.eshop.model.payment.PaymentMethod;
 import org.dragberry.eshop.model.shipping.ShippingMethod;
 import org.dragberry.eshop.service.AppInfoService;
@@ -81,9 +81,6 @@ public class CartController {
     @Autowired
     private HttpSession session;
     
-    @Autowired
-    private HttpServletRequest request;
-    
     private OrderDetails order = new OrderDetails();
     
     private CartStep cartStep = CartStep.EDITING;
@@ -126,13 +123,14 @@ public class CartController {
     }
     
     /**
-     * Go to ordering page
+     * Submit order
+     * @param - reqeust body
      * @return
      */
     @PostMapping("${url.cart.submit-order}")
-    public ModelAndView submitOrder() {
+    public ModelAndView submitOrder(@RequestBody OrderDetailsForm orderDetailsForm) {
         log.info("New order has been submitted!");
-        saveOrderDetails();
+        saveOrderDetails(orderDetailsForm);
         CartState<OrderDetails> cartState = updateCartState(order);
         order.setTotalProductAmount(cartState.getTotalProductAmount());
         order.setShippingCost(cartState.getShippingCost());
@@ -196,20 +194,21 @@ public class CartController {
     }
     
     /**
-     * Save order details from the request
+     * Save order details from the request body
+     * @param orderDetails - request body
      */
-    public void saveOrderDetails() {
-    	order.setPhone(request.getParameter("phone"));
-    	order.setFullName(request.getParameter("fullName"));
-    	order.setAddress(request.getParameter("address"));
-    	order.setEmail(request.getParameter("email"));
-    	order.setComment(request.getParameter("comment"));
-    	try {
-    	    Long shippingMethodKey = Long.valueOf(request.getParameter("shippingMethod"));
-    	    order.setShippingMethod(shippingMethods.stream().filter(sm -> sm.getId().equals(shippingMethodKey)).findFirst().orElse(null));
-    	    Long paymentMethodKey = Long.valueOf(request.getParameter("paymentMethod"));
-    	    order.setPaymentMethod(paymentMethods.stream().filter(pm -> pm.getId().equals(paymentMethodKey)).findFirst().orElse(null));
-    	} catch (NumberFormatException nfe) { /* Do nothing */ }
+    public void saveOrderDetails(OrderDetailsForm orderDetails) {
+    	order.setPhone(orderDetails.getPhone());
+    	order.setFullName(orderDetails.getFullName());
+    	order.setAddress(orderDetails.getAddress());
+    	order.setEmail(orderDetails.getEmail());
+    	order.setComment(orderDetails.getComment());
+	    order.setShippingMethod(shippingMethods.stream()
+	    		.filter(sm -> sm.getId().equals(orderDetails.getShippingMethod()))
+	    		.findFirst().orElse(null));
+	    order.setPaymentMethod(paymentMethods.stream()
+	    		.filter(pm -> pm.getId().equals(orderDetails.getPaymentMethod()))
+	    		.findFirst().orElse(null));
     }
     
     /**
