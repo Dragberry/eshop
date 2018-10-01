@@ -364,6 +364,7 @@ public class InSalesDataImporter implements DataImporter {
                 try (InputStream imgIS = new URL(imgLink).openConnection().getInputStream()) {
                     String imageName = imgLink.substring(imgLink.lastIndexOf("/") + 1);
                     link.attr("src", imageService.createImage(imageName, imgIS));
+                    link.attr("class", "img-external");
                 }
             }
         }
