@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.dragberry.eshop.controller.Controllers;
 import org.dragberry.eshop.interceptor.AppInfoInterceptor;
-import org.dragberry.eshop.interceptor.AuditLogInterceptor;
 import org.dragberry.eshop.security.Security;
 import org.dragberry.eshop.service.impl.Services;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,12 +37,8 @@ public class Application implements WebMvcConfigurer {
     @Autowired
     private AppInfoInterceptor appInfoInterceptor;
     
-    @Autowired
-    private AuditLogInterceptor auditLogInterceptor;
-
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(auditLogInterceptor).excludePathPatterns(EXCLUDE_STATIC);
         registry.addInterceptor(appInfoInterceptor).excludePathPatterns(EXCLUDE_STATIC);
     }
     

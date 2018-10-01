@@ -61,7 +61,10 @@ public class AuditRecord extends AbstractEntity {
     @Column(name = "ENCODING")
     private String encoding;
     
-    @Column(name = "PARAMS")
-    private String params;
+    @Column(name = "QUERY_STRING")
+    private String queryString;
+    
+    @Column(name = "BODY")
+    private String body;
 
 }

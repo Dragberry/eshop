@@ -1,7 +1,8 @@
 package org.dragberry.eshop.application;
 
+import org.dragberry.eshop.filter.AuditLogFilter;
 import org.dragberry.eshop.interceptor.AppInfoInterceptor;
-import org.dragberry.eshop.interceptor.AuditLogInterceptor;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -16,8 +17,15 @@ public class WebConfig {
     }
     
     @Bean
-    public AuditLogInterceptor auditLogInterceptor() {
-        return new AuditLogInterceptor();
+    public AuditLogFilter auditLogInterceptor() {
+        return new AuditLogFilter();
+    }
+    
+    @Bean
+    public FilterRegistrationBean<AuditLogFilter> loggingFilter(){
+        FilterRegistrationBean<AuditLogFilter> registrationBean = new FilterRegistrationBean<>();
+        registrationBean.setFilter(auditLogInterceptor());
+        return registrationBean;    
     }
     
 }
