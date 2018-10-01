@@ -97,24 +97,47 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public List<ProductListItem> getProductList(ProductSearchQuery query) {
 		return productArticleRepo.search(query.getCategoryReference(), query.getSearchParams()).stream()
-	    .map(dto -> {
-	    	ProductListItem product = new ProductListItem();
-	    	product.setId(dto.getId());
-			product.setTitle(dto.getTitle());
-			product.setArticle(dto.getArticle());
-			product.setReference(dto.getReference());
-			product.setActualPrice(dto.getActualPrice());
-			product.setPrice(dto.getPrice());
-			product.setRating(dto.getAverageMark());
-			product.setCommentsCount(dto.getCommentsCount());
-			Category ctg = categoryRepo.findByProductId(dto.getId()).get(0);
-			product.setCategory(new CategoryItem(ctg.getEntityKey(), ctg.getName(), ctg.getReference()));
-			product.setLabels(productArticleRepo.findLabels(dto.getId()).stream()
-					.map(entry -> (Entry<String, ProductLabelType>) entry).collect(labelCollector()));
-			product.setMainImage(imageService.findMainImage(dto.getId(), dto.getArticle()));
-			return product;
-	    }).collect(toList());
+			    .map(dto -> {
+			    	ProductListItem product = new ProductListItem();
+			    	product.setId(dto.getId());
+					product.setTitle(dto.getTitle());
+					product.setArticle(dto.getArticle());
+					product.setReference(dto.getReference());
+					product.setActualPrice(dto.getActualPrice());
+					product.setPrice(dto.getPrice());
+					product.setRating(dto.getAverageMark());
+					product.setCommentsCount(dto.getCommentsCount());
+					Category ctg = categoryRepo.findByProductId(dto.getId()).get(0);
+					product.setCategory(new CategoryItem(ctg.getEntityKey(), ctg.getName(), ctg.getReference()));
+					product.setLabels(productArticleRepo.findLabels(dto.getId()).stream()
+							.map(entry -> (Entry<String, ProductLabelType>) entry).collect(labelCollector()));
+					product.setMainImage(imageService.findMainImage(dto.getId(), dto.getArticle()));
+					return product;
+			    }).collect(toList());
 		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ProductListItem> getProductList(String query) {
+		return productArticleRepo.search(query).stream()
+			    .map(dto -> {
+			    	ProductListItem product = new ProductListItem();
+			    	product.setId(dto.getId());
+					product.setTitle(dto.getTitle());
+					product.setArticle(dto.getArticle());
+					product.setReference(dto.getReference());
+					product.setActualPrice(dto.getActualPrice());
+					product.setPrice(dto.getPrice());
+					product.setRating(dto.getAverageMark());
+					product.setCommentsCount(dto.getCommentsCount());
+					Category ctg = categoryRepo.findByProductId(dto.getId()).get(0);
+					product.setCategory(new CategoryItem(ctg.getEntityKey(), ctg.getName(), ctg.getReference()));
+					product.setLabels(productArticleRepo.findLabels(dto.getId()).stream()
+							.map(entry -> (Entry<String, ProductLabelType>) entry).collect(labelCollector()));
+					product.setMainImage(imageService.findMainImage(dto.getId(), dto.getArticle()));
+					return product;
+			    }).collect(toList());
 	}
 
    

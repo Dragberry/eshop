@@ -7,5 +7,7 @@ import org.dragberry.eshop.dal.dto.ProductListItemDTO;
 
 public interface ProductArticleSearchRepository {
 
-	public List<ProductListItemDTO> search(String categoryReference, Map<String, String[]> searchParams);
+	List<ProductListItemDTO> search(String categoryReference, Map<String, String[]> searchParams);
+
+	List<ProductListItemDTO> search(String query);
 }

@@ -15,10 +15,20 @@
 				</div>
 				<form th:if="${selectedCategory}" id="filtersForm" th:action="|${@environment.getProperty('url.catalog.filter')}/${selectedCategory}|" method="GET">
 					<div class="row mt-2">
-						<button class="btn btn-block btn-secondary btn-sm btn-side-menu" type="button" data-toggle="collapse"
-							data-target="#filters" aria-expanded="false" aria-controls="filters">
-							<span th:text="#{msg.common.filters}">Filters</span>
-						</button>
+						<div class="w-100 text-center">
+							<button class="btn btn-block btn-secondary btn-sm btn-side-menu" type="button" data-toggle="collapse"
+								data-target="#filters" aria-expanded="false" aria-controls="filters">
+								<span th:text="#{msg.common.filters}">Filters</span>
+								<span class="all-filters-count badge badge-dark"
+									th:classappend="${searchParamsCount == 0} ? 'd-none' : ''"
+									th:text="${searchParamsCount}"></span>
+							</button>
+							<button class="all-filters-reset-button btn btn-link" 
+								th:classappend="${searchParamsCount == 0} ? 'd-none' : ''"
+								type="button" onclick="resetForm()">
+								<span class="small" th:text="#{msg.common.resetAllFilter}">Reset</span>
+							</button>
+						</div>
 						<div id="filters" class="content-side-menu collapse show">
 							<th:block th:each="filter : ${category.filters}">
 								<th:block th:replace="__${filter.template}__"></th:block>
@@ -43,8 +53,11 @@
 					    		<span class="fa fa-sort fa-xs" th:title="#{msg.common.sorting}"></span>
 					    	</div>
 					    </div>
-	    				<select form="filtersForm" name="sort" class="form-control form-control-sm" id="sorting" onchange="doSearch()">
-							<option th:each="opt : ${sortingOptionList}" th:value="${opt.value}" th:text="#{${opt.key}}"></option>
+	    				<select form="filtersForm" name="sort" class="form-control form-control-sm" id="sorting" onchange="doFilter()">
+							<option th:each="opt : ${sortingOptionList}" 
+								th:value="${opt.value}"
+								th:selected="${searchParams.get('sort') != null ? searchParams.get('sort')[0] == opt.value : false}"
+								th:text="#{${opt.key}}"></option>
 						</select>
 					</div>
 				</div>
@@ -59,7 +72,8 @@
 	<th:block layout:fragment="page_scripts">
 		<script>
 			var delayTimer;
-			function doSearch() {
+			function doFilter() {
+				countFilters();
 				clearTimeout(delayTimer);
 				delayTimer = setTimeout(function() {
 					var form = $('#filtersForm');
@@ -77,6 +91,27 @@
 				        }
 				   	});
 				}, 1000);
+			}
+			
+			function resetForm() {
+				document.getElementById('filtersForm').reset()
+				$('#filtersForm input[type="text"]').val('');
+				$('#filtersForm input[type="checkbox"]').attr('checked', false);
+				$('#sorting').prop('selectedIndex', 0);
+				doFilter();
+			}
+			
+			function countFilters() {
+				var count = $('#filtersForm input[type="text"]').filter(function() {
+				    return this.value;
+				}).length + $('#filtersForm input[type="checkbox"]:checked').length;
+				if (count == 0) {
+					$('.all-filters-count').addClass('d-none').text(0);
+					$('.all-filters-reset-button').addClass('d-none');
+				} else {
+					$('.all-filters-count').removeClass('d-none').text(count);
+					$('.all-filters-reset-button').removeClass('d-none');
+				}
 			}
 		</script>
 	</th:block>

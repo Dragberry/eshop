@@ -4,9 +4,11 @@ import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,6 +23,7 @@ import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.validator.GenericValidator;
 import org.dragberry.eshop.dal.dto.ProductListItemDTO;
 import org.dragberry.eshop.dal.entity.Product;
 import org.dragberry.eshop.dal.entity.ProductArticle;
@@ -51,6 +54,40 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
 	@PersistenceContext
 	private EntityManager em;
 	
+	@Override
+	public List<ProductListItemDTO> search(String query) {
+		if (!GenericValidator.minLength(query, 2)) {
+			return Collections.emptyList();
+		}
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<ProductListItemDTO> cq = cb.createQuery(ProductListItemDTO.class);
+		Root<ProductArticle> root = cq.from(ProductArticle.class);
+		root.join("categories");
+		Join<?, ?>  productRoot = root.join("products");
+		Join<?, ?>  productCommentRoot = root.join("comments", JoinType.LEFT);
+		
+		List<Predicate> where = new ArrayList<>();
+		Arrays.stream(query.toUpperCase().split("\\s+")).map(str -> "%" + str +  "%").forEach(str -> {
+			where.add(cb.like(cb.upper(root.get("article")), str));
+			where.add(cb.like(cb.upper(root.get("title")), str));
+			where.add(cb.like(cb.upper(root.get("description")), str));
+		});
+		
+		cq.multiselect(
+				root.get("entityKey"),
+				root.get("title"),
+				root.get("article"),
+				root.get("reference"),
+				cb.min(productRoot.get("actualPrice")),
+				cb.min(productRoot.get("price")),
+				cb.countDistinct(productCommentRoot),
+				cb.avg(productCommentRoot.get("mark")))
+		.groupBy(
+				root.get("entityKey"))
+		.where(cb.or(where.toArray(new Predicate[where.size()])));
+		return em.createQuery(cq).getResultList();
+	}
+	
 	public List<ProductListItemDTO> search(String categoryReference, Map<String, String[]> searchParams){
 		return new ProductSearchQuery().search(categoryReference, searchParams);
 	}
@@ -75,6 +112,7 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
 		}
 
 		List<ProductListItemDTO> search(String categoryReference, Map<String, String[]> searchParams) {
+			Objects.requireNonNull(searchParams);
 			if (StringUtils.isNotBlank(categoryReference)) {
 	            where.add(cb.equal(categoryRoot.get("reference"), categoryReference));
 	        }

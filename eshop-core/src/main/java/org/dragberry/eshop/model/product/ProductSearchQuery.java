@@ -1,6 +1,5 @@
 package org.dragberry.eshop.model.product;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import lombok.Data;
@@ -12,6 +11,6 @@ public class ProductSearchQuery {
 	
 	private String categoryName;
 	
-	private Map<String, String[]> searchParams = new HashMap<>();
+	private Map<String, String[]> searchParams;
 	
 }

@@ -1,4 +1,4 @@
-package org.dragberry.eshop.controller;
+package org.dragberry.eshop.controller.product;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,9 +6,16 @@ import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,6 +31,7 @@ import org.dragberry.eshop.model.comment.ProductCommentResponse;
 import org.dragberry.eshop.model.common.KeyValue;
 import org.dragberry.eshop.model.product.ProductCategory;
 import org.dragberry.eshop.model.product.ProductDetails;
+import org.dragberry.eshop.model.product.ProductListItem;
 import org.dragberry.eshop.model.product.ProductSearchQuery;
 import org.dragberry.eshop.navigation.Breadcrumb;
 import org.dragberry.eshop.service.CommentService;
@@ -33,16 +41,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import lombok.extern.log4j.Log4j;
+
+@Log4j
 @Controller
+@Scope(WebApplicationContext.SCOPE_SESSION)
 public class ProductController {
 	
 	private static final String MODEL_CATEGORY = "category";
@@ -51,12 +66,20 @@ public class ProductController {
 
 	private static final String MODEL_CATEGORY_LIST = "categoryList";
 	
-	private static final String MODEL_SORTIN_OPTION_LIST = "sortingOptionList";
+	private static final String MODEL_SORTING_OPTION_LIST = "sortingOptionList";
 
 	private static final String MODEL_BREADCRUMB = "breadcrumb";
 
+	private static final String MODEL_SEARCH_PARAMS = "searchParams"; 
+	
+	private static final String MODEL_SEARCH_PARAMS_COUNT = "searchParamsCount";
+	
 	private static final String MSG_MENU_CATALOG = "msg.menu.catalog";
 
+	private static final Long DEFAULT_CATEGORY_KEY = 0L;
+	
+	private static final String SORT_PARAM = "sort";
+	
 	@Value("${url.catalog}")
 	private String catelogReference;
 	
@@ -76,16 +99,42 @@ public class ProductController {
 	@Autowired
 	private ProductService productService;
 	
-	private static final List<KeyValue> SORTIN_OPTION_LIST = new ArrayList<>(); {
-	    SORTIN_OPTION_LIST.add(new KeyValue("msg.common.sort.popular.desc", "popular[desc]"));
-	    SORTIN_OPTION_LIST.add(new KeyValue("msg.common.sort.date.desc", "date[desc]"));
-	    SORTIN_OPTION_LIST.add(new KeyValue("msg.common.sort.price.asc", "price[desc]"));
-	    SORTIN_OPTION_LIST.add(new KeyValue("msg.common.sort.price.desc", "price[asc]"));
-	    SORTIN_OPTION_LIST.add(new KeyValue("msg.common.sort.rated.desc", "rated[desc]"));
+	private LinkedHashMap<String, ProductCategory> categories;
+	
+	private Set<Long> categoriesInitialized = new HashSet<>();
+	
+	private Map<Long, Map<String, String[]>> categorySearchParams = new HashMap<>();
+
+	private static final List<KeyValue> SORTING_OPTION_LIST = new ArrayList<>();
+
+	static {
+	    SORTING_OPTION_LIST.add(new KeyValue("msg.common.sort.popular.desc", "popular[desc]"));
+	    SORTING_OPTION_LIST.add(new KeyValue("msg.common.sort.date.desc", "date[desc]"));
+	    SORTING_OPTION_LIST.add(new KeyValue("msg.common.sort.price.asc", "price[desc]"));
+	    SORTING_OPTION_LIST.add(new KeyValue("msg.common.sort.price.desc", "price[asc]"));
+	    SORTING_OPTION_LIST.add(new KeyValue("msg.common.sort.rated.desc", "rated[desc]"));
 	}
 	
 	/**
-     * Gen an image
+	 * Get the category list
+	 * @return 
+	 */
+	public Collection<ProductCategory> getCategoryList() {
+		if (categories == null) {
+			fetchCategories();
+		}
+		return categories.values();
+	}
+	
+	@GetMapping("${url.catalog.search}")
+	@ResponseBody
+	public List<ProductListItem> search(@RequestParam(required = true) String query) {
+		log.info("Search request: " + query);
+		return productService.getProductList(query);
+	}
+	
+	/**
+     * Get an image
      * @return
      * @throws IOException 
      */
@@ -113,60 +162,138 @@ public class ProductController {
         }
     }
 	
-    @GetMapping("${url.catalog.filter}/{selectedCategory}")
-    public ModelAndView search(HttpServletRequest request, @PathVariable String selectedCategory) {
-    	ProductCategory category = productService.findCategory(selectedCategory);
+    /**
+     * Get category by reference
+     * @param selectedCategory
+     * @return
+     */
+    private ProductCategory getCategory(String selectedCategory) {
+    	if (categories == null) {
+			fetchCategories();
+		}
+    	ProductCategory category = categories.getOrDefault(selectedCategory, new ProductCategory(DEFAULT_CATEGORY_KEY, "all", "Все товары"));
     	if (category == null) {
-    	    throw new ResourceNotFoundException();
-    	}
-        ModelAndView mv = new ModelAndView("pages/products/product-list :: products");
+			throw new ResourceNotFoundException();
+		} else {
+			if (!categoriesInitialized.contains(category.getId())) {
+				fetchCategoryDetails(category);
+				categoriesInitialized.add(category.getId());
+			}
+		}
+    	return category;
+    }
+    
+    /**
+	 * Fetches all category details
+	 * @param category
+	 */
+	private void fetchCategoryDetails(ProductCategory category) {
+		category.setFilters(productService.getCategoryFilters(category.getId()));
+	}
+
+	/**
+	 * Fetch all available categories
+	 */
+	private void fetchCategories() {
+		categories = productService.getCategoryList().stream().collect(Collectors.toMap(
+				ProductCategory::getReference,
+				ctg -> ctg,
+				(k, v) -> {
+					throw new IllegalStateException(MessageFormat.format("Duplicate key: {0}", k));
+				},
+				LinkedHashMap::new));
+	}
+    
+    /**
+     * Filter products for a category
+     * @param request
+     * @param selectedCategory
+     * @return
+     */
+    @GetMapping("${url.catalog.filter}/{selectedCategory}")
+    public ModelAndView search(HttpServletRequest request, @PathVariable(required = true) String selectedCategory) {
+    	ModelAndView mv = new ModelAndView("pages/products/product-list :: products");
+    	ProductCategory category = getCategory(selectedCategory);
+		mv.addObject(MODEL_CATEGORY, category);
     	ProductSearchQuery query = new ProductSearchQuery();
     	query.setCategoryReference(selectedCategory);
-    	query.setSearchParams(request.getParameterMap());
-    	mv.addObject(MODEL_CATEGORY, category);
-        mv.addObject(MODEL_PRODUCT_LIST, productService.getProductList(query));
+    	Map<String, String[]> searchParams = new HashMap<>(request.getParameterMap());
+    	categorySearchParams.put(category.getId(), searchParams);
+    	query.setSearchParams(searchParams);
+    	mv.addObject(MODEL_PRODUCT_LIST, productService.getProductList(query));
     	return mv;
     }
     
+    /** 
+     * Filter all products
+     * @param request
+     * @return
+     */
     @GetMapping("${url.catalog.filter}")
     public ModelAndView searchAll(HttpServletRequest request) {
         ModelAndView mv = new ModelAndView("pages/products/product-list :: products");
     	ProductSearchQuery query = new ProductSearchQuery();
-    	query.setSearchParams(request.getParameterMap());
-        mv.addObject(MODEL_PRODUCT_LIST, productService.getProductList(query));
+    	Map<String, String[]> searchParams = new HashMap<>(request.getParameterMap());
+    	categorySearchParams.put(DEFAULT_CATEGORY_KEY, searchParams);
+    	query.setSearchParams(searchParams);
+    	mv.addObject(MODEL_PRODUCT_LIST, productService.getProductList(query));
     	return mv;
     }
-    
     
 	/**
 	 * Return a list of products
 	 * @return
 	 */
-	@GetMapping({"${url.catalog}", "${url.catalog}/{selectedCategory}"})
-	public ModelAndView catalog(@PathVariable(required = false) String selectedCategory) {
+	@GetMapping({"${url.catalog}/{selectedCategory}"})
+	public ModelAndView catalog(@PathVariable String selectedCategory) {
 		ModelAndView mv = new ModelAndView("pages/products/product-list");
-		List<ProductCategory> categoryList = productService.getCategoryList();
+		ProductCategory category = getCategory(selectedCategory);
+		mv.addObject(MODEL_CATEGORY, category);
+		mv.addObject(MODEL_BREADCRUMB, Breadcrumb.builder()
+	     		.append(MSG_MENU_CATALOG, catelogReference, true)
+	     		.append(category.getName(), selectedCategory));
+		mv.addObject(MODEL_SORTING_OPTION_LIST, SORTING_OPTION_LIST);
+		mv.addObject(MODEL_CATEGORY_LIST, getCategoryList());
 		ProductSearchQuery query = new ProductSearchQuery();
 		query.setCategoryReference(selectedCategory);
-		if (StringUtils.isNotBlank(selectedCategory)) {
-			ProductCategory category = categoryList.stream().filter(c -> c.getReference().equals(selectedCategory)).findFirst().orElse(new ProductCategory(0L, "all", "Все товары"));
-			if (category == null) {
-				throw new ResourceNotFoundException();
-			} else {
-				category.setFilters(productService.getCategoryFilters(category.getId()));
-			}
-			mv.addObject(MODEL_CATEGORY, category);
-			mv.addObject(MODEL_BREADCRUMB, Breadcrumb.builder()
-		     		.append(MSG_MENU_CATALOG, catelogReference, true)
-		     		.append(category.getName(), selectedCategory));
-		} else {
-			mv.addObject(MODEL_BREADCRUMB, Breadcrumb.builder()
-		     		.append(MSG_MENU_CATALOG, catelogReference, true));
-		}
-		mv.addObject(MODEL_SORTIN_OPTION_LIST, SORTIN_OPTION_LIST);
-		mv.addObject(MODEL_CATEGORY_LIST, categoryList);
+		Map<String, String[]> searchParams = getCategorySearchParams(category.getId());
+		query.setSearchParams(searchParams);
 		mv.addObject(MODEL_PRODUCT_LIST, productService.getProductList(query));
+		mv.addObject(MODEL_SEARCH_PARAMS, searchParams);
+		mv.addObject(MODEL_SEARCH_PARAMS_COUNT, searchParams.entrySet().stream()
+				.filter(params -> !SORT_PARAM.equals(params.getKey()))
+				.flatMap(params -> Arrays.stream(params.getValue()))
+				.filter(StringUtils::isNotBlank).count());
 		return mv;
+	}
+	
+	/**
+	 * Return a list of products
+	 * @return
+	 */
+	@GetMapping({"${url.catalog}"})
+	public ModelAndView catalogAll() {
+		ModelAndView mv = new ModelAndView("pages/products/product-list");
+		mv.addObject(MODEL_BREADCRUMB, Breadcrumb.builder()
+				.append(MSG_MENU_CATALOG, catelogReference, true));
+		mv.addObject(MODEL_SORTING_OPTION_LIST, SORTING_OPTION_LIST);
+		mv.addObject(MODEL_CATEGORY_LIST, getCategoryList());
+		ProductSearchQuery query = new ProductSearchQuery();
+		Map<String, String[]> searchParams = getCategorySearchParams(DEFAULT_CATEGORY_KEY);
+		query.setSearchParams(searchParams);
+		mv.addObject(MODEL_PRODUCT_LIST, productService.getProductList(query));
+		mv.addObject(MODEL_SEARCH_PARAMS, searchParams);
+		mv.addObject(MODEL_SEARCH_PARAMS_COUNT, 0);
+		return mv;
+	}
+	
+	/**
+	 * Get category search params
+	 * @param categoryId
+	 * @return
+	 */
+	private Map<String, String[]> getCategorySearchParams(Long categoryId) {
+		return categorySearchParams.getOrDefault(categoryId,  Collections.emptyMap());
 	}
 
 	/**

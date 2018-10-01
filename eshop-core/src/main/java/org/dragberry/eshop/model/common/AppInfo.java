@@ -14,4 +14,5 @@ public class AppInfo {
 	private String email;
 	
 	private String currency;
+	
 }

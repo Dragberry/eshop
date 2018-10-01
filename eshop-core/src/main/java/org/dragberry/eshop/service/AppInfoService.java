@@ -1,6 +1,7 @@
 package org.dragberry.eshop.service;
 
 import org.dragberry.eshop.model.common.AppInfo;
+import org.dragberry.eshop.model.common.Features;
 import org.dragberry.eshop.model.common.SystemInfo;
 
 public interface AppInfoService {
@@ -22,5 +23,11 @@ public interface AppInfoService {
 	 * @return
 	 */
 	SystemInfo getSystemInfo();
+	
+	/**
+	 * Get the list of available features
+	 * @return
+	 */
+	Features getFeatures();
 	
 }
