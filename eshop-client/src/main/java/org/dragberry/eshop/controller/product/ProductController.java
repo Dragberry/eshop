@@ -31,7 +31,6 @@ import org.dragberry.eshop.model.comment.ProductCommentResponse;
 import org.dragberry.eshop.model.common.KeyValue;
 import org.dragberry.eshop.model.product.ProductCategory;
 import org.dragberry.eshop.model.product.ProductDetails;
-import org.dragberry.eshop.model.product.ProductListItem;
 import org.dragberry.eshop.model.product.ProductSearchQuery;
 import org.dragberry.eshop.navigation.Breadcrumb;
 import org.dragberry.eshop.service.CommentService;
@@ -53,14 +52,17 @@ import org.springframework.web.servlet.ModelAndView;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import lombok.extern.log4j.Log4j;
-
-@Log4j
 @Controller
 @Scope(WebApplicationContext.SCOPE_SESSION)
 public class ProductController {
 	
-	private static final String MODEL_CATEGORY = "category";
+	private static final String MODEL_SEARCH_RESULTS = "searchResults";
+
+    private static final String MODEL_QUERY = "query";
+
+    private static final String MODEL_CATALOG_REFERENCE = "catalogReference";
+
+    private static final String MODEL_CATEGORY = "category";
 
 	private static final String MODEL_PRODUCT_LIST = "productList";
 
@@ -75,13 +77,15 @@ public class ProductController {
 	private static final String MODEL_SEARCH_PARAMS_COUNT = "searchParamsCount";
 	
 	private static final String MSG_MENU_CATALOG = "msg.menu.catalog";
+	
+	private static final String MSG_SEARCH_RESULTS = "msg.common.searchResults";
 
 	private static final Long DEFAULT_CATEGORY_KEY = 0L;
 	
 	private static final String SORT_PARAM = "sort";
 	
 	@Value("${url.catalog}")
-	private String catelogReference;
+	private String catalogReference;
 	
 	@Autowired
 	private MessageSource messageSource;
@@ -126,12 +130,53 @@ public class ProductController {
 		return categories.values();
 	}
 	
-	@GetMapping("${url.catalog.search}")
+	/**
+	 * Performs a quick search in the header
+	 * @param query
+	 * @param request
+	 * @param locale
+	 * @return
+	 */
+	@GetMapping("${url.catalog.quick-search}")
 	@ResponseBody
-	public List<ProductListItem> search(@RequestParam(required = true) String query) {
-		log.info("Search request: " + query);
-		return productService.getProductList(query);
+	public ResultTO<String> quickSearch(@RequestParam(required = true) String query, HttpServletRequest request, Locale locale) {
+		Context context = new Context(locale);
+		context.setVariable(MODEL_CATALOG_REFERENCE, catalogReference);
+		context.setVariable(MODEL_QUERY, query);
+        context.setVariable(MODEL_SEARCH_RESULTS, productService.getProductList(query, new HashMap<>(request.getParameterMap())));
+        return Results.create(templateEngine.process("pages/products/search/quick-search",
+                new HashSet<>(Arrays.asList("search-results")), context));
 	}
+	
+	/**
+     * Return a list of products page with a search results
+     */
+    @GetMapping({"${url.catalog.search}"})
+    public ModelAndView search(@RequestParam(required = true) String query, HttpServletRequest request) {
+        ModelAndView mv = new ModelAndView("pages/products/search/search-results");
+        mv.addObject(MODEL_BREADCRUMB, Breadcrumb.builder()
+                .append(MSG_SEARCH_RESULTS, StringUtils.EMPTY, true));
+        mv.addObject(MODEL_SORTING_OPTION_LIST, SORTING_OPTION_LIST);
+        mv.addObject(MODEL_CATEGORY_LIST, getCategoryList());
+        mv.addObject(MODEL_QUERY, query);
+        mv.addObject(MODEL_PRODUCT_LIST, productService.getProductList(query, new HashMap<>(request.getParameterMap())));
+        mv.addObject(MODEL_SEARCH_PARAMS, Collections.emptyMap());
+        mv.addObject(MODEL_SEARCH_PARAMS_COUNT, 0);
+        return mv;
+    }
+    
+    /** 
+     * Filter search result products
+     * @param request
+     * @return
+     */
+    @GetMapping("${url.catalog.search.filter}")
+    public ModelAndView filterSearchResults(@RequestParam(required = true) String query, HttpServletRequest request) {
+        ModelAndView mv = new ModelAndView("pages/products/search/search-results :: products");
+        mv.addObject(MODEL_QUERY, query);
+        mv.addObject(MODEL_PRODUCT_LIST, productService.getProductList(query, new HashMap<>(request.getParameterMap())));
+        return mv;
+    }
 	
 	/**
      * Get an image
@@ -211,7 +256,7 @@ public class ProductController {
      * @return
      */
     @GetMapping("${url.catalog.filter}/{selectedCategory}")
-    public ModelAndView search(HttpServletRequest request, @PathVariable(required = true) String selectedCategory) {
+    public ModelAndView filter(HttpServletRequest request, @PathVariable(required = true) String selectedCategory) {
     	ModelAndView mv = new ModelAndView("pages/products/product-list :: products");
     	ProductCategory category = getCategory(selectedCategory);
 		mv.addObject(MODEL_CATEGORY, category);
@@ -230,7 +275,7 @@ public class ProductController {
      * @return
      */
     @GetMapping("${url.catalog.filter}")
-    public ModelAndView searchAll(HttpServletRequest request) {
+    public ModelAndView filterAll(HttpServletRequest request) {
         ModelAndView mv = new ModelAndView("pages/products/product-list :: products");
     	ProductSearchQuery query = new ProductSearchQuery();
     	Map<String, String[]> searchParams = new HashMap<>(request.getParameterMap());
@@ -250,8 +295,8 @@ public class ProductController {
 		ProductCategory category = getCategory(selectedCategory);
 		mv.addObject(MODEL_CATEGORY, category);
 		mv.addObject(MODEL_BREADCRUMB, Breadcrumb.builder()
-	     		.append(MSG_MENU_CATALOG, catelogReference, true)
-	     		.append(category.getName(), selectedCategory));
+	     		.append(MSG_MENU_CATALOG, catalogReference, true)
+	     		.append(category.getName(), StringUtils.EMPTY));
 		mv.addObject(MODEL_SORTING_OPTION_LIST, SORTING_OPTION_LIST);
 		mv.addObject(MODEL_CATEGORY_LIST, getCategoryList());
 		ProductSearchQuery query = new ProductSearchQuery();
@@ -275,7 +320,7 @@ public class ProductController {
 	public ModelAndView catalogAll() {
 		ModelAndView mv = new ModelAndView("pages/products/product-list");
 		mv.addObject(MODEL_BREADCRUMB, Breadcrumb.builder()
-				.append(MSG_MENU_CATALOG, catelogReference, true));
+				.append(MSG_MENU_CATALOG, StringUtils.EMPTY, true));
 		mv.addObject(MODEL_SORTING_OPTION_LIST, SORTING_OPTION_LIST);
 		mv.addObject(MODEL_CATEGORY_LIST, getCategoryList());
 		ProductSearchQuery query = new ProductSearchQuery();
@@ -308,9 +353,9 @@ public class ProductController {
             	ModelAndView mv = new ModelAndView("pages/products/details/product-details");
                 mv.addObject("product", product);
                 mv.addObject(MODEL_BREADCRUMB, Breadcrumb.builder()
-                		.append(MSG_MENU_CATALOG, catelogReference, true)
+                		.append(MSG_MENU_CATALOG, catalogReference, true)
                 		.append(product.getCategory().getName(), categoryReference)
-                		.append(product.getTitle(), productReference));
+                		.append(product.getTitle(), StringUtils.EMPTY));
                 return mv;
             }
         }
@@ -343,7 +388,7 @@ public class ProductController {
     	    resp.getIssues().forEach(issue -> issue.setMessage(messageSource.getMessage(issue.getErrorCode(), issue.getParams().toArray(), locale)));
     		return resp;
     	} else {
-    		Context context = new Context();
+    		Context context = new Context(locale);
     		context.setVariable("comment", resp.getValue());
             return Results.create(templateEngine.process("pages/products/details/product-details-tab-panel",
     				new HashSet<>(Arrays.asList("product-comment")), context));

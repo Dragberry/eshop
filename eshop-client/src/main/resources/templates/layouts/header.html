@@ -72,10 +72,10 @@
 					 			<span class="fa fa-search fa-lg"></span>
 					 		</button>
       					</span>
-      					<div id="searchResultsTrigger" class="dropdown-toggle d-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></div>
-					  	<div id="searchResults" class="dropdown-menu dropdown-menu-right" aria-labelledby="searchResultsTrigger"></div>
 					</div>
 				</form>
+				<div id="searchResultsTrigger" class="dropdown-toggle d-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></div>
+			  	<div id="searchResults" class="dropdown-menu dropdown-menu-right" aria-labelledby="searchResultsTrigger"></div>
 			</div>
 		</nav>
 		<script>
@@ -88,24 +88,19 @@
 				clearTimeout(delaySearchTimer);
 				delaySearchTimer = setTimeout(function() {
 					var form = $('#searchForm');
-				    var url = form.attr('action');
 				    $.ajax({
-				    	type: "GET",
-				        url: url,
+				    	type: 'GET',
+				        url: '[[${@environment.getProperty('url.catalog.quick-search')}]]',
 				        data: form.serialize(),
 				        success: function(data)  {
-				        	if (data && data.length > 0) {
-				        		if ($('#searchResults').hasClass('show')) {
-				        			$('#searchResultsTrigger ').dropdown('toggle');				        			
-				        		}
-				        		data.forEach(function(element) {
-				        			$('#searchResults').append('<a class="dropdown-item">' + element.title+ '</a>');
-				        		});
-				        		if (!$('#searchResults').hasClass('show')) {
-				        			$('#searchResultsTrigger ').dropdown('toggle');				        			
-				        		}
-				        		console.log(data);
-				        	}
+			        		if ($('#searchResults').hasClass('show')) {
+			        			$('#searchResultsTrigger ').dropdown('toggle');				        			
+			        		}
+		        			$('#searchResults').html(data.value);
+			        		if (!$('#searchResults').hasClass('show')) {
+			        			$('#searchResultsTrigger ').dropdown('toggle');				        			
+			        		}
+			        		console.log(data);
 				        }
 				   	});
 				}, 250);

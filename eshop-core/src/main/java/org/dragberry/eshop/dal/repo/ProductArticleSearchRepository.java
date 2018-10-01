@@ -9,5 +9,5 @@ public interface ProductArticleSearchRepository {
 
 	List<ProductListItemDTO> search(String categoryReference, Map<String, String[]> searchParams);
 
-	List<ProductListItemDTO> search(String query);
+	List<ProductListItemDTO> quickSearch(String query, Map<String, String[]> searchParams);
 }

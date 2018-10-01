@@ -55,44 +55,72 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
 	private EntityManager em;
 	
 	@Override
-	public List<ProductListItemDTO> search(String query) {
+	public List<ProductListItemDTO> quickSearch(String query, Map<String, String[]> searchParams) {
 		if (!GenericValidator.minLength(query, 2)) {
 			return Collections.emptyList();
 		}
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<ProductListItemDTO> cq = cb.createQuery(ProductListItemDTO.class);
-		Root<ProductArticle> root = cq.from(ProductArticle.class);
-		root.join("categories");
-		Join<?, ?>  productRoot = root.join("products");
-		Join<?, ?>  productCommentRoot = root.join("comments", JoinType.LEFT);
-		
-		List<Predicate> where = new ArrayList<>();
-		Arrays.stream(query.toUpperCase().split("\\s+")).map(str -> "%" + str +  "%").forEach(str -> {
-			where.add(cb.like(cb.upper(root.get("article")), str));
-			where.add(cb.like(cb.upper(root.get("title")), str));
-			where.add(cb.like(cb.upper(root.get("description")), str));
-		});
-		
-		cq.multiselect(
-				root.get("entityKey"),
-				root.get("title"),
-				root.get("article"),
-				root.get("reference"),
-				cb.min(productRoot.get("actualPrice")),
-				cb.min(productRoot.get("price")),
-				cb.countDistinct(productCommentRoot),
-				cb.avg(productCommentRoot.get("mark")))
-		.groupBy(
-				root.get("entityKey"))
-		.where(cb.or(where.toArray(new Predicate[where.size()])));
-		return em.createQuery(cq).getResultList();
+		return new ProductQuickSearchQuery(query).search(searchParams);
 	}
 	
 	public List<ProductListItemDTO> search(String categoryReference, Map<String, String[]> searchParams){
-		return new ProductSearchQuery().search(categoryReference, searchParams);
+		return new ProductSearchQuery(categoryReference).search(searchParams);
 	}
 	
-	private class ProductSearchQuery {
+	private class ProductQuickSearchQuery extends AbstractProductSearchQuery {
+        
+        private String query;
+        
+        ProductQuickSearchQuery(String query) {
+            this.query = query;
+        }
+        
+        @Override
+        protected Predicate getPredicate() {
+            return cb.or(where.toArray(new Predicate[where.size()]));
+        }
+        
+        @Override
+        protected void addPredicates(Map<String, String[]> searchParams) {
+            Arrays.stream(query.toUpperCase().split("\\s+")).map(str -> "%" + str +  "%").forEach(str -> {
+                where.add(cb.like(cb.upper(root.get("article")), str));
+                where.add(cb.like(cb.upper(root.get("title")), str));
+                where.add(cb.like(cb.upper(root.get("description")), str));
+            });
+        }
+        
+    }   
+	
+	private class ProductSearchQuery extends AbstractProductSearchQuery {
+	    
+	    private String categoryReference;
+	    
+	    ProductSearchQuery(String categoryRefence) {
+	        this.categoryReference = categoryRefence;
+	    }
+	    
+	    @Override
+	    protected Predicate getPredicate() {
+	        return cb.and(where.toArray(new Predicate[where.size()]));
+	    }
+	    
+	    @Override
+	    protected void addPredicates(Map<String, String[]> searchParams) {
+	        if (StringUtils.isNotBlank(categoryReference)) {
+                where.add(cb.equal(categoryRoot.get("reference"), categoryReference));
+            }
+            where.add(cb.equal(root.get("saleStatus"), SaleStatus.EXPOSED));
+            for (Entry<String, String[]> entry : searchParams.entrySet()) {
+                String name = entry.getKey();
+                String[] values = entry.getValue();
+                if (processPrice(name, values) || processOptions(name, values) || processAttributes(name, values)) {
+                    continue;
+                }
+            }
+	    }
+	    
+	}
+	
+	private abstract class AbstractProductSearchQuery {
 		CriteriaBuilder cb;
 		CriteriaQuery<ProductListItemDTO> query;
 		Root<ProductArticle> root;
@@ -101,7 +129,7 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
 		Join<?, ?>  productCommentRoot;
 		List<Predicate> where;
 		
-		ProductSearchQuery() {
+		AbstractProductSearchQuery() {
 			cb = em.getCriteriaBuilder();
 			query = cb.createQuery(ProductListItemDTO.class);
 			root = query.from(ProductArticle.class);
@@ -111,25 +139,24 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
 			where = new ArrayList<>();
 		}
 
-		List<ProductListItemDTO> search(String categoryReference, Map<String, String[]> searchParams) {
+		protected abstract Predicate getPredicate();
+		
+		protected abstract void addPredicates(Map<String, String[]> searchParams);
+		
+		protected void addSorting(Map<String, String[]> searchParams) {
+		    String[] values = searchParams.get(SORT_PARAM);
+		    if (values != null) {
+		        sort(values);
+		    }
+		    if (query.getOrderList().isEmpty()) {
+                query.orderBy(cb.desc(cb.count(productRoot.join("orderItems", JoinType.LEFT).get("quantity"))));
+            }
+		}
+		
+		List<ProductListItemDTO> search(Map<String, String[]> searchParams) {
 			Objects.requireNonNull(searchParams);
-			if (StringUtils.isNotBlank(categoryReference)) {
-	            where.add(cb.equal(categoryRoot.get("reference"), categoryReference));
-	        }
-			where.add(cb.equal(root.get("saleStatus"), SaleStatus.EXPOSED));
-	        for (Entry<String, String[]> entry : searchParams.entrySet()) {
-	        	String name = entry.getKey();
-	        	String[] values = entry.getValue();
-	            if (processPrice(name, values) || processOptions(name, values) || processAttributes(name, values)) {
-	            	continue;
-	            }
-	            if (SORT_PARAM.equals(name)) {
-	                sort(values);
-	            }
-	        }
-	        if (query.getOrderList().isEmpty()) {
-	        	query.orderBy(cb.desc(cb.count(productRoot.join("orderItems", JoinType.LEFT).get("quantity"))));
-	        }
+			addPredicates(searchParams);
+			addSorting(searchParams);
 			query.multiselect(
 					root.get("entityKey"),
 					root.get("title"),
@@ -141,11 +168,11 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
 					cb.avg(productCommentRoot.get("mark")))
 			.groupBy(
 					root.get("entityKey"))
-			.where(where.toArray(new Predicate[where.size()]));
+			.where(getPredicate());
 			return em.createQuery(query).getResultList();
 		}
 		
-		private boolean processPrice(String name, String[] values) {
+		protected boolean processPrice(String name, String[] values) {
 			if ("price[from]".equals(name) && values.length == 1) {
                 try { where.add(priceFrom(values)); } catch (Exception exc) {}
                 return true;
@@ -157,7 +184,7 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
             return false;
 		}
 		
-		private boolean processOptions(String name, String[] values) {
+		protected boolean processOptions(String name, String[] values) {
 			Matcher optionMatcher;
             if ((optionMatcher = OPTION_PATTERN.matcher(name)).find()) {
             	return where.addAll(getOptionExpressions(optionMatcher.group(1), values));
@@ -178,7 +205,7 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
 	    	return Arrays.asList();
 	    }
 		
-		private boolean processAttributes(String name, String[] values) {
+		protected boolean processAttributes(String name, String[] values) {
 			Matcher attrMatcher;
             if ((attrMatcher = ATTRIBUTE_PATTERN.matcher(name)).find()) {
             	switch (attrMatcher.group(2)) {

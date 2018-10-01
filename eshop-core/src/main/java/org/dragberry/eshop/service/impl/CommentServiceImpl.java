@@ -52,9 +52,9 @@ public class CommentServiceImpl implements CommentService {
 		}
 		
 		if (StringUtils.isBlank(comment.getText())) {
-			issues.add(Issues.error("msg.comment.comment.required", "addCommentText"));
+			issues.add(Issues.error("msg.error.comment.comment.required", "addCommentText"));
 		} else if (!GenericValidator.maxLength(comment.getText(), 1024)) {
-			issues.add(Issues.error("msg.comment.comment.tooLong", "addCommentText"));
+			issues.add(Issues.error("msg.error.comment.comment.tooLong", "addCommentText"));
 		}
 		
 		if (comment.getMark() == null) {

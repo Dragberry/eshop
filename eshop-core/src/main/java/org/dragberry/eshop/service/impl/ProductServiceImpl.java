@@ -119,8 +119,8 @@ public class ProductServiceImpl implements ProductService {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ProductListItem> getProductList(String query) {
-		return productArticleRepo.search(query).stream()
+	public List<ProductListItem> getProductList(String query, Map<String, String[]> searchParams) {
+		return productArticleRepo.quickSearch(query, searchParams).stream()
 			    .map(dto -> {
 			    	ProductListItem product = new ProductListItem();
 			    	product.setId(dto.getId());

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<body>
+	<th:block th:fragment="search-results">
+		<th:block th:if="${#lists.isEmpty(searchResults)}">
+			<p>No results</p>
+		</th:block>
+		<th:block th:unless="${#lists.isEmpty(searchResults)}">
+			<div th:each="product : ${searchResults}" class="dropdown-item small">
+				<a th:href="|${catalogReference}/${product.category.reference}/${product.reference}|" th:text="${product.title}"></a>
+			</div>
+			<div class="dropdown-divider"></div>
+			<div class="dropdown-item small">
+				<a th:href="|${catalogReference}/search?query=${query}|" th:text="#{msg.common.showAllResults}"></a>
+			</div>
+		</th:block>
+	</th:block>
+</body>
+</html>
