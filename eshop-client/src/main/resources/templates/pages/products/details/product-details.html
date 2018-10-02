@@ -113,7 +113,8 @@
 			<th:block th:replace="pages/products/details/product-details-tab-panel :: product-details-tab-panel(product = ${product})"></th:block>
 		</div>
 		<th:block th:replace="pages/products/details/add-to-cart-modal :: add-to-cart-modal"></th:block>
-		<th:block th:replace="pages/products/details/quick-order-modal :: quick-order-modal"></th:block>
+		<th:block th:replace="pages/products/details/quick-order-modal :: quick-order-modal(product = ${product})"></th:block>
+		<th:block th:replace="pages/products/details/quick-order-success-modal :: quick-order-success-modal(product = ${product})"></th:block>
 	</th:block>	
 		
 	<th:block layout:fragment="page_scripts">
@@ -348,6 +349,7 @@
 							contentType: "application/json",
 							success: function(response) {
 								$('#quickOrderModal').modal("hide");
+								$('#quickOrderSuccessModal').modal("show");
 							}
 						});
 					},

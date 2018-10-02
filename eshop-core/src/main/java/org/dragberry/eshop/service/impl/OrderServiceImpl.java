@@ -25,7 +25,9 @@ import org.dragberry.eshop.dal.repo.OrderRepository;
 import org.dragberry.eshop.dal.repo.PaymentMethodRepository;
 import org.dragberry.eshop.dal.repo.ProductRepository;
 import org.dragberry.eshop.model.cart.OrderDetails;
+import org.dragberry.eshop.model.cart.ProductFullTitleBuilder;
 import org.dragberry.eshop.model.cart.QuickOrderDetails;
+import org.dragberry.eshop.model.common.KeyValue;
 import org.dragberry.eshop.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -162,6 +164,11 @@ public class OrderServiceImpl implements OrderService {
             order.setTotalAmount(actualPrice);
             order = orderRepo.save(order);
             orderDetails.setId(order.getEntityKey());
+            orderDetails.setProductArticle(prod.getProductArticle().getArticle());
+            orderDetails.setProductPrice(prod.getActualPrice());
+            orderDetails.setProductFullTitle(ProductFullTitleBuilder.buildFullTitle(
+            		prod.getProductArticle().getTitle(), 
+            		prod.getOptions().stream().map(opt -> new KeyValue(opt.getName(), opt.getValue())).collect(Collectors.toSet())));
 	    }
 	    return Results.create(orderDetails, issues);
 	}

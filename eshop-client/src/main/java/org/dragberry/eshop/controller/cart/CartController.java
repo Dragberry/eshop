@@ -171,7 +171,14 @@ public class CartController {
     @ResponseBody
     public ResultTO<QuickOrderDetails> submitQuickOder(@RequestBody QuickOrderDetails orderDetails) {
         log.info("New quick order has been submitted!");
-        return orderService.createQuickOrder(orderDetails);
+        ResultTO<QuickOrderDetails> order = orderService.createQuickOrder(orderDetails);
+        if (!order.hasIssues()) {
+	        Map<String, Object> notificationParams = new HashMap<>();
+	    	notificationParams.put("order", orderDetails);
+			notificationParams.put("shopName", appInfoService.shopName());
+			notificationService.sendNotification(appInfoService.getSystemInfo().getEmail(), "quick-order-report", notificationParams);
+        }
+		return order;
     }
     
     /**

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:fragment="message-subject">
+	[[${shopName}]]: Быстрый заказ #[[${order.id}]]
+</th:block>
+
+<th:block th:fragment="message-body">
+	<head>
+		<title th:remove="all">Customer order report</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<style>
+			table {
+			    border-collapse: collapse;
+			}
+			table, tr {
+			    border: 1px solid black;
+			}
+			td, th {
+				padding: 8px;
+				text-align: left;
+			},
+			div.product-title {
+				text-decoration: underline;
+				font-style: italic;
+				font-weight: bold;
+			}
+		</style>
+	</head>
+	<body>
+		<h2>Быстрый заказ #[[${order.id}]]</h2>
+		<h4>Контактная информация</h4>
+		<table>
+			<tr>
+				<th>Контактный телефон</th>
+				<td>[[${order.phone}]]</td>
+			</tr>
+			<tr th:if="${order.fullName}">
+				<th>ФИО</th>
+				<td>[[${order.fullName}]]</td>
+			</tr>
+			<tr th:if="${order.address}">
+				<th>Адрес</th>
+				<td>[[${order.address}]]</td>
+			</tr>
+		</table>
+		<h4>Товар</h4>
+		<table>
+			<tr>
+				<th>ID товара</th>
+				<td>[[${order.productId}]]</td>
+			</tr>
+			<tr>
+				<th>Наименование</th>
+				<td>
+					<div class="product-title">[[${order.productFullTitle}]]</div>
+					<div>Артикул: [[${order.productArticle}]]</div>
+				</td>
+			</tr>
+			<tr>
+				<th>Цена</th>
+				<td>[[${order.productPrice}]] Руб.</td>
+			</tr>
+		</table>
+	</body>
+</th:block>
+</html>

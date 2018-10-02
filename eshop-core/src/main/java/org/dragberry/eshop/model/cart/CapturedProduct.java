@@ -3,7 +3,6 @@ package org.dragberry.eshop.model.cart;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.dragberry.eshop.model.common.KeyValue;
 import org.dragberry.eshop.model.product.CategoryItem;
@@ -40,7 +39,7 @@ public class CapturedProduct {
     private Set<KeyValue> options  = new HashSet<>();
     
     public void updateFullTitle() {
-        this.fullTitle = title + options.stream().map(option -> option.getKey() + ": " + option.getValue()).collect(Collectors.joining("; ", " (", ")"));
+        this.fullTitle = ProductFullTitleBuilder.buildFullTitle(title, options);
     }
     
 }
