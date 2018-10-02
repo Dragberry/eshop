@@ -1,6 +1,8 @@
 package org.dragberry.eshop.service.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,6 +25,7 @@ import org.dragberry.eshop.dal.repo.OrderRepository;
 import org.dragberry.eshop.dal.repo.PaymentMethodRepository;
 import org.dragberry.eshop.dal.repo.ProductRepository;
 import org.dragberry.eshop.model.cart.OrderDetails;
+import org.dragberry.eshop.model.cart.QuickOrderDetails;
 import org.dragberry.eshop.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -117,4 +120,49 @@ public class OrderServiceImpl implements OrderService {
 		return Results.create(orderDetails, issues);
 	}
 
+	@Override
+	public ResultTO<QuickOrderDetails> createQuickOrder(QuickOrderDetails orderDetails) {
+	    List<IssueTO> issues = new ArrayList<>();
+	    if (StringUtils.isBlank(orderDetails.getPhone())) {
+            issues.add(Issues.error("msg.error.contactPhoneRequired", "phone"));
+        } else if (!GenericValidator.maxLength(orderDetails.getPhone(), 20)) {
+            issues.add(Issues.error("msg.error.contactPhoneIsTooLong", "phone"));
+        }
+	    if (StringUtils.isNotBlank(orderDetails.getFullName()) && !GenericValidator.maxLength(orderDetails.getFullName(), 64)) {
+            issues.add(Issues.error("msg.error.fullNameIsTooLong", "fullName"));
+        }
+	    if (StringUtils.isNotBlank(orderDetails.getAddress()) && !GenericValidator.maxLength(orderDetails.getAddress(), 128)) {
+            issues.add(Issues.error("msg.error.addressIsTooLong", "address"));
+        }
+	    Optional<Product> product = null;
+	    if (orderDetails.getProductId() != null) {
+            product = productRepo.findById(orderDetails.getProductId());
+            if (!product.isPresent()) {
+                issues.add(Issues.error("msg.error.productIsUnknown", "productId"));
+            }
+        } else {
+            issues.add(Issues.error("msg.error.productIsNull", "productId"));
+        }
+	    if (issues.isEmpty() && product != null) {
+	        Order order = new Order();
+            order.setOrderStatus(OrderStatus.QUICK);
+            order.setPhone(orderDetails.getPhone());
+            order.setFullName(orderDetails.getFullName());
+            order.setAddress(orderDetails.getAddress());
+            OrderItem item = new OrderItem();
+            item.setOrder(order);
+            Product prod = product.get();
+            item.setProduct(prod);
+            BigDecimal actualPrice = prod.getActualPrice();
+            item.setPrice(actualPrice);
+            item.setQuantity(1);
+            item.setTotalAmount(actualPrice);
+            order.setItems(Arrays.asList(item));
+            order.setTotalProductAmount(actualPrice);
+            order.setTotalAmount(actualPrice);
+            order = orderRepo.save(order);
+            orderDetails.setId(order.getEntityKey());
+	    }
+	    return Results.create(orderDetails, issues);
+	}
 }

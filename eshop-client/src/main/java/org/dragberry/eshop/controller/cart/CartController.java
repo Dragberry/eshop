@@ -18,6 +18,7 @@ import org.dragberry.eshop.model.cart.CapturedProductState;
 import org.dragberry.eshop.model.cart.CartState;
 import org.dragberry.eshop.model.cart.OrderDetails;
 import org.dragberry.eshop.model.cart.OrderDetailsForm;
+import org.dragberry.eshop.model.cart.QuickOrderDetails;
 import org.dragberry.eshop.model.payment.PaymentMethod;
 import org.dragberry.eshop.model.shipping.ShippingMethod;
 import org.dragberry.eshop.service.AppInfoService;
@@ -129,7 +130,6 @@ public class CartController {
      */
     @PostMapping("${url.cart.submit-order}")
     public ModelAndView submitOrder(@RequestBody OrderDetailsForm orderDetailsForm) {
-        log.info("New order has been submitted!");
         saveOrderDetails(orderDetailsForm);
         CartState<OrderDetails> cartState = updateCartState(order);
         order.setTotalProductAmount(cartState.getTotalProductAmount());
@@ -161,6 +161,17 @@ public class CartController {
         mv.addObject("paymentMethods", paymentMethods);
         updateCartState();
         return mv;
+    }
+    /**
+     * This method processes a quick order (single-click order)
+     * @param orderDetails
+     * @return
+     */
+    @PostMapping("${url.cart.quick-order}")
+    @ResponseBody
+    public ResultTO<QuickOrderDetails> submitQuickOder(@RequestBody QuickOrderDetails orderDetails) {
+        log.info("New quick order has been submitted!");
+        return orderService.createQuickOrder(orderDetails);
     }
     
     /**

@@ -93,13 +93,13 @@
 			</div>
 			 <div class="row">
 			 	<div class="col-md-6">
-			 		<button id="addToCartButton" type="button" class="btn btn-success btn-block">
+			 		<button id="addToCartButton" type="button" onclick="addToCard()" class="btn btn-success btn-block">
 			 			<span class="fa fa-cart-plus fa-lg"></span>
 			 			<span th:text="#{msg.common.addToCart}">Add to cart</span>
 			 		</button>
 			 	</div>
 			 	<div class="col-md-6">
-			 		<button id="singleClickBuyButton" type="button" class="btn btn-info btn-block">
+			 		<button id="singleClickBuyButton" type="button" onclick="showSingleClickOrder()" class="btn btn-info btn-block">
 			 			<span class="fa fa-cart-arrow-down fa-lg"></span>
 			 			<span th:text="#{msg.common.singleClickBuy}">Single click buy</span>
 			 		</button>
@@ -112,7 +112,8 @@
 		<div class="col-12">
 			<th:block th:replace="pages/products/details/product-details-tab-panel :: product-details-tab-panel(product = ${product})"></th:block>
 		</div>
-		<th:block th:replace="pages/products/details/product-details-add-to-cart-modal :: product-details-add-to-cart-modal"></th:block>
+		<th:block th:replace="pages/products/details/add-to-cart-modal :: add-to-cart-modal"></th:block>
+		<th:block th:replace="pages/products/details/single-click-order-modal :: single-click-order-modal"></th:block>
 	</th:block>	
 		
 	<th:block layout:fragment="page_scripts">
@@ -133,28 +134,27 @@
 				return isMatched;
 			}
 			
-			function addToCard() {
-				var productToAdd;
+			function getSelectedProductId() {
 				for (productId in product.productOptions) {
 					// if product doesn't have options, then choose the first one
 					if (product.productOptions[productId].length == 0) {
-						productToAdd = {
-			    				action: 'ADD_PRODUCT',
-								entityId: productId
-						};
+						return productId;
 					} else {
 						// if product has options, then choose product using the select option set
 					    for (optionSetIndex in product.productOptions[productId]) {
 					    	if (isProductMatch(product.productOptions[productId][optionSetIndex]['key'], product.productOptions[productId][optionSetIndex]['value'])) {
-					    		productToAdd = {
-					    				action: 'ADD_PRODUCT',
-										entityId: productId
-								};
+					    		return productId;
 					    	}
 					    }
 					}
 				}
-				
+			}
+			
+			function addToCard() {
+				var productToAdd = {
+						action: 'ADD_PRODUCT',
+						entityId: getSelectedProductId()
+				};
 				$.ajax({
 					url: '[[${@environment.getProperty('url.cart.state')}]]',
 				    data: JSON.stringify(productToAdd),
@@ -182,14 +182,7 @@
 		
 			$(document).ready(function() {
 				prepareAddCommentForm();
-				$('#addToCartButton').click(function() {
-					console.log('Add to cart button is clicked');
-					addToCard();
-					
-				});
-				$('#singleClickBuyButton').click(function() {
-					console.log('Single click buy button is clicked');
-				});
+				prepareSingleClickForm();
 			});
 			
 			// ***** Product comment and rating ***** //
@@ -267,7 +260,6 @@
 					},
 					submitHandler: function(form) {
 						$('#submitProductCommentButton').prop('disabled', true);
-						
 						var comment = {
 							'productId': $(form).find('input[name="productId"]').val(),
 							'name': $(form).find('input[name="name"]').val(),
@@ -275,7 +267,6 @@
 							'text': $(form).find('textarea[name="comment"]').val(),
 							'mark': $(form).find('input[name="productRating"]').val()
 						}
-						
 						$.ajax({
 							url: form.action,
 							type: form.method,
@@ -290,6 +281,74 @@
 							},
 							complete: function() {
 								$('#submitProductCommentButton').prop('disabled', false);
+							}
+						});
+					},
+					highlight: function(element, errorClass, validClass) {
+				    	$(element.form).find("input[name=" + element.name + "]")
+			      			.addClass('is-invalid').removeClass('is-valid');
+				    	$(element.form).find("label[for=" + element.name + "]")
+				      		.addClass('invalid-feedback');
+				  	},
+				  	unhighlight: function(element, errorClass, validClass) {
+				  		$(element.form).find("input[name=" + element.name + "]")
+		      				.removeClass('is-invalid').addClass('is-valid');
+				    	$(element.form).find("label[for=" + element.name + "]")
+				      		.removeClass('invalid-feedback');
+				  	}
+				});
+			}
+			
+			function showSingleClickOrder() {
+				$('#singleClickOrderModal').modal("show");
+			}
+			
+			function prepareSingleClickForm() {
+				$('#orderDetailsPhone').mask('+375(00) 000-00-00');
+				
+				$('#submitSingleClickOrderForm').validate({
+					debug: true,
+					errorClass: 'invalid-feedback',
+					validClass: 'valid-feedback',
+					rules: {
+						phone: {
+							required: true,
+							maxlength: 20
+						},
+						fullName: {
+							maxlength: 64
+						},
+						address: {
+							maxlength: 128
+						}
+					},
+					messages: {
+						phone: {
+							required: '[[#{msg.error.contactPhoneRequired}]]',
+							maxlength: '[[#{msg.error.contactPhoneIsTooLong}]]'
+						},
+						fullName: {
+							maxlength: '[[#{msg.error.fullNameIsTooLong}]]'
+						},
+						address: {
+							maxlength: '[[#{msg.error.addressIsTooLong}]]'
+						}
+					},
+					submitHandler: function(form) {
+						var orderDetails = {
+							'phone': $(form).find('input[name="phone"]').val(),
+							'fullName': $(form).find('input[name="fullName"]').val(),
+							'address': $(form).find('textarea[name="address"]').val(),
+							'productId': getSelectedProductId()
+						}
+						$.ajax({
+							url: form.action,
+							type: form.method,
+							data: JSON.stringify(orderDetails),
+							contentType: "application/json",
+							success: function(response) {
+								$('#singleClickOrderModal').modal("hide");
+								console.log('Order sumitted!');
 							}
 						});
 					},

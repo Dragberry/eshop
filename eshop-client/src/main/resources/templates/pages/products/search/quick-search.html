@@ -5,7 +5,7 @@
 <body>
 	<th:block th:fragment="search-results">
 		<th:block th:if="${#lists.isEmpty(searchResults)}">
-			<p>No results</p>
+			<div th:text="#{msg.common.noResults}" class="dropdown-item small"></div>
 		</th:block>
 		<th:block th:unless="${#lists.isEmpty(searchResults)}">
 			<div th:each="product : ${searchResults}" class="dropdown-item small">

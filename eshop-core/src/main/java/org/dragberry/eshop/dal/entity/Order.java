@@ -83,7 +83,7 @@ public class Order extends AuditableEntity {
 	
 	public static enum OrderStatus implements BaseEnum<Character> {
 
-		NEW('N'), CONFIRMED('C'), DECLINED('D');
+		NEW('N'), QUICK('Q'), CONFIRMED('C'), DECLINED('D');
 	    
 	    public final Character value;
 	    
