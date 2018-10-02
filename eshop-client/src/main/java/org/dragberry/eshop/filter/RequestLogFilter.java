@@ -76,7 +76,6 @@ public class RequestLogFilter extends OncePerRequestFilter {
 	 * @return
 	 */
 	private RequestLog createRequestLog(HttpServletRequest request) {
-	    requestLogRepo.findAll();
 		RequestLog record = new RequestLog();
 		record.setAddress(request.getRemoteAddr());
 		record.setEncoding(request.getCharacterEncoding());
@@ -95,7 +94,6 @@ public class RequestLogFilter extends OncePerRequestFilter {
 		    data.setRequestLog(record);
 		    record.setData(data);
 		}
-		requestLogRepo.save(record);
 		return record;
 	}
 

@@ -99,9 +99,9 @@
 			 		</button>
 			 	</div>
 			 	<div class="col-md-6">
-			 		<button id="singleClickBuyButton" type="button" onclick="showSingleClickOrder()" class="btn btn-info btn-block">
+			 		<button id="singleClickBuyButton" type="button" onclick="showQuickOrderModal()" class="btn btn-info btn-block">
 			 			<span class="fa fa-cart-arrow-down fa-lg"></span>
-			 			<span th:text="#{msg.common.singleClickBuy}">Single click buy</span>
+			 			<span th:text="#{msg.common.singleClickOrder}">Single click order</span>
 			 		</button>
 			 	</div>
 			</div>
@@ -113,7 +113,7 @@
 			<th:block th:replace="pages/products/details/product-details-tab-panel :: product-details-tab-panel(product = ${product})"></th:block>
 		</div>
 		<th:block th:replace="pages/products/details/add-to-cart-modal :: add-to-cart-modal"></th:block>
-		<th:block th:replace="pages/products/details/single-click-order-modal :: single-click-order-modal"></th:block>
+		<th:block th:replace="pages/products/details/quick-order-modal :: quick-order-modal"></th:block>
 	</th:block>	
 		
 	<th:block layout:fragment="page_scripts">
@@ -182,7 +182,7 @@
 		
 			$(document).ready(function() {
 				prepareAddCommentForm();
-				prepareSingleClickForm();
+				prepareQuickOrderForm();
 			});
 			
 			// ***** Product comment and rating ***** //
@@ -299,14 +299,14 @@
 				});
 			}
 			
-			function showSingleClickOrder() {
-				$('#singleClickOrderModal').modal("show");
+			function showQuickOrderModal() {
+				$('#quickOrderModal').modal("show");
 			}
 			
-			function prepareSingleClickForm() {
+			function prepareQuickOrderForm() {
 				$('#orderDetailsPhone').mask('+375(00) 000-00-00');
 				
-				$('#submitSingleClickOrderForm').validate({
+				$('#quickOrderForm').validate({
 					debug: true,
 					errorClass: 'invalid-feedback',
 					validClass: 'valid-feedback',
@@ -347,8 +347,7 @@
 							data: JSON.stringify(orderDetails),
 							contentType: "application/json",
 							success: function(response) {
-								$('#singleClickOrderModal').modal("hide");
-								console.log('Order sumitted!');
+								$('#quickOrderModal').modal("hide");
 							}
 						});
 					},
