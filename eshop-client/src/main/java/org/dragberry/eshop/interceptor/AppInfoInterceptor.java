@@ -7,6 +7,7 @@ import org.dragberry.eshop.model.common.AppInfo;
 import org.dragberry.eshop.model.common.Features;
 import org.dragberry.eshop.service.AppInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
  * @author Drahun Maksim
  *
  */
+@Component
 public class AppInfoInterceptor extends HandlerInterceptorAdapter {
 	
 	private static final String APP_INFO = "appInfo";
