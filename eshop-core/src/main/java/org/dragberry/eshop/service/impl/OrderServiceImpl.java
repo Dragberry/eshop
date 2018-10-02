@@ -89,6 +89,7 @@ public class OrderServiceImpl implements OrderService {
     		order.setFullName(orderDetails.getFullName());
     		order.setAddress(orderDetails.getAddress());
     		order.setEmail(orderDetails.getEmail());
+    		order.setComment(orderDetails.getComment());
     		order.setItems(orderDetails.getProducts().entrySet().stream().map(cp -> {
     		    OrderItem item = new OrderItem();
     			item.setOrder(order);

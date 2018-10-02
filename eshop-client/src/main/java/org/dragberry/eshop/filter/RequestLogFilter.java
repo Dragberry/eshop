@@ -2,6 +2,7 @@ package org.dragberry.eshop.filter;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,26 +15,27 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.dragberry.eshop.dal.entity.AuditRecord;
-import org.dragberry.eshop.dal.repo.AuditRecordRepository;
+import org.dragberry.eshop.dal.entity.RequestLog;
+import org.dragberry.eshop.dal.entity.RequestLogData;
+import org.dragberry.eshop.dal.repo.RequestLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
- * This intercepter which logs customer's requests
+ * This filter logs customer's requests
  * 
  * @author Drahun Maksim
  *
  */
 @Component
-public class AuditLogFilter extends OncePerRequestFilter {
+public class RequestLogFilter extends OncePerRequestFilter {
 
 	private static final List<String> EXCLUDE_STATIC = Arrays.asList("/images", "/js", "/css", "/webfonts", "/favicon.ico");
 
 	@Autowired
-	private AuditRecordRepository auditRecordRepo;
+	private RequestLogRepository requestLogRepo;
 
 	/**
 	 * The default value is "false" so that the filter may log a "before" message at
@@ -62,28 +64,38 @@ public class AuditLogFilter extends OncePerRequestFilter {
 		}
 
 		if (shouldLog(requestToUse) && isFirstRequest) {
-			auditRecordRepo.save(createAuditRecord(requestToUse));
+			requestLogRepo.save(createRequestLog(requestToUse));
 		}
 
 		filterChain.doFilter(requestToUse, response);
 	}
 
 	/**
-	 * Creates an AusitRecord from request
+	 * Creates an RequestLog from request
 	 * 
 	 * @return
 	 */
-	private AuditRecord createAuditRecord(HttpServletRequest request) {
-		AuditRecord record = new AuditRecord();
+	private RequestLog createRequestLog(HttpServletRequest request) {
+	    requestLogRepo.findAll();
+		RequestLog record = new RequestLog();
 		record.setAddress(request.getRemoteAddr());
 		record.setEncoding(request.getCharacterEncoding());
 		record.setLocale(request.getLocale().toString());
 		record.setMethod(request.getMethod());
 		record.setSessionId(request.getSession(false) != null ? request.getSession(false).getId() : null);
 		record.setUri(request.getRequestURI());
-		record.setQueryString(request.getQueryString());
-		record.setBody(getMessagePayload(request));
-		auditRecordRepo.save(record);
+		RequestLogData data = new RequestLogData();
+		try {
+		    data.setQueryString(URLDecoder.decode(request.getQueryString(), request.getCharacterEncoding()));
+		} catch (Exception exc) {
+		    data.setQueryString(request.getQueryString());
+		}
+		data.setBody(getMessagePayload(request));
+		if (!data.isEmpty()) {
+		    data.setRequestLog(record);
+		    record.setData(data);
+		}
+		requestLogRepo.save(record);
 		return record;
 	}
 

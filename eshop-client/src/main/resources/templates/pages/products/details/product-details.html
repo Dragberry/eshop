@@ -136,14 +136,23 @@
 			function addToCard() {
 				var productToAdd;
 				for (productId in product.productOptions) {
-				    for (optionSetIndex in product.productOptions[productId]) {
-				    	if (isProductMatch(product.productOptions[productId][optionSetIndex]['key'], product.productOptions[productId][optionSetIndex]['value'])) {
-				    		var productToAdd = {
-				    				action: 'ADD_PRODUCT',
-									entityId: productId
-							};
-				    	}
-				    }
+					// if product doesn't have options, then choose the first one
+					if (product.productOptions[productId].length == 0) {
+						productToAdd = {
+			    				action: 'ADD_PRODUCT',
+								entityId: productId
+						};
+					} else {
+						// if product has options, then choose product using the select option set
+					    for (optionSetIndex in product.productOptions[productId]) {
+					    	if (isProductMatch(product.productOptions[productId][optionSetIndex]['key'], product.productOptions[productId][optionSetIndex]['value'])) {
+					    		productToAdd = {
+					    				action: 'ADD_PRODUCT',
+										entityId: productId
+								};
+					    	}
+					    }
+					}
 				}
 				
 				$.ajax({
