@@ -99,9 +99,12 @@
 .img-desc-icon {
 	width: 2.5rem;
 }
+ul.desc-list {
+	padding-left: 0;	
+}
 
 .desc-list li {
-  list-style-type: none;
-  white-space: nowrap;
-  overflow: hidden;
+  	list-style-type: none;
+  	white-space: nowrap;
+  	overflow: hidden;
 }
