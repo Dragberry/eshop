@@ -56,6 +56,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.safety.Whitelist;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -115,6 +116,9 @@ public class InSalesDataImporter implements DataImporter {
 	private static final String GRP_ATTR_SCREEN = "Экран";
 	
 	private static final String GRP_ATTR_ACCUM = "Аккумулятор и время работы";
+	
+    @Autowired
+    private ResourceLoader resourceLoader;
 	
 	@Autowired
 	private CommentRepository commentRepo;
@@ -260,11 +264,8 @@ public class InSalesDataImporter implements DataImporter {
 			pa.setArticle(article);
 			pa.setTitle(firstLine[columnsMap.get(PRODUCT_TITLE)]);
 			pa.setReference(transliteService.transformToId(firstLine[columnsMap.get(PRODUCT_REFERENCE)]));
-			pa.setDescription(firstLine[columnsMap.get(PRODUCT_DESCRIPTION)]);
-			
-			String fulldesc = processFullDescription(firstLine[columnsMap.get(PRODUCT_DESCRIPTION_FULL)]);
-			
-			pa.setDescriptionFull(fulldesc);
+			pa.setDescription(processDescription(article, firstLine));
+			pa.setDescriptionFull(processDescriptionFull(article, firstLine));
 			pa.setTagTitle(firstLine[columnsMap.get(TAG_TITLE)]);
 			pa.setTagKeywords(firstLine[columnsMap.get(TAG_KEYWORDS)]);
 			pa.setTagDescription(firstLine[columnsMap.get(TAG_DESCRIPTION)]);
@@ -351,26 +352,54 @@ public class InSalesDataImporter implements DataImporter {
 		}
 		
 	}
+
+	private String processDescription(String article, String[] firstLine) {
+		try (InputStream is = resourceLoader.getResource(MessageFormat.format("classpath:data/{0}/{0}_description.html", article)).getInputStream()) {
+			Document description = Jsoup.parse(is, StandardCharsets.UTF_8.name(), StringUtils.EMPTY);
+			return description.body().html();
+		} catch (Exception e) {
+			log.warn("Unable to parse description file for product " + article);
+			return firstLine[columnsMap.get(PRODUCT_DESCRIPTION)];
+		}
+	}
 	
-	private String processFullDescription(String input) throws IOException {
-	    Whitelist wl = Whitelist.simpleText();
-	    wl.addTags("div", "span", "table", "tr", "th", "td", "li", "ul", "ol");
-	    wl.addAttributes("img", "src");
-        Document doc = Jsoup.parseBodyFragment(Jsoup.clean(input, wl));
-        Elements links = doc.select("img[src]");
-        for (Element link : links)  {
-            String imgURL = link.attr("src");
-            if (StringUtils.isNotBlank(imgURL)) {
-            	int lastIndexOfSlash = imgURL.lastIndexOf("/");
-                String realURL = imgURL.substring(0, lastIndexOfSlash + 1) + URLEncoder.encode(imgURL.substring(lastIndexOfSlash + 1), StandardCharsets.UTF_8.name());
-                try (InputStream imgIS = new URL(realURL).openConnection().getInputStream()) {
-                    String imageName = imgURL.substring(imgURL.lastIndexOf("/") + 1);
-                    link.attr("src", imageService.createImage(imageName, imgIS));
-                    link.attr("class", "img-external");
-                }
-            }
-        }
-        return doc.html();
+	private String processDescriptionFull(String article, String[] firstLine) throws IOException {
+		try (InputStream is = resourceLoader.getResource(MessageFormat.format("classpath:data/{0}/{0}_descriptionFull.html", article)).getInputStream()) {
+			Document description = Jsoup.parse(is, StandardCharsets.UTF_8.name(), StringUtils.EMPTY);
+			Elements links = description.select("img[src]");
+		    	for (Element link : links)  {
+		    		String imgURL = link.attr("src");
+		            if (StringUtils.startsWith(imgURL, "https://static-eu.insales.ru/")) {
+		            	int lastIndexOfSlash = imgURL.lastIndexOf("/");
+		                String realURL = imgURL.substring(0, lastIndexOfSlash + 1) + URLEncoder.encode(imgURL.substring(lastIndexOfSlash + 1), StandardCharsets.UTF_8.name());
+		                try (InputStream imgIS = new URL(realURL).openConnection().getInputStream()) {
+		                    String imageName = imgURL.substring(imgURL.lastIndexOf("/") + 1);
+		                    link.attr("src", imageService.createImage(imageName, imgIS));
+		                }
+		            }
+		        }
+			return description.body().html();
+		} catch (Exception e) {
+			log.warn("Unable to parse description file for product " + article);
+		    Whitelist wl = Whitelist.simpleText();
+		    wl.addTags("div", "span", "table", "tr", "th", "td", "li", "ul", "ol");
+		    wl.addAttributes("img", "src");
+	        Document doc = Jsoup.parseBodyFragment(Jsoup.clean(firstLine[columnsMap.get(PRODUCT_DESCRIPTION_FULL)], wl));
+	        Elements links = doc.select("img[src]");
+	        for (Element link : links)  {
+	            String imgURL = link.attr("src");
+	            if (StringUtils.isNotBlank(imgURL)) {
+	            	int lastIndexOfSlash = imgURL.lastIndexOf("/");
+	                String realURL = imgURL.substring(0, lastIndexOfSlash + 1) + URLEncoder.encode(imgURL.substring(lastIndexOfSlash + 1), StandardCharsets.UTF_8.name());
+	                try (InputStream imgIS = new URL(realURL).openConnection().getInputStream()) {
+	                    String imageName = imgURL.substring(imgURL.lastIndexOf("/") + 1);
+	                    link.attr("src", imageService.createImage(imageName, imgIS));
+	                    link.attr("class", "img-external");
+	                }
+	            }
+	        }
+	        return doc.html();
+		}
 	}
 	
 	private void processImages(String[] columns, ProductArticle pa) throws IOException {
