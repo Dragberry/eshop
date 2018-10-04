@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/template}">
+<head>
+	<title th:text="${page.title}">Title</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		 <th:block th:utext="${page.content}></th:block>
+	</div>
+</body>
+</html>

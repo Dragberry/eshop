@@ -3,6 +3,8 @@ package org.dragberry.eshop.controller;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.dragberry.eshop.service.DataImporter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -10,11 +12,14 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import lombok.extern.log4j.Log4j;
+
 /**
  * This controller serves all static pages
  * @author Maksim Dragun
  */
 @Controller
+@Log4j
 public class MainController {
     
     @Autowired
@@ -76,9 +81,10 @@ public class MainController {
      * Delivery page
      * @return
      */
-    @GetMapping("${url.delivery}")
-    public String delivery() {
-        return "pages/delivery";
+    @GetMapping("/*")
+    public String delivery(HttpServletRequest request) {
+        log.info(request.getRequestURI());
+        return "forward:/contacts";
     }
     
    /**
