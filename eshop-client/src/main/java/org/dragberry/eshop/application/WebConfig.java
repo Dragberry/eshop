@@ -23,7 +23,9 @@ import org.thymeleaf.cache.AlwaysValidCacheEntryValidity;
 import org.thymeleaf.cache.ICacheEntryValidity;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
+import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.AbstractConfigurableTemplateResolver;
 import org.thymeleaf.templateresolver.AbstractTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 import org.thymeleaf.templateresolver.StringTemplateResolver;
@@ -38,18 +40,20 @@ public class WebConfig {
     
     @Autowired
     private PageRepository pageRepo;
-    
-    @Bean
-    public String str() {
-    	return "str";
-    }
 
+    @Bean
+    public ThymeleafViewResolver thymeleafViewResolver() {
+        ThymeleafViewResolver thymeleafViewResolver = new ThymeleafViewResolver();
+        thymeleafViewResolver.setTemplateEngine(templateEngine());
+        thymeleafViewResolver.setOrder(1);
+        return thymeleafViewResolver;
+    }
     /**
      * Template engine to process String templates
      * @return
      */
     @Bean
-    public TemplateEngine templateEngine() {
+    public SpringTemplateEngine templateEngine() {
         final SpringTemplateEngine templateEngine = new SpringTemplateEngine();
         templateEngine.addTemplateResolver(pageTemplateResolver());
         templateEngine.addTemplateResolver(htmlTemplateResolver());
@@ -61,6 +65,7 @@ public class WebConfig {
     private ITemplateResolver pageTemplateResolver() {
     	PageTemplateResolver templateResolver = new PageTemplateResolver();
     	templateResolver.setOrder(1);
+    	templateResolver.setCharacterEncoding(StandardCharsets.UTF_8.name());
     	return templateResolver;
     }
     
@@ -83,42 +88,43 @@ public class WebConfig {
         return templateResolver;
     }
     
-    private class PageTemplateResolver extends AbstractTemplateResolver {
+    private class PageTemplateResolver extends AbstractConfigurableTemplateResolver {
 
-		@Override
-		protected ITemplateResource computeTemplateResource(IEngineConfiguration configuration, String ownerTemplate,
-				String template, Map<String, Object> templateResolutionAttributes) {
-			return new ITemplateResource() {
-				
-				private Optional<Page> page = pageRepo.findByReference(template);
-				
-				@Override
-				public ITemplateResource relative(String relativeLocation) {
-					return null;
-				}
-				
-				@Override
-				public Reader reader() throws IOException {
-					return new BufferedReader(new StringReader(page.get().getContent()));
-				}
-				
-				@Override
-				public String getDescription() {
-					return page.get().getName();
-				}
-				
-				@Override
-				public String getBaseName() {
-					return page.get().getName();
-				}
-				
-				@Override
-				public boolean exists() {
-					return page.isPresent();
-				}
-			};
-		}
-
+    	@Override
+    	protected ITemplateResource computeTemplateResource(IEngineConfiguration configuration, String ownerTemplate,
+    			String template, String resourceName, String characterEncoding,
+    			Map<String, Object> templateResolutionAttributes) {
+	    		return new ITemplateResource() {
+					
+					private Optional<Page> page = pageRepo.findByReference(template);
+					
+					@Override
+					public ITemplateResource relative(String relativeLocation) {
+						return null;
+					}
+					
+					@Override
+					public Reader reader() throws IOException {
+						return new StringReader(page.get().getContent());
+					}
+					
+					@Override
+					public String getDescription() {
+						return page.get().getName();
+					}
+					
+					@Override
+					public String getBaseName() {
+						return page.get().getName();
+					}
+					
+					@Override
+					public boolean exists() {
+						return page.isPresent();
+					}
+				};
+    	}
+    	
 		@Override
 		protected TemplateMode computeTemplateMode(IEngineConfiguration configuration, String ownerTemplate,
 				String template, Map<String, Object> templateResolutionAttributes) {

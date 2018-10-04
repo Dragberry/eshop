@@ -24,13 +24,7 @@ public class PageController {
     
     @GetMapping("/*")
     public ModelAndView delivery(HttpServletRequest request) {
-        Optional<Page> page = pageRepo.findByReference(request.getRequestURI());
-        if (page.isPresent()) {
-            ModelAndView mv = new ModelAndView("pages/custom-page");
-            mv.addObject("title", page.get().getTitle());
-            mv.addObject("content", systemService.processTemplate(page.get().getReference()));
-            return mv;
-        }
-        throw new ResourceNotFoundException();
+        ModelAndView mv = new ModelAndView(request.getRequestURI());
+        return mv;
     }
 }
