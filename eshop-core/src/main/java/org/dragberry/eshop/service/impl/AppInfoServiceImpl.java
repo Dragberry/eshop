@@ -2,6 +2,7 @@ package org.dragberry.eshop.service.impl;
 
 import java.time.DayOfWeek;
 import java.util.Arrays;
+import java.util.List;
 
 import org.dragberry.eshop.model.common.AppInfo;
 import org.dragberry.eshop.model.common.Features;
@@ -24,12 +25,17 @@ public class AppInfoServiceImpl implements AppInfoService {
         return shopName;
     }
 
+    public List<Phone> getPhones() {
+        return Arrays.asList(new Phone(Phone.MTS, "8033 375-90-80"), new Phone(Phone.VELCOM, "8029 375-90-80"));
+    }
+    
 	@Override
 	public AppInfo getAppInfo() {
 		AppInfo info = new AppInfo();
+		info.setShopName(shopName);
 		info.setCurrency("BYN");
 		info.setEmail("info@smartvitrina.by");
-		info.setPhones(Arrays.asList(new Phone(Phone.MTS, "8033 375-90-80"), new Phone(Phone.VELCOM, "8029 375-90-80")));
+		info.setPhones(getPhones());
 		info.setWorkingDays(new WorkingDays(Arrays.asList(
 				new WorkingDay(DayOfWeek.MONDAY, "9:00", "21:00", false),
 	            new WorkingDay(DayOfWeek.TUESDAY, "9:00", "21:00", false),
@@ -53,5 +59,5 @@ public class AppInfoServiceImpl implements AppInfoService {
     public Features getFeatures() {
     	return new Features();
     }
-
+    
 }

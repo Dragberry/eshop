@@ -170,8 +170,8 @@
 				Заказы принимаются круглосуточно через корзину и по телефонам с 9:00 до 21:00:
 			</p>
 			<p>
-			<div th:each="phone : ${appInfo.phones}">
-				<img class="img-responsive" th:src="@{|/images/${phone.type}.png|}" width="15" height="15">
+			<div th:each="phone : ${phones}">
+				<img class="img-responsive" th:src="|/images/${phone.type}.png|" width="15" height="15">
 				<span th:text="${phone.number}"></span>
 			</div>
 		</fieldset>

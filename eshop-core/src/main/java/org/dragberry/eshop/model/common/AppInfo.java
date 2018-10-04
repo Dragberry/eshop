@@ -7,6 +7,8 @@ import lombok.Data;
 @Data
 public class AppInfo {
 
+    private String shopName;
+    
 	private WorkingDays workingDays;
 	
 	private List<Phone> phones;

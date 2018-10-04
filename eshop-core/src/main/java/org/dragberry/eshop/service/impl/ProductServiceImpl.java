@@ -45,6 +45,7 @@ import org.dragberry.eshop.model.product.ProductSearchQuery;
 import org.dragberry.eshop.model.product.RangeFilter;
 import org.dragberry.eshop.service.ImageService;
 import org.dragberry.eshop.service.ProductService;
+import org.dragberry.eshop.service.SystemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -68,6 +69,9 @@ public class ProductServiceImpl implements ProductService {
     
     @Autowired
     private ImageService imageService;
+    
+    @Autowired
+    private SystemService systemService;
     
     @Override
 	public List<ProductCategory> getCategoryList() {
@@ -179,8 +183,8 @@ public class ProductServiceImpl implements ProductService {
         product.setId(article.getEntityKey());
         product.setArticle(article.getArticle());
         product.setTitle(article.getTitle());
-        product.setDescription(article.getDescription());
-        product.setDescriptionFull(article.getDescriptionFull());
+        product.setDescription(systemService.processTemplate(article.getDescription()));
+        product.setDescriptionFull(systemService.processTemplate(article.getDescriptionFull()));
         Category ctg = article.getCategories().get(0);
         product.setCategory(new CategoryItem(ctg.getEntityKey(), ctg.getName(), ctg.getReference()));
         product.setMainImage(imageService.findMainImage(article.getEntityKey(), article.getArticle()));

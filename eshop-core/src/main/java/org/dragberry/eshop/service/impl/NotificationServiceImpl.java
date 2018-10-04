@@ -25,6 +25,10 @@ import lombok.extern.log4j.Log4j;
 @Log4j
 @Service
 public class NotificationServiceImpl implements NotificationService {
+    
+    private static final HashSet<String> TEMPLATE_SELECTORS_SUBJECT = new HashSet<>(Arrays.asList("message-subject"));
+    
+    private static final HashSet<String> TEMPLATE_SELECTORS_BODY = new HashSet<>(Arrays.asList("message-body"));
 
 	@Autowired
 	@Qualifier("emailTemplateEngine")
@@ -35,12 +39,12 @@ public class NotificationServiceImpl implements NotificationService {
 	
 	private class EmailHelper {
 	    
-	    void send(String recipient, String template, Map<String, Object> objects) {
+        void send(String recipient, String template, Map<String, Object> objects) {
 	        Context ctx = new Context();
 	        objects.forEach(ctx::setVariable);
             send(recipient,
-                    () -> templateEngine.process(template, new HashSet<>(Arrays.asList("message-body")) , ctx),
-                    () -> templateEngine.process(template, new HashSet<>(Arrays.asList("message-subject")) , ctx));
+                    () -> templateEngine.process(template, TEMPLATE_SELECTORS_BODY, ctx),
+                    () -> templateEngine.process(template, TEMPLATE_SELECTORS_SUBJECT, ctx));
         }
 	    
 	    <T> void send(String recipient, Supplier<String> bodyProvider, Supplier<String> headerProvider) {
