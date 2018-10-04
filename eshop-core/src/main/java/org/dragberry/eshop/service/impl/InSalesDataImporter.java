@@ -32,6 +32,7 @@ import org.dragberry.eshop.dal.entity.CategoryFilterAnyBoolean;
 import org.dragberry.eshop.dal.entity.CategoryFilterAnyString;
 import org.dragberry.eshop.dal.entity.CategoryFilterRange;
 import org.dragberry.eshop.dal.entity.Comment;
+import org.dragberry.eshop.dal.entity.Page;
 import org.dragberry.eshop.dal.entity.Product;
 import org.dragberry.eshop.dal.entity.ProductArticle;
 import org.dragberry.eshop.dal.entity.ProductArticle.SaleStatus;
@@ -44,6 +45,7 @@ import org.dragberry.eshop.dal.entity.ProductAttributeString;
 import org.dragberry.eshop.dal.entity.ProductLabelType;
 import org.dragberry.eshop.dal.repo.CategoryRepository;
 import org.dragberry.eshop.dal.repo.CommentRepository;
+import org.dragberry.eshop.dal.repo.PageRepository;
 import org.dragberry.eshop.dal.repo.ProductArticleOptionRepository;
 import org.dragberry.eshop.dal.repo.ProductArticleRepository;
 import org.dragberry.eshop.dal.repo.ProductRepository;
@@ -141,6 +143,9 @@ public class InSalesDataImporter implements DataImporter {
 	@Autowired
 	private ImageService imageService;
 	
+	@Autowired
+	private PageRepository pageRepo;
+	
 	private Map<String, Integer> columnsMap = new HashMap<>();
 	
 	private Map<String, String> optionsMap = new HashMap<>();
@@ -155,8 +160,25 @@ public class InSalesDataImporter implements DataImporter {
 		createCategory("Каталог фитнес-браслетов", "Фитнес-браслеты", 2);
 		createCategory("Прочие аксессуары", "Прочие аксессуары", 3);
 		createCategory("Каталог детских смарт-часов", "Детские смарт-часы", 1);
+		
+		createPages();
 	}
 	
+	private void createPages() {
+		pageRepo.findByReference("/kontakty").orElseGet(() -> {
+			Page page = new  Page();
+			page.setName("Контакты");
+			page.setReference("/kontakty");
+			page.setTitle("Контакты");
+			try (InputStream is = resourceLoader.getResource("classpath:data/pages/contacts.html").getInputStream()) {
+				page.setContent(IOUtils.toString(is, StandardCharsets.UTF_8));
+			} catch (Exception e) {
+				log.warn("Unable to open contacts.html page");
+			}
+			return pageRepo.save(page);
+		});
+	}
+
 	/**
      * Process category
      * @param categoryName

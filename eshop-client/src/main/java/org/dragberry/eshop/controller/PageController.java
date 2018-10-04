@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.dragberry.eshop.controller.exception.ResourceNotFoundException;
 import org.dragberry.eshop.dal.entity.Page;
 import org.dragberry.eshop.dal.repo.PageRepository;
+import org.dragberry.eshop.service.SystemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,9 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class PageController {
 
+	@Autowired
+	private SystemService systemService;
+	
     @Autowired
     private PageRepository pageRepo;
     
@@ -23,6 +27,8 @@ public class PageController {
         Optional<Page> page = pageRepo.findByReference(request.getRequestURI());
         if (page.isPresent()) {
             ModelAndView mv = new ModelAndView("pages/custom-page");
+            mv.addObject("title", page.get().getTitle());
+            mv.addObject("content", systemService.processTemplate(page.get().getReference()));
             return mv;
         }
         throw new ResourceNotFoundException();

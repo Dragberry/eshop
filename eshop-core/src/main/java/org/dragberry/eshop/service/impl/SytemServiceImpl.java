@@ -19,7 +19,7 @@ public class SytemServiceImpl implements SystemService {
     private String shopName;
     
     @Autowired
-    @Qualifier("stringTemplateEngine")
+    @Qualifier("templateEngine")
     private TemplateEngine stringTemplateEngine;
     
     private Context context;

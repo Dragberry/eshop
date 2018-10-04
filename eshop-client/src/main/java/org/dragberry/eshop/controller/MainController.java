@@ -68,25 +68,6 @@ public class MainController {
         return "pages/account";
     }
 	
-	/**
-     * Contacts page
-     * @return
-     */
-    @GetMapping("${url.contacts}")
-    public String contacts() {
-        return "pages/contacts";
-    }
-    
-    /**
-     * Delivery page
-     * @return
-     */
-    @GetMapping("/*")
-    public String delivery(HttpServletRequest request) {
-        log.info(request.getRequestURI());
-        return "forward:/contacts";
-    }
-    
    /**
     * Payment and installment page
     * @return
