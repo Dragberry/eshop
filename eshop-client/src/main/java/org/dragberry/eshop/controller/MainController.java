@@ -55,6 +55,7 @@ public class MainController {
     
     @GetMapping("/*")
     public ModelAndView delivery(HttpServletRequest request) {
+//    	return new ModelAndView("home");
         if (pageRepo.existsByReference(request.getRequestURI())) {
             return new ModelAndView(request.getRequestURI());
         }

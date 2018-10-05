@@ -189,7 +189,20 @@ public class InSalesDataImporter implements DataImporter {
             page.setReference(reference);
             page.setTitle(name);
             try (InputStream is = resourceLoader.getResource("classpath:data/pages" + ("/".equals(reference) ? "/home" : reference) + ".html").getInputStream()) {
-                page.setContent(IOUtils.toString(is, StandardCharsets.UTF_8));
+            	Document description = Jsoup.parse(is, StandardCharsets.UTF_8.name(), StringUtils.EMPTY);
+    			Elements links = description.select("img[src]");
+		    	for (Element link : links)  {
+		    		String imgURL = link.attr("src");
+		            if (StringUtils.startsWith(imgURL, "https://static-eu.insales.ru/")) {
+		            	int lastIndexOfSlash = imgURL.lastIndexOf("/");
+		                String realURL = imgURL.substring(0, lastIndexOfSlash + 1) + URLEncoder.encode(imgURL.substring(lastIndexOfSlash + 1), StandardCharsets.UTF_8.name());
+		                try (InputStream imgIS = new URL(realURL).openConnection().getInputStream()) {
+		                    String imageName = imgURL.substring(imgURL.lastIndexOf("/") + 1);
+		                    link.attr("src", imageService.createImage(imageName, imgIS));
+		                }
+		            }
+		        }
+            	page.setContent(description.html());
             } catch (Exception e) {
                 log.warn("Unable to open " + reference + " page");
             }

@@ -1,3 +1,48 @@
+/*************** Main page *************/
+.app-info.jumbotron {
+	padding: 2rem;
+	margin-bottom: 0.5rem;
+}
+
+.benefit {
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.benefit-inner {
+    color: #000;
+    text-decoration: none;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+}
+
+.benefit-title {
+	color: #000;
+    display: block;
+    max-width: 100%;
+    padding-left: 0.5em;
+    text-align: left;
+}
+
+.benefit-image {
+    background: transparent;
+    border: 1px solid #000;
+    font-size: 0;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+}
+
+.benefit-image img {
+    max-height: 100%;
+    max-width: 100%;
+    vertical-align: middle;
+}
+
 .navbar .btn {
 	margin-right: 0.5rem;
 }
@@ -36,11 +81,6 @@
 
 .product-price-label {
 	font-size: 100%;
-}
-
-.app-info.jumbotron {
-	padding: 2rem;
-	margin-bottom: 0.5rem;
 }
 
 @media screen and (max-width: 767px) {
