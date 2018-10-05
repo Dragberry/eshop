@@ -15,4 +15,11 @@ public interface PageRepository extends JpaRepository<Page, Long> {
      * @return
      */
     Optional<Page> findByReference(String reference);
+    
+    /**
+     * Checks whether the page exists with such URL reference
+     * @param reference
+     * @return
+     */
+    boolean existsByReference(String reference);
 }

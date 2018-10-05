@@ -27,19 +27,31 @@ public class CoreConfig {
     
     private static final String EMAIL_TEMPLATE_ENCODING = "UTF-8";
 
+    @Bean("stringTemplateEngine")
+    public TemplateEngine stringTemplateEngine() {
+        final SpringTemplateEngine templateEngine = new SpringTemplateEngine();
+        templateEngine.addTemplateResolver(stringTemplateResolver());
+        return templateEngine;
+    }
+    
+    private ITemplateResolver stringTemplateResolver() {
+        final StringTemplateResolver templateResolver = new StringTemplateResolver();
+        templateResolver.setOrder(1);
+        templateResolver.setTemplateMode("HTML5");
+        templateResolver.setCacheable(false);
+        return templateResolver;
+    }
+    
     @Bean("emailTemplateEngine")
     public TemplateEngine emailTemplateEngine() {
         final SpringTemplateEngine templateEngine = new SpringTemplateEngine();
         templateEngine.addTemplateResolver(htmlTemplateResolver());
-        templateEngine.addTemplateResolver(stringTemplateResolver());
-        // Message source, internationalization specific to emails
-//        templateEngine.setTemplateEngineMessageSource(emailMessageSource());
         return templateEngine;
     }
     
     private ITemplateResolver htmlTemplateResolver() {
         final ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
-        templateResolver.setOrder(Integer.valueOf(1));
+        templateResolver.setOrder(1);
         templateResolver.setPrefix("/mail/");
         templateResolver.setSuffix(".html");
         templateResolver.setTemplateMode(TemplateMode.HTML);
@@ -48,14 +60,6 @@ public class CoreConfig {
         return templateResolver;
     }
 
-    private ITemplateResolver stringTemplateResolver() {
-        final StringTemplateResolver templateResolver = new StringTemplateResolver();
-        templateResolver.setOrder(Integer.valueOf(2));
-        templateResolver.setTemplateMode("HTML5");
-        templateResolver.setCacheable(false);
-        return templateResolver;
-    }
-    
     @Bean("notifications")
     public Executor asyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();

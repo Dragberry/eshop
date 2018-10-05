@@ -1,10 +1,11 @@
 package org.dragberry.eshop.application;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
@@ -12,41 +13,53 @@ import org.dragberry.eshop.dal.entity.Page;
 import org.dragberry.eshop.dal.repo.PageRepository;
 import org.dragberry.eshop.filter.RequestLogFilter;
 import org.dragberry.eshop.interceptor.AppInfoInterceptor;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.context.WebApplicationContext;
 import org.thymeleaf.IEngineConfiguration;
-import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.cache.AlwaysValidCacheEntryValidity;
 import org.thymeleaf.cache.ICacheEntryValidity;
+import org.thymeleaf.dialect.IDialect;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.AbstractConfigurableTemplateResolver;
-import org.thymeleaf.templateresolver.AbstractTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
-import org.thymeleaf.templateresolver.StringTemplateResolver;
 import org.thymeleaf.templateresource.ITemplateResource;
 
 @Configuration
 @ComponentScan(basePackageClasses = { AppInfoInterceptor.class, RequestLogFilter.class })
 public class WebConfig {
     
+    private Collection<IDialect> dialects;
+    
+    @Autowired
+    private WebApplicationContext  applicationContext;
+    
     @Autowired
     private MessageSource messageSource;
     
     @Autowired
     private PageRepository pageRepo;
-
+    
+    public WebConfig(ObjectProvider<Collection<IDialect>> dialectsProvider) {
+        this.dialects = dialectsProvider.getIfAvailable(Collections::emptyList);
+    }
+    
     @Bean
     public ThymeleafViewResolver thymeleafViewResolver() {
-        ThymeleafViewResolver thymeleafViewResolver = new ThymeleafViewResolver();
-        thymeleafViewResolver.setTemplateEngine(templateEngine());
-        thymeleafViewResolver.setOrder(1);
-        return thymeleafViewResolver;
+        ThymeleafViewResolver resolver = new ThymeleafViewResolver();
+        resolver.setApplicationContext(applicationContext);
+        resolver.setTemplateEngine(templateEngine());
+        resolver.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        resolver.setCache(false);
+        resolver.setOrder(1);
+        return resolver;
     }
     /**
      * Template engine to process String templates
@@ -55,74 +68,45 @@ public class WebConfig {
     @Bean
     public SpringTemplateEngine templateEngine() {
         final SpringTemplateEngine templateEngine = new SpringTemplateEngine();
-        templateEngine.addTemplateResolver(pageTemplateResolver());
-        templateEngine.addTemplateResolver(htmlTemplateResolver());
-        templateEngine.addTemplateResolver(stringTemplateResolver());
+        templateEngine.addTemplateResolver(dbPageTemplateResolver());
+        templateEngine.addTemplateResolver(springTemplateResolver());
         templateEngine.setTemplateEngineMessageSource(messageSource);
+        this.dialects.forEach(templateEngine::addDialect);
         return templateEngine;
     }
     
-    private ITemplateResolver pageTemplateResolver() {
-    	PageTemplateResolver templateResolver = new PageTemplateResolver();
+    private ITemplateResolver dbPageTemplateResolver() {
+    	DBPageTemplateResolver templateResolver = new DBPageTemplateResolver();
     	templateResolver.setOrder(1);
+    	templateResolver.setCheckExistence(true);
     	templateResolver.setCharacterEncoding(StandardCharsets.UTF_8.name());
     	return templateResolver;
     }
     
-    private ITemplateResolver htmlTemplateResolver() {
+    private ITemplateResolver springTemplateResolver() {
         final SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
         templateResolver.setOrder(2);
-        templateResolver.setPrefix("/templates/");
+        templateResolver.setApplicationContext(applicationContext);
+        templateResolver.setPrefix("classpath:templates/");
         templateResolver.setSuffix(".html");
         templateResolver.setTemplateMode(TemplateMode.HTML);
         templateResolver.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        templateResolver.setCheckExistence(true);
         templateResolver.setCacheable(false);
         return templateResolver;
     }
     
-    private ITemplateResolver stringTemplateResolver() {
-        final StringTemplateResolver templateResolver = new StringTemplateResolver();
-        templateResolver.setOrder(3);
-        templateResolver.setTemplateMode("HTML5");
-        templateResolver.setCacheable(false);
-        return templateResolver;
-    }
-    
-    private class PageTemplateResolver extends AbstractConfigurableTemplateResolver {
+    /**
+     * This class is used to resolve template from database, see {@link Page}
+     * @author Drahun Maksim
+     */
+    private class DBPageTemplateResolver extends AbstractConfigurableTemplateResolver {
 
     	@Override
     	protected ITemplateResource computeTemplateResource(IEngineConfiguration configuration, String ownerTemplate,
     			String template, String resourceName, String characterEncoding,
     			Map<String, Object> templateResolutionAttributes) {
-	    		return new ITemplateResource() {
-					
-					private Optional<Page> page = pageRepo.findByReference(template);
-					
-					@Override
-					public ITemplateResource relative(String relativeLocation) {
-						return null;
-					}
-					
-					@Override
-					public Reader reader() throws IOException {
-						return new StringReader(page.get().getContent());
-					}
-					
-					@Override
-					public String getDescription() {
-						return page.get().getName();
-					}
-					
-					@Override
-					public String getBaseName() {
-						return page.get().getName();
-					}
-					
-					@Override
-					public boolean exists() {
-						return page.isPresent();
-					}
-				};
+	    		return new DBPageTemplateResource(template);
     	}
     	
 		@Override
@@ -136,6 +120,53 @@ public class WebConfig {
 				String template, Map<String, Object> templateResolutionAttributes) {
 			return new AlwaysValidCacheEntryValidity();
 		}
-    	
+    }
+    
+    /**
+     * Template resource for pages which are stored in database
+     * @author Drahun Maksim
+     *
+     */
+    private class DBPageTemplateResource implements ITemplateResource {
+        
+        private final String template;
+        
+        private Page page;
+
+        public DBPageTemplateResource(String template) {
+            this.template = template;
+        }
+        
+        @Override
+        public ITemplateResource relative(String relativeLocation) {
+            return new DBPageTemplateResource(relativeLocation);
+        }
+        
+        @Override
+        public Reader reader() throws IOException {
+            return new StringReader(page.getContent());
+        }
+        
+        @Override
+        public String getDescription() {
+            return page.getName();
+        }
+        
+        @Override
+        public String getBaseName() {
+            return page.getName();
+        }
+        
+        @Override
+        public boolean exists() {
+            if (template.startsWith("/")) {
+                Optional<Page> result = pageRepo.findByReference(template);
+                if (result.isPresent()) {
+                    page = result.get();
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

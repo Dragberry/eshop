@@ -1,8 +1,13 @@
 package org.dragberry.eshop.interceptor;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.dragberry.eshop.dal.dto.MenuPageDTO;
+import org.dragberry.eshop.dal.entity.MenuPage.Status;
+import org.dragberry.eshop.dal.repo.MenuPageRepository;
 import org.dragberry.eshop.model.common.AppInfo;
 import org.dragberry.eshop.model.common.Features;
 import org.dragberry.eshop.service.AppInfoService;
@@ -22,13 +27,20 @@ public class AppInfoInterceptor extends HandlerInterceptorAdapter {
 	private static final String APP_INFO = "appInfo";
 
 	private static final String FEATURES = "features";
+	
+	private static final String MENU = "menu";
 
 	@Autowired
 	private AppInfoService appInfoService;
+	
+	@Autowired
+	private MenuPageRepository menuPageRepo;
 
     private AppInfo appInfo;
     
     private Features features;
+    
+    private List<MenuPageDTO> menu;
     
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
@@ -48,9 +60,13 @@ public class AppInfoInterceptor extends HandlerInterceptorAdapter {
     	if (features == null) {
     		features = appInfoService.getFeatures();
     	}
+    	if (menu == null) {
+    	    menu = menuPageRepo.getMenu(Status.ACTIVE);
+    	}
         if (modelAndView != null) {
             modelAndView.addObject(APP_INFO, appInfo);
             modelAndView.addObject(FEATURES, features);
+            modelAndView.addObject(MENU, menu);
         }
     }
 }

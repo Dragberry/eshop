@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/template}">
+<head>
+	<title th:text="#{msg.menu.contacts}">Contacts</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		 <h1>Наши контакты</h1>
+		 <div th:each="phone : ${appInfo.phones}">
+ 			<img class="img-responsive" th:src="@{|/images/${phone.type}.png|}" width="15" height="15">
+    		<strong th:text="${phone.number}"></strong>
+    	</div>
+	</div>
+</body>
+</html>

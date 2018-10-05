@@ -34,19 +34,8 @@
 					<li class="nav-item">
 						<a class="nav-link" th:href="${@environment.getProperty('url.catalog')}" th:text=#{msg.menu.catalog}>Catalog</a>
 					</li>
-					<li class="nav-item">
-						<a class="nav-link" th:href="${@environment.getProperty('url.wholesale-trade')}" th:text="#{msg.menu.wholesaleTrade}">Wholesale trade</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" th:href="${@environment.getProperty('url.delivery')}" th:text="#{msg.menu.shipping}">Delivery</a>
-					<li class="nav-item">
-						<a class="nav-link" th:href="${@environment.getProperty('url.payment-and-installment')}" th:text="#{msg.menu.paymentAndInstallment}">Payment and Installment</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" th:href="${@environment.getProperty('url.contacts')}" th:text="#{msg.menu.contacts}">Contacts</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" th:href="${@environment.getProperty('url.reviews')}" th:text="#{msg.menu.reviews}">Reviews</a>
+					<li th:each="menuItem : ${menu}" class="nav-item">
+						<a class="nav-link" th:href="${menuItem.reference}" th:text="${menuItem.title}">Menu title</a>
 					</li>
 				</ul>
 				<form id="searchForm" th:action="${@environment.getProperty('url.catalog.search')}" method="GET" class="form-inline mt-2 mt-md-0">

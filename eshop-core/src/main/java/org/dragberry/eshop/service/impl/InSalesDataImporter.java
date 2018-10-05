@@ -32,6 +32,7 @@ import org.dragberry.eshop.dal.entity.CategoryFilterAnyBoolean;
 import org.dragberry.eshop.dal.entity.CategoryFilterAnyString;
 import org.dragberry.eshop.dal.entity.CategoryFilterRange;
 import org.dragberry.eshop.dal.entity.Comment;
+import org.dragberry.eshop.dal.entity.MenuPage;
 import org.dragberry.eshop.dal.entity.Page;
 import org.dragberry.eshop.dal.entity.Product;
 import org.dragberry.eshop.dal.entity.ProductArticle;
@@ -45,6 +46,7 @@ import org.dragberry.eshop.dal.entity.ProductAttributeString;
 import org.dragberry.eshop.dal.entity.ProductLabelType;
 import org.dragberry.eshop.dal.repo.CategoryRepository;
 import org.dragberry.eshop.dal.repo.CommentRepository;
+import org.dragberry.eshop.dal.repo.MenuPageRepository;
 import org.dragberry.eshop.dal.repo.PageRepository;
 import org.dragberry.eshop.dal.repo.ProductArticleOptionRepository;
 import org.dragberry.eshop.dal.repo.ProductArticleRepository;
@@ -146,6 +148,9 @@ public class InSalesDataImporter implements DataImporter {
 	@Autowired
 	private PageRepository pageRepo;
 	
+	@Autowired
+    private MenuPageRepository menuPageRepo;
+	
 	private Map<String, Integer> columnsMap = new HashMap<>();
 	
 	private Map<String, String> optionsMap = new HashMap<>();
@@ -165,20 +170,41 @@ public class InSalesDataImporter implements DataImporter {
 	}
 	
 	private void createPages() {
-		pageRepo.findByReference("/kontakty").orElseGet(() -> {
-			Page page = new  Page();
-			page.setName("Контакты");
-			page.setReference("/kontakty");
-			page.setTitle("Контакты");
-			try (InputStream is = resourceLoader.getResource("classpath:data/pages/contacts.html").getInputStream()) {
-				page.setContent(IOUtils.toString(is, StandardCharsets.UTF_8));
-			} catch (Exception e) {
-				log.warn("Unable to open contacts.html page");
-			}
-			return pageRepo.save(page);
-		});
+	    createPage("/", "Главная страница");
+	    createPage("/optovaya-torgovlya", "Оптовая торговля", 1);
+	    createPage("/dostavka", "Доставка", 2);
+	    createPage("/oplata-i-rassrochka", "Оплата и рассрочка", 3);
+	    createPage("/kontakty", "Контакты", 4);
+	    createPage("/otzyvy-pokupatelei", "Отзывы покупателей", 5);
 	}
 
+	private void createPage(String reference, String name) {
+	    createPage(reference, name, null);
+    }
+	
+	private void createPage(String reference, String name, Integer order) {
+	    pageRepo.findByReference(reference).orElseGet(() -> {
+            Page page = new  Page();
+            page.setName(name);
+            page.setReference(reference);
+            page.setTitle(name);
+            try (InputStream is = resourceLoader.getResource("classpath:data/pages" + ("/".equals(reference) ? "/home" : reference) + ".html").getInputStream()) {
+                page.setContent(IOUtils.toString(is, StandardCharsets.UTF_8));
+            } catch (Exception e) {
+                log.warn("Unable to open " + reference + " page");
+            }
+            page = pageRepo.save(page);
+            if (order != null) {
+                MenuPage mp = new MenuPage();
+                mp.setPage(page);
+                mp.setOrder(order);
+                mp.setStatus(MenuPage.Status.ACTIVE);
+                menuPageRepo.save(mp);
+            }
+            return page;
+        });
+	}
+	
 	/**
      * Process category
      * @param categoryName

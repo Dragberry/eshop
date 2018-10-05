@@ -5,21 +5,21 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.dragberry.eshop.controller.exception.ResourceNotFoundException;
+import org.dragberry.eshop.dal.repo.PageRepository;
 import org.dragberry.eshop.service.DataImporter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-
-import lombok.extern.log4j.Log4j;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * This controller serves all static pages
  * @author Maksim Dragun
  */
 @Controller
-@Log4j
 public class MainController {
     
     @Autowired
@@ -28,6 +28,9 @@ public class MainController {
     
     @Autowired
     private ResourceLoader resourceLoader;
+    
+    @Autowired
+    private PageRepository pageRepo;
     
     /**
      * Home page
@@ -41,15 +44,6 @@ public class MainController {
         return "home";
     }
 
-    /**
-     * Home page
-     * @return
-     */
-	@GetMapping("${url.home}")
-	public String home() {
-		return "home";
-	}
-	
 	/**
      * Error page
      * @return
@@ -59,39 +53,12 @@ public class MainController {
         return "error";
     }
     
-    /**
-     * Account page
-     * @return
-     */
-    @GetMapping("${url.account}")
-    public String account() {
-        return "pages/account";
-    }
-	
-   /**
-    * Payment and installment page
-    * @return
-    */
-   @GetMapping("${url.payment-and-installment}")
-   public String payment() {
-       return "pages/payment-and-installment";
-   }
-    
-    /**
-     * Reviews page
-     * @return
-     */
-    @GetMapping("${url.reviews}")
-    public String reviews() {
-        return "pages/reviews";
+    @GetMapping("/*")
+    public ModelAndView delivery(HttpServletRequest request) {
+        if (pageRepo.existsByReference(request.getRequestURI())) {
+            return new ModelAndView(request.getRequestURI());
+        }
+        throw new ResourceNotFoundException();
     }
     
-    /**
-     * Wholesale trade page
-     * @return
-     */
-    @GetMapping("${url.wholesale-trade}")
-    public String wholesaleTrade() {
-        return "pages/wholesale-trade";
-    }
 }
