@@ -9,7 +9,6 @@ import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -28,15 +27,7 @@ import javax.annotation.PostConstruct;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dragberry.eshop.dal.entity.Category;
-import org.dragberry.eshop.dal.entity.CategoryFilter;
-import org.dragberry.eshop.dal.entity.CategoryFilterAllBoolean;
-import org.dragberry.eshop.dal.entity.CategoryFilterAllList;
-import org.dragberry.eshop.dal.entity.CategoryFilterAnyBoolean;
-import org.dragberry.eshop.dal.entity.CategoryFilterAnyString;
-import org.dragberry.eshop.dal.entity.CategoryFilterRange;
 import org.dragberry.eshop.dal.entity.Comment;
-import org.dragberry.eshop.dal.entity.MenuPage;
-import org.dragberry.eshop.dal.entity.Page;
 import org.dragberry.eshop.dal.entity.Product;
 import org.dragberry.eshop.dal.entity.ProductArticle;
 import org.dragberry.eshop.dal.entity.ProductArticle.SaleStatus;
@@ -48,9 +39,6 @@ import org.dragberry.eshop.dal.entity.ProductAttributeNumeric;
 import org.dragberry.eshop.dal.entity.ProductAttributeString;
 import org.dragberry.eshop.dal.entity.ProductLabelType;
 import org.dragberry.eshop.dal.repo.CategoryRepository;
-import org.dragberry.eshop.dal.repo.CommentRepository;
-import org.dragberry.eshop.dal.repo.MenuPageRepository;
-import org.dragberry.eshop.dal.repo.PageRepository;
 import org.dragberry.eshop.dal.repo.ProductArticleOptionRepository;
 import org.dragberry.eshop.dal.repo.ProductArticleRepository;
 import org.dragberry.eshop.dal.repo.ProductRepository;
@@ -63,6 +51,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.safety.Whitelist;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -72,6 +61,7 @@ import lombok.extern.log4j.Log4j;
 
 @Log4j
 @Service("InSalesDataImporter")
+@DependsOn("webAppInitializer")
 public class InSalesDataImporter implements DataImporter {
 
 	private static final String PRODUCT_ARTICLE = "Артикул";
@@ -130,9 +120,6 @@ public class InSalesDataImporter implements DataImporter {
     private ResourceLoader resourceLoader;
 	
 	@Autowired
-	private CommentRepository commentRepo;
-	
-	@Autowired
 	private CategoryRepository categoryRepo;
 
 	@Autowired
@@ -150,12 +137,6 @@ public class InSalesDataImporter implements DataImporter {
 	@Autowired
 	private ImageService imageService;
 	
-	@Autowired
-	private PageRepository pageRepo;
-	
-	@Autowired
-    private MenuPageRepository menuPageRepo;
-	
 	private Map<String, Integer> columnsMap = new HashMap<>();
 	
 	private Map<String, String> optionsMap = new HashMap<>();
@@ -166,125 +147,10 @@ public class InSalesDataImporter implements DataImporter {
 	
 	@PostConstruct
 	public void init() {
-		createCategory("Каталог смарт-часов", "Смарт-часы", 0);
-		createCategory("Каталог фитнес-браслетов", "Фитнес-браслеты", 2);
-		createCategory("Прочие аксессуары", "Прочие аксессуары", 3);
-		createCategory("Каталог детских смарт-часов", "Детские смарт-часы", 1);
-		
-		createPages();
-	}
-	
-	private void createPages() {
-	    createPage("/", "Главная страница");
-	    createPage("/optovaya-torgovlya", "Оптовая торговля", 1);
-	    createPage("/dostavka", "Доставка", 2);
-	    createPage("/oplata-i-rassrochka", "Оплата и рассрочка", 3);
-	    createPage("/kontakty", "Контакты", 4);
-	    createPage("/otzyvy-pokupatelei", "Отзывы покупателей", 5);
-	}
-
-	private void createPage(String reference, String name) {
-	    createPage(reference, name, null);
-    }
-	
-	private void createPage(String reference, String name, Integer order) {
-	    pageRepo.findByReference(reference).orElseGet(() -> {
-            Page page = new  Page();
-            page.setName(name);
-            page.setReference(reference);
-            page.setTitle(name);
-            try (InputStream is = resourceLoader.getResource("classpath:data/pages" + ("/".equals(reference) ? "/home" : reference) + ".html").getInputStream()) {
-            	Document description = Jsoup.parse(is, StandardCharsets.UTF_8.name(), StringUtils.EMPTY);
-    			Elements links = description.select("img[src]");
-		    	for (Element link : links)  {
-		    		String imgURL = link.attr("src");
-		            if (StringUtils.startsWith(imgURL, "https://static-eu.insales.ru/")) {
-		            	int lastIndexOfSlash = imgURL.lastIndexOf("/");
-		                String realURL = imgURL.substring(0, lastIndexOfSlash + 1) + URLEncoder.encode(imgURL.substring(lastIndexOfSlash + 1), StandardCharsets.UTF_8.name());
-		                try (InputStream imgIS = new URL(realURL).openConnection().getInputStream()) {
-		                    String imageName = imgURL.substring(imgURL.lastIndexOf("/") + 1);
-		                    link.attr("src", imageService.createImage(imageName, imgIS));
-		                }
-		            }
-		        }
-            	page.setContent(description.html());
-            } catch (Exception e) {
-                log.warn("Unable to open " + reference + " page");
-            }
-            page = pageRepo.save(page);
-            if (order != null) {
-                MenuPage mp = new MenuPage();
-                mp.setPage(page);
-                mp.setOrder(order);
-                mp.setStatus(MenuPage.Status.ACTIVE);
-                menuPageRepo.save(mp);
-            }
-            return page;
-        });
-	}
-	
-	/**
-     * Process category
-     * @param categoryName
-     * @return category
-     */
-	private void createCategory(String externalName, String name, int order) {
-		Category ctg = null;
-		for (int index = 0; ctg == null && index < 3; index++) {
-			try {
-				ctg = categoryMap.put(externalName, categoryRepo.findByName(name).orElseGet(() -> {
-					Category newCtg = new Category();
-					newCtg.setName(name);
-					newCtg.setReference(transliteService.transformToId(name));
-					newCtg.setOrder(order);
-					List<CategoryFilter<?,?,?>> filters = new ArrayList<>();
-					CategoryFilterAnyString tech = new CategoryFilterAnyString();
-					tech.setCategory(newCtg);
-					tech.setName("Технология дисплея");
-					tech.setOrder(0);
-					filters.add(tech);
-					CategoryFilterAnyString dim = new CategoryFilterAnyString();
-					dim.setCategory(newCtg);
-					dim.setName("Разрешение дисплея");
-					dim.setOrder(1);
-					filters.add(dim);
-					newCtg.setFilters(filters);
-					CategoryFilterAllList ff = new CategoryFilterAllList();
-					ff.setCategory(newCtg);
-					ff.setName("Фитнес-функции");
-					ff.setOrder(2);
-					filters.add(ff);
-					newCtg.setFilters(filters);
-					CategoryFilterAllList aps = new CategoryFilterAllList();
-					aps.setCategory(newCtg);
-					aps.setName("Встроенные приложения");
-					aps.setOrder(3);
-					filters.add(aps);
-					newCtg.setFilters(filters);
-					CategoryFilterAllBoolean ifs = new CategoryFilterAllBoolean();
-					ifs.setCategory(newCtg);
-					ifs.setName("Интерфейсы");
-					ifs.setOrder(4);
-					filters.add(ifs);
-					newCtg.setFilters(filters);
-					CategoryFilterAnyBoolean sim = new CategoryFilterAnyBoolean();
-                    sim.setCategory(newCtg);
-                    sim.setName("Поддержка SIM-карты");
-                    sim.setOrder(5);
-                    filters.add(sim);
-                    newCtg.setFilters(filters);
-                    CategoryFilterRange weight = new CategoryFilterRange();
-                    weight.setCategory(newCtg);
-                    weight.setName("Вес");
-                    weight.setOrder(6);
-                    filters.add(weight);
-                    newCtg.setFilters(filters);
-					return categoryRepo.save(newCtg);
-				}));
-			} catch (Exception exc) {
-				log.warn(MessageFormat.format("It looks like a category with the same name {0} already exists", name), exc);
-			}
-		}
+		categoryMap.put("Каталог смарт-часов", categoryRepo.findByName("Смарт-часы").get());
+		categoryMap.put("Каталог фитнес-браслетов", categoryRepo.findByName("Фитнес-браслеты").get());
+		categoryMap.put("Прочие аксессуары", categoryRepo.findByName("Прочие аксессуары").get());
+		categoryMap.put("Каталог детских смарт-часов", categoryRepo.findByName("Детские смарт-часы").get());
 	}
 	
 	@Override
