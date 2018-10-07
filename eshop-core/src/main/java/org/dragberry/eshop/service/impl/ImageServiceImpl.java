@@ -34,7 +34,7 @@ public class ImageServiceImpl implements ImageService {
 
     private static final String IMAGES_GLOB_MAIN = "*-main.{jpg,jpeg,png,gif}";
     
-    private static final String IMAGES_GLOB_ALL = "*-[!{main}].{jpg,jpeg,png,gif}";
+    private static final String IMAGES_GLOB_ALL = "*[!{\\-main}].{jpg,jpeg,png,gif}";
 
     private static final String PRODUCTS_DIR = "products";
     

@@ -18,12 +18,12 @@
 				</div>
 				<div id="productCarouselIndicators" class="carousel slide" data-ride="carousel">
 					<ol class="carousel-indicators">
-					    <li data-target="#productCarouselIndicators" data-slide-to="0" class="active">
+					    <li data-target="#productCarouselIndicators" data-slide-to="0" th:data-img="${product.mainImage}" class="active">
 						    <img class="d-block w-100" th:title="${product.title}" th:alt="${product.title}"
 						   		th:src="${product.mainImage} ? @{|${@environment.getProperty('url.images')}/${product.id}/${product.article}/${product.mainImage}|} : ${@environment.getProperty('url.no-image')}">
 					    </li>
 					    <li th:each="img,iter : ${product.images}"
-					    	data-target="#productCarouselIndicators" th:data-slide-to="${iter.index + 1}">
+					    	data-target="#productCarouselIndicators" th:data-slide-to="${iter.index + 1}" th:data-img="${img}">
 					    	<img class="d-block w-100" th:title="${product.title}" th:alt="${product.title}"
 					    		th:src="@{|${@environment.getProperty('url.images')}/${product.id}/${product.article}/${img}|}">
 					    </li>
@@ -122,8 +122,17 @@
 			/*]]>*/
 		</script>
 		<script>
-			function onProductOptionChanged(obj) {
+			function onProductOptionChanged(el) {
 				updatePrice();
+				changeImage(el);
+			}
+			
+			function changeImage(el) {
+				var $el = $(el);
+				var $imgIndex = $('li[data-img*="' + $el.data('option-name') + '_' + $el.find('option:selected').text() + '"]').data('slide-to');
+				if ($imgIndex) {
+					$('#productCarouselIndicators').carousel($imgIndex);
+				}
 			}
 		
 			function isProductMatch(optionName, optionValue) {
