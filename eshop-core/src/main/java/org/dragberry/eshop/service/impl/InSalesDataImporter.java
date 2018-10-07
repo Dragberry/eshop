@@ -3,6 +3,7 @@ package org.dragberry.eshop.service.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -226,31 +227,10 @@ public class InSalesDataImporter implements DataImporter {
 			pa.getProducts().clear();
             pa = productArticleRepo.save(pa);
             
-            processImages(firstLine, pa);
-            
-            pa.getComments().clear();
-            String url = firstLine[columnsMap.get(URL)];
-            Document doc = Jsoup.parse(new URL(url), 10000);
-            for (Element el : doc.getElementsByClass("reviews-item")) {
-            	Comment comment = new Comment();
-            	comment.setUserIP("127.0.0.1");
-            	comment.setStatus(Comment.Status.ACTIVE);
-            	comment.setUserName(el.getElementsByClass("author").text());
-            	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-            	comment.setDateTime(formatter.parse(el.getElementsByClass("date").text(), LocalDateTime::from));
-            	comment.setText(el.getElementsByClass("text").text());
-            	Elements stars = el.getElementsByClass("star-item");
-            	int mark = 5;
-            	for (int index = 0; index < stars.size(); index++) {
-            		if (stars.get(index).hasClass("active")) {
-            			break;
-            		}
-            		mark--;
-            	}
-            	pa.addComment(comment, mark);
-            }
+            processComments(pa, firstLine);
 			pa = productArticleRepo.save(pa);
             
+			List<Product> productList = new ArrayList<>();
 			for (String[] line: rawArticle) {
 				Set<ProductArticleOption> options = new HashSet<>();
 				for (Entry<String, String> entry : optionsMap.entrySet()) {
@@ -289,10 +269,35 @@ public class InSalesDataImporter implements DataImporter {
 				} catch(NumberFormatException | NullPointerException nfe) {
 					log.warn(MessageFormat.format("Can't parse quantity {0} for article {1}", getProperty(line, QUANTITY), pa.getArticle()));
 				}
-				productRepo.save(product);
+				productList.add(productRepo.save(product));
 			}
+			processImages(firstLine, pa, productList);
 		}
 		
+	}
+
+	private void processComments(ProductArticle pa, String[] firstLine) throws IOException, MalformedURLException {
+		pa.getComments().clear();
+		String url = firstLine[columnsMap.get(URL)];
+		Document doc = Jsoup.parse(new URL(url), 10000);
+		for (Element el : doc.getElementsByClass("reviews-item")) {
+			Comment comment = new Comment();
+			comment.setUserIP("127.0.0.1");
+			comment.setStatus(Comment.Status.ACTIVE);
+			comment.setUserName(el.getElementsByClass("author").text());
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+			comment.setDateTime(formatter.parse(el.getElementsByClass("date").text(), LocalDateTime::from));
+			comment.setText(el.getElementsByClass("text").text());
+			Elements stars = el.getElementsByClass("star-item");
+			int mark = 5;
+			for (int index = 0; index < stars.size(); index++) {
+				if (stars.get(index).hasClass("active")) {
+					break;
+				}
+				mark--;
+			}
+			pa.addComment(comment, mark);
+		}
 	}
 
 	private String processDescription(String article, String[] firstLine) {
@@ -344,7 +349,7 @@ public class InSalesDataImporter implements DataImporter {
 		}
 	}
 	
-	private void processImages(String[] columns, ProductArticle pa) throws IOException {
+	private void processImages(String[] columns, ProductArticle pa, List<Product> products) throws IOException {
 		String[] imgs = columns[columnsMap.get(IMAGES)].split(" ");
 		imageService.deleteProductImages(pa.getEntityKey(), pa.getArticle());
         for (int imgIndex = 0; imgIndex < imgs.length; imgIndex++) {
@@ -355,15 +360,32 @@ public class InSalesDataImporter implements DataImporter {
             log.info(MessageFormat.format("Image: {0}", imgURL));
             int lastIndexOfSlash = imgURL.lastIndexOf("/");
             String realURL = imgURL.substring(0, lastIndexOfSlash + 1) + URLEncoder.encode(imgURL.substring(lastIndexOfSlash + 1), StandardCharsets.UTF_8.name());
-            String imageExt = imgURL.substring(imgURL.lastIndexOf("."));
-            String imageName = (imgIndex == 0 ? pa.getArticle() + "-main" : pa.getArticle() + "-" + imgIndex) + imageExt;
+            String imageName = getImageName(pa, products, imgURL, imgIndex == 0);
             try (InputStream imgIS = new URL(realURL).openConnection().getInputStream()) {
                 imageService.createProductImage(pa.getEntityKey(), pa.getArticle(), imageName, imgIS);
             }
         }
 	}
 
-    private Map<String, ProductLabelType> processLabels(String[] firstLine) {
+    private String getImageName(ProductArticle pa, List<Product> products, String imgURL, boolean first) {
+    	int dotIndex = imgURL.lastIndexOf(".");
+		String imageExt = imgURL.substring(dotIndex + 1);
+		if (first) {
+			return MessageFormat.format("{0}-main.{1}", pa.getArticle(), imageExt);
+		}
+    	for (Product p : products) {
+        	for (ProductArticleOption opt : p.getOptions()) {
+        		log.info(opt.getValue().replaceAll(" ", ""));
+        		if (StringUtils.containsIgnoreCase(imgURL, opt.getValue().replaceAll(" ", ""))) {
+        			return MessageFormat.format("{0}_{1}_{2}.{3}", pa.getArticle(), opt.getName(), opt.getValue(), imageExt);
+        		}
+        	}
+        }
+		String oldImgName = imgURL.substring(imgURL.lastIndexOf("/") + 1, dotIndex);
+		return MessageFormat.format("{0}_{1}.{2}", pa.getArticle(), oldImgName, imageExt) ;
+	}
+
+	private Map<String, ProductLabelType> processLabels(String[] firstLine) {
         return Arrays.stream(getProperty(firstLine, LABEL).split("##")).filter(StringUtils::isNotBlank).collect(Collectors.toMap(lbl -> {
         	if ("новое поступление".equals(lbl)) {
         		return "Новинка";
