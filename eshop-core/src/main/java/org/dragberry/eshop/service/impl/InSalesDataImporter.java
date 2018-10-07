@@ -7,6 +7,9 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -87,6 +90,8 @@ public class InSalesDataImporter implements DataImporter {
 	
 	private static final String TAG_DESCRIPTION = "Мета-тег description";
 
+	private static final String URL = "URL";
+	
 	private static final String ACTUAL_PRICE = "Цена продажи";
 	
 	private static final String PRICE = "Старая цена";
@@ -358,15 +363,25 @@ public class InSalesDataImporter implements DataImporter {
             processImages(firstLine, pa);
             
             pa.getComments().clear();
-            int commentCount = 5 + (int) (Math.random() * 5);
-            for (int i = 0; i < commentCount; i++) {
+            String url = firstLine[columnsMap.get(URL)];
+            Document doc = Jsoup.parse(new URL(url), 10000);
+            for (Element el : doc.getElementsByClass("reviews-item")) {
             	Comment comment = new Comment();
-    			comment.setUserIP("127.0.0.1");
-    			comment.setUserName("Maksim");
-    			comment.setText("This is a good thing");
-    			comment.setStatus(Comment.Status.ACTIVE);
-    			comment = commentRepo.save(comment);
-    			pa.addComment(comment, ((int) (Math.random() * 5)) + 1);
+            	comment.setUserIP("127.0.0.1");
+            	comment.setStatus(Comment.Status.ACTIVE);
+            	comment.setUserName(el.getElementsByClass("author").text());
+            	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+            	comment.setDateTime(formatter.parse(el.getElementsByClass("date").text(), LocalDateTime::from));
+            	comment.setText(el.getElementsByClass("text").text());
+            	Elements stars = el.getElementsByClass("star-item");
+            	int mark = 5;
+            	for (int index = 0; index < stars.size(); index++) {
+            		if (stars.get(index).hasClass("active")) {
+            			break;
+            		}
+            		mark--;
+            	}
+            	pa.addComment(comment, mark);
             }
 			pa = productArticleRepo.save(pa);
             

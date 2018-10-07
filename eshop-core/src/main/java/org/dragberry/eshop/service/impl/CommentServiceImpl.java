@@ -79,6 +79,7 @@ public class CommentServiceImpl implements CommentService {
     				cmt.setText(comment.getText());
     				cmt.setUserIP(comment.getIp());
     				cmt.setUserName(comment.getName());
+    				cmt.setDateTime(LocalDateTime.now());
     				cmt = commentRepo.save(cmt);
     				ProductArticle pa = paOpt.get();
     				pa.addComment(cmt, comment.getMark());

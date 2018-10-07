@@ -1,5 +1,7 @@
 package org.dragberry.eshop.dal.entity;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -34,6 +36,9 @@ public class Comment extends AuditableEntity {
 	@Column(name = "COMMENT_KEY")
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "COMMENT_GEN")
 	private Long entityKey;
+	
+	@Column(name = "DATE_TIME")
+    private LocalDateTime dateTime;
 
 	@Column(name = "USER_NAME")
     private String userName;

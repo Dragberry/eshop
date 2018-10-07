@@ -191,13 +191,13 @@ public class ProductServiceImpl implements ProductService {
         
         product.setComments(article.getComments().stream()
         		.filter(entity -> Status.ACTIVE.equals(entity.getComment().getStatus()))
-        		.sorted((c1, c2) -> -c1.getComment().getCreatedDate().compareTo(c2.getComment().getCreatedDate()))
+        		.sorted((c1, c2) -> -c1.getComment().getDateTime().compareTo(c2.getComment().getDateTime()))
         		.map(entity -> {
 		        	CommentDetails comment = new CommentDetails();
 		        	comment.setId(entity.getEntityKey().getCommentId());
 		        	comment.setName(entity.getComment().getUserName());
 		        	comment.setText(entity.getComment().getText());
-		        	comment.setDate(entity.getComment().getCreatedDate());
+		        	comment.setDate(entity.getComment().getDateTime());
 		        	comment.setMark(entity.getMark());
 		        	return comment;
         }).collect(toList()));
