@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductDetails implements ActualPriceHolder {
+public class ProductDetails {
 
     private Long id;
     
@@ -35,10 +35,6 @@ public class ProductDetails implements ActualPriceHolder {
     private String descriptionFull;
 
     private String reference;
-    
-    private BigDecimal actualPrice;
-    
-    private BigDecimal price;
     
     private CategoryItem category;
     

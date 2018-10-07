@@ -34,7 +34,6 @@ import org.dragberry.eshop.model.cart.CapturedProduct;
 import org.dragberry.eshop.model.comment.CommentDetails;
 import org.dragberry.eshop.model.common.KeyValue;
 import org.dragberry.eshop.model.common.Modifier;
-import org.dragberry.eshop.model.product.ActualPriceHolder;
 import org.dragberry.eshop.model.product.CategoryItem;
 import org.dragberry.eshop.model.product.Filter;
 import org.dragberry.eshop.model.product.ListFilter;
@@ -144,35 +143,6 @@ public class ProductServiceImpl implements ProductService {
 			    }).collect(toList());
 	}
 
-   
-
-    private void setLowestPrice(ProductArticle article, ActualPriceHolder product) {
-        Product lowerPriceProduct = null;
-        BigDecimal lowerPrice = null;
-        BigDecimal lowerActualPrice = null;
-        for (Product p : article.getProducts()) {
-            if (lowerPriceProduct == null && p.getPrice() != null) {
-                lowerPriceProduct = p;
-                lowerPrice = p.getPrice();
-                lowerActualPrice = p.getActualPrice();
-            } else {
-                if (lowerPrice.compareTo(p.getPrice()) == -1) {
-                    lowerPrice = p.getPrice();
-                    
-                }
-                if (lowerActualPrice != null) {
-                    if (p.getActualPrice() != null && lowerActualPrice.compareTo(p.getActualPrice()) == -1) {
-                        lowerPrice = p.getActualPrice();
-                    }
-                } else {
-                    lowerActualPrice = p.getActualPrice();
-                }
-            }
-        }
-        product.setPrice(lowerPrice);
-        product.setActualPrice(lowerActualPrice);
-    }
-	
     @Override
     public ProductDetails getProductArticleDetails(String categoryReference, String productReference) {
         ProductArticle article = productArticleRepo.findByReferenceAndCategoryReference(categoryReference, productReference);
@@ -214,7 +184,6 @@ public class ProductServiceImpl implements ProductService {
         product.setTagKeywords(article.getTagKeywords());
         product.setTagDescription(article.getTagDescription());
         product.setTagTitle(article.getTagTitle());
-        setLowestPrice(article, product);
         
         product.setAttributes(article.getAttributes().stream()
         		.collect(groupingBy(ProductAttribute::getGroup, LinkedHashMap::new,

@@ -55,29 +55,29 @@
 				<h6 th:text="|#{msg.common.productArticle}: ${product.article}|">Article</h6>
 			</div>
 			<div class="row">
-				<div class="product-actual-price-block col-12" th:classappend="${product.actualPrice == null} ? 'd-none' : ''">
+				<div class="product-actual-price-block d-none col-12">
 					<div class="alert alert-danger">
 						<span class="d-block h5">
 						<span class="badge badge-danger product-price-label">
-							[[#{msg.common.priceAction}]]: <span class="product-actual-price">[[${product.actualPrice}]]</span> [[#{|msg.currency.${appInfo.currency}|}]]</span>
+							[[#{msg.common.priceAction}]]: <span class="product-actual-price"></span> [[#{|msg.currency.${appInfo.currency}|}]]</span>
 						</span>
 						<span class="d-block h6">[[#{msg.common.priceOld}]]: 
-							<del><span class="product-price">[[${product.price}]]</span> [[#{|msg.currency.${appInfo.currency}|}]]</del>
+							<del><span class="product-price"></span> [[#{|msg.currency.${appInfo.currency}|}]]</del>
 						</span>
 					</div>
 				</div>
-				<div class="product-price-block col-12" th:classappend="${product.actualPrice  != null} ? 'd-none' : ''">
+				<div class="product-price-block d-none col-12">
 					<div class="alert alert-info">
 						<span class="d-block h5">
 							<span class="badge badge-info product-price-label">
-								[[#{msg.common.price}]]: <span class="product-price">[[${product.price}]]</span> [[#{|msg.currency.${appInfo.currency}|}]]
+								[[#{msg.common.price}]]: <span class="product-price"></span> [[#{|msg.currency.${appInfo.currency}|}]]
 							</span>
 						</span>
 					</div>
 				</div>
 		 	 </div>
 		 	 <div class="row">
-				<div th:each="ov : ${product.optionValues}" class="form-group col-md-4">
+				<div th:each="ov : ${product.optionValues}" class="form-group col-md-6">
 			    	<label th:for="${ov.key}"><strong th:text="${ov.key}">Option name</strong></label>
 			   		<select th:data-option-name="${ov.key}" class="product-option form-control" onchange="onProductOptionChanged(this)">
 			   			<option th:each="v : ${ov.value}" th:value="${v.key}" th:text="${v.value}">Option value</option>
@@ -123,18 +123,7 @@
 		</script>
 		<script>
 			function onProductOptionChanged(obj) {
-				var productId = getSelectedProductId();
-				var actualPrice = product.productActualPrices[productId];
-				if (actualPrice == null) {
-					actualPrice = 0;					
-					$('.product-actual-price-block').addClass('d-none');
-					$('.product-price-block').removeClass('d-none');
-				} else {
-					$('.product-actual-price-block').removeClass('d-none');
-					$('.product-price-block').addClass('d-none');
-				}
-				$('.product-actual-price').text(actualPrice.toFixed(2));	
-				$('.product-price').text(product.productPrices[productId].toFixed(2));
+				updatePrice();
 			}
 		
 			function isProductMatch(optionName, optionValue) {
@@ -197,7 +186,24 @@
 			$(document).ready(function() {
 				prepareAddCommentForm();
 				prepareQuickOrderForm();
+				updatePrice();
 			});
+			
+			// this functions sets the product price based on selected options
+			function updatePrice() {
+				var productId = getSelectedProductId();
+				var actualPrice = product.productActualPrices[productId];
+				if (actualPrice == null) {
+					actualPrice = 0;					
+					$('.product-actual-price-block').addClass('d-none');
+					$('.product-price-block').removeClass('d-none');
+				} else {
+					$('.product-actual-price-block').removeClass('d-none');
+					$('.product-price-block').addClass('d-none');
+				}
+				$('.product-actual-price').text(actualPrice.toFixed(2));	
+				$('.product-price').text(product.productPrices[productId].toFixed(2));
+			}
 			
 			// ***** Product comment and rating ***** //
 			function onProductRate(rating) {

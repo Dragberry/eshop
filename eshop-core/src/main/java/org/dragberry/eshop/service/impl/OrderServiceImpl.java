@@ -155,13 +155,13 @@ public class OrderServiceImpl implements OrderService {
             item.setOrder(order);
             Product prod = product.get();
             item.setProduct(prod);
-            BigDecimal actualPrice = prod.getActualPrice();
-            item.setPrice(actualPrice);
+            BigDecimal price = prod.getActualPrice() != null ? prod.getActualPrice() : prod.getPrice();
+            item.setPrice(price);
             item.setQuantity(1);
-            item.setTotalAmount(actualPrice);
+            item.setTotalAmount(price);
             order.setItems(Arrays.asList(item));
-            order.setTotalProductAmount(actualPrice);
-            order.setTotalAmount(actualPrice);
+            order.setTotalProductAmount(price);
+            order.setTotalAmount(price);
             order = orderRepo.save(order);
             orderDetails.setId(order.getEntityKey());
             orderDetails.setProductArticle(prod.getProductArticle().getArticle());
