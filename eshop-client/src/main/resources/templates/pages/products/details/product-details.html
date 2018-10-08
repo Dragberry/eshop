@@ -67,10 +67,10 @@
 					<div class="alert alert-danger">
 						<span class="d-block h5">
 						<span class="badge badge-danger product-price-label">
-							[[#{msg.common.priceAction}]]: <span class="product-actual-price"></span> [[#{|msg.currency.${appInfo.currency}|}]]</span>
+							[[#{msg.common.priceAction}]]: <span class="product-actual-price">[[${product.actualPrice}]]</span> [[#{|msg.currency.${appInfo.currency}|}]]</span>
 						</span>
 						<span class="d-block h6">[[#{msg.common.priceOld}]]: 
-							<del><span class="product-price"></span> [[#{|msg.currency.${appInfo.currency}|}]]</del>
+							<del><span class="product-price">[[${product.price}]]</span> [[#{|msg.currency.${appInfo.currency}|}]]</del>
 						</span>
 					</div>
 				</div>
@@ -78,7 +78,7 @@
 					<div class="alert alert-info">
 						<span class="d-block h5">
 							<span class="badge badge-info product-price-label">
-								[[#{msg.common.price}]]: <span class="product-price"></span> [[#{|msg.currency.${appInfo.currency}|}]]
+								[[#{msg.common.price}]]: <span class="product-price">[[${product.price}]]</span> [[#{|msg.currency.${appInfo.currency}|}]]
 							</span>
 						</span>
 					</div>

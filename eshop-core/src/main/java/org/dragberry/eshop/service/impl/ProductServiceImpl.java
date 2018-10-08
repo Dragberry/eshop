@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
@@ -106,8 +107,10 @@ public class ProductServiceImpl implements ProductService {
 					product.setTitle(dto.getTitle());
 					product.setArticle(dto.getArticle());
 					product.setReference(dto.getReference());
-					product.setActualPrice(dto.getActualPrice());
 					product.setPrice(dto.getPrice());
+					if (!Objects.equals(dto.getPrice(), dto.getActualPrice())) {
+						product.setActualPrice(dto.getActualPrice());
+					}
 					product.setRating(dto.getAverageMark());
 					product.setCommentsCount(dto.getCommentsCount());
 					Category ctg = categoryRepo.findByProductId(dto.getId()).get(0);
@@ -130,8 +133,10 @@ public class ProductServiceImpl implements ProductService {
 					product.setTitle(dto.getTitle());
 					product.setArticle(dto.getArticle());
 					product.setReference(dto.getReference());
-					product.setActualPrice(dto.getActualPrice());
 					product.setPrice(dto.getPrice());
+					if (!Objects.equals(dto.getPrice(), dto.getActualPrice())) {
+						product.setActualPrice(dto.getActualPrice());
+					}
 					product.setRating(dto.getAverageMark());
 					product.setCommentsCount(dto.getCommentsCount());
 					Category ctg = categoryRepo.findByProductId(dto.getId()).get(0);
@@ -165,7 +170,7 @@ public class ProductServiceImpl implements ProductService {
         Map<Long, BigDecimal> productPrices = new HashMap<>();
         Map<Long, BigDecimal> productActualPrices = new HashMap<>();
         
-        article.getProducts().forEach(p -> {
+        article.getProducts().stream().peek(p -> {
             p.getOptions().forEach(o -> {
                 optionValues.computeIfAbsent(
                         o.getName(),
@@ -177,6 +182,9 @@ public class ProductServiceImpl implements ProductService {
             productPrices.put(p.getEntityKey(), p.getPrice());
             productActualPrices.put(p.getEntityKey(), p.getActualPrice());
         });
+        
+        setLowestPrice(article, product);
+        
         product.setOptionValues(optionValues);
         product.setProductOptions(productOptions);
         product.setProductPrices(productPrices);
@@ -205,6 +213,37 @@ public class ProductServiceImpl implements ProductService {
 		product.setLabels(article.getLabels().entrySet().stream().collect(labelCollector()));
         return product;
     }
+    
+    private void setLowestPrice(ProductArticle article, ProductDetails product) {
+        Product lowerPriceProduct = null;
+        BigDecimal lowerPrice = null;
+        BigDecimal lowerActualPrice = null;
+        for (Product p : article.getProducts()) {
+            if (lowerPriceProduct == null && p.getPrice() != null) {
+                lowerPriceProduct = p;
+                lowerPrice = p.getPrice();
+                lowerActualPrice = p.getActualPrice();
+            } else {
+                if (lowerPrice.compareTo(p.getPrice()) == -1) {
+                    lowerPrice = p.getPrice();
+                   
+                }
+                if (lowerActualPrice != null) {
+                    if (p.getActualPrice() != null && lowerActualPrice.compareTo(p.getActualPrice()) == -1) {
+                        lowerPrice = p.getActualPrice();
+                    }
+                } else {
+                    lowerActualPrice = p.getActualPrice();
+                }
+            }
+        }
+        product.setPrice(lowerPrice);
+        if (!Objects.equals(lowerPrice, lowerActualPrice)) {
+			product.setActualPrice(lowerActualPrice);
+		}
+        product.setActualPrice(lowerActualPrice);
+    }
+    		
     
     private Collector<Entry<String, ProductLabelType>, ?, Map<String, Modifier>> labelCollector() {
     	return toMap(

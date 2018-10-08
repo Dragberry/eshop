@@ -38,6 +38,10 @@ public class ProductDetails {
     
     private CategoryItem category;
     
+    private BigDecimal price;
+    
+    private BigDecimal actualPrice;
+    
     private Map<String, Set<KeyValue>> optionValues;
     
     private Map<Long, Set<KeyValue>> productOptions;
