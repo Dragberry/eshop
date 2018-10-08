@@ -371,7 +371,7 @@ public class InSalesDataImporter implements DataImporter {
     	int dotIndex = imgURL.lastIndexOf(".");
 		String imageExt = imgURL.substring(dotIndex + 1);
 		if (first) {
-			return MessageFormat.format("{0}-main.{1}", pa.getArticle(), imageExt);
+			return MessageFormat.format("{0}_main.{1}", pa.getArticle(), imageExt);
 		}
     	for (Product p : products) {
         	for (ProductArticleOption opt : p.getOptions()) {

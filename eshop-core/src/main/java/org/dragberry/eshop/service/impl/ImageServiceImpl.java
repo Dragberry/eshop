@@ -32,9 +32,9 @@ public class ImageServiceImpl implements ImageService {
 
     private static final String PRODUCT_IMG_TEMPLATE = "{0}_{1}";
 
-    private static final String IMAGES_GLOB_MAIN = "*-main.{jpg,jpeg,png,gif}";
+    private static final String IMAGES_GLOB_MAIN = "*_main.{jpg,jpeg,png,gif}";
     
-    private static final String IMAGES_GLOB_ALL = "*[!{\\-main}].{jpg,jpeg,png,gif}";
+    private static final String MAIN_SUFFIX = "_main.";
 
     private static final String PRODUCTS_DIR = "products";
     
@@ -66,7 +66,7 @@ public class ImageServiceImpl implements ImageService {
     public List<String> findProductImages(Long prodiuctArticleId, String productArticle) {
         Path imgDir = Paths.get(dbImages, PRODUCTS_DIR, getImageName(prodiuctArticleId, productArticle));
         if (Files.exists(imgDir) && Files.isDirectory(imgDir)) {
-            try (DirectoryStream<Path> imgStream = Files.newDirectoryStream(imgDir, IMAGES_GLOB_ALL)) {
+            try (DirectoryStream<Path> imgStream = Files.newDirectoryStream(imgDir, path -> !path.getFileName().toString().contains(MAIN_SUFFIX))) {
                 List<String> imgs = new ArrayList<>();
                 Iterator<Path> iter = imgStream.iterator();
                 while (iter.hasNext()) {
