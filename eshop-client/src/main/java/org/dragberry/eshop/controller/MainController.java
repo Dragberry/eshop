@@ -59,7 +59,7 @@ public class MainController {
     
     @GetMapping("/*")
     public ModelAndView delivery(HttpServletRequest request) {
-//    	return new ModelAndView("home");
+//    	return new ModelAndView("pages/dostavka");
     	Optional<Page> page = pageRepo.findByReference(request.getRequestURI());
         if (page.isPresent()) {
         	ModelAndView mv = new ModelAndView(request.getRequestURI());

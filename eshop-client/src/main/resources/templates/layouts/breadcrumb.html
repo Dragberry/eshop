@@ -5,7 +5,7 @@
 <head>
 </head>
 <body>
-	<nav aria-label="breadcrumb">
+	<nav th:if="${breadcrumb != null && !#lists.isEmpty(breadcrumb.links)}" aria-label="breadcrumb">
 	  	<ol class="breadcrumb small">
 		    <li class="breadcrumb-item">
 		    	<a th:href="${@environment.getProperty('url.home')}" th:text="#{msg.menu.home}">Home</a>

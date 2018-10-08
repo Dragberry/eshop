@@ -2,13 +2,89 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{layouts/template}">
+	layout:decorate="~{layouts/template-with-breadcrumb}">
 <head>
-	<title>Доставка</title>
+	<title>Доставка смарт-часов по Минску и всей Беларуси</title>
 </head>
 <body>
-	<div layout:fragment="content">
-		 <h1>Доставка<h1>
+	<div layout:fragment="main-content" class="col-12">
+		<h1>Доставка смарт-часов по Минску и всей Беларуси</h1>
+		<div class="row">
+			<div class="col-12">
+				<p>Интернет-магазин [[${shop.name}]] осуществляет доставку товаров из каталога по всей Беларуси.
+				<p>Уточнить интересующие Вас вопросы по доставке можно по телефонам:</p>
+				<div th:each="phone : ${shop.phones}">
+					<img class="img-responsive" th:src="|/images/${phone.type}.png|" width="15" height="15">
+					<span th:text="${phone.number}"></span>
+				</div>
+				<p>или по электронной почте: <a th:href="|mailto:${shop.email}|">[[${shop.email}]]</a></p>
+			</div>
+			<div class="col-12">
+				<fieldset>
+					<legend class="font-weight-bold">СПОСОБЫ ДОСТАВКИ:</legend>
+					<div class="row align-items-center">
+						<div class="col-3">
+					    	<img class="d-block mx-auto w-50"
+							    	title="Доставка смарт-часов по Минску"
+							    	alt="Доставка смарт-часов по Минску"
+							   		src="https://static-eu.insales.ru/files/1/529/4243985/original/доставка-min.png">
+						</div>
+						<div class="col-6">
+							<span>Курьерская доставка <span class="font-weight-bold">по Минску+10 км. от МКАД</span></span>
+						</div>
+						<div class="col-3">
+							<span class="d-block font-weight-bold text-success">Бесплатно</span>
+							<span class="d-block text-success">(при заказе от 30 рублей)</span>
+							<span class="d-block">день в день*</span>
+						</div>
+					</div>
+					<div class="row align-items-center">
+						<div class="col-3">
+					    	<img class="d-block mx-auto w-50"
+							    	title="Доставка смарт-часов почтой по всей Беларуси"
+							    	alt="Доставка смарт-часов почтой по всей Беларуси"
+							   		src="https://static-eu.insales.ru/files/1/6430/4716830/original/print-1825693_640.jpg">
+						</div>
+						<div class="col-6">
+							<span>Доставка почтой по всей Беларуси (забрать и оплатить покупку можно в отделение почтовой связи).</span>
+						</div>
+						<div class="col-3">
+							<span class="d-block font-weight-bold text-success">5 рублей</span>
+							<span class="d-block">2-3 рабочих дня**</span>
+						</div>
+					</div>
+					<div class="row align-items-center">
+						<div class="col-3">
+					    	<img class="d-block mx-auto w-50"
+							    	title="Доставка курьером по всем городам Беларуси"
+							    	alt="Доставка курьером по всем городам Беларуси"
+							   		src="https://static-eu.insales.ru/files/1/1001/4244457/original/платная_доставка-min1.png">
+						</div>
+						<div class="col-6">
+							<span>Доставка курьером по всем городам (кроме Минска) и населенным пунктам Беларуси (доставка до двери в удобное время) </span>
+						</div>
+						<div class="col-3">
+							<span class="d-block font-weight-bold text-success">8 рублей</span>
+							<span class="d-block">на следующий рабочий день**</span>
+						</div>
+					</div>
+				</fieldset>
+			</div>
+			<div class="col-12 mt-4">
+				<fieldset>
+					<legend class="font-weight-bold">ВРЕМЯ И СРОКИ ДОСТАВКИ:</legend>
+					<p>
+						<span class="d-block">Прием заказов по телефону - с 9:00 до 21:00</span>
+						<span class="d-block">Прием заказов на сайте - круглосуточно!</span>
+					</p>
+					<p>Обработка и доставка заказов осуществляется ежедневно с 10:00 до 22:00.</p>
+				</fieldset>
+			</div>
+			<div class="col-12 mt-4 small">
+				<p>*При заказе до 16:00 доставка по Минску осуществляется в день заказа. При заказе после 16:00 доставка осуществляется на следующий день.</p>
+				<p>**При заказе после 16:00 отправление по Вашему адресу осуществляется на следующий рабочий день.</p>
+			</div>
+		</div>
 	</div>
 </body>
 </html>
