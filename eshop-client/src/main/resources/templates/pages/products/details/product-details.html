@@ -17,17 +17,6 @@
 						class="product-label badge" th:classappend="|badge-${label.value.value}|">Label</span>
 				</div>
 				<div id="productCarouselIndicators" class="carousel slide" data-ride="carousel">
-					<ol class="carousel-indicators">
-					    <li data-target="#productCarouselIndicators" data-slide-to="0" th:data-img="${product.mainImage}" class="active">
-						    <img class="d-block w-100" th:title="${product.title}" th:alt="${product.title}"
-						   		th:src="${product.mainImage} ? @{|${@environment.getProperty('url.images')}/${product.id}/${product.article}/${product.mainImage}|} : ${@environment.getProperty('url.no-image')}">
-					    </li>
-					    <li th:each="img,iter : ${product.images}"
-					    	data-target="#productCarouselIndicators" th:data-slide-to="${iter.index + 1}" th:data-img="${img}">
-					    	<img class="d-block w-100" th:title="${product.title}" th:alt="${product.title}"
-					    		th:src="@{|${@environment.getProperty('url.images')}/${product.id}/${product.article}/${img}|}">
-					    </li>
-				  	</ol>
 				  	<div class="carousel-inner">
 					    <div class="carousel-item active">
 					    	<img class="d-block w-100" th:title="${product.title}" th:alt="${product.title}"
@@ -46,6 +35,25 @@
 					    <span class="carousel-control-next-icon" aria-hidden="true"></span>
 					    <span class="sr-only">Next</span>
 					</a>
+				</div>
+				<div class="carousel-thumbnails-wrapper">
+					<a class="carousel-control-thumbnails text-center" role="button" onclick="$('.carousel-thumbnails').scrollLeft(-200)">
+				    	<span class="fa fa-2x fa-angle-left"></span>
+					</a>
+					<a class="carousel-control-thumbnails carousel-control-right-thumbnails text-center" role="button" onclick="$('.carousel-thumbnails').scrollLeft(200)"> 
+				    	<span class="fa fa-2x fa-angle-right"></span>
+					</a>
+					<ol class="carousel-thumbnails">
+						<li class="img-carousel-thumbnail active" data-target="#productCarouselIndicators" data-slide-to="0" th:data-img="${product.mainImage}">
+							<img class="img-thumbnail" th:title="${product.title}" th:alt="${product.title}"
+				    			th:src="${product.mainImage} ? @{|${@environment.getProperty('url.images')}/${product.id}/${product.article}/${product.mainImage}|} : ${@environment.getProperty('url.no-image')}">
+						</li>
+						<li class="img-carousel-thumbnail" th:each="img,iter : ${product.images}"
+							data-target="#productCarouselIndicators" th:data-slide-to="${iter.index + 1}" th:data-img="${img}">
+							<img class="img-thumbnail" th:title="${product.title}" th:alt="${product.title}"
+				    			th:src="@{|${@environment.getProperty('url.images')}/${product.id}/${product.article}/${img}|}">
+						</li>
+					</ol>
 				</div>
 			</div>
 		</div>

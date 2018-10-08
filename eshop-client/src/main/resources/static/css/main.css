@@ -148,3 +148,47 @@ ul.desc-list {
   	white-space: nowrap;
   	overflow: hidden;
 }
+/****** Image carousel *******/
+ol.carousel-thumbnails {
+	list-style: none;
+	display: flex;
+	overflow: hidden;
+	padding: 0;
+	margin-bottom: 0;
+}
+
+.img-carousel-thumbnail {
+	width: 100px;
+	height: 100px;
+	margin: 2px;
+}
+.img-carousel-thumbnail img:hover {
+	box-shadow: inset 0px 0px 40px 40px #333;
+}
+
+.img-carousel-thumbnail img.img-thumbnail  {
+	max-width: 100px;
+}
+
+.carousel-control-thumbnails {
+	margin: 2px;
+	width: 25px;
+	height: 100px;
+	display: block;
+    padding-top: 35px;
+    position: absolute;
+    background: #e6e6e6;
+	opacity: 0.9;
+}
+
+.carousel-control-thumbnails:hover {
+	background: #999;
+}
+
+.carousel-control-thumbnails:active {
+	background: #888;
+}
+
+.carousel-control-right-thumbnails {
+	right: 0;
+}

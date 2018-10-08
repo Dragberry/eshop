@@ -139,11 +139,11 @@ public class ImageServiceImpl implements ImageService {
     
 @Override
     public InputStream getImage(String folder, String imageName) throws IOException {
-    Path img = Paths.get(dbImages, OTHERS_DIR, folder, imageName);
-    if (Files.exists(img)) {
-        return Files.newInputStream(img);
-    }
-    return new ClassPathResource(NO_IMAGE).getInputStream();
+        Path img = Paths.get(dbImages, OTHERS_DIR, folder, imageName);
+        if (Files.exists(img)) {
+            return Files.newInputStream(img);
+        }
+        return new ClassPathResource(NO_IMAGE).getInputStream();
     }
     
     private static String getImageName(Long prodiuctArticleId, String productArticle) {
