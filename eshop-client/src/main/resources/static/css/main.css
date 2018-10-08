@@ -43,6 +43,12 @@
     vertical-align: middle;
 }
 
+.instruction-arrow {
+	position: absolute;
+    top: 25%;
+    left: 90%;
+}
+
 .navbar .btn {
 	margin-right: 0.5rem;
 }
@@ -160,7 +166,7 @@ ol.carousel-thumbnails {
 .img-carousel-thumbnail {
 	width: 100px;
 	height: 100px;
-	margin: 2px;
+	margin: 0 2px;
 }
 .img-carousel-thumbnail img:hover {
 	box-shadow: inset 0px 0px 40px 40px #333;
@@ -171,7 +177,6 @@ ol.carousel-thumbnails {
 }
 
 .carousel-control-thumbnails {
-	margin: 2px;
 	width: 25px;
 	height: 100px;
 	display: block;
