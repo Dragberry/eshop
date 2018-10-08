@@ -10,6 +10,7 @@ import org.dragberry.eshop.dal.entity.MenuPage.Status;
 import org.dragberry.eshop.dal.repo.MenuPageRepository;
 import org.dragberry.eshop.model.common.AppInfo;
 import org.dragberry.eshop.model.common.Features;
+import org.dragberry.eshop.model.common.Shop;
 import org.dragberry.eshop.service.AppInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -29,6 +30,8 @@ public class AppInfoInterceptor extends HandlerInterceptorAdapter {
 	private static final String FEATURES = "features";
 	
 	private static final String MENU = "menu";
+	
+	private static final String SHOP = "shop";
 
 	@Autowired
 	private AppInfoService appInfoService;
@@ -39,6 +42,8 @@ public class AppInfoInterceptor extends HandlerInterceptorAdapter {
     private AppInfo appInfo;
     
     private Features features;
+    
+    private Shop shop;
     
     private List<MenuPageDTO> menu;
     
@@ -54,6 +59,9 @@ public class AppInfoInterceptor extends HandlerInterceptorAdapter {
         request.getMethod();
         request.getHeaderNames();
         
+        if (shop == null) {
+        	shop = appInfoService.getShopDetails();
+        }
     	if (appInfo == null) {
     		appInfo = appInfoService.getAppInfo();
     	}
@@ -67,6 +75,7 @@ public class AppInfoInterceptor extends HandlerInterceptorAdapter {
             modelAndView.addObject(APP_INFO, appInfo);
             modelAndView.addObject(FEATURES, features);
             modelAndView.addObject(MENU, menu);
+            modelAndView.addObject(SHOP, shop);
         }
     }
 }

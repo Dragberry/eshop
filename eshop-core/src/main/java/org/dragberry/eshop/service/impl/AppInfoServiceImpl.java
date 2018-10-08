@@ -7,6 +7,7 @@ import java.util.List;
 import org.dragberry.eshop.model.common.AppInfo;
 import org.dragberry.eshop.model.common.Features;
 import org.dragberry.eshop.model.common.Phone;
+import org.dragberry.eshop.model.common.Shop;
 import org.dragberry.eshop.model.common.SystemInfo;
 import org.dragberry.eshop.model.common.WorkingDay;
 import org.dragberry.eshop.model.common.WorkingDays;
@@ -58,6 +59,17 @@ public class AppInfoServiceImpl implements AppInfoService {
     @Override
     public Features getFeatures() {
     	return new Features();
+    }
+    
+    @Override
+    public Shop getShopDetails() {
+    	Shop shop = new Shop();
+    	shop.setName(shopName);
+    	shop.setNameAlt("Смартвитрина.бай");
+    	shop.setCurrency("BYN");
+    	shop.setEmail("info@smartvitrina.by");
+    	shop.setPhones(getPhones());
+    	return shop;
     }
     
 }
