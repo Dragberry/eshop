@@ -71,8 +71,6 @@ public class ProductController {
 	
 	private static final String MODEL_SORTING_OPTION_LIST = "sortingOptionList";
 
-	private static final String MODEL_BREADCRUMB = "breadcrumb";
-
 	private static final String MODEL_SEARCH_PARAMS = "searchParams"; 
 	
 	private static final String MODEL_SEARCH_PARAMS_COUNT = "searchParamsCount";
@@ -155,7 +153,7 @@ public class ProductController {
     @GetMapping({"${url.catalog.search}"})
     public ModelAndView search(@RequestParam(required = true) String query, HttpServletRequest request) {
         ModelAndView mv = new ModelAndView("pages/products/search/search-results");
-        mv.addObject(MODEL_BREADCRUMB, Breadcrumb.builder()
+        mv.addObject(Breadcrumb.MODEL_BREADCRUMB, Breadcrumb.builder()
                 .append(MSG_SEARCH_RESULTS, StringUtils.EMPTY, true));
         mv.addObject(MODEL_SORTING_OPTION_LIST, SORTING_OPTION_LIST);
         mv.addObject(MODEL_CATEGORY_LIST, getCategoryList());
@@ -295,7 +293,7 @@ public class ProductController {
 		ModelAndView mv = new ModelAndView("pages/products/list/product-list");
 		ProductCategory category = getCategory(selectedCategory);
 		mv.addObject(MODEL_CATEGORY, category);
-		mv.addObject(MODEL_BREADCRUMB, Breadcrumb.builder()
+		mv.addObject(Breadcrumb.MODEL_BREADCRUMB, Breadcrumb.builder()
 	     		.append(MSG_MENU_CATALOG, catalogReference, true)
 	     		.append(category.getName(), StringUtils.EMPTY));
 		mv.addObject(MODEL_SORTING_OPTION_LIST, SORTING_OPTION_LIST);
@@ -320,7 +318,7 @@ public class ProductController {
 	@GetMapping({"${url.catalog}"})
 	public ModelAndView catalogAll() {
 		ModelAndView mv = new ModelAndView("pages/products/list/product-list");
-		mv.addObject(MODEL_BREADCRUMB, Breadcrumb.builder()
+		mv.addObject(Breadcrumb.MODEL_BREADCRUMB, Breadcrumb.builder()
 				.append(MSG_MENU_CATALOG, StringUtils.EMPTY, true));
 		mv.addObject(MODEL_SORTING_OPTION_LIST, SORTING_OPTION_LIST);
 		mv.addObject(MODEL_CATEGORY_LIST, getCategoryList());
@@ -353,7 +351,7 @@ public class ProductController {
             if (product != null) {
             	ModelAndView mv = new ModelAndView("pages/products/details/product-details");
                 mv.addObject("product", product);
-                mv.addObject(MODEL_BREADCRUMB, Breadcrumb.builder()
+                mv.addObject(Breadcrumb.MODEL_BREADCRUMB, Breadcrumb.builder()
                 		.append(MSG_MENU_CATALOG, catalogReference, true)
                 		.append(product.getCategory().getName(), categoryReference)
                 		.append(product.getTitle(), StringUtils.EMPTY));

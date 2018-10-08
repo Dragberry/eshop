@@ -1,7 +1,9 @@
 package org.dragberry.eshop.dal.entity;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -32,15 +34,16 @@ public class Page extends AuditableEntity {
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "PAGE_GEN")
 	private Long entityKey;
 	
-	@Column(name = "NAME")
-    private String name;
-	
 	@Column(name = "TITLE")
     private String title;
+	
+	@Column(name = "BREADCRUMB_TITLE")
+    private String breadcrumbTitle;
 	
 	@Column(name = "REFERENCE")
     private String reference;
 	
+	@Basic(fetch = FetchType.LAZY)
 	@Column(name = "CONTENT")
     private String content;
 	

@@ -5,7 +5,9 @@ import java.util.List;
 
 public class Breadcrumb {
     
-    private final static String SLASH = "/";
+	public static final String MODEL_BREADCRUMB = "breadcrumb";
+	
+    private static final String SLASH = "/";
     
     private LinkedList<BreadcrumbLink> links = new LinkedList<>();
     

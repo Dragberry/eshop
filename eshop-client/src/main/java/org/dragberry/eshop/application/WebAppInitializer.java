@@ -134,23 +134,23 @@ public class WebAppInitializer {
 	
 	private void createPages() {
 	    createPage("/", "Главная страница");
-	    createPage("/optovaya-torgovlya", "Оптовая торговля", 1);
-	    createPage("/dostavka", "Доставка", 2);
-	    createPage("/oplata-i-rassrochka", "Оплата и рассрочка", 3);
-	    createPage("/kontakty", "Контакты", 4);
-	    createPage("/otzyvy-pokupatelei", "Отзывы покупателей", 5);
+	    createPage("/optovaya-torgovlya", "Оптовая торговля", "Оптовая торговля", 1);
+	    createPage("/dostavka", "Доставка", "Доставка", 2);
+	    createPage("/oplata-i-rassrochka", "Оплата и рассрочка", "Оплата и рассрочка", 3);
+	    createPage("/kontakty", "Контакты", "Контакты", 4);
+	    createPage("/otzyvy-pokupatelei", "Отзывы покупателей", "Отзывы покупателей", 5);
 	}
 	
 	private void createPage(String reference, String name) {
-	    createPage(reference, name, null);
+	    createPage(reference, name, null, null);
     }
 	
-	private void createPage(String reference, String name, Integer order) {
+	private void createPage(String reference, String title, String breadcrumbTitle, Integer order) {
 	    pageRepo.findByReference(reference).orElseGet(() -> {
             Page page = new  Page();
-            page.setName(name);
             page.setReference(reference);
-            page.setTitle(name);
+            page.setTitle(title);
+            page.setBreadcrumbTitle(breadcrumbTitle);
             try (InputStream is = resourceLoader.getResource("classpath:templates/pages" + ("/".equals(reference) ? "/home" : reference) + ".html").getInputStream()) {
             	Document description = Jsoup.parse(is, StandardCharsets.UTF_8.name(), StringUtils.EMPTY);
     			Elements links = description.select("img[src]");

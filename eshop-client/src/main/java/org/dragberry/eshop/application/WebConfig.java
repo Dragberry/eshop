@@ -149,12 +149,12 @@ public class WebConfig {
         
         @Override
         public String getDescription() {
-            return page.getName();
+            return page.getTitle();
         }
         
         @Override
         public String getBaseName() {
-            return page.getName();
+            return page.getTitle();
         }
         
         @Override
