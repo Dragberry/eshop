@@ -1,6 +1,9 @@
 package org.dragberry.eshop.application;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -28,7 +31,6 @@ import org.dragberry.eshop.service.TransliteService;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
@@ -153,18 +155,12 @@ public class WebAppInitializer {
             page.setBreadcrumbTitle(breadcrumbTitle);
             try (InputStream is = resourceLoader.getResource("classpath:templates/pages" + ("/".equals(reference) ? "/home" : reference) + ".html").getInputStream()) {
             	Document description = Jsoup.parse(is, StandardCharsets.UTF_8.name(), StringUtils.EMPTY);
-    			Elements links = description.select("img[src]");
-		    	for (Element link : links)  {
-		    		String imgURL = link.attr("src");
-		            if (StringUtils.startsWith(imgURL, "https://static-eu.insales.ru/")) {
-		            	int lastIndexOfSlash = imgURL.lastIndexOf("/");
-		                String realURL = imgURL.substring(0, lastIndexOfSlash + 1) + URLEncoder.encode(imgURL.substring(lastIndexOfSlash + 1), StandardCharsets.UTF_8.name());
-		                try (InputStream imgIS = new URL(realURL).openConnection().getInputStream()) {
-		                    String imageName = imgURL.substring(imgURL.lastIndexOf("/") + 1);
-		                    link.attr("src", imageService.createImage(imageName, imgIS));
-		                }
-		            }
+		    	for (Element img : description.select("img[src]"))  {
+		            createImageAndReplaceLink(img, "src");
 		        }
+                for (Element link : description.select("a[href]"))  {
+                    createImageAndReplaceLink(link, "href");
+                }
             	page.setContent(description.html());
             } catch (Exception e) {
                 log.warn("Unable to open " + reference + " page");
@@ -180,4 +176,16 @@ public class WebAppInitializer {
             return page;
         });
 	}
+
+    private void createImageAndReplaceLink(Element link, String attr) throws UnsupportedEncodingException, IOException, MalformedURLException {
+        String imgURL = link.attr(attr);
+        if (StringUtils.startsWith(imgURL, "https://static-eu.insales.ru/")) {
+            int lastIndexOfSlash = imgURL.lastIndexOf("/");
+            String realURL = imgURL.substring(0, lastIndexOfSlash + 1) + URLEncoder.encode(imgURL.substring(lastIndexOfSlash + 1), StandardCharsets.UTF_8.name());
+            try (InputStream imgIS = new URL(realURL).openConnection().getInputStream()) {
+                String imageName = imgURL.substring(imgURL.lastIndexOf("/") + 1);
+                link.attr(attr, imageService.createImage(imageName, imgIS));
+            }
+        }
+    }
 }
