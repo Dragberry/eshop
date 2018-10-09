@@ -18,4 +18,14 @@ public class Shop {
 	private String email;
 	
 	private List<Phone> phones;
+	
+	private String onlineWorkingHours;
+	
+	private String workingHours;
+	
+	private String shippingWorkingHours;
+	
+	private String legalAddress;
+	
+	private String legalDetails;
 }

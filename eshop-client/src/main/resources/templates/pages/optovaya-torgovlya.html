@@ -46,7 +46,7 @@
 					<img class="img-responsive" th:src="|/images/${phone.type}.png|" width="15" height="15">
 					<span th:text="${phone.number}"></span>
 				</div>
-				<p class="mt-4">Работаем ежедневно с 09:00 до 21:00.</p>
+				<p class="mt-4">Работаем [[${shop.workingHours}]].</p>
 				<p>Приятных покупок и хороших Вам продаж!</p>				
 			</div>
 		</div>

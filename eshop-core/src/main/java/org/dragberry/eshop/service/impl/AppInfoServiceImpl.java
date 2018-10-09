@@ -69,6 +69,11 @@ public class AppInfoServiceImpl implements AppInfoService {
     	shop.setCurrency("BYN");
     	shop.setEmail("info@smartvitrina.by");
     	shop.setPhones(getPhones());
+    	shop.setOnlineWorkingHours("круглосуточно");
+    	shop.setWorkingHours("ежедневно с 9:00 до 21:00");
+    	shop.setShippingWorkingHours("ежедневно с 10:00 до 22:00");
+    	shop.setLegalAddress("220049, Республика Беларусь, г. Минск, ул. Кнорина, д. 10а, кв. 19");
+    	shop.setLegalDetails("УНП 192176034, IBAN: BY81AKBB30131604233855300000 В бел.рублях в филиале №514 ОАО «АСБ Беларусбанк», код 614, AKBBBY21514, Сурганова 47А");
     	return shop;
     }
     
