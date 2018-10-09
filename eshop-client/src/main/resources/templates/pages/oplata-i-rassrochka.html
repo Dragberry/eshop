@@ -2,13 +2,167 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{layouts/template}">
+	layout:decorate="~{layouts/template-with-breadcrumb}">
 <head>
 	<title>Оплата и рассрочка</title>
 </head>
 <body>
-	<div layout:fragment="content">
-		 <h1>Оплата и рассрочка<h1>
+	<div layout:fragment="main-content" class="col-12">
+		 <h1>Оплата и рассрочка</h1>
+		 <div class="row">
+			<div class="col-12">
+				<p>Уточнить интересующие Вас вопросы по оплате товаров можно:</p>
+				<span class="d-block font-weight-bold">по телефонам:</span>
+				<div th:each="phone : ${shop.phones}">
+					<img class="img-responsive" th:src="|/images/${phone.type}.png|" width="15" height="15">
+					<span th:text="${phone.number}"></span>
+				</div>
+				<div>
+					<span class="font-weight-bold">или по электронной почте:</span>
+					<span><a th:href="|mailto:${shop.email}|">[[${shop.email}]]</a></span>
+				</div>
+			</div>
+			<div class="col-12">
+				<fieldset>
+					<legend class="font-weight-bold text-success">СПОСОБЫ ОПЛАТЫ:</legend>
+					<div class="row align-items-center mt-2">
+						<div class="col-3 col-md-2">
+							<img class="d-block mx-auto w-100 p-2"
+						    	title="Купить за наличыне смарт-часы в Минске"
+						    	alt="Купить за наличыне смарт-часы в Минске"
+						   		src="https://static-eu.insales.ru/files/1/2129/4245585/original/money-29047_640_-min10.png">
+						</div>
+						<div class="col-9 col-md-10">
+							<span class="d-block font-weight-bold">НАЛИЧНЫМИ ПРИ ПОЛУЧЕНИИ ЗАКАЗА</span>
+							<span class="small">Оплата наличными деньгами (белорусские рубли) при доставке товара</span>
+						</div>
+					</div>
+					<div class="row align-items-center mt-2">
+						<div class="col-3 col-md-2">
+							<img class="d-block mx-auto w-100 p-2"
+						    	title="Умные часы по банковской карте"
+						    	alt="Умные часы по банковской карте"
+						   		src="https://static-eu.insales.ru/files/1/2130/4245586/original/Рисунок8-min1.png">
+						</div>
+						<div class="col-9 col-md-10">
+							<span class="d-block font-weight-bold">БАНКОВСКОЙ КАРТОЙ ПРИ ПОЛУЧЕНИИ ЗАКАЗА</span>
+							<span class="small">Оплата картой любого банка при доставке товара (по предварительному согласованию). Мы принимаем к оплате: Visa, Visa Electron, MasterCard,  Maestro, Белкарт</span>
+						</div>
+					</div>
+					<div class="row align-items-center mt-2">
+						<div class="col-3 col-md-2">
+							<img class="d-block mx-auto w-100 p-2"
+						    	title="Смарт-часы в рассрочку по Халве"
+						    	alt="Смарт-часы в рассрочку по Халве"
+						   		src="https://static-eu.insales.ru/files/1/3413/4836693/original/Halva.png">
+						</div>
+						<div class="col-9 col-md-10">
+							<span class="d-block font-weight-bold">КАРТОЙ РАССРОЧКИ "ХАЛВА" ПРИ ПОЛУЧЕНИИ ЗАКАЗА</span>
+							<span class="small">Оплата картой рассрочки "ХАЛВА" от МТБанка при доставке товара (по предварительному согласованию). Рассрочка на 3 месяца!</span>
+						</div>
+					</div>
+					<div class="row align-items-center mt-2">
+						<div class="col-3 col-md-2">
+							<img class="d-block mx-auto w-100 p-2"
+						    	title="Смарт-часы в рассрочку по карте Магнит"
+						    	alt="Смарт-часы в рассрочку по карте Магнит"
+						   		src="https://static-eu.insales.ru/files/1/2131/4245587/original/magnit__1_-min.png">
+						</div>
+						<div class="col-9 col-md-10">
+							<span class="d-block font-weight-bold">КАРТОЙ РАССРОЧКИ "МАГНИТ" ПРИ ПОЛУЧЕНИИ ЗАКАЗА</span>
+							<span class="small">Оплата картой рассрочки МАГНИТ от Беларусбанка при доставке товара (по предварительному согласованию). Рассрочка на 2 месяца! Подробности <a href="http://magnit.belarusbank.by/" target="_blank">здесь</a>.</span>
+						</div>
+					</div>
+					<div class="row align-items-center mt-2">
+						<div class="col-3 col-md-2">
+							<a href="https://bepaid.by" target="_blank">
+								<img class="d-block mx-auto w-100 p-2"
+							    	title="Купить фитнес-браслет on-line с помощью bePaid"
+							    	alt="Купить фитнес-браслет on-line с помощью bePaid"
+							   		src="https://static-eu.insales.ru/files/1/2132/4245588/original/Bepaid1.png">
+						   	</a>
+						</div>
+						<div class="col-9 col-md-10">
+							<span class="d-block font-weight-bold">ONLINE-ПЛАТЕЖ ПО БАНКОВСКОЙ КАРТЕ ЧЕРЕЗ САЙТ</span>
+							<div class="small">
+								<p>Оплата картой любого банка при оформлении заказа через корзину.</p>
+								<p>После нажатия кнопки «ПОДТВЕРДИТЬ ЗАКАЗ» вы перейдете на специальную защищенную платежную страницу процессинговой системы <a href="https://bepaid.by" target="_blank">bePaid.</a></p>
+								<p>На платежной странице будет указан номер заказа и сумма платежа. Для оплаты вам необходимо ввести свои карточные данные и подтвердить платеж, нажав кнопку «Оплатить».</p>
+								<p>Если ваша карта поддерживает технологию 3-D Secure, системой ваш будет предложено пройти стандартную одноминутную процедуру проверки владельца карты на странице вашего банка (банка, который выдал вашу карту).</p>
+								<p>После оплаты наш менеджер свяжется с вами для уточнения деталей по доставке.</p>
+								<p>Обращаем ваше внимание, что после проведения платежа на указанный вами  электронный адрес придет подтверждение оплаты  (<a rel="noopener noreferrer" href="https://static-eu.insales.ru/files/1/3109/4836389/original/electron-chek.JPG" target="_blank">электронный чек</a>). Просим вас сохранять данные оплат.</p>
+								<p>Мы принимаем платежи по следующим банковским картам: Visa, Visa Electron, MasterCard,  Maestro, Белкарт.</p>
+								<img class="d-block mx-auto w-100 p-2"
+							    	title="Покупка смарт-часов по картам Visa, Visa Electron, MasterCard,  Maestro, Белкарт"
+							    	alt="Покупка смарт-часов по картам Visa, Visa Electron, MasterCard,  Maestro, Белкарт"
+							   		src="https://static-eu.insales.ru/files/1/3231/4836511/original/МПС___Белкарт.png">
+								<p>Платежи по банковским картам осуществляются через систему электронных платежей <a href="https://bepaid.by" target="_blank">bePaid</a>.  Платежная страница системы bePaid отвечает всем требованиям безопасности передачи данных (PCI DSS Level 1). Все конфиденциальные данные хранятся в зашифрованном виде и максимально устойчивы к взлому.</p>
+								<p>Возврат денежных средств осуществляется на карту, с которой ранее была произведена оплата. Срок поступления денежных средств на карту от 3 до 30 дней с момента осуществления возврата Продавцом.</p>
+								<p>Условия возврата описаны <a th:href="@{/garantiya-i-service}" target="_blank">здесь</a>.</p>
+							</div>
+						</div>
+					</div>
+					<div class="row align-items-center mt-2">
+						<div class="col-3 col-md-2">
+							<img class="d-block mx-auto w-100 p-2"
+						    	title="ONLINE-ПЛАТЕЖ ПО КАРТЕ ХАЛВА ЧЕРЕЗ САЙТ"
+						    	alt="ONLINE-ПЛАТЕЖ ПО КАРТЕ ХАЛВА ЧЕРЕЗ САЙТ"
+						   		src="https://static-eu.insales.ru/files/1/3379/4836659/original/HALVA_LOGO.png">
+						</div>
+						<div class="col-9 col-md-10">
+							<span class="d-block font-weight-bold">ONLINE-ПЛАТЕЖ ПО КАРТЕ ХАЛВА ЧЕРЕЗ САЙТ</span>
+							<div class="small">
+								<p>После нажатия кнопки «ПОДТВЕРДИТЬ ЗАКАЗ» вы перейдете на специальную защищенную платежную страницу процессинговой системы <a href="https://bepaid.by" target="_blank">bePaid</a>.</p>
+								<p>На платежной странице будет указан номер заказа и сумма платежа. Для оплаты вам необходимо ввести данные карты , активировать учет бонусов (при необходимости) и подтвердить платеж, нажав кнопку «оплатить».</p>
+								<p>Если ваша карта поддерживает технологию 3-D Secure, вам будет предложено пройти стандартную одноминутную процедуру проверки владельца карты на сайте МТБанка (банк, выдавший вашу карту).</p>
+								<p>Обращаем ваше внимание, что после проведения платежа на ваш электронный адрес придет подтверждение оплаты  (<a rel="noopener noreferrer" href="https://static-eu.insales.ru/files/1/3109/4836389/original/electron-chek.JPG" target="_blank">электронный чек</a>). Просим вас сохранять данные оплат. Просим вас сохранять данные оплат.</p>
+								<p>Платежная страница системы отвечает всем требованиям безопасности передачи данных (PCI DSS Level 1). Все конфиденциальные данные хранятся в зашифрованном виде и максимально устойчивы к взлому.</p>
+								<p>Рассрочка на 3 месяца!</p>
+							</div>
+						</div>
+					</div>
+					<div class="row align-items-center mt-2">
+						<div class="col-3 col-md-2">
+							<img class="d-block mx-auto w-100 p-2"
+						    	title="Смарт-часы в рассрочку на 12 месяцев"
+						    	alt="Смарт-часы в рассрочку на 12 месяцев"
+						   		src="https://static-eu.insales.ru/files/1/8028/5594972/original/percent-3365839_640.png">
+						</div>
+						<div class="col-9 col-md-10">
+							<span class="d-block font-weight-bold">РАССРОЧКА БЕЗ ПЕРЕПЛАТ ОТ БЕЛАРУСБАНКА НА 12 МЕСЯЦЕВ.</span>
+							<span class="small">При оплате товара в рассрочку от Беларусбанка мы подготавливаем для Вас счет-фактуру, с которой необходимо обратиться в любое отделение Беларусбанка для оформления. Нужен только паспорт! Производить ежемесячные платежи можно в отделениях Беларусбанка и РУП "Белпочта".</span>
+						</div>
+					</div>
+				</fieldset>
+			</div>
+			<div class="col-12 mt-4">
+				<hr/>
+				<p>О том, как сделать заказ в нашем интернет-магазине читайте <a th:href="@{/#kak-sdelat-zakaz}">НА ГЛАВНОЙ СТРАНИЦЕ</a>.</p>
+				<p>При покупке товара курьер обязан выдать Вам <span class="font-weight-bold">кассовый чек</span> и <span class="font-weight-bold">гарантийный талон</span>.</p>
+				<div class="row">
+					<div class="col-12">
+						<p class="font-weight-bold">Образец документа, подтверждающего факт оплаты товара:</p>
+					</div>
+					<div class="col-12 col-xs-6 col-sm-4 col-md-2">
+						<img class="d-block mx-auto w-100 p-2"
+					    	title="Образец документа, подтверждающего факт оплаты товара"
+					    	alt="Образец документа, подтверждающего факт оплаты товара"
+					   		src="https://static-eu.insales.ru/files/1/2149/4245605/original/чек_с_лого-min.png">
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-12">
+						<p class="font-weight-bold">Образец гарантийного талона:</p>
+					</div>
+					<div class="col-12 col-xs-6 col-sm-4 col-md-2">
+						<img class="d-block mx-auto w-100 p-2"
+					    	title="Образец гарантийного талона"
+					    	alt="Образец гарантийного талона"
+					   		src="https://static-eu.insales.ru/files/1/2150/4245606/original/гарантийный_талон-min.png">
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </body>
 </html>
