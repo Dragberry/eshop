@@ -59,16 +59,16 @@ public class MainController {
     
     @GetMapping("/*")
     public ModelAndView delivery(HttpServletRequest request) {
-//    	return new ModelAndView("pages/kontakty");
-    	Optional<Page> page = pageRepo.findByReference(request.getRequestURI());
-        if (page.isPresent()) {
-        	ModelAndView mv = new ModelAndView(request.getRequestURI());
-        	if (page.get().getBreadcrumbTitle() != null) {
-        		mv.addObject(Breadcrumb.MODEL_BREADCRUMB, Breadcrumb.builder().append(page.get().getTitle(), StringUtils.EMPTY));
-        	}
-            return mv;
-        }
-        throw new ResourceNotFoundException();
+    	return new ModelAndView("pages/home");
+//    	Optional<Page> page = pageRepo.findByReference(request.getRequestURI());
+//        if (page.isPresent()) {
+//        	ModelAndView mv = new ModelAndView(request.getRequestURI());
+//        	if (page.get().getBreadcrumbTitle() != null) {
+//        		mv.addObject(Breadcrumb.MODEL_BREADCRUMB, Breadcrumb.builder().append(page.get().getTitle(), StringUtils.EMPTY));
+//        	}
+//            return mv;
+//        }
+//        throw new ResourceNotFoundException();
     }
     
 }

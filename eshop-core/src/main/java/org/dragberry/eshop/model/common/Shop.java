@@ -1,6 +1,7 @@
 package org.dragberry.eshop.model.common;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -28,4 +29,8 @@ public class Shop {
 	private String legalAddress;
 	
 	private String legalDetails;
+
+	public String getPhonesAsLine() {
+	    return phones.stream().map(p -> "☎" + p.getNumber()).collect(Collectors.joining(", "));
+	}
 }

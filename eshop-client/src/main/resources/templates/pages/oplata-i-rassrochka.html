@@ -5,7 +5,8 @@
 	layout:decorate="~{layouts/template-with-breadcrumb}">
 <head>
 	<title>Оплата и рассрочка</title>
-</head>
+	<meta name="keywords" th:content="|Способы оплаты ${shop.name}">
+	<meta name="description" th:content="|Способы оплаты: наличными деньгами, банковской картой при доставке товара, картой рассрочки МАГНИТ от Беларусбанка, онлайн платеж на сайте. Мы принимаем к оплате: Visa, Visa Electron, MasterCard,  Maestro, Белкарт. Интернет-магазин ${shop.name}: ${shop.phonesAsLine}.</head>
 <body>
 	<div layout:fragment="main-content" class="col-12">
 		 <h1>Оплата и рассрочка</h1>
