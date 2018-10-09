@@ -170,7 +170,7 @@ public class ProductServiceImpl implements ProductService {
         Map<Long, BigDecimal> productPrices = new HashMap<>();
         Map<Long, BigDecimal> productActualPrices = new HashMap<>();
         
-        article.getProducts().stream().peek(p -> {
+        article.getProducts().forEach(p -> {
             p.getOptions().forEach(o -> {
                 optionValues.computeIfAbsent(
                         o.getName(),

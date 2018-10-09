@@ -1,7 +1,20 @@
 /*************** Main page *************/
-.app-info.jumbotron {
+.app-info-primary.jumbotron {
 	padding: 2rem;
 	margin-bottom: 0.5rem;
+}
+
+.app-info-secondary.jumbotron {
+	padding: 1rem;
+	margin-bottom: 0.5rem;
+}
+
+.order-instruction-prev {
+	color: #999;
+}
+
+.order-instruction-next {
+	color: #999;
 }
 
 .benefit {
