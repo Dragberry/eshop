@@ -136,11 +136,13 @@ public class WebAppInitializer {
 	
 	private void createPages() {
 	    createPage("/", "Главная страница");
-	    createPage("/optovaya-torgovlya", "Оптовая торговля", "Оптовая торговля", 1);
-	    createPage("/dostavka", "Доставка", "Доставка", 2);
-	    createPage("/oplata-i-rassrochka", "Оплата и рассрочка", "Оплата и рассрочка", 3);
+	    
+	    createPage("/dostavka", "Доставка", "Доставка", 1);
+	    createPage("/oplata-i-rassrochka", "Оплата и рассрочка", "Оплата и рассрочка", 2);
+	    createPage("/garantiya-i-servis", "Гарантия и сервис", "Гарантия и сервис", 3);
 	    createPage("/kontakty", "Контакты", "Контакты", 4);
 	    createPage("/otzyvy-pokupatelei", "Отзывы покупателей", "Отзывы покупателей", 5);
+	    createPage("/optovaya-torgovlya", "Оптовая торговля", "Оптовая торговля", 1);
 	}
 	
 	private void createPage(String reference, String name) {
