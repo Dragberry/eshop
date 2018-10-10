@@ -9,7 +9,16 @@ import org.dragberry.eshop.model.comment.ProductCommentResponse;
 
 public interface CommentService {
 
+	/**
+	 * Create c product comment
+	 * @param comment
+	 * @return
+	 */
 	ResultTO<ProductCommentResponse> createComment(ProductCommentRequest comment);
 	
+	/**
+	 * Get the list of product comments
+	 * @return
+	 */
 	List<CommentDetails> getCommentList();
 }

@@ -13,9 +13,11 @@ import org.dragberry.eshop.common.IssueTO;
 import org.dragberry.eshop.common.Issues;
 import org.dragberry.eshop.common.ResultTO;
 import org.dragberry.eshop.common.Results;
+import org.dragberry.eshop.dal.entity.Category;
 import org.dragberry.eshop.dal.entity.Comment;
 import org.dragberry.eshop.dal.entity.Comment.Status;
 import org.dragberry.eshop.dal.entity.ProductArticle;
+import org.dragberry.eshop.dal.repo.CategoryRepository;
 import org.dragberry.eshop.dal.repo.CommentRepository;
 import org.dragberry.eshop.dal.repo.ProductArticleRepository;
 import org.dragberry.eshop.model.comment.CommentDetails;
@@ -34,6 +36,9 @@ public class CommentServiceImpl implements CommentService {
 
 	@Autowired
 	private ProductArticleRepository productArticleRepo;
+	
+	@Autowired
+	private CategoryRepository categoryRepo;
 	
 	@Autowired
 	private CommentRepository commentRepo;
@@ -108,21 +113,20 @@ public class CommentServiceImpl implements CommentService {
 
 	@Override
 	public List<CommentDetails> getCommentList() {
-	    return commentRepo.findProductComments(PageRequest.of(0, 20)).stream().map(pc -> {
+	    return commentRepo.findProductComments(PageRequest.of(0, 20)).stream().map(dto -> {
 	    	ProductCommentDetails cd = new ProductCommentDetails();
-	        Comment comment = pc.getComment();
-			cd.setDate(comment.getDateTime());
-	        cd.setId(comment.getEntityKey());
-	        cd.setName(comment.getUserName());
-	        cd.setText(comment.getText());
-	        cd.setMark(pc.getMark());
-	        ProductArticle productArticle = pc.getProductArticle();
-			cd.setProductId(productArticle.getEntityKey());
-	        cd.setProductTitle(productArticle.getTitle());
-	        cd.setProductArticle(productArticle.getArticle());
-	        cd.setProductImage(imageService.findMainImage(productArticle.getEntityKey(), productArticle.getArticle()));
-	        cd.setProductCategoryReference(productArticle.getCategories().get(0).getReference());
-	        cd.setProductReference(productArticle.getReference());
+			cd.setDate(dto.getDate());
+	        cd.setId(dto.getId());
+	        cd.setName(dto.getName());
+	        cd.setText(dto.getText());
+	        cd.setMark(dto.getMark());
+			cd.setProductId(dto.getProductId());
+	        cd.setProductTitle(dto.getProductTitle());
+	        cd.setProductArticle(dto.getProductArticle());
+	        cd.setProductImage(imageService.findMainImage(dto.getProductId(), dto.getProductArticle()));
+	        cd.setProductReference(dto.getProductReference());
+	        Category ctg = categoryRepo.findByProductId(dto.getId()).get(0);
+	        cd.setProductCategoryReference(ctg.getReference());
 	        return cd;
 	    }).collect(Collectors.toList());
 	}
