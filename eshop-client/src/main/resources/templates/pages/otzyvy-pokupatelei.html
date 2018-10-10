@@ -2,13 +2,41 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{layouts/template}">
+	layout:decorate="~{layouts/template-with-breadcrumb}">
 <head>
-	<title>Отзывы покупателей</title>
+	<title>Отзывы о смарт-часах и магазине ${shop.name}</title>
+	<meta name="keywords" th:content="|отзывы ${shop.name}, отзывы о смарт-часах|">
+	<meta name="description" th:content="|Отзывы о смарт-часах и фитнес браслетах в интернет-магазине ${shop.name} (${shop.nameAlt}). ${shop.phonesAsLine}">
 </head>
 <body>
-	<div layout:fragment="content">
-		 <h1>Отзывы покупателей</h1>
+	<div layout:fragment="main-content" class="col-12">
+		<h1 class="h1">Отзывы наших клиентов - Интернет-магазин [[${shop.name}]]</h1>
+		<div class="row">
+			<div class="col-12">
+				<h2 class="h2 mt-2">Здесь вы можете найти отзывы наших клиентов о смарт-часах и фитнес-браслетах</h2>
+				<p th:if="${#lists.isEmpty(comments)}" th:text="#{msg.common.noComments}"></p>
+				<div th:unless="${#lists.isEmpty(comments)}" class="list-group small mb-4">
+					<div th:each="comment, iter : ${comments}" class="list-group-item">
+				 		<div class="row">
+				 			<div class="col-6 text-left">
+				 				<div>
+				 					<span class="fa fa-user fa-xs"></span>
+									<span class="font-weight-bold mr-4">[[${comment.name}]]</span>
+								</div>
+								<span th:replace="components/rating :: rating(name = ${comment.id}, value = ${comment.mark})">Rating</span>
+				 			</div>
+				 			<div class="col-6 text-right">
+				 				<span class="fa fa-calendar fa-xs"></span>
+				 				<span class="font-weight-italic">[[${#temporals.format(comment.date, 'yyyy-MM-dd hh:mm:ss')}]]</span>	
+				 			</div>
+				 			<div class="col-12">
+				 				<span>[[${comment.text}]]</span>
+				 			</div>
+		 				</div>
+			 		</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </body>
 </html>

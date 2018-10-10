@@ -2,9 +2,11 @@ package org.dragberry.eshop.model.comment;
 
 import java.time.LocalDateTime;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class CommentDetails {
 
 	private Long id;

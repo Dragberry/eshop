@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
@@ -17,10 +18,12 @@ import org.dragberry.eshop.dal.entity.Comment.Status;
 import org.dragberry.eshop.dal.entity.ProductArticle;
 import org.dragberry.eshop.dal.repo.CommentRepository;
 import org.dragberry.eshop.dal.repo.ProductArticleRepository;
+import org.dragberry.eshop.model.comment.CommentDetails;
 import org.dragberry.eshop.model.comment.ProductCommentRequest;
 import org.dragberry.eshop.model.comment.ProductCommentResponse;
 import org.dragberry.eshop.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -98,4 +101,15 @@ public class CommentServiceImpl implements CommentService {
 		return Results.create(null, issues);
 	}
 
+	@Override
+	public List<CommentDetails> getCommentList() {
+	    return commentRepo.findAll(PageRequest.of(0, 20)).stream().map(c -> {
+	        CommentDetails cd = new CommentDetails();
+	        cd.setDate(c.getDateTime());
+	        cd.setId(c.getEntityKey());
+	        cd.setName(c.getUserName());
+	        cd.setText(c.getText());
+	        return cd;
+	    }).collect(Collectors.toList());
+	}
 }
