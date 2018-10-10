@@ -7,8 +7,15 @@ import lombok.Setter;
 @Setter
 public class ProductCommentDetails extends CommentDetails {
 
-	private Long productArticleId;
+	private Long productId;
+	
+	private String productArticle;
 	
 	private String productTitle;
 	
+	private String productImage;
+	
+	private String productCategoryReference;
+	
+	private String productReference;
 }
