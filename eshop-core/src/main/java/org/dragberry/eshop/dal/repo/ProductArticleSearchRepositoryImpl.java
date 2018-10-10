@@ -124,6 +124,7 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
 		CriteriaBuilder cb;
 		CriteriaQuery<ProductListItemDTO> query;
 		Root<ProductArticle> root;
+		Join<?, ?> mainCategoryRoot;
 		Join<?, ?> categoryRoot;
 		Join<?, ?>  productRoot;
 		Join<?, ?>  productCommentRoot;
@@ -133,6 +134,7 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
 			cb = em.getCriteriaBuilder();
 			query = cb.createQuery(ProductListItemDTO.class);
 			root = query.from(ProductArticle.class);
+			mainCategoryRoot = root.join("category");
 			categoryRoot = root.join("categories");
 			productRoot = root.join("products");
 			productCommentRoot = root.join("comments", JoinType.LEFT);
@@ -165,7 +167,10 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
 					cb.min(productRoot.get("actualPrice")),
 					cb.min(productRoot.get("price")),
 					cb.countDistinct(productCommentRoot),
-					cb.avg(productCommentRoot.get("mark")))
+					cb.avg(productCommentRoot.get("mark")),
+					mainCategoryRoot.get("entityKey"),
+					mainCategoryRoot.get("name"),
+					mainCategoryRoot.get("reference"))
 			.groupBy(
 					root.get("entityKey"))
 			.where(getPredicate());

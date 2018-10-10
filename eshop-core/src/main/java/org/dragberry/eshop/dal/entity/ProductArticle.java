@@ -20,6 +20,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -75,6 +76,10 @@ public class ProductArticle extends AuditableEntity {
         joinColumns = @JoinColumn(name = "PRODUCT_ARTICLE_KEY", referencedColumnName = "PRODUCT_ARTICLE_KEY"), 
         inverseJoinColumns = @JoinColumn(name = "CATEGORY_KEY", referencedColumnName = "CATEGORY_KEY"))
 	private List<Category> categories = new ArrayList<>();
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CATEGORY_KEY", referencedColumnName = "CATEGORY_KEY")
+	private Category category;
 	
 	@OneToMany(mappedBy = "productArticle")
 	private List<Product> products = new ArrayList<>();

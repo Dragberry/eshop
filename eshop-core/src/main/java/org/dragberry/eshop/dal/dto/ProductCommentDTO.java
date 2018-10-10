@@ -28,4 +28,6 @@ public class ProductCommentDTO {
 	private String productTitle;
 	
 	private String productReference;
+	
+	private String categoryReference;
 }

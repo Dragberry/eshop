@@ -113,8 +113,7 @@ public class ProductServiceImpl implements ProductService {
 					}
 					product.setRating(dto.getAverageMark());
 					product.setCommentsCount(dto.getCommentsCount());
-					Category ctg = categoryRepo.findByProductId(dto.getId()).get(0);
-					product.setCategory(new CategoryItem(ctg.getEntityKey(), ctg.getName(), ctg.getReference()));
+					product.setCategory(new CategoryItem(dto.getCategoryId(), dto.getCategoryName(), dto.getCategoryReference()));
 					product.setLabels(productArticleRepo.findLabels(dto.getId()).stream()
 							.map(entry -> (Entry<String, ProductLabelType>) entry).collect(labelCollector()));
 					product.setMainImage(imageService.findMainImage(dto.getId(), dto.getArticle()));
@@ -139,8 +138,7 @@ public class ProductServiceImpl implements ProductService {
 					}
 					product.setRating(dto.getAverageMark());
 					product.setCommentsCount(dto.getCommentsCount());
-					Category ctg = categoryRepo.findByProductId(dto.getId()).get(0);
-					product.setCategory(new CategoryItem(ctg.getEntityKey(), ctg.getName(), ctg.getReference()));
+					product.setCategory(new CategoryItem(dto.getCategoryId(), dto.getCategoryName(), dto.getCategoryReference()));
 					product.setLabels(productArticleRepo.findLabels(dto.getId()).stream()
 							.map(entry -> (Entry<String, ProductLabelType>) entry).collect(labelCollector()));
 					product.setMainImage(imageService.findMainImage(dto.getId(), dto.getArticle()));
@@ -160,7 +158,7 @@ public class ProductServiceImpl implements ProductService {
         product.setTitle(article.getTitle());
         product.setDescription(systemService.processTemplate(article.getDescription()));
         product.setDescriptionFull(systemService.processTemplate(article.getDescriptionFull()));
-        Category ctg = article.getCategories().get(0);
+        Category ctg = article.getCategory();
         product.setCategory(new CategoryItem(ctg.getEntityKey(), ctg.getName(), ctg.getReference()));
         product.setMainImage(imageService.findMainImage(article.getEntityKey(), article.getArticle()));
         product.setImages(imageService.findProductImages(article.getEntityKey(), article.getArticle()));

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -144,7 +145,7 @@ public class InSalesDataImporter implements DataImporter {
 	
 	private Map<String, String> attributeMap = new HashMap<>();
 	
-	private Map<String, Category> categoryMap = new HashMap<>();
+	private Map<String, Category> categoryMap = new LinkedHashMap<>();
 	
 	@PostConstruct
 	public void init() {
@@ -222,6 +223,7 @@ public class InSalesDataImporter implements DataImporter {
 					}
 				}
 			}
+			pa.setCategory(pa.getCategories().get(0));
 			
 			productRepo.deleteAll(pa.getProducts());
 			pa.getProducts().clear();

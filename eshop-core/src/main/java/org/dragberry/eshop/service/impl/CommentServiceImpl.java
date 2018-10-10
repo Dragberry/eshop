@@ -13,11 +13,9 @@ import org.dragberry.eshop.common.IssueTO;
 import org.dragberry.eshop.common.Issues;
 import org.dragberry.eshop.common.ResultTO;
 import org.dragberry.eshop.common.Results;
-import org.dragberry.eshop.dal.entity.Category;
 import org.dragberry.eshop.dal.entity.Comment;
 import org.dragberry.eshop.dal.entity.Comment.Status;
 import org.dragberry.eshop.dal.entity.ProductArticle;
-import org.dragberry.eshop.dal.repo.CategoryRepository;
 import org.dragberry.eshop.dal.repo.CommentRepository;
 import org.dragberry.eshop.dal.repo.ProductArticleRepository;
 import org.dragberry.eshop.model.comment.CommentDetails;
@@ -36,9 +34,6 @@ public class CommentServiceImpl implements CommentService {
 
 	@Autowired
 	private ProductArticleRepository productArticleRepo;
-	
-	@Autowired
-	private CategoryRepository categoryRepo;
 	
 	@Autowired
 	private CommentRepository commentRepo;
@@ -125,8 +120,7 @@ public class CommentServiceImpl implements CommentService {
 	        cd.setProductArticle(dto.getProductArticle());
 	        cd.setProductImage(imageService.findMainImage(dto.getProductId(), dto.getProductArticle()));
 	        cd.setProductReference(dto.getProductReference());
-	        Category ctg = categoryRepo.findByProductId(dto.getId()).get(0);
-	        cd.setProductCategoryReference(ctg.getReference());
+	        cd.setProductCategoryReference(dto.getCategoryReference());
 	        return cd;
 	    }).collect(Collectors.toList());
 	}

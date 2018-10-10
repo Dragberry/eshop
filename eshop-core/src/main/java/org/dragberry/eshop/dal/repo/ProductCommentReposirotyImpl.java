@@ -10,6 +10,7 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 
 import org.dragberry.eshop.dal.dto.ProductCommentDTO;
+import org.dragberry.eshop.dal.entity.Comment.Status;
 import org.dragberry.eshop.dal.entity.ProductComment;
 import org.springframework.data.domain.Pageable;
 
@@ -29,6 +30,7 @@ public class ProductCommentReposirotyImpl implements ProductCommentReposiroty {
 		Root<ProductComment> root = query.from(ProductComment.class);
 		Join<?, ?> commentRoot = root.join("comment");
 		Join<?, ?> productRoot = root.join("productArticle");
+		Join<?, ?> categoryRoot = productRoot.join("category");
 		query.multiselect(
 				commentRoot.get("entityKey"),
 				commentRoot.get("userName"),
@@ -38,7 +40,9 @@ public class ProductCommentReposirotyImpl implements ProductCommentReposiroty {
 				productRoot.get("entityKey"),
 				productRoot.get("article"),
 				productRoot.get("title"),
-				productRoot.get("reference"))
+				productRoot.get("reference"),
+				categoryRoot.get("reference"))
+		.where(cb.equal(commentRoot.get("status"), Status.ACTIVE))
 		.orderBy(cb.desc(commentRoot.get("dateTime")));
 		return em.createQuery(query)
 				.setMaxResults(page.getPageSize())

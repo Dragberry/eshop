@@ -27,4 +27,10 @@ public class ProductListItemDTO {
 	
 	private Double averageMark;
 	
+	private Long categoryId;
+	
+	private String categoryName;
+	
+	private String categoryReference;
+	
 }
