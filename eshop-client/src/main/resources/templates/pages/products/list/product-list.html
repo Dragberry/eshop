@@ -42,35 +42,76 @@
 			</div>
 		</div>
 		<div class="col-md-9">
-			<div class="row">
-				<div class="col-12 col-xs-12 col-sm-6 col-md-8">
+			<div class="row mb-4">
+				<div class="col-12">
 					<h1 th:text="${category} ? ${category.name} : #{msg.common.allProducts}"></h1>
 				</div>
-				<div class="col-12 col-xs-12 col-sm-6 col-md-4">
-					<div class="input-group">
-	    				<div class="input-group-prepend">
-					    	<div class="input-group-text">
-					    		<span class="fa fa-sort fa-xs" th:title="#{msg.common.sorting}"></span>
-					    	</div>
-					    </div>
-	    				<select form="filtersForm" name="sort" class="form-control form-control-sm" id="sorting" onchange="doFilter()">
-							<option th:each="opt : ${sortingOptionList}" 
-								th:value="${opt.value}"
-								th:selected="${searchParams.get('sort') != null ? searchParams.get('sort')[0] == opt.value : false}"
-								th:text="#{${opt.key}}"></option>
-						</select>
+				<div class="col-12">
+					<div class="form-row d-flex justify-content-end">
+						<div class="col-6 col-sm-4 col-md-3">
+							<div class="input-group d-flex justify-content-end">
+								<div class="form-check form-check-inline list-display-type">
+								  	<label class="btn" for="displayTiles"
+								  		th:classappend="${#strings.equals(displayOption, 'TILES') ? 'btn-secondary' : ''}">
+								  		<input form="filtersForm"
+								  			id="displayTiles" 
+								  			type="radio"
+								  			name="display"
+								  			value="tiles"
+								  			class="form-check-input"
+								  			onchange="onDisplayChanged();doFilter()"
+								  			th:checked="${#strings.equals(displayOption, 'TILES')}">
+							 			<span class="fa fa-table"></span>
+								  	</label>
+								</div>
+								<div class="form-check form-check-inline list-display-type">
+								  	<label class="btn" for="displayList"
+								  		th:classappend="${#strings.equals(displayOption, 'LIST') ? 'btn-secondary' : ''}">
+								  		<input form="filtersForm"
+								  			id="displayList" 
+								  			type="radio"
+								  			name="display"
+								  			value="list"
+								  			class="form-check-input"
+								  			onchange="onDisplayChanged();doFilter()"
+								  			th:checked="${#strings.equals(displayOption, 'LIST')}">
+								  		<span class="fa fa-list"></span>
+								  	</label>
+								</div>
+							</div>
+						</div>
+						<div class="col-6 col-sm-6 col-md-5">
+							<div class="input-group">
+			    				<div class="input-group-prepend">
+							    	<div class="input-group-text">
+							    		<span class="fa fa-sort fa-xs" th:title="#{msg.common.sorting}"></span>
+							    	</div>
+							    </div>
+			    				<select form="filtersForm" name="sort" class="form-control form-control-sm" id="sorting" onchange="doFilter()">
+									<option th:each="opt : ${sortingOptionList}" 
+										th:value="${opt.value}"
+										th:selected="${searchParams.get('sort') != null ? searchParams.get('sort')[0] == opt.value : false}"
+										th:text="#{${opt.key}}"></option>
+								</select>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
 			<div th:fragment="products" id="productList" class="row card-columns">
-				<div th:each="productItem : ${productList}" class="col-sm-6 col-md-6 col-lg-4 col-xl-4">
-					<div th:replace="pages/products/list/product-list-item :: product-list-item(product = ${productItem})">Product item</div>
-				</div>
+				<th:block th:each="productItem : ${productList}">
+					<div th:replace="__${displayOption.template}__">Product item</div>
+				</th:block>
 			</div>
 		</div>
 	</th:block>
 	<th:block layout:fragment="page_scripts">
 		<script>
+			function onDisplayChanged() {
+				$('input[name="display"]').parent().removeClass('btn-secondary');
+				$('input[name="display"]:checked').parent().addClass('btn-secondary');
+			}
+		
 			var delayTimer;
 			function doFilter() {
 				countFilters();

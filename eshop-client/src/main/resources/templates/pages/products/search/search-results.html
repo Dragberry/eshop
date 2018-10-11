@@ -40,9 +40,9 @@
 				</div>
 			</div>
 			<div th:fragment="products" id="productList" class="row card-columns">
-				<div th:each="productItem : ${productList}" class="col-sm-6 col-md-6 col-lg-4 col-xl-4">
-					<div th:replace="pages/products/list/product-list-item :: product-list-item(product = ${productItem})">Product item</div>
-				</div>
+				<th:block th:each="productItem : ${productList}">
+					<div th:replace="__${displayOption.template}__">Product item</div>
+				</th:block>
 			</div>
 		</div>
 	</th:block>

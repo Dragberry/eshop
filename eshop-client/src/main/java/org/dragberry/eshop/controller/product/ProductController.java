@@ -56,6 +56,21 @@ import org.thymeleaf.context.Context;
 @Controller
 @Scope(WebApplicationContext.SCOPE_SESSION)
 public class ProductController {
+    
+    public static enum DisplayOption {
+        LIST("pages/products/list/product-list-item :: product-item(product = ${productItem})"),
+        TILES("pages/products/list/product-tile-item :: product-item(product = ${productItem})");
+        
+        public final String template;
+        
+        private DisplayOption(String template) {
+            this.template = template;
+        }
+        
+        public String getTemplate() {
+            return template;
+        }
+    }
 	
 	private static final String MODEL_SEARCH_RESULTS = "searchResults";
 
@@ -75,6 +90,8 @@ public class ProductController {
 	
 	private static final String MODEL_SEARCH_PARAMS_COUNT = "searchParamsCount";
 	
+	private static final String MODEL_DISPLAY_OPTION = "displayOption";
+	
 	private static final String MSG_MENU_CATALOG = "msg.menu.catalog";
 	
 	private static final String MSG_SEARCH_RESULTS = "msg.common.searchResults";
@@ -83,8 +100,13 @@ public class ProductController {
 	
 	private static final String SORT_PARAM = "sort";
 	
+	private static final String DISPLAY_PARAM = "display";
+	
 	@Value("${url.catalog}")
 	private String catalogReference;
+	
+	@Autowired
+	private HttpServletRequest request;
 	
 	@Autowired
 	private MessageSource messageSource;
@@ -108,6 +130,8 @@ public class ProductController {
 	
 	private Map<Long, Map<String, String[]>> categorySearchParams = new HashMap<>();
 
+	private DisplayOption displayOption = DisplayOption.LIST;
+	
 	private static final List<KeyValue> SORTING_OPTION_LIST = new ArrayList<>();
 
 	static {
@@ -130,15 +154,29 @@ public class ProductController {
 	}
 	
 	/**
+	 * Set the display option. The default should be list
+	 */
+	private void setDisplayOption(ModelAndView mv) {
+        String reqParam = request.getParameter(DISPLAY_PARAM);
+        if (StringUtils.isBlank(reqParam)) {
+            if (displayOption == null) {
+                displayOption = DisplayOption.LIST;
+            }
+        } else {
+            displayOption = DisplayOption.valueOf(reqParam.toUpperCase());
+        }
+        mv.addObject(MODEL_DISPLAY_OPTION, displayOption);
+	}
+	
+	/**
 	 * Performs a quick search in the header
 	 * @param query
-	 * @param request
 	 * @param locale
 	 * @return
 	 */
 	@GetMapping("${url.catalog.quick-search}")
 	@ResponseBody
-	public ResultTO<String> quickSearch(@RequestParam(required = true) String query, HttpServletRequest request, Locale locale) {
+	public ResultTO<String> quickSearch(@RequestParam(required = true) String query, Locale locale) {
 		Context context = new Context(locale);
 		context.setVariable(MODEL_CATALOG_REFERENCE, catalogReference);
 		context.setVariable(MODEL_QUERY, query);
@@ -151,7 +189,7 @@ public class ProductController {
      * Return a list of products page with a search results
      */
     @GetMapping({"${url.catalog.search}"})
-    public ModelAndView search(@RequestParam(required = true) String query, HttpServletRequest request) {
+    public ModelAndView search(@RequestParam(required = true) String query) {
         ModelAndView mv = new ModelAndView("pages/products/search/search-results");
         mv.addObject(Breadcrumb.MODEL_BREADCRUMB, Breadcrumb.builder()
                 .append(MSG_SEARCH_RESULTS, StringUtils.EMPTY, true));
@@ -161,6 +199,7 @@ public class ProductController {
         mv.addObject(MODEL_PRODUCT_LIST, productService.getProductList(query, new HashMap<>(request.getParameterMap())));
         mv.addObject(MODEL_SEARCH_PARAMS, Collections.emptyMap());
         mv.addObject(MODEL_SEARCH_PARAMS_COUNT, 0);
+        setDisplayOption(mv);
         return mv;
     }
     
@@ -170,10 +209,11 @@ public class ProductController {
      * @return
      */
     @GetMapping("${url.catalog.search.filter}")
-    public ModelAndView filterSearchResults(@RequestParam(required = true) String query, HttpServletRequest request) {
+    public ModelAndView filterSearchResults(@RequestParam(required = true) String query) {
         ModelAndView mv = new ModelAndView("pages/products/search/search-results :: products");
         mv.addObject(MODEL_QUERY, query);
         mv.addObject(MODEL_PRODUCT_LIST, productService.getProductList(query, new HashMap<>(request.getParameterMap())));
+        setDisplayOption(mv);
         return mv;
     }
 	
@@ -265,22 +305,23 @@ public class ProductController {
     	categorySearchParams.put(category.getId(), searchParams);
     	query.setSearchParams(searchParams);
     	mv.addObject(MODEL_PRODUCT_LIST, productService.getProductList(query));
+    	setDisplayOption(mv);
     	return mv;
     }
     
     /** 
      * Filter all products
-     * @param request
      * @return
      */
     @GetMapping("${url.catalog.filter}")
-    public ModelAndView filterAll(HttpServletRequest request) {
+    public ModelAndView filterAll() {
         ModelAndView mv = new ModelAndView("pages/products/list/product-list :: products");
     	ProductSearchQuery query = new ProductSearchQuery();
     	Map<String, String[]> searchParams = new HashMap<>(request.getParameterMap());
     	categorySearchParams.put(DEFAULT_CATEGORY_KEY, searchParams);
     	query.setSearchParams(searchParams);
     	mv.addObject(MODEL_PRODUCT_LIST, productService.getProductList(query));
+    	setDisplayOption(mv);
     	return mv;
     }
     
@@ -308,6 +349,7 @@ public class ProductController {
 				.filter(params -> !SORT_PARAM.equals(params.getKey()))
 				.flatMap(params -> Arrays.stream(params.getValue()))
 				.filter(StringUtils::isNotBlank).count());
+		setDisplayOption(mv);
 		return mv;
 	}
 	
@@ -328,6 +370,7 @@ public class ProductController {
 		mv.addObject(MODEL_PRODUCT_LIST, productService.getProductList(query));
 		mv.addObject(MODEL_SEARCH_PARAMS, searchParams);
 		mv.addObject(MODEL_SEARCH_PARAMS_COUNT, 0);
+		setDisplayOption(mv);
 		return mv;
 	}
 	

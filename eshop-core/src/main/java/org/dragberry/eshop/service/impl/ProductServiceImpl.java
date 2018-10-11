@@ -117,6 +117,7 @@ public class ProductServiceImpl implements ProductService {
 					product.setLabels(productArticleRepo.findLabels(dto.getId()).stream()
 							.map(entry -> (Entry<String, ProductLabelType>) entry).collect(labelCollector()));
 					product.setMainImage(imageService.findMainImage(dto.getId(), dto.getArticle()));
+					product.setDescription(systemService.processTemplate(dto.getDescription()));
 					return product;
 			    }).collect(toList());
 		
@@ -142,6 +143,7 @@ public class ProductServiceImpl implements ProductService {
 					product.setLabels(productArticleRepo.findLabels(dto.getId()).stream()
 							.map(entry -> (Entry<String, ProductLabelType>) entry).collect(labelCollector()));
 					product.setMainImage(imageService.findMainImage(dto.getId(), dto.getArticle()));
+					product.setDescription(systemService.processTemplate(dto.getDescription()));
 					return product;
 			    }).collect(toList());
 	}

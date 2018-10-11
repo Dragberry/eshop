@@ -145,6 +145,21 @@
 	width: 100%;
 }
 
+/****** Product list ******/
+.list-display-type label > input {
+	display: none;
+  	position: absolute;
+}
+
+.list-display-type label {
+  	cursor: pointer;
+  	btn btn-secondary
+}
+
+.list-display-type .btn {
+	padding: 0.15rem 0.5rem;
+}
+
 .product-attribute-filter .product-attribute-list-filter {
 	max-height: 7rem;
     overflow-y: auto;

@@ -22,6 +22,8 @@ public class ProductListItem implements ActualPriceHolder {
 
 	private String reference;
 	
+	private String description;
+	
 	private BigDecimal actualPrice;
 	
 	private BigDecimal price;

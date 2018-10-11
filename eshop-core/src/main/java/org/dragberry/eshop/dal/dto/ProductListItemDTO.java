@@ -19,6 +19,8 @@ public class ProductListItemDTO {
 	
 	private String reference;
 	
+	private String description;
+	
 	private BigDecimal actualPrice;
 	
 	private BigDecimal price;
@@ -32,5 +34,6 @@ public class ProductListItemDTO {
 	private String categoryName;
 	
 	private String categoryReference;
+	
 	
 }
