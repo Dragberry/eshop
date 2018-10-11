@@ -147,6 +147,40 @@ public class ProductServiceImpl implements ProductService {
 					return product;
 			    }).collect(toList());
 	}
+	
+	@Override
+	public ProductDetails getProductOptions(Long productArticleId) {
+		Objects.requireNonNull(productArticleId);
+		ProductArticle article = productArticleRepo.findById(productArticleId).orElse(null);
+		if (article == null) {
+			return null;
+		}
+		ProductDetails product = new ProductDetails();
+        product.setId(article.getEntityKey());
+        product.setTitle(article.getTitle());
+        Map<String, Set<KeyValue>> optionValues = new HashMap<>();
+        Map<Long, Set<KeyValue>> productOptions = new HashMap<>();
+        Map<Long, BigDecimal> productPrices = new HashMap<>();
+        Map<Long, BigDecimal> productActualPrices = new HashMap<>();
+        article.getProducts().forEach(p -> {
+            p.getOptions().forEach(o -> {
+                optionValues.computeIfAbsent(
+                        o.getName(),
+                        value -> new HashSet<KeyValue>()).add(new KeyValue(o.getEntityKey(), o.getValue()));
+            });
+            productOptions.put(
+            		p.getEntityKey(),
+                    p.getOptions().stream().map(o -> new KeyValue(o.getName(), o.getEntityKey())).collect(toSet()));
+            productPrices.put(p.getEntityKey(), p.getPrice());
+            productActualPrices.put(p.getEntityKey(), p.getActualPrice());
+        });
+        setLowestPrice(article, product);
+        product.setOptionValues(optionValues);
+        product.setProductOptions(productOptions);
+        product.setProductPrices(productPrices);
+        product.setProductActualPrices(productActualPrices);
+        return product;
+	}
 
     @Override
     public ProductDetails getProductArticleDetails(String categoryReference, String productReference) {

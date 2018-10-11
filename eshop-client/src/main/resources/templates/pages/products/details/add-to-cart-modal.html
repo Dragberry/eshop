@@ -16,6 +16,7 @@
 		        		</button>
 		      		</div>
 					<div class="modal-body">
+				    	<form id="addToCartForm" method="POST" th:action="${@environment.getProperty('url.cart.state')}"></form>
 				    	<div id="capturedProductInfo" class="row">
 				    		<div class="col-md-12">
 				       			<strong>[[#{msg.common.title}]]:</strong> <span class="captured-product-title">DZ09</span>

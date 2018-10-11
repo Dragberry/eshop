@@ -31,6 +31,13 @@ public interface ProductService {
      */
     List<ProductListItem> getProductList(String query, Map<String, String[]> searchParams);
 
+    /**
+     * Get available product options for the given product article id
+     * @param productArticleId
+     * @return
+     */
+    ProductDetails getProductOptions(Long productArticleId);
+    
 	/**
 	 * Get the product details
 	 * @param categoryReference

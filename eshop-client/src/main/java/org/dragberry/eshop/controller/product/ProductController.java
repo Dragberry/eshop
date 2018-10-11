@@ -57,7 +57,7 @@ import org.thymeleaf.context.Context;
 @Scope(WebApplicationContext.SCOPE_SESSION)
 public class ProductController {
     
-    public static enum DisplayOption {
+	public static enum DisplayOption {
         LIST("pages/products/list/product-list-item :: product-item(product = ${productItem})"),
         TILES("pages/products/list/product-tile-item :: product-item(product = ${productItem})");
         
@@ -91,6 +91,8 @@ public class ProductController {
 	private static final String MODEL_SEARCH_PARAMS_COUNT = "searchParamsCount";
 	
 	private static final String MODEL_DISPLAY_OPTION = "displayOption";
+	
+	private static final String MODEL_PRODUCT = "product";
 	
 	private static final String MSG_MENU_CATALOG = "msg.menu.catalog";
 	
@@ -393,7 +395,7 @@ public class ProductController {
             ProductDetails product = productService.getProductArticleDetails(categoryReference, productReference);
             if (product != null) {
             	ModelAndView mv = new ModelAndView("pages/products/details/product-details");
-                mv.addObject("product", product);
+                mv.addObject(MODEL_PRODUCT, product);
                 mv.addObject(Breadcrumb.MODEL_BREADCRUMB, Breadcrumb.builder()
                 		.append(MSG_MENU_CATALOG, catalogReference, true)
                 		.append(product.getCategory().getName(), categoryReference)
@@ -422,5 +424,12 @@ public class ProductController {
             return Results.create(templateEngine.process("pages/products/details/product-details-tab-panel",
     				new HashSet<>(Arrays.asList("product-comment")), context));
     	}
+    }
+    
+    @GetMapping("/product/options")
+    public ModelAndView selectProductOptionsModal(@RequestParam Long productArticleId) {
+    	ModelAndView mv = new ModelAndView("pages/products/list/select-product-modal :: select-product-modal");
+    	mv.addObject(MODEL_PRODUCT, productService.getProductOptions(productArticleId));
+    	return mv;
     }
 }
