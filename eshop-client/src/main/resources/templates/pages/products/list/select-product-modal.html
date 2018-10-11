@@ -9,7 +9,7 @@
 		    	<div class="modal-content">
 		      		<div class="modal-header alert alert-success">
 		        		<span class="modal-title" id="selectProductModalTitle">
-							<span class="font-weight-bold">[[${product.title}]]</span>
+							<span class="font-weight-bold"></span>
 		        		</span>
 		        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 		          			<span aria-hidden="true">&times;</span>
@@ -22,49 +22,18 @@
 					    		<p>[[#{msg.common.selectOptions}]]</p>
 					    	</div>
 					    	<div class="row">
-								<div class="form-check col-md-12">
-  									<label for="po1" class="form-check-label">
-    									<input id="po1" type="radio" class="form-check-input" name="productOption" value="1">
+				    			<div th:each="prod : ${product}" class="col-12 form-check">
+  									<label th:for="${prod.key}" class="form-check-label">
+    									<input th:id="${prod.key}" type="radio" class="form-check-input" name="productOption" th:value="${prod.key}">
    										<span class="d-block">
    											<span class="row">
-   												<span class="col-8">Черный</span>
-   												<span class="col-4">50 Руб</span>
+   												<span class="col-8">
+   													<span th:each="opt : ${prod.value.options}" class="d-block">[[${opt.value}]]</span>
+   												</span>
+   												<span class="col-4">[[${prod.value.price}]] Руб</span>
    											</span>
    										</span>
   									</label>
-								</div>
-								<div class="form-check col-md-12">
-  									<label for="po2" class="form-check-label">
-    									<input id="po2" type="radio" class="form-check-input" name="productOption" value="1">
-   										<span class="d-block">
-   											<span class="row">
-   												<span class="col-8">Черный</span>
-   												<span class="col-4">50 Руб</span>
-   											</span>
-   										</span>
-  									</label>
-								</div>								    	
-							</div>
-							<div class="row">
-								<div class="product-actual-price-block d-none col-12">
-									<div class="alert alert-danger">
-										<span class="d-block h5">
-										<span class="badge badge-danger product-price-label">
-											[[#{msg.common.priceAction}]]: <span class="product-actual-price">[[${product.actualPrice}]]</span> [[#{|msg.currency.${appInfo.currency}|}]]</span>
-										</span>
-										<span class="d-block h6">[[#{msg.common.priceOld}]]: 
-											<del><span class="product-price">[[${product.price}]]</span> [[#{|msg.currency.${appInfo.currency}|}]]</del>
-										</span>
-									</div>
-								</div>
-								<div class="product-price-block d-none col-12">
-									<div class="alert alert-info">
-										<span class="d-block h5">
-											<span class="badge badge-info product-price-label">
-												[[#{msg.common.price}]]: <span class="product-price">[[${product.price}]]</span> [[#{|msg.currency.${appInfo.currency}|}]]
-											</span>
-										</span>
-									</div>
 								</div>
 							</div>
 						</div>
