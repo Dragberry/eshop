@@ -41,6 +41,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
+import org.springframework.mobile.device.Device;
+import org.springframework.mobile.device.DeviceUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -58,6 +60,7 @@ import org.thymeleaf.context.Context;
 public class ProductController {
     
 	public static enum DisplayOption {
+		MOBILE("pages/products/list/product-mobile-item :: product-item(product = ${productItem})"),
         LIST("pages/products/list/product-list-item :: product-item(product = ${productItem})"),
         TILES("pages/products/list/product-tile-item :: product-item(product = ${productItem})");
         
@@ -159,14 +162,19 @@ public class ProductController {
 	 * Set the display option. The default should be list
 	 */
 	private void setDisplayOption(ModelAndView mv) {
-        String reqParam = request.getParameter(DISPLAY_PARAM);
-        if (StringUtils.isBlank(reqParam)) {
-            if (displayOption == null) {
-                displayOption = DisplayOption.LIST;
-            }
-        } else {
-            displayOption = DisplayOption.valueOf(reqParam.toUpperCase());
-        }
+		Device device = DeviceUtils.getCurrentDevice(request);
+		if (device != null && device.isMobile()) {
+			displayOption = DisplayOption.MOBILE;
+		} else {
+			String reqParam = request.getParameter(DISPLAY_PARAM);
+	        if (StringUtils.isBlank(reqParam)) {
+	            if (displayOption == null) {
+	                displayOption = DisplayOption.LIST;
+	            }
+	        } else {
+	            displayOption = DisplayOption.valueOf(reqParam.toUpperCase());
+	        }
+		}
         mv.addObject(MODEL_DISPLAY_OPTION, displayOption);
 	}
 	

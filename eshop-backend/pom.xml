@@ -17,7 +17,6 @@
 	<properties>
 		<jjwt.version>0.7.0</jjwt.version>
 		<json-path.version>2.4.0</json-path.version>
-		<spring-mobile.version>2.0.0.M3</spring-mobile.version>
 	</properties>
 
 	<dependencies>
@@ -29,11 +28,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.mobile</groupId>
-			<artifactId>spring-mobile-device</artifactId>
-			<version>${spring-mobile.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
@@ -54,17 +48,6 @@
 		</dependency>
 		 -->
 	</dependencies>
-
-	<repositories>
-		<repository>
-			<id>spring-milestones</id>
-			<name>Spring Milestones</name>
-			<url>https://repo.spring.io/libs-milestone</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
 
 	<build>
 		<plugins>

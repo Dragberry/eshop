@@ -10,14 +10,19 @@
 	<th:block layout:fragment="main-content">
 		<div class="col-md-3">
 			<div class="container">
-				<div class="row">
+				<div class="row mb-2">
 					<th:block th:replace="pages/products/list/categories-side-menu :: categories-side-menu(selectedCategory = ${selectedCategory})"></th:block>
 				</div>
 				<form th:if="${selectedCategory}" id="filtersForm" th:action="|${@environment.getProperty('url.catalog.filter')}/${selectedCategory}|" method="GET">
-					<div class="row mt-2">
+					<div class="row mb-2">
 						<div class="w-100 text-center">
-							<button class="btn btn-block btn-secondary btn-sm btn-side-menu" type="button" data-toggle="collapse"
-								data-target="#filters" aria-expanded="false" aria-controls="filters">
+							<button class="btn btn-block btn-secondary btn-sm btn-side-menu"
+								th:classappend="${#request.getAttribute('currentDevice').mobile ? 'collapsed' : ''}"
+								type="button"
+								data-toggle="collapse"
+								data-target="#filters"
+								aria-expanded="${#request.getAttribute('currentDevice').mobile}"
+								aria-controls="filters">
 								<span th:text="#{msg.common.filters}">Filters</span>
 								<span class="all-filters-count badge badge-dark"
 									th:classappend="${searchParamsCount == 0} ? 'd-none' : ''"
@@ -29,7 +34,7 @@
 								<span class="small" th:text="#{msg.common.resetAllFilter}">Reset</span>
 							</button>
 						</div>
-						<div id="filters" class="content-side-menu collapse show">
+						<div id="filters" class="content-side-menu collapse" th:classappend="${!#request.getAttribute('currentDevice').mobile ? 'show' : ''}">
 							<th:block th:each="filter : ${category.filters}">
 								<th:block th:replace="__${filter.template}__"></th:block>
 								<hr/>
@@ -48,7 +53,7 @@
 				</div>
 				<div class="col-12">
 					<div class="form-row d-flex justify-content-end">
-						<div class="col-6 col-sm-4 col-md-3">
+						<div th:unless="${#request.getAttribute('currentDevice').mobile}" class="col-6 col-sm-4 col-md-3">
 							<div class="input-group d-flex justify-content-end">
 								<div class="form-check form-check-inline list-display-type">
 								  	<label class="btn" for="displayTiles"
@@ -80,7 +85,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="col-6 col-sm-6 col-md-5">
+						<div th:classappend="${#request.getAttribute('currentDevice').mobile ? 'col-12' : 'col-6 col-sm-6 col-md-5'}">
 							<div class="input-group">
 			    				<div class="input-group-prepend">
 							    	<div class="input-group-text">

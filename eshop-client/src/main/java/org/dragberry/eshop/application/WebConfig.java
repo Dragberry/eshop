@@ -19,6 +19,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.mobile.device.DeviceResolverRequestFilter;
 import org.springframework.web.context.WebApplicationContext;
 import org.thymeleaf.IEngineConfiguration;
 import org.thymeleaf.cache.AlwaysValidCacheEntryValidity;
@@ -52,13 +53,18 @@ public class WebConfig {
     }
     
     @Bean
+    public DeviceResolverRequestFilter deviceResolverRequestFilter() {
+    	return new DeviceResolverRequestFilter();
+    }
+    
+    @Bean
     public ThymeleafViewResolver thymeleafViewResolver() {
         ThymeleafViewResolver resolver = new ThymeleafViewResolver();
         resolver.setApplicationContext(applicationContext);
         resolver.setTemplateEngine(templateEngine());
         resolver.setCharacterEncoding(StandardCharsets.UTF_8.name());
         resolver.setCache(false);
-        resolver.setOrder(1);
+        resolver.setOrder(2);
         return resolver;
     }
     /**
@@ -75,6 +81,10 @@ public class WebConfig {
         return templateEngine;
     }
     
+    /**
+     * The template resolver for DB pages
+     * @return
+     */
     private ITemplateResolver dbPageTemplateResolver() {
     	DBPageTemplateResolver templateResolver = new DBPageTemplateResolver();
     	templateResolver.setOrder(1);
@@ -83,17 +93,30 @@ public class WebConfig {
     	return templateResolver;
     }
     
+    /**
+     * This is a default spring template resolver
+     * @return
+     */
     private ITemplateResolver springTemplateResolver() {
-        final SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
-        templateResolver.setOrder(2);
-        templateResolver.setApplicationContext(applicationContext);
-        templateResolver.setPrefix("classpath:templates/");
-        templateResolver.setSuffix(".html");
-        templateResolver.setTemplateMode(TemplateMode.HTML);
-        templateResolver.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        templateResolver.setCheckExistence(true);
-        templateResolver.setCacheable(false);
-        return templateResolver;
+        return enrichSpringTemplateResolver(new SpringResourceTemplateResolver(), 2);
+    }
+    
+    /**
+     * Enriches spring template resolver
+     * @param templateResolver
+     * @param order
+     * @return
+     */
+    private SpringResourceTemplateResolver enrichSpringTemplateResolver(SpringResourceTemplateResolver templateResolver, int order) {
+    	 templateResolver.setApplicationContext(applicationContext);
+         templateResolver.setPrefix("classpath:templates/");
+         templateResolver.setSuffix(".html");
+         templateResolver.setTemplateMode(TemplateMode.HTML);
+         templateResolver.setCharacterEncoding(StandardCharsets.UTF_8.name());
+         templateResolver.setCheckExistence(true);
+         templateResolver.setCacheable(false);
+         templateResolver.setOrder(order);
+         return templateResolver;
     }
     
     /**
