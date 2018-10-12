@@ -2,11 +2,14 @@ package org.dragberry.eshop.controller.cart;
 
 import java.math.BigDecimal;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
@@ -20,6 +23,7 @@ import org.dragberry.eshop.model.cart.OrderDetails;
 import org.dragberry.eshop.model.cart.OrderDetailsForm;
 import org.dragberry.eshop.model.cart.QuickOrderDetails;
 import org.dragberry.eshop.model.payment.PaymentMethod;
+import org.dragberry.eshop.model.product.ProductArticleOptions;
 import org.dragberry.eshop.model.shipping.ShippingMethod;
 import org.dragberry.eshop.service.AppInfoService;
 import org.dragberry.eshop.service.ShippingService;
@@ -28,6 +32,8 @@ import org.dragberry.eshop.service.OrderService;
 import org.dragberry.eshop.service.PaymentService;
 import org.dragberry.eshop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,7 +43,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
-
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 import lombok.extern.log4j.Log4j;
 
 @Log4j
@@ -45,6 +52,13 @@ import lombok.extern.log4j.Log4j;
 @Scope(WebApplicationContext.SCOPE_SESSION)
 public class CartController {
     
+    private static final String MODEL_SHOP = "shop";
+
+    private static final String MODEL_CART_STATE_URL = "cartStateUrl";
+
+    private static final String CART_MODEL_URL = "cartUrl";
+
+    private static final String MODEL_PRODUCT = "product";
     public static enum CartStep {
         EDITING("pages/cart/editing-cart-items"),
         ORDERING("pages/cart/ordering"),
@@ -60,6 +74,16 @@ public class CartController {
         	return template;
         }
     }
+    
+    @Value("${url.cart}")
+    private String cartUrl;
+    
+    @Value("${url.cart.state}")
+    private String cartStateUrl;
+    
+    @Autowired
+    @Qualifier("templateEngine")
+    private TemplateEngine templateEngine;
     
     @Autowired
     private AppInfoService appInfoService;
@@ -81,7 +105,10 @@ public class CartController {
     
     @Autowired
     private HttpSession session;
-    
+
+    @Autowired
+    private HttpServletRequest request;
+ 
     private OrderDetails order = new OrderDetails();
     
     private CartStep cartStep = CartStep.EDITING;
@@ -278,71 +305,108 @@ public class CartController {
     
     private Map<CartAction, CartActionExecutor<?>> executors = new HashMap<>();
     {
-      executors.put(CartAction.ADD_PRODUCT, new CartActionExecutor<CapturedProduct>() {
+        executors.put(CartAction.ADD_PRODUCT, new CartActionExecutor<String>() {
 
-        @Override
-        public CartState<CapturedProduct> execute(CartStateChange change) {
-            CapturedProduct capturedProduct = productService.getProductCartDetails(change.getEntityId());
-            if (capturedProduct != null) {
-                order.getProducts().computeIfAbsent(capturedProduct, cp -> new CapturedProductState(cp.getProductId(), cp.getPrice())).increment();
-                return updateCartState(capturedProduct);
-            } throw new BadRequestException();
-        }
-      });
-      
-      executors.put(CartAction.REMOVE_PRODUCT, new CartActionExecutor<CapturedProduct>() {
-
-          @Override
-          public CartState<CapturedProduct> execute(CartStateChange change) {
-              CapturedProduct product = new CapturedProduct();
-              product.setProductId(change.getEntityId());
-              if (order.getProducts().containsKey(product)) {
-                  order.getProducts().remove(product);
-                  return updateCartState(product);
-              }
-              throw new BadRequestException();
-          }
+            @Override
+            public CartState<String> execute(CartStateChange change) {
+                CapturedProduct capturedProduct = productService.getProductCartDetails(change.getEntityId());
+                if (capturedProduct != null) {
+                    order.getProducts().computeIfAbsent(capturedProduct,
+                            cp -> new CapturedProductState(cp.getProductId(), cp.getPrice())).increment();
+                    Context context = new Context(request.getLocale());
+                    context.setVariable(MODEL_SHOP, appInfoService.getShopDetails());
+                    context.setVariable(CART_MODEL_URL, cartUrl);
+                    context.setVariable(MODEL_PRODUCT, capturedProduct);
+                    String response = templateEngine.process("pages/products/common/add-to-cart-success-modal",
+                            new HashSet<>(Arrays.asList("add-to-cart-success-modal")), context);
+                    return updateCartState(response);
+                }
+                throw new BadRequestException();
+            }
         });
-      
-      executors.put(CartAction.INCREMENT, new CartActionExecutor<CapturedProductState>() {
 
-          @Override
-          public CartState<CapturedProductState> execute(CartStateChange change) {
-              CapturedProduct product = new CapturedProduct();
-              product.setProductId(change.getEntityId());
-              if (order.getProducts().containsKey(product)) {
-                  CapturedProductState state = order.getProducts().get(product);
-                  state.increment();
-                  return updateCartState(state);
-              }
-              throw new BadRequestException();
-          }
+        executors.put(CartAction.ADD_PRODUCT_ARTICLE, new CartActionExecutor<String>() {
+
+            @Override
+            public CartState<String> execute(CartStateChange change) {
+                ProductArticleOptions pao = productService.getProductOptions(change.getEntityId());
+                if (pao != null && !pao.getOptions().isEmpty()) {
+                    Context context = new Context(request.getLocale());
+                    context.setVariable(MODEL_SHOP, appInfoService.getShopDetails());
+                    String response;
+                    if (pao.getOptions().size() == 1) {
+                        CapturedProduct capturedProduct = productService.getProductCartDetails(pao.getOptions().keySet().stream().findFirst().get());
+                        order.getProducts().computeIfAbsent(capturedProduct,
+                                cp -> new CapturedProductState(cp.getProductId(), cp.getPrice())).increment();
+                        context.setVariable(CART_MODEL_URL, cartUrl);
+                        context.setVariable(MODEL_PRODUCT, capturedProduct);
+                        response = templateEngine.process("pages/products/common/add-to-cart-success-modal",
+                                new HashSet<>(Arrays.asList("add-to-cart-success-modal")), context);
+                    } else {
+                        context.setVariable(MODEL_CART_STATE_URL, cartStateUrl);
+                        context.setVariable(MODEL_PRODUCT, pao);
+                        response = templateEngine.process("pages/products/list/select-product-modal",
+                                new HashSet<>(Arrays.asList("select-product-modal")), context);
+                    }
+                    return updateCartState(response);
+                }
+                throw new BadRequestException();
+            }
         });
-      
-      executors.put(CartAction.DECREMENT, new CartActionExecutor<CapturedProductState>() {
 
-          @Override
-          public CartState<CapturedProductState> execute(CartStateChange change) {
-              CapturedProduct product = new CapturedProduct();
-              product.setProductId(change.getEntityId());
-              if (order.getProducts().containsKey(product)) {
-                  CapturedProductState state = order.getProducts().get(product);
-                  state.decrement();
-                  return updateCartState(state);
-              }
-              throw new BadRequestException();
-          }
+        executors.put(CartAction.REMOVE_PRODUCT, new CartActionExecutor<CapturedProduct>() {
+
+            @Override
+            public CartState<CapturedProduct> execute(CartStateChange change) {
+                CapturedProduct product = new CapturedProduct();
+                product.setProductId(change.getEntityId());
+                if (order.getProducts().containsKey(product)) {
+                    order.getProducts().remove(product);
+                    return updateCartState(product);
+                }
+                throw new BadRequestException();
+            }
         });
-      
-      executors.put(CartAction.SHIPPING_METHOD, new CartActionExecutor<ShippingMethod>() {
 
-          @Override
-          public CartState<ShippingMethod> execute(CartStateChange change) {
-              ShippingMethod method = shippingMethods.stream().filter(dm -> dm.getId().equals(change.getEntityId())).findFirst()
-                      .orElseThrow(BadRequestException::new);
-              order.setShippingMethod(method);
-              return updateCartState(method);
-          }
+        executors.put(CartAction.INCREMENT, new CartActionExecutor<CapturedProductState>() {
+
+            @Override
+            public CartState<CapturedProductState> execute(CartStateChange change) {
+                CapturedProduct product = new CapturedProduct();
+                product.setProductId(change.getEntityId());
+                if (order.getProducts().containsKey(product)) {
+                    CapturedProductState state = order.getProducts().get(product);
+                    state.increment();
+                    return updateCartState(state);
+                }
+                throw new BadRequestException();
+            }
+        });
+
+        executors.put(CartAction.DECREMENT, new CartActionExecutor<CapturedProductState>() {
+
+            @Override
+            public CartState<CapturedProductState> execute(CartStateChange change) {
+                CapturedProduct product = new CapturedProduct();
+                product.setProductId(change.getEntityId());
+                if (order.getProducts().containsKey(product)) {
+                    CapturedProductState state = order.getProducts().get(product);
+                    state.decrement();
+                    return updateCartState(state);
+                }
+                throw new BadRequestException();
+            }
+        });
+
+        executors.put(CartAction.SHIPPING_METHOD, new CartActionExecutor<ShippingMethod>() {
+
+            @Override
+            public CartState<ShippingMethod> execute(CartStateChange change) {
+                ShippingMethod method = shippingMethods.stream().filter(dm -> dm.getId().equals(change.getEntityId()))
+                        .findFirst().orElseThrow(BadRequestException::new);
+                order.setShippingMethod(method);
+                return updateCartState(method);
+            }
         });
     }
 }

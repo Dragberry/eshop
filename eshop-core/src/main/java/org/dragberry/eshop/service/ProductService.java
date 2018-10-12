@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.dragberry.eshop.model.product.ProductListItem;
-import org.dragberry.eshop.model.product.ProductOptionDetails;
 import org.dragberry.eshop.model.cart.CapturedProduct;
 import org.dragberry.eshop.model.product.Filter;
+import org.dragberry.eshop.model.product.ProductArticleOptions;
 import org.dragberry.eshop.model.product.ProductCategory;
 import org.dragberry.eshop.model.product.ProductDetails;
 import org.dragberry.eshop.model.product.ProductSearchQuery;
@@ -37,7 +37,7 @@ public interface ProductService {
      * @param productArticleId
      * @return
      */
-   Map<Long, ProductOptionDetails> getProductOptions(Long productArticleId);
+    ProductArticleOptions getProductOptions(Long productArticleId);
     
 	/**
 	 * Get the product details

@@ -426,10 +426,4 @@ public class ProductController {
     	}
     }
     
-    @GetMapping("/product/options")
-    public ModelAndView selectProductOptionsModal(@RequestParam Long productArticleId) {
-    	ModelAndView mv = new ModelAndView("pages/products/list/select-product-modal :: select-product-modal");
-    	mv.addObject(MODEL_PRODUCT, productService.getProductOptions(productArticleId));
-    	return mv;
-    }
 }

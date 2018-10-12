@@ -22,7 +22,7 @@ function isProductMatch(optionName, optionValue) {
 	return isMatched;
 }
 
-function getSelectedProductId() {
+function getProductId() {
 	for (productId in product.productOptions) {
 		// if product doesn't have options, then choose the first one
 		if (product.productOptions[productId].length == 0) {
@@ -38,38 +38,6 @@ function getSelectedProductId() {
 	}
 }
 
-function addToCard() {
-	var productToAdd = {
-			action: 'ADD_PRODUCT',
-			entityId: getSelectedProductId()
-	};
-	$.ajax({
-		url: document.getElementById('addToCartForm').action,
-	    data: JSON.stringify(productToAdd),
-    	type: 'PATCH',
-        contentType: 'application/json',
-        dataType: 'json',
-        cache: false,
-        success: showAddToCartModal
-    });
-}
-
-function showAddToCartModal(cartState) {
-	var optionsTitle = '';
-	var options = [];
-	for (optionId in cartState.value.options) {
-		options.push(cartState.value.options[optionId]['key'] + ': ' + cartState.value.options[optionId]['value'])
-	}
-	if (options) {
-		optionsTitle = ' (' + options.join('; ') + ')' 
-	}
-	$('#capturedProductInfo > div > .captured-product-title').text(cartState.value.title + optionsTitle)
-	$('#capturedProductInfo > div > .captured-product-article').text(cartState.value.article)
-	$('#capturedProductInfo > div > .captured-product-price').text(cartState.value.price.toFixed(2))
-	$('#addToCartSuccessModal').modal("show")
-    refreshCartCount(cartState);
-}
-
 $(document).ready(function() {
 	prepareAddCommentForm();
 	prepareQuickOrderForm();
@@ -78,7 +46,7 @@ $(document).ready(function() {
 
 // this functions sets the product price based on selected options
 function updatePrice() {
-	var productId = getSelectedProductId();
+	var productId = getProductId();
 	var actualPrice = product.productActualPrices[productId];
 	if (actualPrice == null) {
 		actualPrice = 0;					
@@ -246,7 +214,7 @@ function prepareQuickOrderForm() {
 				'phone': $(form).find('input[name="phone"]').val(),
 				'fullName': $(form).find('input[name="fullName"]').val(),
 				'address': $(form).find('textarea[name="address"]').val(),
-				'productId': getSelectedProductId()
+				'productId': getProductId()
 			}
 			$.ajax({
 				url: form.action,

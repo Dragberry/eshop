@@ -38,6 +38,7 @@ import org.dragberry.eshop.model.common.Modifier;
 import org.dragberry.eshop.model.product.CategoryItem;
 import org.dragberry.eshop.model.product.Filter;
 import org.dragberry.eshop.model.product.ListFilter;
+import org.dragberry.eshop.model.product.ProductArticleOptions;
 import org.dragberry.eshop.model.product.ProductCategory;
 import org.dragberry.eshop.model.product.ProductDetails;
 import org.dragberry.eshop.model.product.ProductListItem;
@@ -150,21 +151,22 @@ public class ProductServiceImpl implements ProductService {
 	}
 	
 	@Override
-	public Map<Long, ProductOptionDetails> getProductOptions(Long productArticleId) {
+	public ProductArticleOptions getProductOptions(Long productArticleId) {
 		Objects.requireNonNull(productArticleId);
 		ProductArticle article = productArticleRepo.findById(productArticleId).orElse(null);
 		if (article == null) {
 			return null;
 		}
-		Map<Long, ProductOptionDetails> products = new LinkedHashMap<>();
+		ProductArticleOptions pao = new ProductArticleOptions();
+		pao.setTitle(article.getTitle());
 		article.getProducts().forEach(p -> {
 			ProductOptionDetails pod = new ProductOptionDetails();
 			pod.setPrice(p.getPrice());
 			pod.setActualPrice(p.getActualPrice());
 			pod.setOptions(p.getOptions().stream().map(o -> new KeyValue(o.getName(), o.getValue())).collect(toList()));
-			products.put(p.getEntityKey(), pod);
+			pao.getOptions().put(p.getEntityKey(), pod);
 		});
-        return products;
+        return pao;
 	}
 
     @Override

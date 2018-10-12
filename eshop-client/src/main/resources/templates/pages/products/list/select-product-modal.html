@@ -4,37 +4,61 @@
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <body>
 	<th:block th:fragment="select-product-modal">
-		<div class="modal fade" id="selectProductModal" tabindex="-1" role="dialog" aria-labelledby="selectProductModalTitle" aria-hidden="true">
+		<div class="modal fade" id="addToCartModal" tabindex="-1" role="dialog" aria-labelledby="selectProductModalTitle" aria-hidden="true">
 			<div class="modal-dialog modal-dialog-centered" role="document">
 		    	<div class="modal-content">
 		      		<div class="modal-header alert alert-success">
 		        		<span class="modal-title" id="selectProductModalTitle">
-							<span class="font-weight-bold"></span>
+							<span class="font-weight-bold">[[${product.title}]]</span>
 		        		</span>
 		        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 		          			<span aria-hidden="true">&times;</span>
 		        		</button>
 		      		</div>
 					<div class="modal-body">
-				    	<form id="getProductOptionsForm" method="GET" th:action="${@environment.getProperty('url.cart.state')}"></form>
 				    	<div class="container">
-					    	<div class="row">
-					    		<p>[[#{msg.common.selectOptions}]]</p>
-					    	</div>
-					    	<div class="row">
-				    			<div th:each="prod : ${product}" class="col-12 form-check">
-  									<label th:for="${prod.key}" class="form-check-label">
-    									<input th:id="${prod.key}" type="radio" class="form-check-input" name="productOption" th:value="${prod.key}">
-   										<span class="d-block">
-   											<span class="row">
-   												<span class="col-8">
-   													<span th:each="opt : ${prod.value.options}" class="d-block">[[${opt.value}]]</span>
+				    		<p class="font-weight-bold">[[#{msg.common.selectOptions}]]</p>
+					    	<div class="list-group">
+					    		<div th:each="prod, iter : ${product.options}"
+					    			class="list-group-item select-product-option list-group-item-action"
+					    			th:classappend="|${iter.index % 2 == 0 ? 'even' : 'odd'} ${iter.index == 0 ? 'list-group-item-success' : ''}|">
+					    			<label th:for="${prod.key}" class="form-check-label">
+   										<span class="container d-block">
+   											<span class="row align-items-center">
+   												<span class="col-1">
+   													<input type="radio" form="addToCartForm"
+			    										th:id="${prod.key}"
+			    										name="productId"
+			    										th:value="${prod.key}"
+			    										th:checked="${iter.index == 0}"
+			    										onchange="onProductOptionChange()">
+			    										<span class="fa fa-check-circle fa-lg" th:classappend="${iter.index != 0} ? 'invisible' : ''"></span>
+			    									</span>
+   												<span class="col-6">
+   													<span th:each="opt : ${prod.value.options}" class="d-block">
+   														<span class="d-block small font-weight-bold">[[${opt.key}]]:</span>
+   														[[${opt.value}]]
+   													</span>
    												</span>
-   												<span class="col-4">[[${prod.value.price}]] Руб</span>
+   												<span class="col-5 font-weight-bold text-right">
+	   												<th:block th:if="${prod.value.actualPrice}">
+														<span class="d-block">
+															<span class="font-weight-bold" th:text="|${prod.value.actualPrice} #{|msg.currency.${shop.currency}|}|">Product price</span>
+														</span>
+														<span>
+															<del class="small" th:text="|${prod.value.price} #{|msg.currency.${shop.currency}|}|">Old product price</del>
+														</span>
+													</th:block>
+													<th:block th:unless="${prod.value.actualPrice}">
+														<span class="d-block">
+															<span class="font-weight-bold" th:text="|${prod.value.price} #{|msg.currency.${shop.currency}|}|">Product price</span>
+														</span>
+													</th:block>
+												</span>
    											</span>
    										</span>
   									</label>
-								</div>
+					    		</div>
 							</div>
 						</div>
 					</div>
@@ -42,9 +66,9 @@
 						<div class="container col-md-12">
 	                		<div class="row">
 								<div class="col-xs-12 col-md-6">
-					        		<a th:href="${@environment.getProperty('url.cart')}" class="btn btn-success btn-block" th:text="#{msg.common.addToCart}">
-					        			Add to cart
-					        		</a>
+					        		<button type="button" class="btn btn-success btn-block" onclick="addProductToCart()">
+					        			[[#{msg.common.addToCart}]]
+					        		</button>
 				        		</div>
 					        	<div class="col-xs-12 col-md-6">
 					        		<button type="button" class="btn btn-secondary btn-block" data-dismiss="modal" th:text="#{msg.common.continueShopping}">

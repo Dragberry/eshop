@@ -153,11 +153,19 @@
 
 .list-display-type label {
   	cursor: pointer;
-  	btn btn-secondary
 }
 
 .list-display-type .btn {
 	padding: 0.15rem 0.5rem;
+}
+
+.list-group-item.select-product-option {
+	padding: .375rem 0.125rem;
+}
+
+.list-group-item.select-product-option input{
+	display: none;
+  	position: absolute;
 }
 
 .product-attribute-filter .product-attribute-list-filter {

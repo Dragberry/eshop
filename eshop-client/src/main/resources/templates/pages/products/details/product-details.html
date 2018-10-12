@@ -99,7 +99,7 @@
 			</div>
 			 <div class="row">
 			 	<div class="col-md-6">
-			 		<button id="addToCartButton" type="button" onclick="addToCard()" class="btn btn-success btn-block">
+			 		<button id="addToCartButton" type="button" onclick="addToCart('ADD_PRODUCT', getProductId())" class="btn btn-success btn-block">
 			 			<span class="fa fa-cart-plus fa-lg"></span>
 			 			<span th:text="#{msg.common.addToCart}">Add to cart</span>
 			 		</button>
@@ -118,7 +118,9 @@
 		<div class="col-12">
 			<th:block th:replace="pages/products/details/product-details-tab-panel :: product-details-tab-panel(product = ${product})"></th:block>
 		</div>
-		<th:block th:replace="pages/products/details/add-to-cart-modal :: add-to-cart-modal"></th:block>
+		<form id="addToCartForm" th:action="${@environment.getProperty('url.cart.state')}" method="POST">
+			<div id="addToCartModal"></div>
+		</form>
 		<th:block th:replace="pages/products/details/quick-order-modal :: quick-order-modal(product = ${product})"></th:block>
 		<th:block th:replace="pages/products/details/quick-order-success-modal :: quick-order-success-modal(product = ${product})"></th:block>
 	</th:block>	
@@ -129,6 +131,7 @@
 			var product = /*[[${product}]]*/ null;
 			/*]]>*/
 		</script>
+		<script th:src="@{/js/products/product-common.js}"></script>
 		<script th:src="@{/js/products/product-details.js}"></script>
 	</th:block>
 </body>
