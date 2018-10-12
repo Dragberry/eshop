@@ -25,7 +25,7 @@
 					    			<label th:for="${prod.key}" class="form-check-label">
    										<span class="container d-block">
    											<span class="row align-items-center">
-   												<span class="col-1">
+   												<span class="col-2">
    													<input type="radio" form="addToCartForm"
 			    										th:id="${prod.key}"
 			    										name="productId"
@@ -34,27 +34,27 @@
 			    										onchange="onProductOptionChange()">
 			    										<span class="fa fa-check-circle fa-lg" th:classappend="${iter.index != 0} ? 'invisible' : ''"></span>
 			    									</span>
-   												<span class="col-7">
-   													<span th:each="opt : ${prod.value.options}" class="d-block">
-   														<span class="d-block small font-weight-bold">[[${opt.key}]]:</span>
-   														[[${opt.value}]]
+   												<span class="col-10">
+   													<span class="row">
+   														<span class="col-12">
+		   													<span th:each="opt : ${prod.value.options}" class="d-block">
+		   														<span class="d-block small font-weight-bold">[[${opt.key}]]:</span>
+		   														[[${opt.value}]]
+		   													</span>
+   														</span>
+   														<span class="col-12 font-weight-bold text-right">
+	   														<th:block th:if="${prod.value.actualPrice}">
+																<del class="small mr-4" th:text="|${prod.value.price} #{|msg.currency.${shop.currency}|}|">Old product price</del>
+																<span class="font-weight-bold" th:text="|${prod.value.actualPrice} #{|msg.currency.${shop.currency}|}|">Product price</span>
+															</th:block>
+															<th:block th:unless="${prod.value.actualPrice}">
+																<span class="d-block">
+																	<span class="font-weight-bold" th:text="|${prod.value.price} #{|msg.currency.${shop.currency}|}|">Product price</span>
+																</span>
+															</th:block>
+   														</span>
    													</span>
    												</span>
-   												<span class="col-4 font-weight-bold text-right">
-	   												<th:block th:if="${prod.value.actualPrice}">
-														<span class="d-block">
-															<span class="font-weight-bold" th:text="|${prod.value.actualPrice} #{|msg.currency.${shop.currency}|}|">Product price</span>
-														</span>
-														<span>
-															<del class="small" th:text="|${prod.value.price} #{|msg.currency.${shop.currency}|}|">Old product price</del>
-														</span>
-													</th:block>
-													<th:block th:unless="${prod.value.actualPrice}">
-														<span class="d-block">
-															<span class="font-weight-bold" th:text="|${prod.value.price} #{|msg.currency.${shop.currency}|}|">Product price</span>
-														</span>
-													</th:block>
-												</span>
    											</span>
    										</span>
   									</label>
