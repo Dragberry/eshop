@@ -129,6 +129,40 @@
 		<script th:inline="javascript">
 			/*<![CDATA[*/
 			var product = /*[[${product}]]*/ null;
+			
+			var addCommentValidationMessages = {
+				name: {
+					required: '[[#{msg.error.comment.name.required}]]',
+					maxlength: '[[#{msg.error.comment.name.tooLong}]]',
+				},
+				email: {
+					required: '[[#{msg.error.common.email.required}]]',
+					email: '[[#{msg.error.common.email.invalid}]]',
+					maxlength: '[[#{msg.error.common.email.tooLong}]]'
+				},
+				comment: {
+					required: '[[#{msg.error.comment.comment.required}]]',
+					maxlength: '[[#{msg.error.comment.comment.tooLong}]]'
+				},
+				productRating: {
+					required: '[[#{msg.error.comment.rating.required}]]',
+					min: '[[#{msg.error.comment.rating.invalid}]]',
+					max: '[[#{msg.error.comment.rating.invalid}]]',
+				}
+			}
+			
+			var quickOrderValidationMessages = {
+				phone: {
+					required: '[[#{msg.error.contactPhoneRequired}]]',
+					maxlength: '[[#{msg.error.contactPhoneIsTooLong}]]'
+				},
+				fullName: {
+					maxlength: '[[#{msg.error.fullNameIsTooLong}]]'
+				},
+				address: {
+					maxlength: '[[#{msg.error.addressIsTooLong}]]'
+				}
+			}
 			/*]]>*/
 		</script>
 		<script th:src="@{/js/products/product-common.js}"></script>

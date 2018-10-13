@@ -113,26 +113,7 @@ function prepareAddCommentForm() {
 				max: 5
 			}
 		},
-		messages: {
-			name: {
-				required: '[[#{msg.error.comment.name.required}]]',
-				maxlength: '[[#{msg.error.comment.name.tooLong}]]',
-			},
-			email: {
-				required: '[[#{msg.error.common.email.required}]]',
-				email: '[[#{msg.error.common.email.invalid}]]',
-				maxlength: '[[#{msg.error.common.email.tooLong}]]'
-			},
-			comment: {
-				required: '[[#{msg.error.comment.comment.required}]]',
-				maxlength: '[[#{msg.error.comment.comment.tooLong}]]'
-			},
-			productRating: {
-				required: '[[#{msg.error.comment.rating.required}]]',
-				min: '[[#{msg.error.comment.rating.invalid}]]',
-				max: '[[#{msg.error.comment.rating.invalid}]]',
-			}
-		},
+		messages: addCommentValidationMessages,
 		submitHandler: function(form) {
 			$('#submitProductCommentButton').prop('disabled', true);
 			var comment = {
@@ -197,18 +178,7 @@ function prepareQuickOrderForm() {
 				maxlength: 128
 			}
 		},
-		messages: {
-			phone: {
-				required: '[[#{msg.error.contactPhoneRequired}]]',
-				maxlength: '[[#{msg.error.contactPhoneIsTooLong}]]'
-			},
-			fullName: {
-				maxlength: '[[#{msg.error.fullNameIsTooLong}]]'
-			},
-			address: {
-				maxlength: '[[#{msg.error.addressIsTooLong}]]'
-			}
-		},
+		messages: quickOrderValidationMessages,
 		submitHandler: function(form) {
 			var orderDetails = {
 				'phone': $(form).find('input[name="phone"]').val(),
