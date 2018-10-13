@@ -18,51 +18,120 @@
 				<p class="mt-4"th:text="#{msg.common.cartIsEmpty}">Empty cart</p>
 				<p class="mt-4"><a class="btn btn-success" th:href="${@environment.getProperty('url.catalog')}" th:text="#{msg.common.goShopping}"></a></p>
 			</div>
-			<table id="cartItems" th:if="${order.products.size() > 0}" class="table">
-				<tr>
-			    	<th scope="col">#</th>
-			     	<th scope="col" th:text="#{msg.common.product}">Title</th>
-			     	<th scope="col" th:text="#{msg.common.price}">Price</th>
-			     	<th scope="col" th:text="#{msg.common.quantity}" class="text-center">Quantity</th>
-			     	<th scope="col" th:text="#{msg.common.sum}">Sum</th>
-		       		<th scope="col" th:text="#{msg.common.action}" class="text-center">Action</th>
-			    </tr>
-				<tr th:each="product,iter : ${order.products}" th:data-product-id=${product.key.productId}>
-					<th scope="row" th:text="${iter.index + 1}" th:data-index="${iter.index + 1}">1</th>
-					<td class="align-middle">
-						<a th:href="@{|${@environment.getProperty('url.catalog')}/${product.key.category.reference}/${product.key.reference}|}">
-							<img class="cart-image img-fluid img-thumbnail float-left" th:title="${product.key.title}" th:alt="${product.key.title}"
-							 	th:src="${product.key.mainImage} ? @{|${@environment.getProperty('url.images')}/${product.key.productArticleId}/${product.key.article}/${product.key.mainImage}|} : ${@environment.getProperty('url.no-image')}">
-						</a>
-						<a th:href="@{|${@environment.getProperty('url.catalog')}/${product.key.category.reference}/${product.key.reference}|}">
-							<span class="d-block" th:text="${product.key.fullTitle}">Title</span>
-						</a>
-						<span class="d-block" th:text="|#{msg.common.productArticle}: ${product.key.article}|">Article</span>
-					</td>
-					<td class="align-middle">
-						<span th:text="${product.key.price}">Price</span>
-						<span th:text="#{|msg.currency.${appInfo.currency}|}">Currency</span>
-					</td>
-					<td class="text-center align-middle">
-						<button th:onclick="|decrementCartItem(${product.key.productId})|" type="button" class="btn btn-secondary" th:title="#{msg.common.minus}">
-				 			<span class="fa fa-minus fa-lg"></span>
-				 		</button>
-						<span class="cart-product-quantity" th:text="${product.value.quantity}">Quantity</span>
-						<button th:onclick="|incrementCartItem(${product.key.productId})|" type="button" class="btn btn-secondary" th:title="#{msg.common.plus}">
-				 			<span class="fa fa-plus fa-lg"></span>
-				 		</button>
-					</td>
-					<td class="align-middle">
-						<span class="cart-product-item-total-amount" th:text="${product.value.totalAmount}">Total Amount</span>
-						<span th:text="#{|msg.currency.${appInfo.currency}|}">Currency</span>
-					</td>
-					<td class="text-center align-middle">
-						<button th:onclick="|removeItemFromCart(${product.key.productId})|" type="button" class="btn btn-danger" th:title="#{msg.common.remove}">
-				 			<span class="fa fa-times fa-lg"></span>
-				 		</button>
-					</td>
-				</tr>
-			</table>
+			
+			<th:block th:if="${#request.getAttribute('currentDevice').mobile}">
+				<div th:if="${order.products.size() > 0}" class="col-12">
+					<div th:each="product,iter : ${order.products}" th:data-product-id=${product.key.productId} class="row">
+						<div class="col-4">
+							<a th:href="@{|${@environment.getProperty('url.catalog')}/${product.key.category.reference}/${product.key.reference}|}">
+								<img class="d-block mx-auto w-100 "
+									th:title="${product.key.title}"
+									th:alt="${product.key.title}"
+									th:src="${product.key.mainImage} ? @{|${@environment.getProperty('url.images')}/${product.key.productArticleId}/${product.key.article}/${product.key.mainImage}|} : ${@environment.getProperty('url.no-image')}">
+							</a>
+						</div>
+						<div class="col-8">
+							<div class="row">
+								<div class="col-9">
+									<h4 class="small font-weight-bold">
+										<a th:href="@{|${@environment.getProperty('url.catalog')}/${product.key.category.reference}/${product.key.reference}|}">
+											<span th:text="${product.key.fullTitle}">Product title</span>
+										</a>
+									</h4>
+									<span class="small">
+										<span class="font-weight-bold">[[#{msg.common.article}]]:</span>
+										<span>[[${product.key.article}]]</span>
+									</span>
+								</div>
+								<div class="col-3 text-right">
+									<span class="fa fa-times cart-remove-item-btn" th:onclick="|removeItemFromCart(${product.key.productId})|"></span>
+								</div>
+								<div class="col-3 cart-product-quantity-decrement">
+									<button th:onclick="|decrementCartItem(${product.key.productId})|" type="button" class="btn btn-secondary btn-block" th:title="#{msg.common.minus}">
+					 					<span class="fa fa-minus fa-lg"></span>
+					 				</button>
+								</div>
+								<div class="col-6 cart-product-quantity">
+							 		<div class="form-group">
+    									<input type="text" class="form-control text-center" th:value="${product.value.quantity}" disabled>
+									</div>
+								</div>
+								<div class="col-3 cart-product-quantity-increment">
+									<button th:onclick="|incrementCartItem(${product.key.productId})|" type="button" class="btn btn-secondary btn-block" th:title="#{msg.common.plus}">
+							 			<span class="fa fa-plus fa-lg"></span>
+							 		</button>
+								</div>
+								<div class="col-8 font-weight-bold">
+									<span class="cart-product-item-total-amount" th:text="${product.value.totalAmount}">Total Amount</span>
+									<span th:text="#{|msg.currency.${appInfo.currency}|}">Currency</span>
+								</div>
+							</div>
+						</div>
+						<div class="col-12">
+							<hr/>
+						</div>
+					</div>
+				</div>
+			</th:block>
+			
+			<th:block th:unless="${#request.getAttribute('currentDevice').mobile}">
+				<table id="cartItems" th:if="${order.products.size() > 0}" class="table">
+					<tr>
+				    	<th scope="col">#</th>
+				     	<th scope="col" th:text="#{msg.common.product}">Title</th>
+				     	<th scope="col" th:text="#{msg.common.price}">Price</th>
+				     	<th scope="col" th:text="#{msg.common.quantity}" class="text-center">Quantity</th>
+				     	<th scope="col" th:text="#{msg.common.sum}">Sum</th>
+			       		<th scope="col" th:text="#{msg.common.action}" class="text-center">Action</th>
+				    </tr>
+					<tr th:each="product,iter : ${order.products}" th:data-product-id=${product.key.productId}>
+						<th scope="row" th:text="${iter.index + 1}" th:data-index="${iter.index + 1}">1</th>
+						<td class="align-middle">
+							<a th:href="@{|${@environment.getProperty('url.catalog')}/${product.key.category.reference}/${product.key.reference}|}">
+								<img class="cart-image img-fluid img-thumbnail float-left" th:title="${product.key.title}" th:alt="${product.key.title}"
+								 	th:src="${product.key.mainImage} ? @{|${@environment.getProperty('url.images')}/${product.key.productArticleId}/${product.key.article}/${product.key.mainImage}|} : ${@environment.getProperty('url.no-image')}">
+							</a>
+							<a th:href="@{|${@environment.getProperty('url.catalog')}/${product.key.category.reference}/${product.key.reference}|}">
+								<span class="d-block" th:text="${product.key.fullTitle}">Title</span>
+							</a>
+							<span class="d-block" th:text="|#{msg.common.productArticle}: ${product.key.article}|">Article</span>
+						</td>
+						<td class="align-middle text-nowrap">
+							<span th:text="${product.key.price}">Price</span>
+							<span th:text="#{|msg.currency.${appInfo.currency}|}">Currency</span>
+						</td>
+						<td class="text-center align-middle">
+							<div class="row">
+								<div class="col-4 cart-product-quantity-decrement">
+									<button th:onclick="|decrementCartItem(${product.key.productId})|" type="button" class="btn btn-secondary btn-block" th:title="#{msg.common.minus}">
+					 					<span class="fa fa-minus fa-lg"></span>
+					 				</button>
+								</div>
+								<div class="col-4 cart-product-quantity">
+							 		<div class="form-group">
+    									<input type="text" class="form-control text-center" th:value="${product.value.quantity}" disabled>
+									</div>
+								</div>
+								<div class="col-4 cart-product-quantity-increment">
+									<button th:onclick="|incrementCartItem(${product.key.productId})|" type="button" class="btn btn-secondary btn-block" th:title="#{msg.common.plus}">
+							 			<span class="fa fa-plus fa-lg"></span>
+							 		</button>
+								</div>
+							</div>
+						</td>
+						<td class="align-middle text-nowrap">
+							<span class="cart-product-item-total-amount" th:text="${product.value.totalAmount}">Total Amount</span>
+							<span th:text="#{|msg.currency.${appInfo.currency}|}">Currency</span>
+						</td>
+						<td class="text-center align-middle">
+							<button th:onclick="|removeItemFromCart(${product.key.productId})|" type="button" class="btn btn-danger" th:title="#{msg.common.remove}">
+					 			<span class="fa fa-times fa-lg"></span>
+					 		</button>
+						</td>
+					</tr>
+				</table>			
+			</th:block>
+			
 			<div class="col-md-12">
 				<hr>
 			</div>
