@@ -11,14 +11,17 @@ import java.util.Optional;
 
 import org.dragberry.eshop.dal.entity.Page;
 import org.dragberry.eshop.dal.repo.PageRepository;
+import org.dragberry.eshop.dal.repo.RequestLogRepository;
 import org.dragberry.eshop.filter.RequestLogFilter;
 import org.dragberry.eshop.interceptor.AppInfoInterceptor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.mobile.device.DeviceResolverRequestFilter;
 import org.springframework.web.context.WebApplicationContext;
 import org.thymeleaf.IEngineConfiguration;
@@ -48,11 +51,29 @@ public class WebConfig {
     @Autowired
     private PageRepository pageRepo;
     
+    @Autowired
+    private RequestLogRepository requestLogRepository;
+    
     public WebConfig(ObjectProvider<Collection<IDialect>> dialectsProvider) {
         this.dialects = dialectsProvider.getIfAvailable(Collections::emptyList);
     }
     
     @Bean
+    public FilterRegistrationBean<DeviceResolverRequestFilter> deviceResolverFilter(){
+        FilterRegistrationBean<DeviceResolverRequestFilter> bean = new FilterRegistrationBean<>();
+        bean.setFilter(new DeviceResolverRequestFilter());
+        bean.setOrder(Ordered.LOWEST_PRECEDENCE + 1);
+        return bean;    
+    }
+    
+    @Bean
+    public FilterRegistrationBean<RequestLogFilter> requestLogFilter(){
+        FilterRegistrationBean<RequestLogFilter> bean = new FilterRegistrationBean<>();
+        bean.setFilter(new RequestLogFilter(requestLogRepository));
+        bean.setOrder(Ordered.LOWEST_PRECEDENCE);
+        return bean;    
+    }
+    
     public DeviceResolverRequestFilter deviceResolverRequestFilter() {
     	return new DeviceResolverRequestFilter();
     }

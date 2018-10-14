@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 
 import javax.servlet.FilterChain;
@@ -16,11 +17,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.dragberry.eshop.dal.entity.RequestLog;
+import org.dragberry.eshop.dal.entity.RequestLog.Device;
 import org.dragberry.eshop.dal.entity.RequestLogData;
 import org.dragberry.eshop.dal.repo.RequestLogRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Component;
+import org.springframework.mobile.device.DeviceUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
@@ -29,13 +30,15 @@ import org.springframework.web.filter.OncePerRequestFilter;
  * @author Drahun Maksim
  *
  */
-@Component
 public class RequestLogFilter extends OncePerRequestFilter {
 
 	private static final List<String> EXCLUDE_STATIC = Arrays.asList("/images", "/js", "/css", "/webfonts", "/favicon.ico");
 
-	@Autowired
 	private RequestLogRepository requestLogRepo;
+
+	public RequestLogFilter(RequestLogRepository repo) {
+		this.requestLogRepo = repo;
+	}
 
 	/**
 	 * The default value is "false" so that the filter may log a "before" message at
@@ -62,7 +65,7 @@ public class RequestLogFilter extends OncePerRequestFilter {
 		if (isFirstRequest && !(request instanceof CustomHttpServletRequestWrapper)) {
 			requestToUse = new CustomHttpServletRequestWrapper(request);
 		}
-
+		
 		if (shouldLog(requestToUse) && isFirstRequest) {
 			requestLogRepo.save(createRequestLog(requestToUse));
 		}
@@ -81,8 +84,16 @@ public class RequestLogFilter extends OncePerRequestFilter {
 		record.setEncoding(request.getCharacterEncoding());
 		record.setLocale(request.getLocale().toString());
 		record.setMethod(request.getMethod());
+		record.setDevice(Device.valueOf(DeviceUtils.getCurrentDevice(request)));
 		record.setSessionId(request.getSession(false) != null ? request.getSession(false).getId() : null);
 		record.setUri(request.getRequestURI());
+		StringBuilder sb = new StringBuilder();
+		Enumeration<String> headers = request.getHeaderNames();
+		while (headers.hasMoreElements()) {
+			String header = headers.nextElement();
+			sb.append(header).append("\t").append(request.getHeader(header)).append("\n");
+		}
+		record.setHeaders(sb.length() > 1024 ? sb.substring(0, 1024) : sb.toString());
 		RequestLogData data = new RequestLogData();
 		try {
 		    data.setQueryString(URLDecoder.decode(request.getQueryString(), request.getCharacterEncoding()));
