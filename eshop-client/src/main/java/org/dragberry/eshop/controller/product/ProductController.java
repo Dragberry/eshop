@@ -429,7 +429,7 @@ public class ProductController {
     	} else {
     		Context context = new Context(locale);
     		context.setVariable("comment", resp.getValue());
-            return Results.create(templateEngine.process("pages/products/details/product-details-tab-panel",
+            return Results.create(templateEngine.process("pages/products/details/product-details-extra-panel",
     				new HashSet<>(Arrays.asList("product-comment")), context));
     	}
     }

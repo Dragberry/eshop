@@ -131,7 +131,7 @@ function prepareAddCommentForm() {
 				success: function(result) {
 					processResult(result, function(value) {
 						$('#productCommentZero').after(result.value);
-						$('#addComment').text('[[#{msg.common.thanksForComment}]]').addClass('mt-4 mb-4 alert alert-success');
+						$('#addComment').text(addCommentSuccessMessage).addClass('mt-4 mb-4 alert alert-success');
 						calculateRatings();
 					});
 				},

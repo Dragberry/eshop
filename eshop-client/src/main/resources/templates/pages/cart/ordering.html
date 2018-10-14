@@ -94,25 +94,29 @@
 						<div class="col-md-6">
 							<fieldset class="col-md-12">
 								<legend class="h5">[[#{msg.common.yourOrder}]]</legend>
-								<table class="table">
-									<tr th:each="product : ${order.products}" th:data-product-id=${product.key.productId}>
-										<td>
-											<img class="cart-image-small img-fluid img-thumbnail" th:title="${product.key.title}" th:alt="${product.key.title}"
-								 				th:src="${product.key.mainImage} ? @{|${@environment.getProperty('url.images')}/${product.key.productArticleId}/${product.key.article}/${product.key.mainImage}|} : ${@environment.getProperty('url.no-image')}">
-										</td>
-										<td class="align-bottom">
-											<span th:text="${product.key.fullTitle}">Title</span>
-										</td>
-										<td class="align-bottom text-right">
-											<strong>
-												<span th:text="${product.value.quantity}">Quantity</span>
-												<span>X</span>
-												<span th:text="${product.key.price}">Price</span>
-												<span th:text="#{|msg.currency.${appInfo.currency}|}">Currency</span>
-											</strong>
-										</td>
-									</tr>
-								</table>
+								<div class="row" th:each="product : ${order.products}" th:data-product-id=${product.key.productId}>
+									<div class="col-3">
+										<img class="w-100"
+											th:title="${product.key.title}"
+											th:alt="${product.key.title}"
+								 			th:src="${product.key.mainImage} ? @{|${@environment.getProperty('url.images')}/${product.key.productArticleId}/${product.key.article}/${product.key.mainImage}|} : ${@environment.getProperty('url.no-image')}">
+									</div>
+									<div class="col-9">
+										<div class="row">
+											<div class="col-12 col-md-8">
+												<span th:text="${product.key.fullTitle}">Title</span>										
+											</div>
+											<div class="col-12 col-md-4">
+												<span class="font-weight-bold">
+													<span th:text="${product.value.quantity}">Quantity</span>
+													<span>X</span>
+													<span th:text="${product.key.price}">Price</span>
+													<span th:text="#{|msg.currency.${appInfo.currency}|}">Currency</span>
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
 							</fieldset>
 							<div class="col-md-12">
 								<hr/>

@@ -116,7 +116,12 @@
 			<hr/>
 		</div>
 		<div class="col-12">
-			<th:block th:replace="pages/products/details/product-details-tab-panel :: product-details-tab-panel(product = ${product})"></th:block>
+			<th:block th:if="${#request.getAttribute('currentDevice').mobile}">
+				<th:block th:replace="pages/products/details/product-details-extra-panel.mobile :: product-details-extra-panel(product = ${product})"></th:block>			
+			</th:block>
+			<th:block th:unless="${#request.getAttribute('currentDevice').mobile}">
+				<th:block th:replace="pages/products/details/product-details-extra-panel :: product-details-extra-panel(product = ${product})"></th:block>
+			</th:block>
 		</div>
 		<form id="addToCartForm" th:action="${@environment.getProperty('url.cart.state')}" method="POST">
 			<div id="addToCartModal"></div>
@@ -129,7 +134,7 @@
 		<script th:inline="javascript">
 			/*<![CDATA[*/
 			var product = /*[[${product}]]*/ null;
-			
+			var addCommentSuccessMessage = '[[#{msg.common.thanksForComment}]]';
 			var addCommentValidationMessages = {
 				name: {
 					required: '[[#{msg.error.comment.name.required}]]',
