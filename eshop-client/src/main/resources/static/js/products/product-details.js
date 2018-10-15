@@ -3,6 +3,22 @@ function onProductOptionChanged(el) {
 	changeImage(el);
 }
 
+//this functions sets the product price based on selected options
+function updatePrice() {
+	var productId = getProductId();
+	var actualPrice = product.productActualPrices[productId];
+	if (actualPrice == null) {
+		actualPrice = 0;					
+		$('.product-actual-price-block').addClass('d-none');
+		$('.product-price-block').removeClass('d-none');
+	} else {
+		$('.product-actual-price-block').removeClass('d-none');
+		$('.product-price-block').addClass('d-none');
+	}
+	$('.product-actual-price').text(actualPrice.toFixed(2));	
+	$('.product-price').text(product.productPrices[productId].toFixed(2));
+}
+
 function changeImage(el) {
 	var $el = $(el);
 	var $imgIndex = $('li[data-img*="' + $el.data('option-name') + '_' + $el.find('option:selected').text() + '"]').data('slide-to');
@@ -11,9 +27,13 @@ function changeImage(el) {
 	}
 }
 
-function isProductMatch(optionName, optionValue) {
+function isProductMatchRadio(optionName, optionValue) {
+	return optionValue == $('input[name="' + optionName + '"]:checked').val();
+}
+
+function isProductMatchSelect(optionName, optionValue) {
 	var isMatched = false;
-	$('select[data-option-name]').each(function() {
+	$('*[data-option-name]').each(function() {
 		if (optionName == $(this).data('option-name') && optionValue == $(this).find('option:selected').val()) {
 			isMatched = true;
 			return false;
@@ -29,11 +49,22 @@ function getProductId() {
 			return productId;
 		} else {
 			// if product has options, then choose product using the select option set
-		    for (optionSetIndex in product.productOptions[productId]) {
-		    	if (isProductMatch(product.productOptions[productId][optionSetIndex]['key'], product.productOptions[productId][optionSetIndex]['value'])) {
-		    		return productId;
+		    var optionSet = product.productOptions[productId];
+		    if (optionSet.length == 1) {
+		    	// If the product can have only one option
+		    	for (optionSetIndex in product.productOptions[productId]) {
+		    		if (isProductMatchRadio(product.productOptions[productId][optionSetIndex]['key'], product.productOptions[productId][optionSetIndex]['value'])) {
+			    		return productId;
+			    	}
 		    	}
-		    }
+			} else {
+				// If the product can have several options
+				for (optionSetIndex in product.productOptions[productId]) {
+			    	if (isProductMatchSelect(product.productOptions[productId][optionSetIndex]['key'], product.productOptions[productId][optionSetIndex]['value'])) {
+			    		return productId;
+			    	}
+			    }
+			}
 		}
 	}
 }
@@ -43,22 +74,6 @@ $(document).ready(function() {
 	prepareQuickOrderForm();
 	updatePrice();
 });
-
-// this functions sets the product price based on selected options
-function updatePrice() {
-	var productId = getProductId();
-	var actualPrice = product.productActualPrices[productId];
-	if (actualPrice == null) {
-		actualPrice = 0;					
-		$('.product-actual-price-block').addClass('d-none');
-		$('.product-price-block').removeClass('d-none');
-	} else {
-		$('.product-actual-price-block').removeClass('d-none');
-		$('.product-price-block').addClass('d-none');
-	}
-	$('.product-actual-price').text(actualPrice.toFixed(2));	
-	$('.product-price').text(product.productPrices[productId].toFixed(2));
-}
 
 // ***** Product comment and rating ***** //
 function onProductRate(rating) {

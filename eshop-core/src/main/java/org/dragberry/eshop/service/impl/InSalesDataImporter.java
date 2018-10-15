@@ -278,28 +278,32 @@ public class InSalesDataImporter implements DataImporter {
 		
 	}
 
-	private void processComments(ProductArticle pa, String[] firstLine) throws IOException, MalformedURLException {
+	private void processComments(ProductArticle pa, String[] firstLine) {
 		pa.getComments().clear();
 		String url = firstLine[columnsMap.get(URL)];
-		Document doc = Jsoup.parse(new URL(url), 10000);
-		for (Element el : doc.getElementsByClass("reviews-item")) {
-			Comment comment = new Comment();
-			comment.setUserIP("127.0.0.1");
-			comment.setStatus(Comment.Status.ACTIVE);
-			comment.setUserName(el.getElementsByClass("author").text());
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-			comment.setDateTime(formatter.parse(el.getElementsByClass("date").text(), LocalDateTime::from));
-			comment.setText(el.getElementsByClass("text").text());
-			Elements stars = el.getElementsByClass("star-item");
-			int mark = 5;
-			for (int index = 0; index < stars.size(); index++) {
-				if (stars.get(index).hasClass("active")) {
-					break;
-				}
-				mark--;
-			}
-			pa.addComment(comment, mark);
-		}
+		try {
+    		Document doc = Jsoup.parse(new URL(url), 10000);
+    		for (Element el : doc.getElementsByClass("reviews-item")) {
+    			Comment comment = new Comment();
+    			comment.setUserIP("127.0.0.1");
+    			comment.setStatus(Comment.Status.ACTIVE);
+    			comment.setUserName(el.getElementsByClass("author").text());
+    			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+    			comment.setDateTime(formatter.parse(el.getElementsByClass("date").text(), LocalDateTime::from));
+    			comment.setText(el.getElementsByClass("text").text());
+    			Elements stars = el.getElementsByClass("star-item");
+    			int mark = 5;
+    			for (int index = 0; index < stars.size(); index++) {
+    				if (stars.get(index).hasClass("active")) {
+    					break;
+    				}
+    				mark--;
+    			}
+    			pa.addComment(comment, mark);
+    		}
+		} catch (Exception e) {
+            log.warn("An error has occured during comments processing on " + url, e);
+        }
 	}
 
 	private String processDescription(String article, String[] firstLine) {

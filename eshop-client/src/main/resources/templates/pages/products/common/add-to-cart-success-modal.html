@@ -16,17 +16,37 @@
 		        		</button>
 		      		</div>
 					<div class="modal-body">
-				    	<div id="capturedProductInfo" class="row">
-				    		<div class="col-md-12">
-				       			<strong>[[#{msg.common.title}]]:</strong> <span class="captured-product-title">[[${product.title}]]</span>
-				       		</div>
-				       		<div class="col-md-12">
-				       			<strong>[[#{msg.common.article}]]:</strong> <span class="captured-product-article">[[${product.article}]]</span>
-				       		</div>
-				       		<div class="col-md-12">
-				       			<strong>[[#{msg.common.price}]]:</strong> <span class="captured-product-price">[[${product.price}]]</span> [[#{|msg.currency.${shop.currency}|}]]
-				       		</div>
-				    	</div>
+		    			<div class="row">
+		    				<div class="col-3">
+		    					<span class="font-weight-bold">[[#{msg.common.title}]]:</span>
+		    				</div>
+		    				<div class="col-9">
+		    					<span>[[${product.title}]]</span>
+		    				</div>
+		    				<div class="offset-3 col-9">
+		    					<span  th:each="opt : ${product.options}" class="d-block">
+		    						<span class="small font-italic">[[${opt.value}]]</span>
+		    					</span>
+		    				</div>
+		    			</div>
+		       			<div class="row">
+		    				<div class="col-3">
+		    					<span class="font-weight-bold">[[#{msg.common.article}]]:</span>
+		    				</div>
+		    				<div class="col-9">
+		    					<span>[[${product.article}]]</span>
+		    				</div>
+		    			</div>
+		       			<div class="row">
+		    				<div class="col-3">
+		    					<span class="font-weight-bold">[[#{msg.common.price}]]:</span>
+		    				</div>
+		    				<div class="col-9">
+		    					<span class="font-weight-bold">
+		    						<span>[[${product.price}]]</span> [[#{|msg.currency.${shop.currency}|}]]
+		    					</span>
+		    				</div>
+		    			</div>
 					</div>
 					<div class="modal-footer">
 						<div class="container col-md-12">

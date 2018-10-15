@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<body>
+	<th:block th:fragment="extra">
+		<div class="row">
+			<div class="col-12">
+		 	 	<span class="font-weight-bold">Дополнительно можно заказать:</span>
+		 	</div>
+		 	<div class="col-12">
+		 		<div class="list-group">
+		 			<div class="list-group-item list-group-item-action border-0 p-1">
+			 			<div class="form-check">
+			 				<label class="form-check-label" for="extraGiftWrapper">
+			 					<span class="row">
+			 						<span class="col-6">
+				 						<input class="form-check-input" type="checkbox" value="" id="extraGiftWrapper">
+				 						<span class="font-italic">Подарочная упаковка</span>
+			 						</span>
+			 						<span class="col-4 font-weight-bold"> + 3 Руб.</span>
+			 					</span>
+						  	</label>
+						</div>
+		 			</div>
+				 	<div class="list-group-item list-group-item-action border-0 p-1">
+				 		<div class="form-check">
+				 			<label class="form-check-label" for="extraFastDelivery">
+			 					<span class="row">
+			 						<span class="col-6">
+				 						<input class="form-check-input" type="checkbox" value="" id="extraFastDelivery">
+				 						<span class="font-italic">Быстрая доставка (по Минску)</span>
+			 						</span>
+			 						<span class="col-4 font-weight-bold"> + 2 Руб.</span>
+			 					</span>
+						  	</label>
+						</div>
+				 	</div>
+				</div>
+		 	</div>
+		</div>
+	</th:block>
+	
+	<th:block th:fragment="shipping">
+		<div class="row">
+			<div class="col-12">
+				<span class="fa fa-truck fa-lg"></span>
+		 		<span class="font-weight-bold">Доставка:</span>
+		 	</div>
+		 	<div class="col-12">
+		 		<ul class="small">
+		 			<li class="row">
+		 				<span class="col-3">По Минску:</span>
+		 				<span class="col-4">курьером(сегодня)</span>
+		 				<span class="col-4 font-weight-bold">- БЕСПЛАТНО</span>
+		 			</li>
+		 			<li class="row">
+		 				<span class="col-3">По Беларуси:</span>
+		 				<span class="col-4">почтой (2-3 дня)</span>
+		 				<span class="col-4 font-weight-bold">- 5 Руб.</span>
+		 			</li>
+		 			<li class="row">
+		 				<span class="col-3"></span>
+		 				<span class="col-4">курьером (завтра)</span>
+		 				<span class="col-4 font-weight-bold">- 8 Руб.</span>
+		 			</li>
+		 			<li class="row">
+		 				<a href="/dostavka">Подробнее о доставке</a>
+		 			</li>
+		 		</ul>
+		 	</div>
+		</div>
+	</th:block>
+	
+	<th:block th:fragment="payments">
+		<div class="row">
+			<div class="col-10">
+				<span class="fa fa-credit-card fa-lg"></span>
+		 		<span class="font-weight-bold">Принимаем к оплате:</span>
+		 	</div>
+		 	<div class="col-2 text-right">
+		 		
+		 	</div>
+		</div>
+	</th:block>
+</body>
+</html>

@@ -94,7 +94,7 @@
 						<div class="col-md-6">
 							<fieldset class="col-md-12">
 								<legend class="h5">[[#{msg.common.yourOrder}]]</legend>
-								<div class="row" th:each="product : ${order.products}" th:data-product-id=${product.key.productId}>
+								<div class="row mb-1" th:each="product : ${order.products}" th:data-product-id=${product.key.productId}>
 									<div class="col-3">
 										<img class="w-100"
 											th:title="${product.key.title}"
@@ -104,7 +104,10 @@
 									<div class="col-9">
 										<div class="row">
 											<div class="col-12 col-md-8">
-												<span th:text="${product.key.fullTitle}">Title</span>										
+												<span class="d-block">[[${product.key.title}]]</span>		
+												<span th:each="opt : ${product.key.options}" class="d-block">
+						    						<span class="small font-italic">[[${opt.value}]]</span>
+						    					</span>								
 											</div>
 											<div class="col-12 col-md-4">
 												<span class="font-weight-bold">
