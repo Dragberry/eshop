@@ -61,12 +61,6 @@
 						<div class="col-12">
 							<p class="small"><span class="font-weight-bold">[[#{msg.common.productArticle}]]:</span> [[${product.article}]]</p>
 						</div>
-						<div class="col-12">
-							<p class="small text-justify" th:utext="${product.description}">Description</p>
-						</div>
-						<div class="col-12">
-							<hr/>
-						</div>
 						<div class="col-3">
 							<div class="h5">
 								<span th:each="label : ${product.labels}"
@@ -142,12 +136,6 @@
 					</div>
 					<div class="row">
 						<div class="col-12">
-							<th:block th:replace="pages/products/details/product-details-panels :: extra"></th:block>
-						</div>
-						<div class="col-12">
-							<hr/>
-						</div>
-						<div class="col-12">
 							<th:block th:replace="pages/products/details/product-details-panels :: shipping"></th:block>
 						</div>
 						<div class="col-12">
@@ -162,22 +150,24 @@
 					</div>
 				</div>
 			</div>
-			<div class="col-12">
-				<hr/>
+			<div class="row">
+				<div class="col-12">
+					<hr/>
+				</div>
+				<div class="col-12" id="productDetailsExtraPanel">
+					<th:block th:if="${#request.getAttribute('currentDevice').mobile}">
+						<th:block th:replace="pages/products/details/product-details-extra-panel.mobile :: product-details-extra-panel(product = ${product})"></th:block>			
+					</th:block>
+					<th:block th:unless="${#request.getAttribute('currentDevice').mobile}">
+						<th:block th:replace="pages/products/details/product-details-extra-panel :: product-details-extra-panel(product = ${product})"></th:block>
+					</th:block>
+				</div>
+				<form id="addToCartForm" th:action="${@environment.getProperty('url.cart.state')}" method="POST">
+					<div id="addToCartModal"></div>
+				</form>
+				<th:block th:replace="pages/products/details/quick-order-modal :: quick-order-modal(product = ${product})"></th:block>
+				<th:block th:replace="pages/products/details/quick-order-success-modal :: quick-order-success-modal(product = ${product})"></th:block>
 			</div>
-			<div class="col-12">
-				<th:block th:if="${#request.getAttribute('currentDevice').mobile}">
-					<th:block th:replace="pages/products/details/product-details-extra-panel.mobile :: product-details-extra-panel(product = ${product})"></th:block>			
-				</th:block>
-				<th:block th:unless="${#request.getAttribute('currentDevice').mobile}">
-					<th:block th:replace="pages/products/details/product-details-extra-panel :: product-details-extra-panel(product = ${product})"></th:block>
-				</th:block>
-			</div>
-			<form id="addToCartForm" th:action="${@environment.getProperty('url.cart.state')}" method="POST">
-				<div id="addToCartModal"></div>
-			</form>
-			<th:block th:replace="pages/products/details/quick-order-modal :: quick-order-modal(product = ${product})"></th:block>
-			<th:block th:replace="pages/products/details/quick-order-success-modal :: quick-order-success-modal(product = ${product})"></th:block>
 		</div>
 	</th:block>	
 		
