@@ -6,7 +6,7 @@ function onProductOptionChanged(el) {
 //this functions sets the product price based on selected options
 function updatePrice() {
 	var productId = getProductId();
-	var actualPrice = product.productActualPrices[productId];
+	var actualPrice = products.productActualPrices[productId];
 	if (actualPrice == null) {
 		actualPrice = 0;					
 		$('.product-actual-price-block').addClass('d-none');
@@ -16,7 +16,7 @@ function updatePrice() {
 		$('.product-price-block').addClass('d-none');
 	}
 	$('.product-actual-price').text(actualPrice.toFixed(2));	
-	$('.product-price').text(product.productPrices[productId].toFixed(2));
+	$('.product-price').text(products.productPrices[productId].toFixed(2));
 }
 
 function changeImage(el) {
@@ -43,24 +43,24 @@ function isProductMatchSelect(optionName, optionValue) {
 }
 
 function getProductId() {
-	for (productId in product.productOptions) {
+	for (productId in products.productOptions) {
 		// if product doesn't have options, then choose the first one
-		if (product.productOptions[productId].length == 0) {
+		if (products.productOptions[productId].length == 0) {
 			return productId;
 		} else {
 			// if product has options, then choose product using the select option set
-		    var optionSet = product.productOptions[productId];
+		    var optionSet = products.productOptions[productId];
 		    if (optionSet.length == 1) {
 		    	// If the product can have only one option
-		    	for (optionSetIndex in product.productOptions[productId]) {
-		    		if (isProductMatchRadio(product.productOptions[productId][optionSetIndex]['key'], product.productOptions[productId][optionSetIndex]['value'])) {
+		    	for (optionSetIndex in products.productOptions[productId]) {
+		    		if (isProductMatchRadio(products.productOptions[productId][optionSetIndex]['key'], products.productOptions[productId][optionSetIndex]['value'])) {
 			    		return productId;
 			    	}
 		    	}
 			} else {
 				// If the product can have several options
-				for (optionSetIndex in product.productOptions[productId]) {
-			    	if (isProductMatchSelect(product.productOptions[productId][optionSetIndex]['key'], product.productOptions[productId][optionSetIndex]['value'])) {
+				for (optionSetIndex in products.productOptions[productId]) {
+			    	if (isProductMatchSelect(products.productOptions[productId][optionSetIndex]['key'], products.productOptions[productId][optionSetIndex]['value'])) {
 			    		return productId;
 			    	}
 			    }

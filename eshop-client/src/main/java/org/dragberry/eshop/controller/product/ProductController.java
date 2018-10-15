@@ -32,6 +32,7 @@ import org.dragberry.eshop.model.common.KeyValue;
 import org.dragberry.eshop.model.product.ProductCategory;
 import org.dragberry.eshop.model.product.ProductDetails;
 import org.dragberry.eshop.model.product.ProductSearchQuery;
+import org.dragberry.eshop.model.product.ProductsDetails;
 import org.dragberry.eshop.navigation.Breadcrumb;
 import org.dragberry.eshop.service.CommentService;
 import org.dragberry.eshop.service.ImageService;
@@ -96,6 +97,8 @@ public class ProductController {
 	private static final String MODEL_DISPLAY_OPTION = "displayOption";
 	
 	private static final String MODEL_PRODUCT = "product";
+	
+	private static final String MODEL_PRODUCTS = "products";
 	
 	private static final String MSG_MENU_CATALOG = "msg.menu.catalog";
 	
@@ -404,6 +407,13 @@ public class ProductController {
             if (product != null) {
             	ModelAndView mv = new ModelAndView("pages/products/details/product-details");
                 mv.addObject(MODEL_PRODUCT, product);
+                ProductsDetails products = new ProductsDetails();
+                products.setOptionValues(product.getOptionValues());
+                products.setProductOptions(product.getProductOptions());
+                products.setProductActualPrices(product.getProductActualPrices());
+                products.setProductPrices(product.getProductPrices());
+                products.setOptionValues(product.getOptionValues());
+                mv.addObject(MODEL_PRODUCTS, products);
                 mv.addObject(Breadcrumb.MODEL_BREADCRUMB, Breadcrumb.builder()
                 		.append(MSG_MENU_CATALOG, catalogReference, true)
                 		.append(product.getCategory().getName(), categoryReference)
