@@ -8,16 +8,7 @@
 			<div class="col-12">
 				<p class="small"><span class="font-weight-bold">[[#{msg.common.productArticle}]]:</span> [[${product.article}]]</p>
 			</div>
-			<div class="col-3">
-				<div class="h5">
-					<span th:each="label : ${product.labels}"
-						class="product-label badge w-100"
-						th:classappend="|badge-${label.value.value}|">
-						[[${label.key}]]
-					</span>
-				</div>
-			</div>
-			<div class="col-4 text-center">
+			<div class="col-6 text-center">
 				<div class="product-actual-price-block d-none">
 					<span class="d-block h1 font-weight-bold">
 						<span class="product-actual-price">[[${product.actualPrice}]]</span> [[#{|msg.currency.${appInfo.currency}|}]]
@@ -34,14 +25,14 @@
 					</span>
 				</div>
 			</div>
-			<div class="col-5">
+			<div class="col-6">
 				<div class="row">
 					<div class="col-12">
 						<button id="addToCartButton" type="button" onclick="addToCart('ADD_PRODUCT', getProductId())" class="btn btn-success btn-block">
 				 			<span class="fa fa-cart-plus fa-lg"></span>
-				 			<span th:text="#{msg.common.addToCart}">Add to cart</span>
+				 			<span th:text="#{msg.common.addToCartSimple}">Add to cart</span>
 				 		</button>
-				 		<button id="singleClickBuyButton" type="button" onclick="showQuickOrderModal()" class="btn btn-link text-success btn-block">
+				 		<button id="singleClickBuyButton" type="button" onclick="showQuickOrderModal()" class="btn btn-link text-success btn-block" style="nowrap:normal">
 				 			<span class="fa fa-cart-arrow-down fa-lg"></span>
 				 			<span th:text="#{msg.common.singleClickOrder}">Single click order</span>
 				 		</button>

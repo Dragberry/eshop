@@ -13,7 +13,7 @@
 		<div class="container">
 			<h1 class="d-inline">[[${product.title}]]</h1>
 			<div class="row mt-4">
-				<div class="col-md-6">
+				<div class="col-md-6 mb-2">
 					<div class="card">
 						<div id="productCarouselIndicators" class="carousel slide" data-ride="carousel">
 						  	<div class="carousel-inner">
@@ -57,49 +57,14 @@
 					</div>
 				</div>
 				<div class="col-md-6">
-					<div class="row align-items-center">
+					<div class="row">
 						<div class="col-12">
-							<p class="small"><span class="font-weight-bold">[[#{msg.common.productArticle}]]:</span> [[${product.article}]]</p>
-						</div>
-						<div class="col-3">
-							<div class="h5">
-								<span th:each="label : ${product.labels}"
-									class="product-label badge w-100"
-									th:classappend="|badge-${label.value.value}|">
-									[[${label.key}]]
-								</span>
-							</div>
-						</div>
-						<div class="col-4 text-center">
-							<div class="product-actual-price-block d-none">
-								<span class="d-block h1 font-weight-bold">
-									<span class="product-actual-price">[[${product.actualPrice}]]</span> [[#{|msg.currency.${appInfo.currency}|}]]
-								</span>
-								<span class="d-block h4">
-									<del><span class="product-price">[[${product.price}]]</span> [[#{|msg.currency.${appInfo.currency}|}]]</del>
-								</span>
-							</div>
-							<div class="product-price-block d-none col-12">
-								<span class="d-block h1 font-weight-bold">
-									<span class="product-price-label">
-										<span class="product-price">[[${product.price}]]</span> [[#{|msg.currency.${appInfo.currency}|}]]
-									</span>
-								</span>
-							</div>
-						</div>
-						<div class="col-5">
-							<div class="row">
-								<div class="col-12">
-									<button id="addToCartButton" type="button" onclick="addToCart('ADD_PRODUCT', getProductId())" class="btn btn-success btn-block">
-							 			<span class="fa fa-cart-plus fa-lg"></span>
-							 			<span th:text="#{msg.common.addToCart}">Add to cart</span>
-							 		</button>
-							 		<button id="singleClickBuyButton" type="button" onclick="showQuickOrderModal()" class="btn btn-link text-success btn-block">
-							 			<span class="fa fa-cart-arrow-down fa-lg"></span>
-							 			<span th:text="#{msg.common.singleClickOrder}">Single click order</span>
-							 		</button>
-						 		</div>
-					 		</div>
+							<th:block th:unless="${#request.getAttribute('currentDevice').mobile}">
+								<th:block th:replace="pages/products/details/product-details-panels :: action(product = ${product})"></th:block>
+							</th:block>
+							<th:block th:if="${#request.getAttribute('currentDevice').mobile}">
+								<th:block th:replace="pages/products/details/product-details-panels.mobile :: action(product = ${product})"></th:block>
+							</th:block>
 						</div>
 						<div class="col-12">
 							<hr/>
@@ -132,9 +97,7 @@
 						      	</div>
 					    	</th:block>
 					    	<hr/>
-						</div>
-					</div>
-					<div class="row">
+				    	</div>
 						<div class="col-12">
 							<th:block th:replace="pages/products/details/product-details-panels :: shipping"></th:block>
 						</div>
