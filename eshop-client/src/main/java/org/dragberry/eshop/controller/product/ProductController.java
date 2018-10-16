@@ -401,11 +401,11 @@ public class ProductController {
      * @return
      */
     @GetMapping({"${url.catalog}/{categoryReference}/{productReference}"})
-    public ModelAndView product(@PathVariable String categoryReference, @PathVariable String productReference) {
+    public ModelAndView product(@PathVariable String categoryReference, @PathVariable String productReference, Device device) {
         if (productReference != null) {
             ProductDetails product = productService.getProductArticleDetails(categoryReference, productReference);
             if (product != null) {
-            	ModelAndView mv = new ModelAndView("pages/products/details/product-details");
+            	ModelAndView mv = new ModelAndView(device.isMobile() ? "pages/products/details/product-details.mobile" : "pages/products/details/product-details");
                 mv.addObject(MODEL_PRODUCT, product);
                 ProductsDetails products = new ProductsDetails();
                 products.setOptionValues(product.getOptionValues());
@@ -439,7 +439,7 @@ public class ProductController {
     	} else {
     		Context context = new Context(locale);
     		context.setVariable("comment", resp.getValue());
-            return Results.create(templateEngine.process("pages/products/details/product-details-extra-panel",
+            return Results.create(templateEngine.process("pages/products/details/product-details-tabs",
     				new HashSet<>(Arrays.asList("product-comment")), context));
     	}
     }

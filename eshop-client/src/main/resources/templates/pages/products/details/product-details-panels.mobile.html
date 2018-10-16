@@ -4,10 +4,7 @@
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <body>
 	<th:block th:fragment="action">
-		<div class="row align-items-center">
-			<div class="col-12">
-				<p class="small"><span class="font-weight-bold">[[#{msg.common.productArticle}]]:</span> [[${product.article}]]</p>
-			</div>
+		<div class="row mt-2 align-items-center">
 			<div class="col-6 text-center">
 				<div class="product-actual-price-block d-none">
 					<span class="d-block h1 font-weight-bold">
@@ -26,18 +23,16 @@
 				</div>
 			</div>
 			<div class="col-6">
-				<div class="row">
-					<div class="col-12">
-						<button id="addToCartButton" type="button" onclick="addToCart('ADD_PRODUCT', getProductId())" class="btn btn-success btn-block">
-				 			<span class="fa fa-cart-plus fa-lg"></span>
-				 			<span th:text="#{msg.common.addToCartSimple}">Add to cart</span>
-				 		</button>
-				 		<button id="singleClickBuyButton" type="button" onclick="showQuickOrderModal()" class="btn btn-link text-success btn-block" style="nowrap:normal">
-				 			<span class="fa fa-cart-arrow-down fa-lg"></span>
-				 			<span th:text="#{msg.common.singleClickOrder}">Single click order</span>
-				 		</button>
-			 		</div>
-		 		</div>
+				<button id="addToCartButton" type="button" onclick="addToCart('ADD_PRODUCT', getProductId())" class="btn btn-success btn-block">
+		 			<span class="fa fa-cart-plus fa-lg"></span>
+		 			<span th:text="#{msg.common.addToCartSimple}">Add to cart</span>
+		 		</button>
+			</div>
+			<div class="col-12 text-right">
+				<button id="singleClickBuyButton" type="button" onclick="showQuickOrderModal()" class="btn btn-link text-success">
+		 			<span class="fa fa-cart-arrow-down fa-lg"></span>
+		 			<span th:text="#{msg.common.singleClickOrder}">Single click order</span>
+		 		</button>
 			</div>
 		</div>
 	</th:block>
@@ -83,25 +78,24 @@
 	<th:block th:fragment="shipping">
 		<div class="row">
 			<div class="col-12">
-				<span class="fa fa-truck fa-lg"></span>
 		 		<span class="font-weight-bold">Доставка:</span>
 		 	</div>
 		 	<div class="col-12">
-		 		<ul class="small">
-		 			<li class="row">
-		 				<span class="col-3">По Минску:</span>
-		 				<span class="col-4">курьером(сегодня)</span>
-		 				<span class="col-4 font-weight-bold">- БЕСПЛАТНО</span>
+		 		<ul class="">
+		 			<li class="row mt-1">
+		 				<span class="col-5">По Минску:</span>
+		 				<span class="col-7">курьером(сегодня)</span>
+		 				<span class="offset-5 col-7 font-weight-bold">БЕСПЛАТНО</span>
 		 			</li>
-		 			<li class="row">
-		 				<span class="col-3">По Беларуси:</span>
-		 				<span class="col-4">почтой (2-3 дня)</span>
-		 				<span class="col-4 font-weight-bold">- 5 Руб.</span>
+		 			<li class="row mt-1">
+		 				<span class="col-5">По Беларуси:</span>
+		 				<span class="col-7">почтой (2-3 дня)</span>
+		 				<span class="offset-5 col-7 font-weight-bold">5 [[#{|msg.currency.${shop.currency}|}]]</span>
 		 			</li>
-		 			<li class="row">
-		 				<span class="col-3"></span>
-		 				<span class="col-4">курьером (завтра)</span>
-		 				<span class="col-4 font-weight-bold">- 8 Руб.</span>
+		 			<li class="row mt-1">
+		 				<span class="col-5"></span>
+		 				<span class="col-7">курьером (завтра)</span>
+		 				<span class="offset-5 col-7 font-weight-bold">8 [[#{|msg.currency.${shop.currency}|}]]</span>
 		 			</li>
 		 			<li class="row">
 		 				<a href="/dostavka">Подробнее о доставке</a>
@@ -113,12 +107,52 @@
 	
 	<th:block th:fragment="payments">
 		<div class="row">
-			<div class="col-10">
-				<span class="fa fa-credit-card fa-lg"></span>
+			<div class="col-12">
 		 		<span class="font-weight-bold">Принимаем к оплате:</span>
 		 	</div>
-		 	<div class="col-2 text-right">
-		 		
+		 	<div class="col-12">
+		 		<div class="row pt-2">
+		 			<div class="col-4">
+		 				<img class="d-block w-100"
+				    		th:src="@{|${@environment.getProperty('url.images')}/belcard.gif|}">
+		 			</div>
+		 			<div class="col-4">
+		 				<img class="d-block w-100"
+				    		th:src="@{|${@environment.getProperty('url.images')}/visa.gif|}">
+		 			</div>
+		 			<div class="col-4">
+		 				<img class="d-block w-100"
+				    		th:src="@{|${@environment.getProperty('url.images')}/mastercard.webp|}">
+		 			</div>
+		 		</div>
+		 	</div>
+		 	<div class="col-12 mt-4">
+		 		<span class="font-weight-bold">Оплата в рассрочку:</span>
+		 	</div>
+		 	<div class="col-12">
+		 		<div class="row pt-2">
+		 			<div class="col-4">
+		 				<img class="d-block w-100"
+				    		th:src="@{|${@environment.getProperty('url.images')}/halva.png|}">
+		 				<span>3 месяца</span>
+		 			</div>
+		 			<div class="col-4">
+		 				<img class="d-block w-100"
+				    		th:src="@{|${@environment.getProperty('url.images')}/magnit.png|}">
+		 				<span>2 месяца</span>
+		 			</div>
+		 			<div class="col-4">
+		 				<img class="d-block w-100"
+				    		th:src="@{|${@environment.getProperty('url.images')}/belarusbank.png|}">
+		 				<span>12 месяцев</span>
+		 			</div>
+		 			<div class="col-12 alert alert-warning text-center">
+		 				При оплате в рассрочку скидки не распространяются!
+		 			</div>
+		 		</div>
+		 	</div>
+		 	<div class="col-12">
+		 		<a href="/oplata-i-rassrochka">Подробнее о способах оплаты</a>
 		 	</div>
 		</div>
 	</th:block>
