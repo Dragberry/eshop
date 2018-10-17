@@ -81,26 +81,36 @@
 		 		<span class="font-weight-bold">Доставка:</span>
 		 	</div>
 		 	<div class="col-12">
-		 		<ul class="">
-		 			<li class="row mt-1">
-		 				<span class="col-5">По Минску:</span>
-		 				<span class="col-7">курьером(сегодня)</span>
-		 				<span class="offset-5 col-7 font-weight-bold">БЕСПЛАТНО</span>
-		 			</li>
-		 			<li class="row mt-1">
-		 				<span class="col-5">По Беларуси:</span>
-		 				<span class="col-7">почтой (2-3 дня)</span>
-		 				<span class="offset-5 col-7 font-weight-bold">5 [[#{|msg.currency.${shop.currency}|}]]</span>
-		 			</li>
-		 			<li class="row mt-1">
-		 				<span class="col-5"></span>
-		 				<span class="col-7">курьером (завтра)</span>
-		 				<span class="offset-5 col-7 font-weight-bold">8 [[#{|msg.currency.${shop.currency}|}]]</span>
-		 			</li>
-		 			<li class="row">
-		 				<a href="/dostavka">Подробнее о доставке</a>
-		 			</li>
-		 		</ul>
+		 		<div class="row mt-1">
+		 			<div class="col-5">
+		 				<span>По Минску:</span>
+		 			</div>
+		 			<div class="col-7">
+		 				<span>курьером(сегодня)</span>
+		 			</div>
+		 			<div class="offset-5 col-7">
+		 				<span class="font-weight-bold">БЕСПЛАТНО</span>
+		 			</div>
+		 			<div class="col-5">
+		 				<span>По Беларуси:</span>
+		 			</div>
+		 			<div class="col-7">
+		 				<span>почтой (2-3 дня)</span>
+		 			</div>
+		 			<div class="offset-5 col-7">
+		 				<span class="font-weight-bold">5 [[#{|msg.currency.${shop.currency}|}]]</span>
+		 			</div>
+		 			<div class="col-5"></div>
+		 			<div class="col-7">
+		 				<span>курьером (завтра)</span>
+		 			</div>
+		 			<div class="offset-5 col-7">
+		 				<span class="font-weight-bold">8 [[#{|msg.currency.${shop.currency}|}]]</span>
+		 			</div>
+		 			<div class="col-12 small text-right">
+	 					<a href="/dostavka">Подробнее о доставке</a>
+	 				</div>
+	 			</div>
 		 	</div>
 		</div>
 	</th:block>
@@ -131,17 +141,17 @@
 		 	</div>
 		 	<div class="col-12">
 		 		<div class="row pt-2">
-		 			<div class="col-4">
+		 			<div class="col-4 text-center">
 		 				<img class="d-block w-100"
 				    		th:src="@{|${@environment.getProperty('url.images')}/halva.png|}">
 		 				<span>3 месяца</span>
 		 			</div>
-		 			<div class="col-4">
+		 			<div class="col-4 text-center">
 		 				<img class="d-block w-100"
 				    		th:src="@{|${@environment.getProperty('url.images')}/magnit.png|}">
 		 				<span>2 месяца</span>
 		 			</div>
-		 			<div class="col-4">
+		 			<div class="col-4 text-center">
 		 				<img class="d-block w-100"
 				    		th:src="@{|${@environment.getProperty('url.images')}/belarusbank.png|}">
 		 				<span>12 месяцев</span>
@@ -151,7 +161,7 @@
 		 			</div>
 		 		</div>
 		 	</div>
-		 	<div class="col-12">
+		 	<div class="col-12 small text-right">
 		 		<a href="/oplata-i-rassrochka">Подробнее о способах оплаты</a>
 		 	</div>
 		</div>

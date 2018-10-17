@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/template-with-breadcrumb}">
+<head>
+	<title th:text="${product.tagTitle != null ? product.tagTitle : product.title}">Product title</title>
+	<meta name="keywords" th:content="${product.tagKeywords}">
+	<meta name="description" th:content="${product.tagDescription}">
+	<meta name="product-id" th:content="${product.id}">
+</head>
+<body>
+	<th:block layout:fragment="main-content">
+		<div class="container">
+			<h1>[[${product.title}]]</h1>
+			<div class="row">
+				<th:block layout:fragment="product-details-content">
+					Product details content
+				</th:block>
+				<form id="addToCartForm" th:action="${@environment.getProperty('url.cart.state')}" method="POST">
+					<div id="addToCartModal"></div>
+				</form>
+				<th:block th:replace="pages/products/details/quick-order-modal :: quick-order-modal(product = ${product})"></th:block>
+				<th:block th:replace="pages/products/details/quick-order-success-modal :: quick-order-success-modal(product = ${product})"></th:block>
+			</div>
+		</div>
+	</th:block>	
+		
+	<th:block layout:fragment="page_scripts">
+		<script th:inline="javascript">
+			/*<![CDATA[*/
+			var products = /*[[${products}]]*/ null;
+			var addCommentSuccessMessage = [[#{msg.common.thanksForComment}]];
+			var addCommentValidationMessages = {
+				name: {
+					required: [[#{msg.error.comment.name.required}]],
+					maxlength: [[#{msg.error.comment.name.tooLong}]],
+				},
+				email: {
+					required: [[#{msg.error.common.email.required}]],
+					email: [[#{msg.error.common.email.invalid}]],
+					maxlength: [[#{msg.error.common.email.tooLong}]]
+				},
+				comment: {
+					required: [[#{msg.error.comment.comment.required}]],
+					maxlength: [[#{msg.error.comment.comment.tooLong}]]
+				},
+				productRating: {
+					required: [[#{msg.error.comment.rating.required}]],
+					min: [[#{msg.error.comment.rating.invalid}]],
+					max: [[#{msg.error.comment.rating.invalid}]],
+				}
+			}
+			
+			var quickOrderValidationMessages = {
+				phone: {
+					required: [[#{msg.error.contactPhoneRequired}]],
+					maxlength: [[#{msg.error.contactPhoneIsTooLong}]]
+				},
+				fullName: {
+					maxlength: [[#{msg.error.fullNameIsTooLong}]]
+				},
+				address: {
+					maxlength: [[#{msg.error.addressIsTooLong}]]
+				}
+			}
+			/*]]>*/
+		</script>
+		<script th:src="@{/js/products/product-common.js}"></script>
+		<script th:src="@{/js/products/product-details.js}"></script>
+	</th:block>
+</body>
+</html>
