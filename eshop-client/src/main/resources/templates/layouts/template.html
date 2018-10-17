@@ -16,7 +16,7 @@
     <main role="main" class="container">
     	<div class="app-info-primary jumbotron">
         	<div class="container">
-				<div class="row">
+				<div class="row align-items-center">
 					<div class="col-lg-4 col-md-6 text-center">
 	        			<a th:href="${@environment.getProperty('url.home')}">
 		        			<img class="img-fluid img-responsive" th:src="@{/images/logo.jpg}" 
@@ -31,8 +31,19 @@
 	        			</div>
 	        			<div th:text="${appInfo.workingDays.description}"></div>
 	        		</div>
-	        		<div class="col-lg-4 hidden-md">
-	        			
+	        		<div class="col-lg-4 text-center">
+	        			<form id="searchForm" th:action="${@environment.getProperty('url.catalog.search')}" method="GET">
+							<div class="input-group">
+							  	<input name="query" type="text" class="form-control" autocomplete="off"
+							  		th:placeholder="#{msg.common.search}"
+							  		onkeyup="doSearch()">
+							  	<span class="input-group-btn">
+								  	<button type="button" class="btn btn-secondary search" th:title="#{msg.common.search}">
+							 			<span class="fa fa-search fa-lg"></span>
+							 		</button>
+		      					</span>
+							</div>
+						</form>
 	        		</div>
 				</div>
 			</div>
@@ -78,12 +89,15 @@
 		  	</div>
 		</div>
 	</main>
-	<footer th:replace="layouts/footer :: footer">&copy; 2014 The Static Templates</footer>
+	<footer th:replace="layouts/footer :: footer">&copy; 2018 Dragberry</footer>
 	<script th:src="@{/js/jquery.min.js}"></script>
 	<script th:src="@{/js/jquery.validate.min.js}"></script>
 	<script th:src="@{/js/jquery.mask.min.js}"></script>
 	<script th:src="@{/js/poppers.min.js}"></script>
 	<script th:src="@{/js/bootstrap.min.js}"></script>
+	<script>
+		var quickSearchUrl = '[[${@environment.getProperty('url.catalog.quick-search')}]]';
+	</script>
 	<script th:src="@{/js/main.js}"></script>
 	<th:block layout:fragment="page_scripts"></th:block>
 </body>

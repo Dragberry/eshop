@@ -10,6 +10,9 @@ $(document).ready(function() {
 	$(window).resize(onPageResize);
 	calculateRatings();
 	updateCommentsCount();
+	$(window).scroll(function(obj) {
+	 	console.log(obj);
+	});
 });
 
 $(document).ajaxError(showServerErrorModal);
@@ -91,3 +94,35 @@ function showServerErrorModal() {
 	$('#serverErrorModal').modal('show');
 }
 
+/**
+ * Refresh cart count when the product is added to cart
+ */
+function refreshCartCount(cartState) {
+	$(".cart-product-count").text(cartState.quantity == 0 ? '' : cartState.quantity);
+}
+
+/**
+ * Performs a quick search with  delay
+ */
+var delaySearchTimer;
+function doSearch() {
+	clearTimeout(delaySearchTimer);
+	delaySearchTimer = setTimeout(function() {
+		var form = $('#searchForm');
+	    $.ajax({
+	    	type: 'GET',
+	        url: quickSearchUrl,
+	        data: form.serialize(),
+	        success: function(data)  {
+        		if ($('#searchResults').hasClass('show')) {
+        			$('#searchResultsTrigger ').dropdown('toggle');				        			
+        		}
+    			$('#searchResults').html(data.value);
+        		if (!$('#searchResults').hasClass('show')) {
+        			$('#searchResultsTrigger ').dropdown('toggle');				        			
+        		}
+        		console.log(data);
+	        }
+	   	});
+	}, 250);
+}
