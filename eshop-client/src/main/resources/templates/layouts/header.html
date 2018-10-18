@@ -6,78 +6,131 @@
 <head>
 </head>
 <body>
-	<header class="container fixed-top">
-		<nav class="navbar navbar-expand-lg navbar-dark bg-dark container">
-			<button class="navbar-toggler" type="button" data-toggle="collapse"
-				data-target="#navbarCollapse" aria-controls="navbarCollapse"
-				aria-expanded="false" aria-label="Toggle navigation">
-				<span class="navbar-toggler-icon"></span>
-			</button>
-			<a class="navbar-brand" th:href="${@environment.getProperty('url.home')}" th:title="#{msg.menu.home}">
-				<span class="fa fa-home fa-lg"></span>
-			</a>
-			<a class="menu-cart-link navbar-brand d-lg-none" th:href="${@environment.getProperty('url.cart')}" th:title="#{msg.common.cart}">
-	 			<span class="fa fa-shopping-cart fa-lg"></span>
-	 			<span class="cart-product-count badge badge-success" th:text="${session != null && session.cartProductCount > 0} ? ${session.cartProductCount} : ''">0</span>
-	 		</a>
-			<a th:if="${features.comparasionEnabled}"
-				class="navbar-brand d-lg-none" th:href="${@environment.getProperty('url.compare')}" th:title="#{msg.common.comparasion}">
-	 			<span class="fa fa-columns fa-lg"></span>
-	 			<span class="badge badge-success">0</span>
-	 		</a>
-			<div class="collapse navbar-collapse" id="navbarCollapse">
-				<ul class="navbar-nav mr-auto text-center">
-					<li class="nav-item">
-						<a class="nav-link"
-							id="categoriesMenu"
-							href="#"
-							role="button"
-							data-toggle="dropdown"
-							aria-haspopup="true"
-							aria-expanded="false"
-							th:text=#{msg.menu.catalog}>
-							Catalog
-						</a>
-						<div class="dropdown-menu w-100 bg-dark" aria-labelledby="categoriesMenu">
-							<div class="container small">
-								<div class="row">
-									<div class="col-12">
-										<a class="nav-link" th:href="${@environment.getProperty('url.catalog')}">Все категории</a>
-									</div>
-									<div class="col-12">
-										<hr/>
-									</div>
-									<div class="col-sm-6 col-md-3" th:each="category : ${categoryList}">
-										<a class="nav-link"
-											th:classappend="${category.reference == selectedCategory} ? 'active' : ''"
-											th:href="@{|${@environment.getProperty('url.catalog')}/${category.reference}|}"
-											th:text="${category.name}">
-											Category
-										</a>
-									</div>
-								</div>
-							</div>
-				        </div>
-					</li>
-					<li th:each="menuItem : ${menu}" class="nav-item">
-						<a class="nav-link" th:href="${menuItem.reference}" th:text="${menuItem.title}">Menu title</a>
-					</li>
-				</ul>
-				<a class="menu-cart-link btn btn-secondary d-none d-lg-block" th:href="${@environment.getProperty('url.cart')}" th:title="#{msg.common.cart}">
+	<th:block th:fragment="header">
+		<header class="container fixed-top">
+			<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+				<button class="navbar-toggler" type="button" data-toggle="collapse"
+					data-target="#navbarCollapse" aria-controls="navbarCollapse"
+					aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<a class="navbar-brand" th:href="${@environment.getProperty('url.home')}" th:title="#{msg.menu.home}">
+					<span class="fa fa-home fa-lg"></span>
+				</a>
+				<a class="menu-cart-link navbar-brand d-lg-none" th:href="${@environment.getProperty('url.cart')}" th:title="#{msg.common.cart}">
 		 			<span class="fa fa-shopping-cart fa-lg"></span>
 		 			<span class="cart-product-count badge badge-success" th:text="${session != null && session.cartProductCount > 0} ? ${session.cartProductCount} : ''">0</span>
 		 		</a>
 				<a th:if="${features.comparasionEnabled}"
-					class="btn btn-secondary d-none d-lg-block" th:href="${@environment.getProperty('url.compare')}" th:title="#{msg.common.comparasion}">
+					class="navbar-brand d-lg-none" th:href="${@environment.getProperty('url.compare')}" th:title="#{msg.common.comparasion}">
 		 			<span class="fa fa-columns fa-lg"></span>
-		 			<span class="badge badge-success">4</span>
+		 			<span class="badge badge-success">0</span>
 		 		</a>
-		 		<a th:if="${features.userAccountEnabled}"
-		 			class="btn btn-secondary d-none d-lg-block" th:href="${@environment.getProperty('url.account')}" th:title="#{msg.menu.account}">
-		 			<span class="fa fa-user fa-lg"></span>
-		 		</a>
+				<div class="collapse navbar-collapse" id="navbarCollapse">
+					<ul class="navbar-nav mr-auto text-center">
+						<li class="nav-item">
+							<a class="nav-link"
+								id="categoriesMenu"
+								href="#"
+								role="button"
+								data-toggle="dropdown"
+								aria-haspopup="true"
+								aria-expanded="false"
+								th:text=#{msg.menu.catalog}>
+								Catalog
+							</a>
+							<div class="dropdown-menu w-100 bg-dark" aria-labelledby="categoriesMenu">
+								<div class="container small">
+									<div class="row">
+										<div class="col-12">
+											<a class="nav-link" th:href="${@environment.getProperty('url.catalog')}">Все категории</a>
+										</div>
+										<div class="col-12">
+											<hr/>
+										</div>
+										<div class="col-sm-6 col-md-3" th:each="category : ${categoryList}">
+											<a class="nav-link"
+												th:classappend="${category.reference == selectedCategory} ? 'active' : ''"
+												th:href="@{|${@environment.getProperty('url.catalog')}/${category.reference}|}"
+												th:text="${category.name}">
+												Category
+											</a>
+										</div>
+									</div>
+								</div>
+					        </div>
+						</li>
+						<li th:each="menuItem : ${menu}" class="nav-item">
+							<a class="nav-link" th:href="${menuItem.reference}" th:text="${menuItem.title}">Menu title</a>
+						</li>
+					</ul>
+					<a class="menu-cart-link btn btn-secondary d-none d-lg-block" th:href="${@environment.getProperty('url.cart')}" th:title="#{msg.common.cart}">
+			 			<span class="fa fa-shopping-cart fa-lg"></span>
+			 			<span class="cart-product-count badge badge-success" th:text="${session != null && session.cartProductCount > 0} ? ${session.cartProductCount} : ''">0</span>
+			 		</a>
+					<a th:if="${features.comparasionEnabled}"
+						class="btn btn-secondary d-none d-lg-block" th:href="${@environment.getProperty('url.compare')}" th:title="#{msg.common.comparasion}">
+			 			<span class="fa fa-columns fa-lg"></span>
+			 			<span class="badge badge-success">4</span>
+			 		</a>
+			 		<a th:if="${features.userAccountEnabled}"
+			 			class="btn btn-secondary d-none d-lg-block" th:href="${@environment.getProperty('url.account')}" th:title="#{msg.menu.account}">
+			 			<span class="fa fa-user fa-lg"></span>
+			 		</a>
+				</div>
+			</nav>
+		</header>
+		<div class="container">
+	    	<div class="app-info-primary jumbotron">
+	        	<div class="container">
+					<div class="row align-items-center">
+						<div class="col-lg-4 col-md-6 text-center">
+		        			<a th:href="${@environment.getProperty('url.home')}">
+			        			<img class="img-fluid img-responsive" th:src="@{/images/logo.jpg}" 
+					        		th:alt="${@environment.getProperty('application.title')}"
+					        		th:title="${@environment.getProperty('application.title')}">
+				        	</a>
+		        		</div>
+		        		<div class="col-lg-4 col-md-6 text-center">
+		        			<div th:each="phone : ${appInfo.phones}">
+		        				<img class="img-responsive" th:src="@{|/images/${phone.type}.png|}" width="15" height="15">
+		        				<strong th:text="${phone.number}"></strong>
+		        			</div>
+		        			<div th:text="${appInfo.workingDays.description}"></div>
+		        		</div>
+		        		<div class="col-lg-4 text-center">
+		        			<form id="searchForm" th:action="${@environment.getProperty('url.catalog.search')}" method="GET">
+								<div class="input-group">
+								  	<input id="quickSearchInput"
+								  		name="query" type="text" class="form-control" autocomplete="off"
+								  		aria-describedby="quickSearchButton"
+								  		th:placeholder="#{msg.common.search}"
+								  		onkeyup="doSearch(event)">
+								  	<div class="input-group-append dropdown">
+								    	<button id="quickSearchButton"
+								    		class="btn btn-secondary"
+								    		type="submit"
+								    		th:title="#{msg.common.search}">
+											<span class="fa fa-search fa-lg"></span>
+										</button>
+										<div id="searchResultsTrigger"
+											class="dropdown-toggle invisible"
+								    		data-toggle="dropdown"
+								    		aria-haspopup="true"
+								    		aria-expanded="false">
+					  					</div>
+										<div id="searchResults"
+					  						class="dropdown-menu dropdown-menu-right"
+					  						aria-labelledby="searchResultsTrigger">
+					  					</div>
+								  	</div>
+								</div>
+							</form>
+		        		</div>
+					</div>
+				</div>
 			</div>
-		</nav>
-	</header>
+		</div>
+	</th:block>
 </body>
 </html>

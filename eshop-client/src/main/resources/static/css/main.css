@@ -83,6 +83,14 @@
     left: 90%;
 }
 
+.navbar-collapse-mobile {
+	overflow: auto;
+	height: 100%;
+    height: -moz-available;
+    height: -webkit-fill-available;
+    height: fill-available;
+}
+
 .navbar .btn {
 	margin-right: 0.5rem;
 }
