@@ -359,7 +359,7 @@ public class ProductController {
 		mv.addObject(MODEL_PRODUCT_LIST, productService.getProductList(query));
 		mv.addObject(MODEL_SEARCH_PARAMS, searchParams);
 		mv.addObject(MODEL_SEARCH_PARAMS_COUNT, searchParams.entrySet().stream()
-				.filter(params -> !SORT_PARAM.equals(params.getKey()))
+				.filter(params -> !SORT_PARAM.equals(params.getKey()) && !DISPLAY_PARAM.equals(params.getKey()))
 				.flatMap(params -> Arrays.stream(params.getValue()))
 				.filter(StringUtils::isNotBlank).count());
 		setDisplayOption(mv);

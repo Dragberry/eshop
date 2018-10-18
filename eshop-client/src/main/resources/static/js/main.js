@@ -42,9 +42,15 @@ function showValidationErrors(issues) {
 
 /* Update body margin on screen resize */
 function onPageResize() {
-	var bodyMargin = $('body').css('margin-bottom');
+	var headerHeight = $('header').height();
+	var bodyMarginTop = $('body').css('margin-top');
+	if (bodyMarginTop != headerHeight) {
+		$("body").css('margin-top', headerHeight);
+	}
+	
+	var bodyMarginBottom = $('body').css('margin-bottom');
 	var footerHeight = $('footer').height();
-	if (bodyMargin + 50 != footerHeight) {
+	if (bodyMarginBottom + 50 != footerHeight) {
 		$("body").css('margin-bottom', footerHeight + 50);
 	}
 }
@@ -105,7 +111,7 @@ function refreshCartCount(cartState) {
  * Performs a quick search with  delay
  */
 var delaySearchTimer;
-function doSearch() {
+function doSearch(event) {
 	clearTimeout(delaySearchTimer);
 	delaySearchTimer = setTimeout(function() {
 		var form = $('#searchForm');
@@ -115,13 +121,12 @@ function doSearch() {
 	        data: form.serialize(),
 	        success: function(data)  {
         		if ($('#searchResults').hasClass('show')) {
-        			$('#searchResultsTrigger ').dropdown('toggle');				        			
+        			$('#searchResultsTrigger').dropdown('toggle');				        			
         		}
     			$('#searchResults').html(data.value);
         		if (!$('#searchResults').hasClass('show')) {
-        			$('#searchResultsTrigger ').dropdown('toggle');				        			
+        			$('#searchResultsTrigger').dropdown('toggle');				        			
         		}
-        		console.log(data);
 	        }
 	   	});
 	}, 250);

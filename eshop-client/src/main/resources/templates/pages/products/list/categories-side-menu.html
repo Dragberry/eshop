@@ -12,7 +12,7 @@
 			type="button"
 			data-toggle="collapse"
 			data-target="#categoriesNav"
-			aria-expanded="${#request.getAttribute('currentDevice').mobile}"
+			th:aria-expanded="${#request.getAttribute('currentDevice').mobile}"
 			aria-controls="categoriesNav">
 			<span th:text="#{msg.common.categories}">Categories</span>
 		</button>

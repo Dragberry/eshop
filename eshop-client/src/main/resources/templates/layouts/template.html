@@ -34,14 +34,29 @@
 	        		<div class="col-lg-4 text-center">
 	        			<form id="searchForm" th:action="${@environment.getProperty('url.catalog.search')}" method="GET">
 							<div class="input-group">
-							  	<input name="query" type="text" class="form-control" autocomplete="off"
+							  	<input id="quickSearchInput"
+							  		name="query" type="text" class="form-control" autocomplete="off"
+							  		aria-describedby="quickSearchButton"
 							  		th:placeholder="#{msg.common.search}"
-							  		onkeyup="doSearch()">
-							  	<span class="input-group-btn">
-								  	<button type="button" class="btn btn-secondary search" th:title="#{msg.common.search}">
-							 			<span class="fa fa-search fa-lg"></span>
-							 		</button>
-		      					</span>
+							  		onkeyup="doSearch(event)">
+							  	<div class="input-group-append dropdown">
+							    	<button id="quickSearchButton"
+							    		class="btn btn-secondary"
+							    		type="submit"
+							    		th:title="#{msg.common.search}">
+										<span class="fa fa-search fa-lg"></span>
+									</button>
+									<div id="searchResultsTrigger"
+										class="dropdown-toggle invisible"
+							    		data-toggle="dropdown"
+							    		aria-haspopup="true"
+							    		aria-expanded="false">
+				  					</div>
+									<div id="searchResults"
+				  						class="dropdown-menu dropdown-menu-right"
+				  						aria-labelledby="searchResultsTrigger">
+				  					</div>
+							  	</div>
 							</div>
 						</form>
 	        		</div>

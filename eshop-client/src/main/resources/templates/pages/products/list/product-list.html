@@ -21,7 +21,7 @@
 								type="button"
 								data-toggle="collapse"
 								data-target="#filters"
-								aria-expanded="${#request.getAttribute('currentDevice').mobile}"
+								th:aria-expanded="${#request.getAttribute('currentDevice').mobile}"
 								aria-controls="filters">
 								<span th:text="#{msg.common.filters}">Filters</span>
 								<span class="all-filters-count badge badge-dark"

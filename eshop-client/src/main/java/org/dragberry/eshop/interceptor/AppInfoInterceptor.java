@@ -1,7 +1,7 @@
 package org.dragberry.eshop.interceptor;
 
+import java.util.Collection;
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -11,7 +11,9 @@ import org.dragberry.eshop.dal.repo.MenuPageRepository;
 import org.dragberry.eshop.model.common.AppInfo;
 import org.dragberry.eshop.model.common.Features;
 import org.dragberry.eshop.model.common.Shop;
+import org.dragberry.eshop.model.product.ProductCategory;
 import org.dragberry.eshop.service.AppInfoService;
+import org.dragberry.eshop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
@@ -32,16 +34,23 @@ public class AppInfoInterceptor extends HandlerInterceptorAdapter {
 	private static final String MENU = "menu";
 	
 	private static final String SHOP = "shop";
+	
+	private static final String CATEGORY_LIST = "categoryList";
 
 	@Autowired
 	private AppInfoService appInfoService;
 	
 	@Autowired
 	private MenuPageRepository menuPageRepo;
+	
+	@Autowired
+	private ProductService productService;
 
     private AppInfo appInfo;
     
     private Features features;
+    
+    private Collection<ProductCategory> categories;
     
     private Shop shop;
     
@@ -71,11 +80,16 @@ public class AppInfoInterceptor extends HandlerInterceptorAdapter {
     	if (menu == null) {
     	    menu = menuPageRepo.getMenu(Status.ACTIVE);
     	}
+    	if (categories == null) {
+    	    categories = productService.getCategoryList();
+    	}
         if (modelAndView != null) {
             modelAndView.addObject(APP_INFO, appInfo);
             modelAndView.addObject(FEATURES, features);
             modelAndView.addObject(MENU, menu);
             modelAndView.addObject(SHOP, shop);
+            modelAndView.addObject(CATEGORY_LIST, categories);
         }
     }
+    
 }

@@ -16,6 +16,10 @@
 }
 
 /*************** Main page *************/
+.dropdown-toggle::after {
+    display:none;
+}
+
 .app-info-primary.jumbotron {
 	padding: 2rem;
 	margin-bottom: 0.5rem;
@@ -81,10 +85,6 @@
 
 .navbar .btn {
 	margin-right: 0.5rem;
-}
-
-.navbar .btn.search {
-	border-radius: 0 .25rem .25rem 0;
 }
 
 #categories-side-menu {
