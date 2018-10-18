@@ -10,9 +10,6 @@ $(document).ready(function() {
 	$(window).resize(onPageResize);
 	calculateRatings();
 	updateCommentsCount();
-	$(window).scroll(function(obj) {
-	 	console.log(obj);
-	});
 });
 
 $(document).ajaxError(showServerErrorModal);
@@ -130,4 +127,14 @@ function doSearch(event) {
 	        }
 	   	});
 	}, 250);
+}
+
+function onQuickSearchFocus() {
+	$('#headerCartColumn, #headerMenuColumn').addClass('d-none');
+	$('#headerSearchColumn').addClass('col-12').removeClass('col-6');
+}
+
+function onQuickSearchBlur() {
+	$('#headerCartColumn, #headerMenuColumn').removeClass('d-none');
+	$('#headerSearchColumn').removeClass('col-12').addClass('col-6');
 }

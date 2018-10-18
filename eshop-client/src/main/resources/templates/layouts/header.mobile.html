@@ -9,20 +9,22 @@
 	<th:block th:fragment="header">
 		<header class="fixed-top container">
 			<nav class="row navbar navbar-dark bg-dark">
-				<div class="col-3">
+				<div id="headerCartColumn" class="col-3">
 					<a class="navbar-brand" th:href="${@environment.getProperty('url.cart')}" th:title="#{msg.common.cart}">
 			 			<span class="fa fa-shopping-cart fa-lg"></span>
 						<span class="cart-product-count badge badge-success" th:text="${session != null && session.cartProductCount > 0} ? ${session.cartProductCount} : ''">0</span>
 					</a>
 				</div>
-				<div class="col-6">
+				<div id="headerSearchColumn" class="col-6">
 					<form id="searchForm" th:action="${@environment.getProperty('url.catalog.search')}" method="GET">
 						<div class="input-group">
 						  	<input id="quickSearchInput"
 						  		name="query" type="text" class="form-control" autocomplete="off"
 						  		aria-describedby="quickSearchButton"
 						  		th:placeholder="#{msg.common.search}"
-						  		onkeyup="doSearch(event)">
+						  		onkeyup="doSearch(event)"
+						  		onfocus="onQuickSearchFocus()"
+						  		onblur="onQuickSearchBlur()">
 						  	<div class="input-group-append dropdown">
 						    	<button id="quickSearchButton"
 						    		class="btn btn-secondary mb-0"
@@ -34,7 +36,7 @@
 						</div>
 					</form>
 				</div>
-				<div class="col-3">
+				<div id="headerMenuColumn" class="col-3">
 					<button class="navbar-toggler"
 						type="button"
 						data-toggle="collapse"
