@@ -5,15 +5,93 @@
 <body>
 	<th:block th:fragment="search-results">
 		<th:block th:if="${#lists.isEmpty(searchResults)}">
-			<div th:text="#{msg.common.noResults}" class="dropdown-item small"></div>
+			<div class="container">
+				<div class="row">
+					<div class="col-11 text-center font-weight-bold">
+						[[#{msg.common.noResults}]]
+					</div>
+					<div class="col-1 text-right">
+						<button type="button" class="btn btn-danger btn-sm" onclick="closeQuickSearchResults()">
+							<span class="fa fa-times"></span>
+						</button>
+					</div>
+				</div>
+			</div>
 		</th:block>
 		<th:block th:unless="${#lists.isEmpty(searchResults)}">
-			<div th:each="product : ${searchResults}" class="dropdown-item small">
-				<a th:href="|${catalogReference}/${product.category.reference}/${product.reference}|" th:text="${product.title}"></a>
-			</div>
-			<div class="dropdown-divider"></div>
-			<div class="dropdown-item small">
-				<a th:href="|${catalogReference}/search?query=${query}|" th:text="#{msg.common.showAllResults}"></a>
+			<div class="container">
+				<div class="row">
+					<div class="col-11 text-center font-weight-bold">
+						<a th:href="|${catalogReference}/search?query=${query}|">
+							[[#{msg.common.showAllResults}]]
+						</a>
+					</div>
+					<div class="col-1 text-right">
+			 			<button type="button" class="btn btn-danger btn-sm" onclick="closeQuickSearchResults()">
+							<span class="fa fa-times"></span>
+						</button>
+					</div>
+				</div>
+				<div class="dropdown-divider"></div>
+				<div th:each="product : ${searchResults}" class="dropdown-item" style="white-space:normal">
+					<div class="container" th:fragment="product-item">
+						<div class="row">
+							<div class="col-12">
+								<h3 class="font-weight-bold">
+									<a th:href="|${catalogReference}/${product.category.reference}/${product.reference}|">
+										<span th:text="${product.title}">Product title</span>
+									</a>
+									<span th:each="label : ${product.labels}"  th:text="${label.key}"
+										class="product-label badge" th:classappend="|badge-${label.value.value}|">Label</span>
+								</h3>
+							</div>
+							<div class="col-3">
+								<a th:href="|${catalogReference}/${product.category.reference}/${product.reference}|">
+									<img class="d-block mx-auto w-75"
+										th:title="${product.title}"
+										th:alt="${product.title}"
+										th:src="${product.mainImage} ? |${imagesReference}/${product.id}/${product.article}/${product.mainImage}| : ${noImageReference}">
+								</a>
+							</div>
+							<div class="col-7">
+								<div class="row">
+						 			<div class="col-6 text-left">
+						 				<div>
+											<span class="font-weight-bold small mr-4">Код продукта: [[${product.article}]]</span>
+										</div>
+						 			</div>
+						 			<div class="col-6 text-right">
+						 				
+						 			</div>
+						 			<div class="col-12 small text-justify">
+						 				<div th:utext="${product.description}">Description</div>
+						 			</div>
+					 			</div>
+							</div>
+							<div class="col-2 text-center">
+								<th:block th:if="${product.actualPrice}">
+									<div>
+										<strong th:text="|${product.actualPrice} #{|msg.currency.${shop.currency}|}|">Product price</strong>
+									</div>
+									<div>
+										<del class="small" th:text="|${product.price} #{|msg.currency.${shop.currency}|}|">Old product price</del>
+									</div>
+								</th:block>
+								<th:block th:unless="${product.actualPrice}">
+									<div>
+										<strong th:text="|${product.price} #{|msg.currency.${shop.currency}|}|">Product price</strong>
+									</div>
+								</th:block>
+								<span th:replace="components/rating :: rating(name = |product_rating_ ${product.id}|, value = ${product.rating})">Rating</span>
+								<span class="d-block small product-comments-count" th:data-value="${product.commentsCount}">Comments count</span>
+								<button id="addToCartButton" type="button" th:onclick="|addToCart('ADD_PRODUCT_ARTICLE', ${product.id})|" class="btn btn-success btn-sm mt-2">
+						 			<span>В корзину</span>
+						 		</button>
+							</div>
+						</div>
+					</div>
+					<div class="dropdown-divider"></div>
+				</div>
 			</div>
 		</th:block>
 	</th:block>

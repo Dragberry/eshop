@@ -106,23 +106,13 @@
 								  		aria-describedby="quickSearchButton"
 								  		th:placeholder="#{msg.common.search}"
 								  		onkeyup="doSearch(event)">
-								  	<div class="input-group-append dropdown">
+								  	<div class="input-group-append">
 								    	<button id="quickSearchButton"
 								    		class="btn btn-secondary"
 								    		type="submit"
 								    		th:title="#{msg.common.search}">
 											<span class="fa fa-search fa-lg"></span>
 										</button>
-										<div id="searchResultsTrigger"
-											class="dropdown-toggle invisible"
-								    		data-toggle="dropdown"
-								    		aria-haspopup="true"
-								    		aria-expanded="false">
-					  					</div>
-										<div id="searchResults"
-					  						class="dropdown-menu dropdown-menu-right"
-					  						aria-labelledby="searchResultsTrigger">
-					  					</div>
 								  	</div>
 								</div>
 							</form>
@@ -131,6 +121,40 @@
 				</div>
 			</div>
 		</div>
+		<div class="container">
+			<div class="row">
+				<div class="col-12 dropdown">
+					<div id="searchResultsTrigger"
+						class="dropdown-toggle invisible"
+				   		aria-haspopup="true"
+				   		aria-expanded="false"
+				   		data-display="static">
+					</div>
+			    	<div id="searchResults" 
+			    		class="dropdown-menu w-100"
+			    		aria-labelledby="searchResultsTrigger">
+						<div class="container">
+							<div class="row">
+								<div class="col-12">
+									<a class="nav-link" th:href="${@environment.getProperty('url.catalog')}">Все категории</a>
+								</div>
+								<div class="col-12">
+									<hr/>
+								</div>
+								<div class="col-sm-6 col-md-3" th:each="category : ${categoryList}">
+									<a class="nav-link"
+										th:classappend="${category.reference == selectedCategory} ? 'active' : ''"
+										th:href="@{|${@environment.getProperty('url.catalog')}/${category.reference}|}"
+										th:text="${category.name}">
+										Category
+									</a>
+								</div>
+							</div>
+						</div>
+			        </div>
+		        </div>
+	        </div>
+        </div>
 	</th:block>
 </body>
 </html>

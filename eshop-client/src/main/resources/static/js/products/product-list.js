@@ -1,26 +1,3 @@
-/*
- * Call this method to add selected product option on the select-product-modal
- * It's shows the add-to-cart-success-modal, when the select-product-modal is already hidden
- */
-function addProductToCart() {
-	$('#addToCartModal').on('hidden.bs.modal', function (e) {
-		addToCart('ADD_PRODUCT', getProductId());
-	});
-	$('#addToCartModal').modal('hide');
-}
-
-
-function getProductId() {
-	return $('input[name="productId"]:checked').val();
-}
-
-function onProductOptionChange() {
-	$('.select-product-option:has(input[name="productId"]:checked)').addClass('list-group-item-success')
-		.siblings().removeClass('list-group-item-success')
-	$('input[name="productId"]').siblings().addClass('invisible');
-	$('input[name="productId"]:checked').siblings().removeClass('invisible');
-}
-
 function onDisplayChanged() {
 	$('input[name="display"]').parent().removeClass('btn-secondary');
 	$('input[name="display"]:checked').parent().addClass('btn-secondary');

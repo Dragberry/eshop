@@ -111,13 +111,9 @@
 					<div th:replace="__${displayOption.template}__">Product item</div>
 				</th:block>
 			</div>
-			<form id="addToCartForm" th:action="${@environment.getProperty('url.cart.state')}" method="POST">
-				<div id="addToCartModal"></div>
-			</form>
 		</div>
 	</th:block>
 	<th:block layout:fragment="page_scripts">
-		<script th:src="@{/js/products/product-common.js}"></script>
 		<script th:src="@{/js/products/product-list.js}"></script>
 	</th:block>
 </body>

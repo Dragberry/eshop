@@ -22,6 +22,11 @@
 		<div layout:fragment="content">
 			<h1>Static content for prototyping purposes only</h1>
 		</div>
+		
+		<form id="addToCartForm" th:action="${@environment.getProperty('url.cart.state')}" method="POST">
+			<div id="addToCartModal"></div>
+		</form>
+		
 		<div class="modal fade" id="serverErrorModal" tabindex="-1" role="dialog" aria-labelledby="serverErrorModalTitle" aria-hidden="true">
 			<div class="modal-dialog modal-dialog-centered" role="document">
 		    	<div class="modal-content">
@@ -65,6 +70,7 @@
 		var quickSearchUrl = '[[${@environment.getProperty('url.catalog.quick-search')}]]';
 	</script>
 	<script th:src="@{/js/main.js}"></script>
+	<script th:src="@{/js/products/product-common.js}"></script>
 	<th:block layout:fragment="page_scripts"></th:block>
 </body>
 </html>

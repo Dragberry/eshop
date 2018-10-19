@@ -4,15 +4,25 @@ $(document).on('pageinit', function() {
 	calculateRatings();
 	updateCommentsCount();
 });
-/* On documnet ready */
+/* On document ready */
 $(document).ready(function() {
 	onPageResize();
 	$(window).resize(onPageResize);
 	calculateRatings();
 	updateCommentsCount();
+	preventClosingQuickSearchPanel();
 });
 
 $(document).ajaxError(showServerErrorModal);
+
+/**
+ * Prevent to close quick search panel if it's clicked inside
+ */
+function preventClosingQuickSearchPanel() {
+//	$(document).on('click', '#searchResults', function (e) {
+//		e.stopPropagation();
+//	});
+}
 
 /*
  * This method should be used as success ajax function when server can return validation errors
@@ -117,23 +127,31 @@ function doSearch(event) {
 	        url: quickSearchUrl,
 	        data: form.serialize(),
 	        success: function(data)  {
-        		if ($('#searchResults').hasClass('show')) {
-        			$('#searchResultsTrigger').dropdown('toggle');				        			
-        		}
+	        	$('#searchResults').removeClass('show');
     			$('#searchResults').html(data.value);
-        		if (!$('#searchResults').hasClass('show')) {
-        			$('#searchResultsTrigger').dropdown('toggle');				        			
-        		}
+    			calculateRatings();
+    			updateCommentsCount();
+    			$('#searchResults').addClass('show');
 	        }
 	   	});
 	}, 250);
 }
 
+function closeQuickSearchResults() {
+	$('#searchResults').removeClass('show');
+}
+
+/**
+ * Change mobile quick search input on focus
+ */
 function onQuickSearchFocus() {
 	$('#headerCartColumn, #headerMenuColumn').addClass('d-none');
 	$('#headerSearchColumn').addClass('col-12').removeClass('col-6');
 }
 
+/**
+ * Change mobile quick search input on losing focus
+ */
 function onQuickSearchBlur() {
 	$('#headerCartColumn, #headerMenuColumn').removeClass('d-none');
 	$('#headerSearchColumn').removeClass('col-12').addClass('col-6');

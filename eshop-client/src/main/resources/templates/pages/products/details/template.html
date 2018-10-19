@@ -17,9 +17,7 @@
 				<th:block layout:fragment="product-details-content">
 					Product details content
 				</th:block>
-				<form id="addToCartForm" th:action="${@environment.getProperty('url.cart.state')}" method="POST">
-					<div id="addToCartModal"></div>
-				</form>
+			
 				<th:block th:replace="pages/products/details/quick-order-modal :: quick-order-modal(product = ${product})"></th:block>
 				<th:block th:replace="pages/products/details/quick-order-success-modal :: quick-order-success-modal(product = ${product})"></th:block>
 			</div>
@@ -66,7 +64,6 @@
 			}
 			/*]]>*/
 		</script>
-		<script th:src="@{/js/products/product-common.js}"></script>
 		<script th:src="@{/js/products/product-details.js}"></script>
 	</th:block>
 </body>

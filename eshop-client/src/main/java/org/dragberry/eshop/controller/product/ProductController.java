@@ -34,6 +34,7 @@ import org.dragberry.eshop.model.product.ProductDetails;
 import org.dragberry.eshop.model.product.ProductSearchQuery;
 import org.dragberry.eshop.model.product.ProductsDetails;
 import org.dragberry.eshop.navigation.Breadcrumb;
+import org.dragberry.eshop.service.AppInfoService;
 import org.dragberry.eshop.service.CommentService;
 import org.dragberry.eshop.service.ImageService;
 import org.dragberry.eshop.service.ProductService;
@@ -81,6 +82,12 @@ public class ProductController {
     private static final String MODEL_QUERY = "query";
 
     private static final String MODEL_CATALOG_REFERENCE = "catalogReference";
+    
+    private static final String MODEL_IMAGES_REFERENCE = "imagesReference";
+    
+    private static final String MODEL_NO_IMAGE_REFERENCE = "noImageReference";
+    
+    private static final String MODEL_SHOP = "shop";
 
     private static final String MODEL_CATEGORY = "category";
 
@@ -113,6 +120,12 @@ public class ProductController {
 	@Value("${url.catalog}")
 	private String catalogReference;
 	
+	@Value("${url.images}")
+    private String imagesReference;
+	
+	@Value("${url.no-image}")
+    private String noImageReference;
+	
 	@Autowired
 	private HttpServletRequest request;
 	
@@ -122,6 +135,9 @@ public class ProductController {
 	@Autowired
 	@Qualifier("templateEngine")
 	private TemplateEngine templateEngine;
+	
+	@Autowired
+    private AppInfoService appInfoService;
 	
 	@Autowired
 	private CommentService commentService;
@@ -192,6 +208,9 @@ public class ProductController {
 	public ResultTO<String> quickSearch(@RequestParam(required = true) String query, Locale locale) {
 		Context context = new Context(locale);
 		context.setVariable(MODEL_CATALOG_REFERENCE, catalogReference);
+		context.setVariable(MODEL_IMAGES_REFERENCE, imagesReference);
+		context.setVariable(MODEL_NO_IMAGE_REFERENCE, noImageReference);
+		context.setVariable(MODEL_SHOP, appInfoService.getShopDetails());
 		context.setVariable(MODEL_QUERY, query);
         context.setVariable(MODEL_SEARCH_RESULTS, productService.getProductList(query, new HashMap<>(request.getParameterMap())));
         return Results.create(templateEngine.process("pages/products/search/quick-search",

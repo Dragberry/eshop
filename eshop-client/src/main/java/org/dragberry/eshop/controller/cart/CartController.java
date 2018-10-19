@@ -345,7 +345,7 @@ public class CartController {
                     } else {
                         context.setVariable(MODEL_CART_STATE_URL, cartStateUrl);
                         context.setVariable(MODEL_PRODUCT, pao);
-                        response = templateEngine.process("pages/products/list/select-product-modal",
+                        response = templateEngine.process("pages/products/common/select-product-modal",
                                 new HashSet<>(Arrays.asList("select-product-modal")), context);
                     }
                     return updateCartState(response);
