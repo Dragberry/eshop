@@ -8,44 +8,6 @@
 </head>
 <body>
 	<th:block layout:fragment="main-content">
-		<div class="col-md-3">
-			<div class="container">
-				<div class="row mb-2">
-					<th:block th:replace="pages/products/list/categories-side-menu :: categories-side-menu(selectedCategory = ${selectedCategory})"></th:block>
-				</div>
-				<form th:if="${selectedCategory}" id="filtersForm" th:action="|${@environment.getProperty('url.catalog.filter')}/${selectedCategory}|" method="GET">
-					<div class="row mb-2">
-						<div class="w-100 text-center">
-							<button class="btn btn-block btn-secondary btn-sm btn-side-menu"
-								th:classappend="${#request.getAttribute('currentDevice').mobile ? 'collapsed' : ''}"
-								type="button"
-								data-toggle="collapse"
-								data-target="#filters"
-								th:aria-expanded="${#request.getAttribute('currentDevice').mobile}"
-								aria-controls="filters">
-								<span th:text="#{msg.common.filters}">Filters</span>
-								<span class="all-filters-count badge badge-dark"
-									th:classappend="${searchParamsCount == 0} ? 'd-none' : ''"
-									th:text="${searchParamsCount}"></span>
-							</button>
-							<button class="all-filters-reset-button btn btn-link" 
-								th:classappend="${searchParamsCount == 0} ? 'd-none' : ''"
-								type="button" onclick="resetForm()">
-								<span class="small" th:text="#{msg.common.resetAllFilter}">Reset</span>
-							</button>
-						</div>
-						<div id="filters" class="content-side-menu collapse" th:classappend="${!#request.getAttribute('currentDevice').mobile ? 'show' : ''}">
-							<th:block th:each="filter : ${category.filters}">
-								<th:block th:replace="__${filter.template}__"></th:block>
-								<hr/>
-							</th:block>
-						</div>
-					</div>	
-				</form>
-				<form th:unless="${selectedCategory}" id="filtersForm" th:action="|${@environment.getProperty('url.catalog.filter')}|" method="GET">
-				</form>
-			</div>
-		</div>
 		<div class="col-md-9">
 			<div class="row">
 				<div class="col-12">
@@ -110,6 +72,44 @@
 				<th:block th:each="productItem : ${productList}">
 					<div th:replace="__${displayOption.template}__">Product item</div>
 				</th:block>
+			</div>
+		</div>
+		<div class="col-md-3">
+			<div class="container">
+				<div class="row mb-2">
+					<th:block th:replace="pages/products/list/categories-side-menu :: categories-side-menu(selectedCategory = ${selectedCategory})"></th:block>
+				</div>
+				<form th:if="${selectedCategory}" id="filtersForm" th:action="|${@environment.getProperty('url.catalog.filter')}/${selectedCategory}|" method="GET">
+					<div class="row mb-2">
+						<div class="w-100 text-center">
+							<button class="btn btn-block btn-secondary btn-sm btn-side-menu"
+								th:classappend="${#request.getAttribute('currentDevice').mobile ? 'collapsed' : ''}"
+								type="button"
+								data-toggle="collapse"
+								data-target="#filters"
+								th:aria-expanded="${#request.getAttribute('currentDevice').mobile}"
+								aria-controls="filters">
+								<span th:text="#{msg.common.filters}">Filters</span>
+								<span class="all-filters-count badge badge-dark"
+									th:classappend="${searchParamsCount == 0} ? 'd-none' : ''"
+									th:text="${searchParamsCount}"></span>
+							</button>
+							<button class="all-filters-reset-button btn btn-link" 
+								th:classappend="${searchParamsCount == 0} ? 'd-none' : ''"
+								type="button" onclick="resetForm()">
+								<span class="small" th:text="#{msg.common.resetAllFilter}">Reset</span>
+							</button>
+						</div>
+						<div id="filters" class="content-side-menu collapse" th:classappend="${!#request.getAttribute('currentDevice').mobile ? 'show' : ''}">
+							<th:block th:each="filter : ${category.filters}">
+								<th:block th:replace="__${filter.template}__"></th:block>
+								<hr/>
+							</th:block>
+						</div>
+					</div>	
+				</form>
+				<form th:unless="${selectedCategory}" id="filtersForm" th:action="|${@environment.getProperty('url.catalog.filter')}|" method="GET">
+				</form>
 			</div>
 		</div>
 	</th:block>
