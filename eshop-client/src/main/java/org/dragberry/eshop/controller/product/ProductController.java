@@ -213,7 +213,8 @@ public class ProductController {
 		context.setVariable(MODEL_SHOP, appInfoService.getShopDetails());
 		context.setVariable(MODEL_QUERY, query);
         context.setVariable(MODEL_SEARCH_RESULTS, productService.getProductList(query, new HashMap<>(request.getParameterMap())));
-        return Results.create(templateEngine.process("pages/products/search/quick-search",
+        return Results.create(templateEngine.process(DeviceUtils.getCurrentDevice(request).isMobile() 
+                ? "pages/products/search/quick-search.mobile" : "pages/products/search/quick-search",
                 new HashSet<>(Arrays.asList("search-results")), context));
 	}
 	

@@ -92,6 +92,40 @@
 			</nav>
 		</header>
 		<div class="container">
+			<div class="row">
+				<div class="col-12 dropdown">
+					<div id="searchResultsTrigger"
+						class="dropdown-toggle invisible"
+				   		aria-haspopup="true"
+				   		aria-expanded="false"
+				   		data-display="static">
+					</div>
+			    	<div id="searchResults" 
+			    		class="dropdown-menu w-100"
+			    		aria-labelledby="searchResultsTrigger">
+						<div class="container">
+							<div class="row">
+								<div class="col-12">
+									<a class="nav-link" th:href="${@environment.getProperty('url.catalog')}">Все категории</a>
+								</div>
+								<div class="col-12">
+									<hr/>
+								</div>
+								<div class="col-sm-6 col-md-3" th:each="category : ${categoryList}">
+									<a class="nav-link"
+										th:classappend="${category.reference == selectedCategory} ? 'active' : ''"
+										th:href="@{|${@environment.getProperty('url.catalog')}/${category.reference}|}"
+										th:text="${category.name}">
+										Category
+									</a>
+								</div>
+							</div>
+						</div>
+			        </div>
+		        </div>
+	        </div>
+        </div>
+		<div class="container">
 			<div class="app-info-primary jumbotron">
 	        	<div class="container">
 					<div class="row text-center align-items-center">
