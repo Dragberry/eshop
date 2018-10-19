@@ -14,6 +14,8 @@ public class ProductCategory {
 	
 	private String name;
 	
+	private String descriptionFull;
+	
 	private List<Filter> filters = new ArrayList<>();
 
 	public ProductCategory(Long id, String reference, String name) {

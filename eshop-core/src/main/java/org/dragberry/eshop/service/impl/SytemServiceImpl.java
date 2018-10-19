@@ -1,13 +1,9 @@
 package org.dragberry.eshop.service.impl;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.dragberry.eshop.model.common.Phone;
+import org.dragberry.eshop.service.AppInfoService;
 import org.dragberry.eshop.service.SystemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -15,8 +11,10 @@ import org.thymeleaf.context.Context;
 @Service
 public class SytemServiceImpl implements SystemService {
 
-    @Value("${application.title}")
-    private String shopName;
+    private static final String SHOP = "shop";
+    
+    @Autowired
+    private AppInfoService appInfoService;
     
     @Autowired
     @Qualifier("stringTemplateEngine")
@@ -24,15 +22,10 @@ public class SytemServiceImpl implements SystemService {
     
     private Context context;
     
-    public List<Phone> getPhones() {
-        return Arrays.asList(new Phone(Phone.MTS, "8033 375-90-80"), new Phone(Phone.VELCOM, "8029 375-90-80"));
-    }
-    
     public Context getContext() {
         if (context == null) {
             context = new Context();
-            context.setVariable("shopName", shopName);
-            context.setVariable("phones", getPhones());
+            context.setVariable(SHOP, appInfoService.getShopDetails());
         }
         return context;
     }

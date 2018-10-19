@@ -3,6 +3,7 @@ package org.dragberry.eshop.dal.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -46,6 +47,10 @@ public class Category extends AuditableEntity {
 	
 	@Column(name = "`ORDER`")
     private Integer order;
+	
+	@Basic(fetch = FetchType.LAZY)
+	@Column(name = "DESCRIPTION_FULL")
+    private String descriptionFull;
 	
 	@OneToMany(mappedBy = "category", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<CategoryFilter<?, ?, ?>> filters = new ArrayList<>(); 

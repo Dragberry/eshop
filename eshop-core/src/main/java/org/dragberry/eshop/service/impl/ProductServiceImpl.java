@@ -82,6 +82,7 @@ public class ProductServiceImpl implements ProductService {
 			pc.setId(category.getEntityKey());
 			pc.setName(category.getName());
 			pc.setReference(category.getReference());
+			pc.setDescriptionFull(systemService.processTemplate(category.getDescriptionFull()));
 			return pc;
 		}).collect(toList());
 	}

@@ -7,6 +7,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -126,13 +127,25 @@ public class WebAppInitializer {
 	private void createCategory(String name, int order, Function<Category, List<CategoryFilter<?, ?, ?>>> filtersProvider) {
 		Category ctg = new Category();
 		ctg.setName(name);
-		ctg.setReference(transliteService.transformToId(name));
+		String categoryReference = transliteService.transformToId(name);
+        ctg.setReference(categoryReference);
 		ctg.setOrder(order);
+		ctg.setDescriptionFull(processDescription(categoryReference));
 		if (filtersProvider != null) {
 			ctg.setFilters(filtersProvider.apply(ctg));
 		}
 		categoryRepo.save(ctg);
 	}
+	
+	private String processDescription(String categoryReference) {
+        try (InputStream is = resourceLoader.getResource(MessageFormat.format("classpath:data/categories/{0}/{0}_descriptionFull.html", categoryReference)).getInputStream()) {
+            Document description = Jsoup.parse(is, StandardCharsets.UTF_8.name(), StringUtils.EMPTY);
+            return description.body().html();
+        } catch (Exception e) {
+            log.warn("Unable to parse description file for category " + categoryReference);
+            return StringUtils.EMPTY;
+        }
+    }
 	
 	private void createPages() {
 	    createPage("/", "Главная страница");
