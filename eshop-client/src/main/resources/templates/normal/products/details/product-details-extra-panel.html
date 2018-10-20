@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<body>
+	<th:block th:fragment="product-details-extra-panel">
+		<ul class="nav nav-tabs" id="productTabs" role="tablist">
+			<li class="nav-item">
+				<a class="nav-link active" id="descriptionTab" href="#description"
+					data-toggle="tab" role="tab" aria-controls="description" aria-selected="true">
+					<span th:text="#{msg.common.description}">Description</span>	
+				</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" id="attributesTab" href="#attributes"
+				 	data-toggle="tab" role="tab" aria-controls="attributes" aria-selected="false">
+				 	<span th:text="#{msg.common.attributes}">Attributes</span>
+				 </a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" id="commentsTab" href="#comments"
+				 	data-toggle="tab" role="tab" aria-controls="comments" aria-selected="false">
+				 	<span th:text="|#{msg.common.comments} (${#lists.size(product.comments)})|">Comments</span>	
+				 </a>
+			</li>
+		</ul>
+		<div class="tab-content" id="productTabsContent">
+			<div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="descriptionTab">
+				<th:block th:replace="common/products/details/product-details-tabs :: description-full(product = ${product})"></th:block>
+			</div>
+			<div class="tab-pane fade" id="attributes" role="tabpanel" aria-labelledby="attributesTab">
+				<th:block th:replace="common/products/details/product-details-tabs :: attributes(product = ${product})"></th:block>
+			</div>
+			<div class="tab-pane fade" id="comments" role="tabpanel" aria-labelledby="commentsTab">
+				<th:block th:replace="common/products/details/product-details-tabs :: comments(product = ${product})"></th:block>
+			</div>
+		</div>
+		
+	</th:block>
+</body>
+</html>

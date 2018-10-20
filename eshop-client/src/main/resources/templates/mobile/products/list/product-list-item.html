@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<body>
+<div class="container" th:fragment="product-item">
+	<div class="row mb-2">
+		<div class="col-12">
+			<h3 class="font-weight-bold">
+				<a th:href="@{|${@environment.getProperty('url.catalog')}/${product.category.reference}/${product.reference}|}">
+					<span th:text="${product.title}">Product title</span>
+				</a>
+			</h3>
+		</div>
+		<div class="col-6">
+			<a th:href="@{|${@environment.getProperty('url.catalog')}/${product.category.reference}/${product.reference}|}">
+				<img class="d-block mx-auto w-100 "
+					th:title="${product.title}"
+					th:alt="${product.title}"
+					th:src="${product.mainImage} ? @{|${@environment.getProperty('url.images')}/${product.id}/${product.article}/${product.mainImage}|} : ${@environment.getProperty('url.no-image')}">
+			</a>
+		</div>
+		<div class="col-6">
+			<div class="row">
+				<div class="col-12 text-center">
+					<span th:each="label : ${product.labels}"  th:text="${label.key}"
+						class="product-label badge" th:classappend="|badge-${label.value.value}|">Label</span>
+				</div>
+				<div class="col-12  text-center">
+					<th:block th:if="${product.actualPrice}">
+						<div>
+							<strong th:text="|${product.actualPrice} #{|msg.currency.${appInfo.currency}|}|">Product price</strong>
+						</div>
+						<div>
+							<del class="small" th:text="|${product.price} #{|msg.currency.${appInfo.currency}|}|">Old product price</del>
+						</div>
+					</th:block>
+					<th:block th:unless="${product.actualPrice}">
+						<div>
+							<strong th:text="|${product.price} #{|msg.currency.${appInfo.currency}|}|">Product price</strong>
+						</div>
+					</th:block>
+				</div>
+				<div class="col-12 text-center">
+					<span th:replace="common/components/rating :: rating(name = |product_rating_ ${product.id}|, value = ${product.rating})">Rating</span>
+					<span class="d-block product-comments-count" th:data-value="${product.commentsCount}">Comments count</span>
+				</div>
+				<div class="col-12 text-right">
+					<button id="addToCartButton" type="button" th:onclick="|addToCart('ADD_PRODUCT_ARTICLE', ${product.id})|" class="btn btn-success btn-sm mb-2">
+			 			<span class="fa fa-cart-plus"></span>
+			 			<span class="">В корзину</span>
+			 		</button>
+				</div>
+			</div>
+		</div>
+		<div class="col-12">
+			<hr/>
+		</div>
+	</div>
+</div>
+</body>
+</html>

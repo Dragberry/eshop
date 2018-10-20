@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+	<title layout:title-pattern="$CONTENT_TITLE" th:text="${@environment.getProperty('application.title')}">E-Shop</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" media="all" th:href="@{/css/bootstrap.min.css}" />
+	<link rel="stylesheet" type="text/css" media="all" th:href="@{/css/font-awesome.css}" />
+	<link rel="stylesheet" type="text/css" media="all" th:href="@{/css/main.css}" />
+	<link rel="stylesheet" type="text/css" media="all" th:href="@{/css/sticky-footer-navbar.css}" />
+</head>
+<body>
+	<header th:replace="normal/layout/header :: header">Normal header</header>
+
+    <main role="main" class="container">
+		<div layout:fragment="content">
+			<h1>Static content for prototyping purposes only</h1>
+		</div>
+		
+		<form id="addToCartForm" th:action="${@environment.getProperty('url.cart.state')}" method="POST">
+			<div id="addToCartModal"></div>
+		</form>
+		
+		<div class="modal fade" id="serverErrorModal" tabindex="-1" role="dialog" aria-labelledby="serverErrorModalTitle" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered" role="document">
+		    	<div class="modal-content">
+		      		<div class="modal-header alert alert-danger">
+		        		<h5 class="modal-title" id="serverErrorModalTitle" th:text="#{msg.error.commonErrorTitle}">
+		        			An error has occured in the server
+		        		</h5>
+		        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          			<span aria-hidden="true">&times;</span>
+		        		</button>
+		      		</div>
+					<div class="modal-body">
+						<div class="text-center">
+				    		<p th:text="#{msg.error.commonErrorMsg}">MSG</p>
+		        			<div th:each="phone : ${appInfo.phones}">
+		        				<img class="img-responsive" th:src="@{|/images/${phone.type}.png|}" width="15" height="15">
+		        				<strong th:text="${phone.number}"></strong>
+	        				</div>
+	        			</div>
+					</div>
+					<div class="modal-footer">
+						<div class="col-sm-2 col-md-3"></div>
+			        	<div class="col-sm-8 col-md-6">
+			        		<button type="button" class="btn btn-danger btn-block" data-dismiss="modal" th:text="#{msg.common.ok}">
+			        			Ok
+			        		</button>
+		        		</div>
+		        		<div class="col-sm-2 col-md-3"></div>
+			      	</div>
+		    	</div>
+		  	</div>
+		</div>
+	</main>
+	
+	<footer th:replace="common/layout/footer :: footer">&copy; 2018 Dragberry</footer>
+	
+	<script th:src="@{/js/jquery.min.js}"></script>
+	<script th:src="@{/js/jquery.validate.min.js}"></script>
+	<script th:src="@{/js/jquery.mask.min.js}"></script>
+	<script th:src="@{/js/poppers.min.js}"></script>
+	<script th:src="@{/js/bootstrap.min.js}"></script>
+	<script>
+		var quickSearchUrl = '[[${@environment.getProperty('url.catalog.quick-search')}]]';
+	</script>
+	<script th:src="@{/js/main.js}"></script>
+	<script th:src="@{/js/products/product-common.js}"></script>
+	<th:block layout:fragment="page_scripts"></th:block>
+</body>
+</html>

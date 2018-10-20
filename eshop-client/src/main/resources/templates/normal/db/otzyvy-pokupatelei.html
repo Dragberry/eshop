@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{normal/layout/template-with-breadcrumb}">
+<head>
+	<title>Отзывы о смарт-часах и магазине ${shop.name}</title>
+	<meta name="keywords" th:content="|отзывы ${shop.name}, отзывы о смарт-часах|">
+	<meta name="description" th:content="|Отзывы о смарт-часах и фитнес браслетах в интернет-магазине ${shop.name} (${shop.nameAlt}). ${shop.phonesAsLine}">
+</head>
+<body>
+	<div layout:fragment="main-content" class="col-12">
+		<h1 class="h1">Отзывы наших клиентов - Интернет-магазин [[${shop.name}]]</h1>
+		<div class="row">
+			<div class="col-12">
+				<h2 class="h2 mt-2 mb-4">Здесь вы можете найти отзывы счастливых обладателей смарт-часов и фитнес-браслетов</h2>
+				<p th:if="${#lists.isEmpty(comments)}">Пока никто еще не оставил свой отзыв:(</p>
+			</div>
+			<div class="col-12 mt-4" th:if="${#request.getAttribute('currentDevice').mobile && !#lists.isEmpty(comments)}">
+				<div class="row" th:each="comment, iter : ${comments}">
+					<div class="col-12">
+						<h3 class="font-weight-bold">
+	 						<span>Отзыв на</span>
+	 						<a th:href="@{|${@environment.getProperty('url.catalog')}/${comment.productCategoryReference}/${comment.productReference}|}">
+	 							[[${comment.productTitle}]]
+	 						</a>
+	 					</h3>
+	 					<div class="row small">
+	 						<div class="col-4">
+			 					<a th:href="@{|${@environment.getProperty('url.catalog')}/${comment.productCategoryReference}/${comment.productReference}|}">
+			 						<img class="d-block w-100"
+			 							th:title="${comment.productTitle}"
+			 							th:alt="|Отзыв на ${comment.productTitle}|"
+										th:src="${comment.productImage} ? @{|${@environment.getProperty('url.images')}/${comment.productId}/${comment.productArticle}/${comment.productImage}|} : ${@environment.getProperty('url.no-image')}">
+		
+			 					</a>
+			 				</div>
+			 				<div class="offset-1 col-7">
+			 					<div class="row">
+			 						<div class="col-12">
+						 				<span class="fa fa-calendar fa-xs"></span>
+						 				<span class="font-weight-italic">[[${#temporals.format(comment.date, 'yyyy-MM-dd hh:mm')}]]</span>	
+						 			</div>
+						 			<div class="col-12">
+						 				<span class="fa fa-user fa-xs"></span>
+										<span class="font-weight-bold mr-4">[[${comment.name}]]</span>
+									</div>
+									<div class="col-12">
+										<span th:replace="components/rating :: rating(name = ${comment.id}, value = ${comment.mark})">Rating</span>
+									</div>
+			 					</div>
+			 				</div>
+			 				<div class="col-12 text-justify">
+		 						<p>[[${comment.text}]]</p>
+		 					</div>
+		 				</div>
+	 				</div>
+	 				<div class="col-12">
+	 					<hr/>
+	 				</div>
+	 			</div>
+			</div>
+			
+			
+			<div class="col-12 mt-4" th:if="${!#request.getAttribute('currentDevice').mobile && !#lists.isEmpty(comments)}">
+				<div class="row" th:each="comment, iter : ${comments}">
+					<div class="col-12">
+						<h3 class="font-weight-bold">
+	 						<span>Отзыв на</span>
+	 						<a th:href="@{|${@environment.getProperty('url.catalog')}/${comment.productCategoryReference}/${comment.productReference}|}">
+	 							[[${comment.productTitle}]]
+	 						</a>
+	 					</h3>
+	 					<div class="row small">
+	 						<div class="col-12 col-sm-3 col-md-2">
+			 					<a th:href="@{|${@environment.getProperty('url.catalog')}/${comment.productCategoryReference}/${comment.productReference}|}">
+			 						<img class="d-block mx-auto w-75 p-2"
+			 							th:title="${comment.productTitle}"
+			 							th:alt="|Отзыв на ${comment.productTitle}|"
+										th:src="${comment.productImage} ? @{|${@environment.getProperty('url.images')}/${comment.productId}/${comment.productArticle}/${comment.productImage}|} : ${@environment.getProperty('url.no-image')}">
+		
+			 					</a>
+			 				</div>
+			 				<div class="col-12 col-sm-9 col-md-10">
+			 					<div class="row">
+						 			<div class="col-6 text-left">
+						 				<div>
+						 					<span class="fa fa-user fa-xs"></span>
+											<span class="font-weight-bold mr-4">[[${comment.name}]]</span>
+										</div>
+										<span th:replace="components/rating :: rating(name = ${comment.id}, value = ${comment.mark})">Rating</span>
+						 			</div>
+						 			<div class="col-6 text-right">
+						 				<span class="fa fa-calendar fa-xs"></span>
+						 				<span class="font-weight-italic">[[${#temporals.format(comment.date, 'yyyy-MM-dd hh:mm:ss')}]]</span>	
+						 			</div>
+						 			<div class="col-12 text-justify">
+						 				<p>[[${comment.text}]]</p>
+						 			</div>
+					 			</div>
+				 			</div>
+	 					</div>
+					</div>
+		 			<div class="col-12">
+		 				<hr/>
+		 			</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

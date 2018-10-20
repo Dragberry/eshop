@@ -40,11 +40,18 @@ public class Page extends AuditableEntity {
 	@Column(name = "BREADCRUMB_TITLE")
     private String breadcrumbTitle;
 	
+	@Column(name = "VIEW_NAME")
+    private String viewName;
+	
 	@Column(name = "REFERENCE")
     private String reference;
 	
 	@Basic(fetch = FetchType.LAZY)
 	@Column(name = "CONTENT")
     private String content;
+	
+	@Basic(fetch = FetchType.LAZY)
+	@Column(name = "CONTENT_MOBILE")
+    private String contentMobile;
 	
 }

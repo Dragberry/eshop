@@ -17,6 +17,13 @@ public interface PageRepository extends JpaRepository<Page, Long> {
     Optional<Page> findByReference(String reference);
     
     /**
+     * Find a page by viewName
+     * @param viewName
+     * @return
+     */
+    Optional<Page> findByViewName(String viewName);
+    
+    /**
      * Checks whether the page exists with such URL reference
      * @param reference
      * @return

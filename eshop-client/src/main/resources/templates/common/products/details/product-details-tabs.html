@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<body>
+	<th:block th:fragment="description-full">
+		<div class="mt-2" th:if="${product.descriptionFull != null}"
+			th:utext="${product.descriptionFull}">Description</div>
+		<div class="mt-2" th:unless="${product.descriptionFull != null}"
+			th:text="#{msg.common.noDescription}"></div>
+	</th:block>
+	
+	<th:block th:fragment="attributes">
+		<div class="row mt-2">
+			<div class="col-12 col-md-10 col-lg-10">
+				<p th:unless="${product.attributes}" class="mt-4" th:text="#{msg.common.noInfo}"></p>
+				<table th:if="${product.attributes}" class="table table-striped table-sm">
+					<tbody th:each="group : ${product.attributes}">
+						<tr>
+							<th scope="col" colspan="2">
+								<span th:text="${group.key}"></span>
+							</th>
+						</tr>
+						<tr th:each="attr: ${group.value}">
+							<td style="width: 50%"><span th:text="${attr.key}"></span></td>
+							<td><span th:text="${#strings.isEmpty(#messages.msgOrNull(attr.value)) ? attr.value : #messages.msg(attr.value)}"></span></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</th:block>
+	
+	<th:block th:fragment="comments">
+		<button id="addCommentButton" class="btn btn-link text-left mt-2 mb-2"
+			data-toggle="collapse"
+			data-target="#addComment"
+			aria-expanded="false"
+			aria-controls="addComment">
+			<span class="fa fa-plus"></span>
+			<span th:text="#{msg.common.addComment}">Add comment</span>
+		</button>	
+		<div id="addComment" class="card collapse mt-2 mb-2">
+			<div class="card-body">
+				<form id="addCommentForm" th:action="${@environment.getProperty('url.product.add-comment')}" method="POST">
+					<div class="form-group required">
+						<label for="addCommentName" class="font-weight-bold">[[#{msg.common.yourName}]]</label>
+						<input type="text" name="name" class="form-control form-control-sm" id="addCommentName">
+					</div>
+					<div class="form-group required">
+						<label for="addCommentEmail" class="font-weight-bold">[[#{msg.common.email}]]</label>
+						<input type="text" name="email"	class="form-control form-control-sm" id="addCommentEmail">
+					</div>
+					<div class="form-group required">
+						<label for="addCommentRating" class="font-weight-bold">[[#{msg.common.rateProduct}]]</label>
+						<div id="product-rate" class="star-rating product-star-rating" th:onmouseleave="|onInterruptedRate()|">
+							<span th:each="i : ${#numbers.sequence(1, 5)}"
+								class="fa fa-star fa-2x"
+								th:data-rating="${i}"
+								th:onmouseover="|onHoverRate($(this))|"
+								th:onclick="|onProductRate(${i})|">
+							</span>
+							<input type="hidden" id="addCommentRating" name="productRating"	class="rating-value" value="0">
+						</div>
+					</div>
+					<div class="form-group required">
+						<label for="addCommentText" class="font-weight-bold">[[#{msg.common.yourComment}]]</label>
+						<textarea name="comment" class="form-control form-control-sm" id="addCommentText"></textarea>
+					</div>
+					<input id="addCommentProduct" type="hidden" name="productId" th:value="${product.id}">
+					<button id="submitProductCommentButton" type="submit" class="btn btn-success mt-4">
+						[[#{msg.common.submitComment}]]
+					</button>
+				</form>
+			</div>
+		</div>
+		<div th:if="${#lists.isEmpty(product.comments)}">
+			<p th:text="#{msg.common.noComments}"></p>
+		</div>
+		<div th:unless="${#lists.isEmpty(product.comments)}" class="list-group small">
+			<div id="productCommentZero" class="d-none"></div>
+			<th:block th:each="comment, iter : ${product.comments}">
+				<div th:fragment="product-comment" class="list-group-item">
+					<div class="row">
+						<div class="col-6 text-left">
+							<div>
+								<span class="fa fa-user fa-xs"></span>
+								<span class="font-weight-bold mr-4">[[${comment.name}]]</span>
+							</div>
+							<span
+								th:replace="common/components/rating :: rating(name = ${comment.id}, value = ${comment.mark})">Rating</span>
+						</div>
+						<div class="col-6 text-right">
+							<span class="fa fa-calendar fa-xs"></span>
+							<span class="font-weight-italic">[[${#temporals.format(comment.date, 'yyyy-MM-dd hh:mm')}]]</span>
+						</div>
+						<div class="col-12">
+							<span>[[${comment.text}]]</span>
+						</div>
+					</div>
+				</div>
+			</th:block>
+		</div>
+	</th:block>
+</body>

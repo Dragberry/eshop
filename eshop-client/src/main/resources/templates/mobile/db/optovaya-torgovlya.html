@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{mobile/layout/template-with-breadcrumb}">
+<head>
+	<title>Оптовая продажа смарт-часов юридическим лицам и ИП</title>
+	<meta name="keywords" th:content="|Оптовая торговля ${shop.name}, сотрудничество с юрлицами ${shop.name}">
+	<meta name="description" th:content="|Оптовая торговля ${shop.name}.Сотрудничество с юрлицами и ИП. Уточнить все интересующие Вас вопросы можно по телефонам: ${shop.phonesAsLine}">
+</head>
+<body>
+	<div layout:fragment="main-content" class="col-12">
+		<h1>Оптовая продажа смарт-часов юридическим лицам и ИП</h1>
+		<div class="row">
+			<div class="col-12">
+				<p>
+					<span class="d-block font-weight-bold">Приглашаем к сотрудничеству индивидуальных предпринимателей и юридических лиц.</span> 
+					<span class="d-block">Интернет-магазин [[${shop.name}]] для юридических лиц и ИП предлагает смарт-часы и фитнес-браслеты по выгодным оптовым ценам.</span>
+					<span class="d-block">Вы сможете приобрести все товары из нашего каталога по безналичному расчету со всеми необходимыми документами для продажи.</span>
+				</p>
+				<p class="font-weight-bold"><span class="text-danger">5 "ЗА"</span> почему стоит работать с нами?</p>
+				<p>
+					<ol class="pl-4">
+						<li>
+							<span class="d-clock font-weight-bold">У нас на складе в наличии имеется большой ассортимент смарт-часов и фитнес-браслетов!</span>
+							<span class="d-block small">А модели, которых нет в наличии в нашем каталоге, Вы всегда сможете оформить ПОД ЗАКАЗ (и в течении 7-10 дней они уже будут на Вашем складе со всеми необходимыми документами)</span>
+						</li>
+						<li>
+							<span class="d-clock font-weight-bold">Предлагаем низкие цены при покупке оптом!</span>
+							<span class="d-block small">Мы являемся прямым поставщиком и представителем на территории РБ производителя смарт-устройств, поэтому можем предложить привлекательные цены первого импортера.</span>
+						</li>
+						<li>
+							<span class="d-clock font-weight-bold">Выгодные условия сотрудничества даже при небольшом опте!</span>
+							<span class="d-block small">Работаем от 10 штук, а также предлагаем выгодные условия постоянным клиентам: чем больше заказ, тем ниже цены.</span>
+						</li>
+						<li>
+							<span class="d-clock font-weight-bold">Опытные и дружелюбные консультанты!</span>
+							<span class="d-block small">Мы можем проконсультировать Вас по каждой интересующей модели, а также (при необходимости) осуществим консультацию по открытию интернет-магазина и ведению продаж.</span>
+						</li>
+						<li>
+							<span class="d-clock font-weight-bold">Быстрое оформление заказов!</span>
+							<span class="d-block small">Оформив заказ, мы можем подготовить все необходимые документы и собрать Ваш заказ в течение 1 часа. А при необходимости можем осуществить доставку по всей Беларуси!</span>
+						</li>
+					</ol>
+				</p>
+				<p>Чтобы запросить прайс с актуальными оптовыми ценами Вам необходимо отправить свидетельство о регистрации ИП или Юр. лица нам на электронный адрес: <a th:href="|mailto:${shop.email}|">[[${shop.email}]]</a> или связаться с нами по телефонам:</p>
+				<div th:each="phone : ${shop.phones}">
+					<img class="img-responsive" th:src="|/images/${phone.type}.png|" width="15" height="15">
+					<span th:text="${phone.number}"></span>
+				</div>
+				<p class="mt-4">Работаем [[${shop.workingHours}]].</p>
+				<p>Приятных покупок и хороших Вам продаж!</p>				
+			</div>
+		</div>
+	
+	</div>
+</body>
+</html>

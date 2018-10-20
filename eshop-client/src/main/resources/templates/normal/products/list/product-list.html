@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{normal/layout/template-with-breadcrumb}">
+<head>
+<title th:text="${category} ? ${category.name} : #{msg.common.allProducts}">Catalog</title>
+</head>
+<body>
+	<th:block layout:fragment="main-content">
+		<div class="col-md-9">
+			<div class="row">
+				<div class="col-12">
+					<h1 th:text="${category} ? ${category.name} : #{msg.common.allProducts}"></h1>
+				</div>
+				<div class="col-12">
+					<div class="form-row d-flex justify-content-end">
+						<div class="col-6 col-sm-4 col-md-3">
+							<div class="input-group d-flex justify-content-end">
+								<div class="form-check form-check-inline list-display-type">
+								  	<label class="btn" for="displayTiles"
+								  		th:classappend="${#strings.equals(displayOption, 'TILES') ? 'btn-secondary' : ''}">
+								  		<input form="filtersForm"
+								  			id="displayTiles" 
+								  			type="radio"
+								  			name="display"
+								  			value="tiles"
+								  			class="form-check-input"
+								  			onchange="onDisplayChanged();doFilter()"
+								  			th:checked="${#strings.equals(displayOption, 'TILES')}">
+							 			<span class="fa fa-table"></span>
+								  	</label>
+								</div>
+								<div class="form-check form-check-inline list-display-type">
+								  	<label class="btn" for="displayList"
+								  		th:classappend="${#strings.equals(displayOption, 'LIST') ? 'btn-secondary' : ''}">
+								  		<input form="filtersForm"
+								  			id="displayList" 
+								  			type="radio"
+								  			name="display"
+								  			value="list"
+								  			class="form-check-input"
+								  			onchange="onDisplayChanged();doFilter()"
+								  			th:checked="${#strings.equals(displayOption, 'LIST')}">
+								  		<span class="fa fa-list"></span>
+								  	</label>
+								</div>
+							</div>
+						</div>
+						<div class="col-6 col-sm-6 col-md-5">
+							<div class="input-group">
+			    				<div class="input-group-prepend">
+							    	<div class="input-group-text">
+							    		<span class="fa fa-sort fa-xs" th:title="#{msg.common.sorting}"></span>
+							    	</div>
+							    </div>
+			    				<select form="filtersForm" name="sort" class="form-control form-control-sm" id="sorting" onchange="doFilter()">
+									<option th:each="opt : ${sortingOptionList}" 
+										th:value="${opt.value}"
+										th:selected="${searchParams.get('sort') != null ? searchParams.get('sort')[0] == opt.value : false}"
+										th:text="#{${opt.key}}"></option>
+								</select>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div th:fragment="products" id="productList" class="row">
+				<div class="col-12">
+					<hr/>
+				</div>
+				<th:block th:each="productItem : ${productList}">
+					<div th:replace="__|normal/${displayOption.template}|__">Product item</div>
+				</th:block>
+			</div>
+		</div>
+		<div class="col-md-3">
+			<div th:replace="normal/products/list/categories-side-menu :: categories-side-menu(selectedCategory = ${selectedCategory})"></div>
+			<div class="row mt-2"></div>
+			<div th:replace="normal/products/list/product-filters-menu :: product-filters-menu(selectedCategory = ${selectedCategory}, category = ${category}, searchParamsCount = ${searchParamsCount})"></div>
+		</div>
+		<div class="col-12 small text-justify" th:unless="${category == null || #strings.isEmpty(category.descriptionFull)}">
+			<th:block th:utext="${category.descriptionFull}"></th:block>
+		</div>
+	</th:block>
+	<th:block layout:fragment="page_scripts">
+		<script th:src="@{/js/products/product-list.js}"></script>
+	</th:block>
+</body>
+</html>

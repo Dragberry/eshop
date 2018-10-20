@@ -60,9 +60,9 @@ public class CartController {
 
     private static final String MODEL_PRODUCT = "product";
     public static enum CartStep {
-        EDITING("pages/cart/editing-cart-items"),
-        ORDERING("pages/cart/ordering"),
-        SUCCESS("pages/cart/success");
+        EDITING("cart/editing-cart-items"),
+        ORDERING("cart/ordering"),
+        SUCCESS("cart/success");
         
         public final String template;
         
@@ -135,7 +135,7 @@ public class CartController {
     	if (cartStep == null || cartStep == CartStep.SUCCESS) {
     		cartStep = CartStep.EDITING;
     	}
-        ModelAndView mv = new ModelAndView("pages/cart/cart");
+        ModelAndView mv = new ModelAndView("cart/cart");
         mv.addObject("order", order);
         mv.addObject("cartStep", cartStep);
         mv.addObject("shippingMethods", shippingMethods);
@@ -317,7 +317,7 @@ public class CartController {
                     context.setVariable(MODEL_SHOP, appInfoService.getShopDetails());
                     context.setVariable(CART_MODEL_URL, cartUrl);
                     context.setVariable(MODEL_PRODUCT, capturedProduct);
-                    String response = templateEngine.process("pages/products/common/add-to-cart-success-modal",
+                    String response = templateEngine.process("common/products/common/add-to-cart-success-modal",
                             new HashSet<>(Arrays.asList("add-to-cart-success-modal")), context);
                     return updateCartState(response);
                 }
@@ -340,12 +340,12 @@ public class CartController {
                                 cp -> new CapturedProductState(cp.getProductId(), cp.getPrice())).increment();
                         context.setVariable(CART_MODEL_URL, cartUrl);
                         context.setVariable(MODEL_PRODUCT, capturedProduct);
-                        response = templateEngine.process("pages/products/common/add-to-cart-success-modal",
+                        response = templateEngine.process("common/products/common/add-to-cart-success-modal",
                                 new HashSet<>(Arrays.asList("add-to-cart-success-modal")), context);
                     } else {
                         context.setVariable(MODEL_CART_STATE_URL, cartStateUrl);
                         context.setVariable(MODEL_PRODUCT, pao);
-                        response = templateEngine.process("pages/products/common/select-product-modal",
+                        response = templateEngine.process("common/products/common/select-product-modal",
                                 new HashSet<>(Arrays.asList("select-product-modal")), context);
                     }
                     return updateCartState(response);

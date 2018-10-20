@@ -128,13 +128,37 @@ function doSearch(event) {
 	        data: form.serialize(),
 	        success: function(data)  {
 	        	$('#searchResults').removeClass('show');
-    			$('#searchResults').html(data.value);
+    			$('#searchResults').html(data);
     			calculateRatings();
     			updateCommentsCount();
     			$('#searchResults').addClass('show');
 	        }
 	   	});
 	}, 250);
+}
+
+/**
+ * Performs a filter operation on search screen
+ */
+var delaySearchFilterTimer;
+function doFilter() {
+	clearTimeout(delaySearchFilterTimer);
+	delaySearchFilterTimer = setTimeout(function() {
+		var form = $('#filtersForm');
+	    var url = form.attr('action');
+	    $.ajax({
+	    	type: "GET",
+	        url: url,
+	        data: form.serialize(),
+	        success: function(data)  {
+	        	$('#productList').fadeOut('normal', function() {
+	        		$(this).replaceWith(data);
+	        		calculateRatings();
+	        		updateCommentsCount();
+	        	});
+	        }
+	   	});
+	}, 1000);
 }
 
 function closeQuickSearchResults() {

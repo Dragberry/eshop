@@ -62,7 +62,7 @@ public class MainController {
 //    	return new ModelAndView("pages/home");
     	Optional<Page> page = pageRepo.findByReference(request.getRequestURI());
         if (page.isPresent()) {
-        	ModelAndView mv = new ModelAndView(request.getRequestURI());
+        	ModelAndView mv = new ModelAndView(page.get().getViewName());
         	if (page.get().getBreadcrumbTitle() != null) {
         		mv.addObject(Breadcrumb.MODEL_BREADCRUMB, Breadcrumb.builder().append(page.get().getTitle(), StringUtils.EMPTY));
         	}

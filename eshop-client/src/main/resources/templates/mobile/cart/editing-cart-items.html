@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<body>
+	<div th:fragment="cart-content">
+		<nav aria-label="breadcrumb">
+		  	<ol class="breadcrumb">
+			    <li class="breadcrumb-item">
+			    	<a th:href="${@environment.getProperty('url.home')}" th:text="#{msg.menu.home}">Home</a>
+			    </li>
+			    <li class="breadcrumb-item active" aria-current="page">
+			    	<strong th:text="#{msg.common.yourOrder}">Your order</strong>
+			    </li>
+		  	</ol>
+		</nav>
+		<div class="row">
+			<div id="cartIsEmpty" th:classappend="${order.products.size()} > 0 ? 'd-none' : ''" class="col-md-12 text-center">
+				<p class="mt-4"th:text="#{msg.common.cartIsEmpty}">Empty cart</p>
+				<p class="mt-4"><a class="btn btn-success" th:href="${@environment.getProperty('url.catalog')}" th:text="#{msg.common.goShopping}"></a></p>
+			</div>
+			
+			<div th:if="${order.products.size() > 0}" class="col-12">
+				<div th:each="product,iter : ${order.products}" th:data-product-id=${product.key.productId} class="row">
+					<div class="col-4">
+						<a th:href="@{|${@environment.getProperty('url.catalog')}/${product.key.category.reference}/${product.key.reference}|}">
+							<img class="d-block mx-auto w-100 "
+								th:title="${product.key.title}"
+								th:alt="${product.key.title}"
+								th:src="${product.key.mainImage} ? @{|${@environment.getProperty('url.images')}/${product.key.productArticleId}/${product.key.article}/${product.key.mainImage}|} : ${@environment.getProperty('url.no-image')}">
+						</a>
+					</div>
+					<div class="col-8">
+						<div class="row">
+							<div class="col-9">
+								<h4 class="small font-weight-bold">
+									<a th:href="@{|${@environment.getProperty('url.catalog')}/${product.key.category.reference}/${product.key.reference}|}">
+										<span th:text="${product.key.fullTitle}">Product title</span>
+									</a>
+								</h4>
+								<span class="small">
+									<span class="font-weight-bold">[[#{msg.common.article}]]:</span>
+									<span>[[${product.key.article}]]</span>
+								</span>
+							</div>
+							<div class="col-3 text-right">
+								<span class="fa fa-times cart-remove-item-btn" th:onclick="|removeItemFromCart(${product.key.productId})|"></span>
+							</div>
+							<div class="col-3 cart-product-quantity-decrement">
+								<button th:onclick="|decrementCartItem(${product.key.productId})|" type="button" class="btn btn-secondary btn-block" th:title="#{msg.common.minus}">
+				 					<span class="fa fa-minus fa-lg"></span>
+				 				</button>
+							</div>
+							<div class="col-6 cart-product-quantity">
+						 		<div class="form-group">
+   									<input type="text" class="form-control text-center" th:value="${product.value.quantity}" disabled>
+								</div>
+							</div>
+							<div class="col-3 cart-product-quantity-increment">
+								<button th:onclick="|incrementCartItem(${product.key.productId})|" type="button" class="btn btn-secondary btn-block" th:title="#{msg.common.plus}">
+						 			<span class="fa fa-plus fa-lg"></span>
+						 		</button>
+							</div>
+							<div class="col-8 font-weight-bold">
+								<span class="cart-product-item-total-amount" th:text="${product.value.totalAmount}">Total Amount</span>
+								<span th:text="#{|msg.currency.${appInfo.currency}|}">Currency</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-12">
+						<hr/>
+					</div>
+				</div>
+			</div>
+			
+			<div class="col-md-12">
+				<hr>
+			</div>
+			<div class="col-md-12 text-right">
+				<span class="h5">
+					<strong>
+						[[#{msg.common.total}]]: <span class="cart-product-total-amount">[[${session.cartTotalProductAmount}]]</span> [[#{|msg.currency.${appInfo.currency}|}]]
+					</strong>
+				</span>
+			</div>
+			<div class="col-md-12 text-right">
+				<button id="toOrderButton" type="button" onclick="toOrdering()" th:href="${@environment.getProperty('url.cart.order')}" class="btn btn-success" th:disabled="${session.cartProductCount > 0 ? false : true}">
+		 			<span th:text="#{msg.common.toOrder}">To order</span>
+		 		</button>
+	 		</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<body>
+	<th:block th:fragment="range-filter">
+		<div class="product-attribute-filter product-attribute-range-filter row mt-3">
+			<div class="col-12">
+				<strong>
+					[[${#strings.isEmpty(#messages.msgOrNull(filter.name)) ? filter.name : #messages.msg(filter.name)}]]
+					<span class="fa fa-times fa-xs reset-filter-button" th:title="#{msg.common.resetFilter}"
+						th:onclick="|$('input[name=&quot;${filter.fromId}&quot;], input[name=&quot;${filter.toId}&quot;]').val('');doFilter();|"></span>
+				</strong>
+			</div>
+			<div class="col-6">
+			    <div class="input-group input-group-sm">
+			   		<div class="input-group-prepend">
+						<span class="input-group-text" th:id="|${filter.fromId}From|">[[#{msg.common.from}]]:</span>
+					</div>
+			    	<input type="text" class="form-control"
+			    		th:value="${searchParams.get(filter.fromId) != null ? searchParams.get(filter.fromId)[0] : ''}"
+			    		th:name="${filter.fromId}" th:id="${filter.fromId}"
+			    		th:aria-describedby="|${filter.fromId}From|"
+			    		th:data-mask="${filter.mask}" data-mask-reverse="true"
+			    		onkeyup="doFilter()">
+				</div>
+			</div>
+			<div class="col-6">
+				<div class="input-group input-group-sm">
+					<div class="input-group-prepend">
+						<span class="input-group-text" th:id="|${filter.toId}To|">[[#{msg.common.to}]]:</span>
+					</div>
+			    	<input type="text" class="form-control"
+			    		th:value="${searchParams.get(filter.toId) != null ? searchParams.get(filter.toId)[0] : ''}"
+			    		th:name="${filter.toId}" th:id="${filter.toId}"
+			    		th:aria-describedby="|${filter.toId}To|"
+			    		th:data-mask="${filter.mask}" data-mask-reverse="true"
+			    		onkeyup="doFilter()">
+				</div>
+			</div>
+		</div>
+	</th:block>
+	
+	<th:block th:fragment="list-filter">
+		<div class="product-attribute-filter row mt-3">
+			<div class="col-12">
+				<strong>[[${#strings.isEmpty(#messages.msgOrNull(filter.name)) ? filter.name : #messages.msg(filter.name)}]]</strong>
+				<span class="fa fa-times fa-xs reset-filter-button" th:title="#{msg.common.resetFilter}"
+					th:onclick="|$('input[name=&quot;${filter.id}&quot;]').prop('checked', false);doFilter();|"></span>
+			</div>
+			<div class="product-attribute-list-filter col-12">
+				<div th:each="attr, iter : ${filter.attributes}" class="form-check">
+					<input class="form-check-input" type="checkbox"
+						th:name="|${filter.id}|"
+						th:id="|${filter.id}${attr.value}|" 
+						th:value="${attr.value}"
+						th:checked="${searchParams.get(filter.id) != null ? #lists.contains(searchParams.get(filter.id), #strings.toString(attr.value)) : false}"
+						onchange="doFilter()">
+				  	<label class="form-check-label" th:for="|${filter.id}${attr.value}|">
+				  		[[${#strings.isEmpty(#messages.msgOrNull(attr.key)) ? attr.key : #messages.msg(attr.key)}]]
+				  	</label>
+				</div>
+			</div>
+		</div>
+	</th:block>
+	
+	<th:block th:fragment="group-filter">
+		<div class="product-attribute-filter row mt-3">
+			<div class="col-12">
+				<strong>[[${#strings.isEmpty(#messages.msgOrNull(filter.name)) ? filter.name : #messages.msg(filter.name)}]]</strong>
+				<span class="fa fa-times fa-xs reset-filter-button" th:title="#{msg.common.resetFilter}"
+					th:onclick="|$('input[id*=&quot;${filter.id}&quot;]').prop('checked', false);doFilter();|"></span>
+			</div>
+			<div class="product-attribute-list-filter col-12">
+				<div th:each="attr, iter : ${filter.attributes}" class="form-check">
+					<input class="form-check-input" type="checkbox"
+						th:name="${attr.value}"
+						th:id="|${filter.id}[${attr.value}]|"
+						th:value="true"
+						th:checked="${searchParams.get(attr.value) != null ? searchParams.get(attr.value)[0] == 'true' : false}"
+						onchange="doFilter()">
+				  	<label class="form-check-label" th:for="|${filter.id}[${attr.value}]|">
+				  		[[${#strings.isEmpty(#messages.msgOrNull(attr.key)) ? attr.key : #messages.msg(attr.key)}]]
+				  	</label>
+				</div>
+			</div>
+		</div>
+	</th:block>
+</body>
+</html>

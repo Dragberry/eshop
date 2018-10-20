@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<body>
+	<div class="row" th:fragment="categories-side-menu">
+		<div class="col-12">
+			<button class="btn btn-block btn-secondary btn-sm btn-side-menu"
+				type="button"
+				data-toggle="collapse"
+				data-target="#categoriesNav"
+				aria-expanded="true"
+				aria-controls="categoriesNav">
+				<span th:text="#{msg.common.categories}">Categories</span>
+			</button>
+			<nav id="categories-side-menu" class="content-side-menu navbar bg-dark navbar-dark">
+				<div class="collapse navbar-collapse show" id="categoriesNav">
+					<ul class="navbar-nav">
+						<li th:each="category : ${categoryList}" class="nav-item">
+							<a class="nav-link" th:classappend="${category.reference == selectedCategory} ? 'active' : ''"
+								th:href="@{|${@environment.getProperty('url.catalog')}/${category.reference}|}" th:text="${category.name}">Category</a>
+						</li>
+					</ul>
+				</div>
+			</nav>
+		</div>
+	</div>
+</body>
+</html>

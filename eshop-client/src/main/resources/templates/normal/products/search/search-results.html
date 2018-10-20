@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{normal/layout/template-with-breadcrumb}">
+<head>
+<title th:text="#{msg.common.searchResults}">Search results</title>
+</head>
+<body>
+	<th:block layout:fragment="main-content">
+		<div class="col-md-9">
+			<div class="row">
+				<div class="col-12 col-xs-12 col-sm-6 col-md-8">
+					<h1 th:text="#{msg.common.searchResults}">Search results</h1>
+				</div>
+				<div class="col-12 col-xs-12 col-sm-6 col-md-4">
+					<div class="input-group">
+	    				<div class="input-group-prepend">
+					    	<div class="input-group-text">
+					    		<span class="fa fa-sort fa-xs" th:title="#{msg.common.sorting}"></span>
+					    	</div>
+					    </div>
+	    				<select form="filtersForm" name="sort" class="form-control form-control-sm" id="sorting" onchange="doFilter()">
+							<option th:each="opt : ${sortingOptionList}" 
+								th:value="${opt.value}"
+								th:selected="${searchParams.get('sort') != null ? searchParams.get('sort')[0] == opt.value : false}"
+								th:text="#{${opt.key}}"></option>
+						</select>
+						<input form="filtersForm" type="hidden" name="query" th:value="${query}"></input>
+						<form id="filtersForm" th:action="|${@environment.getProperty('url.catalog.search.filter')}|" method="GET">
+						</form>
+					</div>
+				</div>
+			</div>
+			<div th:fragment="products" id="productList" class="row">
+				<div class="col-12">
+					<hr/>
+				</div>
+				<th:block th:each="productItem : ${productList}">
+					<div th:replace="__|normal/${displayOption.template}|__">Product item</div>
+				</th:block>
+			</div>
+		</div>
+		<div class="col-md-3">
+			<div th:replace="normal/products/list/categories-side-menu :: categories-side-menu(selectedCategory = ${selectedCategory})"></div>
+		</div>
+	</th:block>
+</body>
+</html>

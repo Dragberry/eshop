@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{mobile/layout/template}">
+<body>
+	<div layout:fragment="content">
+		<th:block th:switch="${status}">
+		    <p th:case="'404'">
+		        Oops, we lost this page!
+		    </p>
+		    <div th:case="'500'">
+		        Oops, something wet wrong! We are trying to fix this problem!
+		    </div>
+		</th:block>
+		 <p></p>
+		 <p><a th:href="${@environment.getProperty('url.catalog')}">It's better to see our catalog!</a></p>
+	</div>
+</body>
+</html>

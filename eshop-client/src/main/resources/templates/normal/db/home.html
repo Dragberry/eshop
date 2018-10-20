@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{normal/layout/template-with-breadcrumb}">
+<head>
+	<title>Интернет-магазин стильных и качественных смарт-часов и фитнес браслетов [[${shop.name}]]</title>
+	<meta name="keywords" th:content="|${shop.name}, ${shop.nameAlt} интернет магазин, смарт-часы, smart watch, фитнес браслеты, фитнес-треккеры|">
+	<meta name="description" th:content="|Интернет магазин ${shop.name} предлагает Вам ⌚ смарт-часы ⌚ и фитнес-браслеты по приятным ценам, с официальной гарантией и доставкой по всей Беларуси. Широкий выбор умных часов и браслетов в нашем каталоге. Заказ на сайте и по телефонам: ${shop.phonesAsLine}|">
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class="container">
+			<div class="row">
+				<div id="mainBannerCarousel" class="carousel slide" data-ride="carousel">
+					<ol class="carousel-indicators">
+					    <li data-target="#mainBannerCarousel" data-slide-to="0" class="active"></li>
+					    <li data-target="#mainBannerCarousel" data-slide-to="1"></li>
+					    <li data-target="#mainBannerCarousel" data-slide-to="2"></li>
+				  	</ol>
+				  	<div class="carousel-inner">
+					    <div class="carousel-item active">
+					    	<a href="/katalog/smart-chasy">
+						    	<img class="d-block w-100"
+							    	title="Купить смарт-часы в Минске"
+							    	alt="Купить смарт-часы в Минске"
+							   		src="https://static-eu.insales.ru/files/1/6748/4119132/original/Рисунок1-min.png">
+					   		</a>
+					    </div>
+					    <div class="carousel-item">
+						    <a href="/katalog/detskie-smart-chasy">
+						    	<img class="d-block w-100"
+							    	title="Купить смарт-часы в Минске"
+							    	alt="Купить смарт-часы в Минске"
+							   		src="https://static-eu.insales.ru/files/1/6808/4119192/original/Рисунок2-min.png">
+					   		</a>
+					    </div>
+					     <div class="carousel-item">
+					     	<a href="/katalog/fitnes-braslety">
+						    	<img class="d-block w-100"
+							    	title="Лучшие умные часы в Минске"
+							    	alt="Лучшие умные часы в Минске"
+							   		src="https://static-eu.insales.ru/files/1/6838/4119222/original/Рисунок4-min.png">
+						   	</a>
+					    </div>
+					</div>
+					<a class="carousel-control-prev" href="#mainBannerCarousel" role="button" data-slide="prev">
+						<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+				    	<span class="sr-only">Previous</span>
+					</a>
+					<a class="carousel-control-next" href="#mainBannerCarousel" role="button" data-slide="next">
+					    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+					    <span class="sr-only">Next</span>
+					</a>
+				</div>
+			</div>
+			
+			<div class="row app-info-secondary jumbotron">
+        		<div class="container">
+					<div class="row">
+						<div class="benefit col-md-4">
+							<div class="benefit-inner">
+								<div class="benefit-image">
+						            <img src="https://static-eu.insales.ru/files/1/4867/4002563/original/benefit3.png"
+						            	title="Выгодные акции и бонусы"
+						            	alt="Выгодные акции и бонусы"/>
+				            	</div>
+								<div class="small benefit-title font-weight-bold">ВЫГОДНЫЕ АКЦИИ И БОНУСЫ</div>
+							</div>
+						</div>
+						<div class="benefit col-md-4">
+							<div class="benefit-inner">
+								<div class="benefit-image">
+									<img class="img-fluid float-left"
+						            	src="https://static-eu.insales.ru/files/1/6300/4126876/original/mark-27098_640.png"
+						            	title="Гарантии качества продукции"
+						            	alt="Гарантии качества продукции"/>
+				            	</div>
+								<div class="small benefit-title font-weight-bold">ГАРАНТИЯ КАЧЕСТВА ПРОДУКЦИИ</div>
+							</div>
+						</div>
+						<div class="benefit col-md-4">
+							<div class="benefit-inner">
+								<div class="benefit-image">
+									<img class="img-fluid float-left"
+						            	src="https://static-eu.insales.ru/files/1/4864/4002560/original/benefit1.png"
+						            	title="Быстрая доставка до двери"
+						            	alt="Быстрая доставка до двери"/>
+					            </div>
+								<div class="small benefit-title font-weight-bold">БЫСТРАЯ ДОСТАВКА ДО ДВЕРИ</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="row">
+				<h2 class="font-weight-bold">Интернет-магазин "[[${shop.name}]]"</h2>
+				<p>Мы рады предложить Вам качественные товары с подробными описаниями, характеристиками и фотографиями.</p>
+				<p>Мы доставим Ваш заказ в любой уголок Беларуси , осуществим подробную консультацию по товарам и поможем с выбором.</p>	
+				<p>Магазин "[[${shop.name}]]" ([[${shop.nameAlt}]]) предлагает Вам купить качественные смарт-часы с доставкой! Все виды современных моделей от эконом класса до более дорогих представлены в нашем каталоге.</p>	
+				<fieldset>
+					<legend class="font-weight-bold">Наши главные преимущества:</legend>
+					<ul>
+						<li>Низкие цены от производителей</li>
+						<li>Доставка по Минску в день заказа</li>
+						<li>Доставка заказов Службой доставки по всей Стране за 1-3 дня</li>
+						<li>Только оригинальная и соответствующая требованиям продукция</li>
+						<li>Гарантия на все товары</li>
+						<li>Бонусы и скидки для постоянных покупателей</li>
+					</ul>
+				</fieldset>
+			</div>
+			
+			<div class="row justify-content-center">
+				<div class="col-12 text-center mt-4 mb-4">
+					<span class="font-weight-bold">ИНФОРМАЦИЯ О ЗАКАЗЕ И ДОСТАВКЕ ТОВАРОВ:</span>
+				</div>
+			    <div class="col-6 col-md-3 mb-4 text-center">
+			    	<img class="d-block mx-auto w-50"
+					    	title="Прием заказов на умные часы в Минске"
+					    	alt="Прием заказов на умные часы в Минске"
+					   		src="https://static-eu.insales.ru/files/1/2024/4245480/original/check-2160904_640-min.png">
+			    	<span class="d-block font-weight-bold">ПРИЕМ ЗАКАЗОВ:</span>
+			    	<span class="d-block">через корзину - [[${shop.onlineWorkingHours}]]</span>
+			    	<span class="d-block">по телефону - [[${shop.workingHours}]]</span>
+			    </div>
+			    <div class="col-6 col-md-3 mb-4 text-center">
+			    	<img class="d-block mx-auto w-50"
+					    	title="Доставка смарт-часов по всей Беларуси"
+					    	alt="Доставка смарт-часов по всей Беларуси"
+					   		src="https://static-eu.insales.ru/files/1/2005/4245461/original/label-2160913_640-min.png">
+			    	<span class="d-block font-weight-bold">РЕГИОНЫ ДОСТАВКИ:</span>
+			    	<span class="d-block">вся Беларусь</span>
+			    	<span class="d-block">курьер или почта</span>
+			    </div>
+			    <div class="col-6 col-md-3 mb-4 text-center">
+			    	<img class="d-block mx-auto w-50"
+					    	title="Магазин smart-watch без выходных"
+					    	alt="Магазин smart-watch без выходных"
+					   		src="https://static-eu.insales.ru/files/1/2025/4245481/original/gear-2160908_640-min.png">
+			    	<span class="d-block font-weight-bold">ОБРАБОТКА ЗАКАЗОВ:</span>
+			    	<span class="d-block">[[${shop.workingHours}]]</span>
+			    </div>
+			   <div class="col-6 col-md-3 mb-4 text-center">
+			    	<img class="d-block mx-auto w-50"
+					    	title="Ежедневная доставка смарт-часов по Минску и Беларуси"
+					    	alt="Ежедневная доставка смарт-часов по Минску и Беларуси"
+					   		src="https://static-eu.insales.ru/files/1/2026/4245482/original/clock-2244773_640-min.png">
+			    	<span class="d-block font-weight-bold">ВРЕМЯ ДОСТАВКИ:</span>
+			    	<span class="d-block">[[${shop.shippingWorkingHours}]]</span>
+			    </div>
+			    <div class="col-6 col-md-3 mb-4 text-center">
+			    	<img class="d-block mx-auto w-50"
+					    	title="Бесплатная доставка смарт-часов по Минску"
+					    	alt="Бесплатная доставка смарт-часов по Минску"
+					   		src="https://static-eu.insales.ru/files/1/2027/4245483/original/Рисунок6-min.png">
+			    	<span class="d-block font-weight-bold">СТОИМОСТЬ ДОСТАВКИ:</span>
+			    	<span class="d-block">по Минску - бесплатно;</span>
+			    	<span class="d-block">другие города - 5-8 рублей</span>
+			    </div>
+			    <div class="col-6 col-md-3 mb-4 text-center">
+			    	<img class="d-block mx-auto w-50"
+					    	title="Купить умные часы в интернете"
+					    	alt="Купить умные часы в интернете"
+					   		src="https://static-eu.insales.ru/files/1/2036/4245492/original/commerce-2160909_640-min1.png">
+			    	<span class="d-block font-weight-bold">ОПЛАТА ТОВАРА:</span>
+			    	<span class="d-block">наличными,</span>
+			    	<span class="d-block"> банковской картой или платеж через интернет</span>
+			    </div>
+			    <div class="col-6 col-md-3 mb-4 text-center">
+			    	<img class="d-block mx-auto w-50"
+					    	title="Сертифицированные smartwatch в Беларуси"
+					    	alt="Сертифицированные smartwatch в Беларуси"
+					   		src="https://static-eu.insales.ru/files/1/2037/4245493/original/paper-2160320__340-min1.png">
+			    	<span class="d-block font-weight-bold">ДОКУМЕНТЫ НА ТОВАР:</span>
+			    	<span class="d-block">все товары проходят</span>
+			    	<span class="d-block">подтверждение качества и соответствия требованиям</span>
+			    </div>
+			    <div class="col-6 col-md-3 mb-4 text-center">
+			    	<img class="d-block mx-auto w-50"
+					    	title="Официальная гарантия на оригинальные смарт-часы"
+					    	alt="Официальная гарантия на оригинальные смарт-часы"
+					   		src="https://static-eu.insales.ru/files/1/2038/4245494/original/like-2195024_640-min1.png">
+			    	<span class="d-block font-weight-bold">ГАРАНТИЯ КАЧЕСТВА:</span>
+			    	<span class="d-block">на все товары мы выдаем</span>
+			    	<span class="d-block">официальную гарантию от производителя</span>
+			    </div>
+			</div>
+			
+			<div id="kak-sdelat-zakaz" class="row justify-content-center">
+				<div class="col-12 text-center mt-4">
+					<span class="font-weight-bold">КАК СДЕЛАТЬ ЗАКАЗ В НАШЕМ МАГАЗИНЕ?</span>
+				</div>
+				<div class="col-12 text-center mb-4">
+					<span>Все очень просто:</span>
+				</div>
+				<div class="row">
+					<div class="col-3 text-center d-none d-md-block">
+				    	<img class="d-block mx-auto w-50"
+						    	title="Добавьте смарт-часы в корзину и оформите заказ"
+						    	alt="Добавьте смарт-часы в корзину и оформите заказ"
+						   		src="https://static-eu.insales.ru/files/1/2063/4245519/original/10-min.png">
+				    	<span class="d-block font-weight-bold">Добавьте товар в корзину и оформите заказ</span>
+				    	<img class="instruction-arrow d-block w-25" src="https://static-eu.insales.ru/files/1/2079/4245535/original/Рисунок71.png">
+				    </div>
+				    <div class="col-3 text-center d-none d-md-block">
+				    	<img class="d-block mx-auto w-50"
+						    	title="Дождитесь подтверждения заказа на почту"
+						    	alt="Дождитесь подтверждения заказа на почту"
+						   		src="https://static-eu.insales.ru/files/1/2064/4245520/original/12-min.png">
+				    	<span class="d-block font-weight-bold">Вам на почту придет подтверждение</span>
+				    	<img class="instruction-arrow d-block w-25" src="https://static-eu.insales.ru/files/1/2079/4245535/original/Рисунок71.png">
+				    </div>
+				    <div class="col-3 text-center d-none d-md-block">
+				    	<img class="d-block mx-auto w-50"
+						    	title="Дождитесь звонка оператора для уточнения данных"
+						    	alt="Дождитесь звонка оператора для уточнения данных"
+						   		src="https://static-eu.insales.ru/files/1/2065/4245521/original/11-min.png">
+				    	<span class="d-block font-weight-bold">С Вами свяжется оператор для уточнения данных</span>
+				    	<img class="instruction-arrow d-block w-25" src="https://static-eu.insales.ru/files/1/2079/4245535/original/Рисунок71.png">
+				    </div>
+				    <div class="col-3 text-center d-none d-md-block">
+				    	<img class="d-block mx-auto w-50"
+						    	title="Доставка курьером или почтой"
+						    	alt="Доставка курьером или почтой"
+						   		src="https://static-eu.insales.ru/files/1/2067/4245523/original/14-min.png">
+				    	<span class="d-block font-weight-bold">Курьер доставит товар по Вашему адресу</span>
+				    </div>
+			    </div>
+			</div>
+			
+			<div class="row justify-content-center mt-4 small">
+				<p class="text-center">В интернет-магазине "[[${shop.name}]]" ([[${shop.nameAlt}]]) Вы сможете купить смарт-часы (smart watch/ смарт-воч) или как их еще называют: умные часы, часы-телефон с поддержкой сим-карты, блютуз часы для Android и Ios по низким ценам и заказать доставку по Минску, Бресту, Витебску, Гомелю, Гродно, Могилеву и другим городам Беларуси. </p>
+				<p class="font-weight-bold">Savori smart watch. Савори смарт-воч.</p>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

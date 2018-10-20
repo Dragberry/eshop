@@ -148,27 +148,27 @@ public class WebAppInitializer {
     }
 	
 	private void createPages() {
-	    createPage("/", "Главная страница");
-	    
-	    createPage("/dostavka", "Доставка", "Доставка", 1);
-	    createPage("/oplata-i-rassrochka", "Оплата и рассрочка", "Оплата и рассрочка", 2);
-	    createPage("/garantiya-i-servis", "Гарантия и сервис", "Гарантия и сервис", 3);
-	    createPage("/kontakty", "Контакты", "Контакты", 4);
-	    createPage("/otzyvy-pokupatelei", "Отзывы покупателей", "Отзывы покупателей", 5);
-	    createPage("/optovaya-torgovlya", "Оптовая торговля", "Оптовая торговля", 1);
+	    createPage("/", "db/home", "Главная страница");
+	    createPage("/dostavka", "db/dostavka", "Доставка", "Доставка", 1);
+	    createPage("/oplata-i-rassrochka", "db/oplata-i-rassrochka", "Оплата и рассрочка", "Оплата и рассрочка", 2);
+	    createPage("/garantiya-i-servis", "db/garantiya-i-servis", "Гарантия и сервис", "Гарантия и сервис", 3);
+	    createPage("/kontakty", "db/kontakty","Контакты", "Контакты", 4);
+	    createPage("/otzyvy-pokupatelei", "db/otzyvy-pokupatelei", "Отзывы покупателей", "Отзывы покупателей", 5);
+	    createPage("/optovaya-torgovlya", "db/optovaya-torgovlya", "Оптовая торговля", "Оптовая торговля", 1);
 	}
 	
-	private void createPage(String reference, String name) {
-	    createPage(reference, name, null, null);
+	private void createPage(String reference, String viewName, String name) {
+	    createPage(reference, viewName, name, null, null);
     }
 	
-	private void createPage(String reference, String title, String breadcrumbTitle, Integer order) {
+	private void createPage(String reference, String viewName, String title, String breadcrumbTitle, Integer order) {
 	    pageRepo.findByReference(reference).orElseGet(() -> {
             Page page = new  Page();
             page.setReference(reference);
+            page.setViewName(viewName);
             page.setTitle(title);
             page.setBreadcrumbTitle(breadcrumbTitle);
-            try (InputStream is = resourceLoader.getResource("classpath:templates/pages" + ("/".equals(reference) ? "/home" : reference) + ".html").getInputStream()) {
+            try (InputStream is = resourceLoader.getResource("classpath:templates/normal" + ("/".equals(reference) ? "/home" : reference) + ".html").getInputStream()) {
             	Document description = Jsoup.parse(is, StandardCharsets.UTF_8.name(), StringUtils.EMPTY);
 		    	for (Element img : description.select("img[src]"))  {
 		            createImageAndReplaceLink(img, "src");
@@ -180,6 +180,8 @@ public class WebAppInitializer {
             } catch (Exception e) {
                 log.warn("Unable to open " + reference + " page");
             }
+            page.setContent(getContent("normal", viewName));
+            page.setContentMobile(getContent("mobile", viewName));
             page = pageRepo.save(page);
             if (order != null) {
                 MenuPage mp = new MenuPage();
@@ -190,6 +192,23 @@ public class WebAppInitializer {
             }
             return page;
         });
+	}
+	
+	private String getContent(String device, String viewName) {
+		 String resourceName = MessageFormat.format("classpath:templates/{0}/{1}.html", device, viewName);
+		try (InputStream is = resourceLoader.getResource(resourceName).getInputStream()) {
+			 Document description = Jsoup.parse(is, StandardCharsets.UTF_8.name(), StringUtils.EMPTY);
+			 for (Element img : description.select("img[src]")) {
+				 createImageAndReplaceLink(img, "src");
+			 }
+             for (Element link : description.select("a[href]"))  {
+                 createImageAndReplaceLink(link, "href");
+             }
+         	return description.html();
+         } catch (Exception e) {
+             log.warn("Unable to open " + resourceName + " page");
+             return null;
+         }
 	}
 
     private void createImageAndReplaceLink(Element link, String attr) throws UnsupportedEncodingException, IOException, MalformedURLException {

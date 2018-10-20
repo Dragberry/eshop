@@ -44,7 +44,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.mobile.device.Device;
-import org.springframework.mobile.device.DeviceUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -62,9 +61,8 @@ import org.thymeleaf.context.Context;
 public class ProductController {
     
 	public static enum DisplayOption {
-		MOBILE("pages/products/list/product-mobile-item :: product-item(product = ${productItem})"),
-        LIST("pages/products/list/product-list-item :: product-item(product = ${productItem})"),
-        TILES("pages/products/list/product-tile-item :: product-item(product = ${productItem})");
+        LIST("products/list/product-list-item :: product-item(product = ${productItem})"),
+        TILES("products/list/product-tile-item :: product-item(product = ${productItem})");
         
         public final String template;
         
@@ -181,19 +179,14 @@ public class ProductController {
 	 * Set the display option. The default should be list
 	 */
 	private void setDisplayOption(ModelAndView mv) {
-		Device device = DeviceUtils.getCurrentDevice(request);
-		if (device != null && device.isMobile()) {
-			displayOption = DisplayOption.MOBILE;
-		} else {
-			String reqParam = request.getParameter(DISPLAY_PARAM);
-	        if (StringUtils.isBlank(reqParam)) {
-	            if (displayOption == null) {
-	                displayOption = DisplayOption.LIST;
-	            }
-	        } else {
-	            displayOption = DisplayOption.valueOf(reqParam.toUpperCase());
-	        }
-		}
+		String reqParam = request.getParameter(DISPLAY_PARAM);
+        if (StringUtils.isBlank(reqParam)) {
+            if (displayOption == null) {
+                displayOption = DisplayOption.LIST;
+            }
+        } else {
+            displayOption = DisplayOption.valueOf(reqParam.toUpperCase());
+        }
         mv.addObject(MODEL_DISPLAY_OPTION, displayOption);
 	}
 	
@@ -204,18 +197,15 @@ public class ProductController {
 	 * @return
 	 */
 	@GetMapping("${url.catalog.quick-search}")
-	@ResponseBody
-	public ResultTO<String> quickSearch(@RequestParam(required = true) String query, Locale locale) {
-		Context context = new Context(locale);
-		context.setVariable(MODEL_CATALOG_REFERENCE, catalogReference);
-		context.setVariable(MODEL_IMAGES_REFERENCE, imagesReference);
-		context.setVariable(MODEL_NO_IMAGE_REFERENCE, noImageReference);
-		context.setVariable(MODEL_SHOP, appInfoService.getShopDetails());
-		context.setVariable(MODEL_QUERY, query);
-        context.setVariable(MODEL_SEARCH_RESULTS, productService.getProductList(query, new HashMap<>(request.getParameterMap())));
-        return Results.create(templateEngine.process(DeviceUtils.getCurrentDevice(request).isMobile() 
-                ? "pages/products/search/quick-search.mobile" : "pages/products/search/quick-search",
-                new HashSet<>(Arrays.asList("search-results")), context));
+	public ModelAndView quickSearch(@RequestParam(required = true) String query, Locale locale) {
+		ModelAndView mv = new ModelAndView("products/search/quick-search :: search-results");
+		mv.addObject(MODEL_CATALOG_REFERENCE, catalogReference);
+		mv.addObject(MODEL_IMAGES_REFERENCE, imagesReference);
+		mv.addObject(MODEL_NO_IMAGE_REFERENCE, noImageReference);
+		mv.addObject(MODEL_SHOP, appInfoService.getShopDetails());
+		mv.addObject(MODEL_QUERY, query);
+		mv.addObject(MODEL_SEARCH_RESULTS, productService.getProductList(query, new HashMap<>(request.getParameterMap())));
+        return mv;
 	}
 	
 	/**
@@ -223,7 +213,7 @@ public class ProductController {
      */
     @GetMapping({"${url.catalog.search}"})
     public ModelAndView search(@RequestParam(required = true) String query) {
-        ModelAndView mv = new ModelAndView("pages/products/search/search-results");
+        ModelAndView mv = new ModelAndView("products/search/search-results");
         mv.addObject(Breadcrumb.MODEL_BREADCRUMB, Breadcrumb.builder()
                 .append(MSG_SEARCH_RESULTS, StringUtils.EMPTY, true));
         mv.addObject(MODEL_SORTING_OPTION_LIST, SORTING_OPTION_LIST);
@@ -243,7 +233,7 @@ public class ProductController {
      */
     @GetMapping("${url.catalog.search.filter}")
     public ModelAndView filterSearchResults(@RequestParam(required = true) String query) {
-        ModelAndView mv = new ModelAndView("pages/products/search/search-results :: products");
+        ModelAndView mv = new ModelAndView("products/search/search-results :: products");
         mv.addObject(MODEL_QUERY, query);
         mv.addObject(MODEL_PRODUCT_LIST, productService.getProductList(query, new HashMap<>(request.getParameterMap())));
         setDisplayOption(mv);
@@ -329,7 +319,7 @@ public class ProductController {
      */
     @GetMapping("${url.catalog.filter}/{selectedCategory}")
     public ModelAndView filter(HttpServletRequest request, @PathVariable(required = true) String selectedCategory) {
-    	ModelAndView mv = new ModelAndView("pages/products/list/product-list :: products");
+    	ModelAndView mv = new ModelAndView("products/list/product-list :: products");
     	ProductCategory category = getCategory(selectedCategory);
 		mv.addObject(MODEL_CATEGORY, category);
     	ProductSearchQuery query = new ProductSearchQuery();
@@ -348,7 +338,7 @@ public class ProductController {
      */
     @GetMapping("${url.catalog.filter}")
     public ModelAndView filterAll() {
-        ModelAndView mv = new ModelAndView("pages/products/list/product-list :: products");
+        ModelAndView mv = new ModelAndView("products/list/product-list :: products");
     	ProductSearchQuery query = new ProductSearchQuery();
     	Map<String, String[]> searchParams = new HashMap<>(request.getParameterMap());
     	categorySearchParams.put(DEFAULT_CATEGORY_KEY, searchParams);
@@ -364,7 +354,7 @@ public class ProductController {
 	 */
 	@GetMapping({"${url.catalog}/{selectedCategory}"})
 	public ModelAndView catalog(@PathVariable String selectedCategory) {
-		ModelAndView mv = new ModelAndView("pages/products/list/product-list");
+		ModelAndView mv = new ModelAndView("products/list/product-list");
 		ProductCategory category = getCategory(selectedCategory);
 		mv.addObject(MODEL_CATEGORY, category);
 		mv.addObject(Breadcrumb.MODEL_BREADCRUMB, Breadcrumb.builder()
@@ -392,7 +382,7 @@ public class ProductController {
 	 */
 	@GetMapping({"${url.catalog}"})
 	public ModelAndView catalogAll() {
-		ModelAndView mv = new ModelAndView("pages/products/list/product-list");
+		ModelAndView mv = new ModelAndView("products/list/product-list");
 		mv.addObject(Breadcrumb.MODEL_BREADCRUMB, Breadcrumb.builder()
 				.append(MSG_MENU_CATALOG, StringUtils.EMPTY, true));
 		mv.addObject(MODEL_SORTING_OPTION_LIST, SORTING_OPTION_LIST);
@@ -425,7 +415,7 @@ public class ProductController {
         if (productReference != null) {
             ProductDetails product = productService.getProductArticleDetails(categoryReference, productReference);
             if (product != null) {
-            	ModelAndView mv = new ModelAndView(device.isMobile() ? "pages/products/details/product-details.mobile" : "pages/products/details/product-details");
+            	ModelAndView mv = new ModelAndView("products/details/product-details");
                 mv.addObject(MODEL_PRODUCT, product);
                 ProductsDetails products = new ProductsDetails();
                 products.setOptionValues(product.getOptionValues());
@@ -459,7 +449,7 @@ public class ProductController {
     	} else {
     		Context context = new Context(locale);
     		context.setVariable("comment", resp.getValue());
-            return Results.create(templateEngine.process("pages/products/details/product-details-tabs",
+            return Results.create(templateEngine.process("common/products/details/product-details-tabs",
     				new HashSet<>(Arrays.asList("product-comment")), context));
     	}
     }
