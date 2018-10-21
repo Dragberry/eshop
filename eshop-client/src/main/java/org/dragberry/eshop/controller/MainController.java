@@ -79,7 +79,7 @@ public class MainController {
     public ModelAndView comments(HttpServletRequest request) {
         ModelAndView mv = handlePage(request);
         mv.addObject("comments", commentService.getCommentList());
-        mv.setViewName("pages/otzyvy-pokupatelei");
+        mv.setViewName("db/otzyvy-pokupatelei");
         return mv;
     }
     
@@ -92,6 +92,6 @@ public class MainController {
     @GetMapping("import/test")
     public String testImport() throws IOException {
         inSalesDataImporter.importData(resourceLoader.getResource("classpath:data/insales_export.csv").getInputStream());
-        return "pages/home";
+        return "db/home";
     }
 }

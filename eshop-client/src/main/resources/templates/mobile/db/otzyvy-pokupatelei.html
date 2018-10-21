@@ -16,7 +16,7 @@
 				<h2 class="h2 mt-2 mb-4">Здесь вы можете найти отзывы счастливых обладателей смарт-часов и фитнес-браслетов</h2>
 				<p th:if="${#lists.isEmpty(comments)}">Пока никто еще не оставил свой отзыв:(</p>
 			</div>
-			<div class="col-12 mt-4" th:if="${#request.getAttribute('currentDevice').mobile && !#lists.isEmpty(comments)}">
+			<div class="col-12 mt-4" th:if="${!#lists.isEmpty(comments)}">
 				<div class="row" th:each="comment, iter : ${comments}">
 					<div class="col-12">
 						<h3 class="font-weight-bold">
@@ -46,7 +46,7 @@
 										<span class="font-weight-bold mr-4">[[${comment.name}]]</span>
 									</div>
 									<div class="col-12">
-										<span th:replace="components/rating :: rating(name = ${comment.id}, value = ${comment.mark})">Rating</span>
+										<span th:replace="common/components/rating :: rating(name = ${comment.id}, value = ${comment.mark})">Rating</span>
 									</div>
 			 					</div>
 			 				</div>
@@ -59,52 +59,6 @@
 	 					<hr/>
 	 				</div>
 	 			</div>
-			</div>
-			
-			
-			<div class="col-12 mt-4" th:if="${!#request.getAttribute('currentDevice').mobile && !#lists.isEmpty(comments)}">
-				<div class="row" th:each="comment, iter : ${comments}">
-					<div class="col-12">
-						<h3 class="font-weight-bold">
-	 						<span>Отзыв на</span>
-	 						<a th:href="@{|${@environment.getProperty('url.catalog')}/${comment.productCategoryReference}/${comment.productReference}|}">
-	 							[[${comment.productTitle}]]
-	 						</a>
-	 					</h3>
-	 					<div class="row small">
-	 						<div class="col-12 col-sm-3 col-md-2">
-			 					<a th:href="@{|${@environment.getProperty('url.catalog')}/${comment.productCategoryReference}/${comment.productReference}|}">
-			 						<img class="d-block mx-auto w-75 p-2"
-			 							th:title="${comment.productTitle}"
-			 							th:alt="|Отзыв на ${comment.productTitle}|"
-										th:src="${comment.productImage} ? @{|${@environment.getProperty('url.images')}/${comment.productId}/${comment.productArticle}/${comment.productImage}|} : ${@environment.getProperty('url.no-image')}">
-		
-			 					</a>
-			 				</div>
-			 				<div class="col-12 col-sm-9 col-md-10">
-			 					<div class="row">
-						 			<div class="col-6 text-left">
-						 				<div>
-						 					<span class="fa fa-user fa-xs"></span>
-											<span class="font-weight-bold mr-4">[[${comment.name}]]</span>
-										</div>
-										<span th:replace="components/rating :: rating(name = ${comment.id}, value = ${comment.mark})">Rating</span>
-						 			</div>
-						 			<div class="col-6 text-right">
-						 				<span class="fa fa-calendar fa-xs"></span>
-						 				<span class="font-weight-italic">[[${#temporals.format(comment.date, 'yyyy-MM-dd hh:mm:ss')}]]</span>	
-						 			</div>
-						 			<div class="col-12 text-justify">
-						 				<p>[[${comment.text}]]</p>
-						 			</div>
-					 			</div>
-				 			</div>
-	 					</div>
-					</div>
-		 			<div class="col-12">
-		 				<hr/>
-		 			</div>
-				</div>
 			</div>
 		</div>
 	</div>
