@@ -163,7 +163,9 @@ public class ProductServiceImpl implements ProductService {
 		article.getProducts().forEach(p -> {
 			ProductOptionDetails pod = new ProductOptionDetails();
 			pod.setPrice(p.getPrice());
-			pod.setActualPrice(p.getActualPrice());
+			if (!Objects.equals(p.getPrice(), p.getActualPrice())) {
+				pod.setActualPrice(p.getActualPrice());
+			}
 			pod.setOptions(p.getOptions().stream().map(o -> new KeyValue(o.getName(), o.getValue())).collect(toList()));
 			pao.getOptions().put(p.getEntityKey(), pod);
 		});
@@ -202,7 +204,9 @@ public class ProductServiceImpl implements ProductService {
             		p.getEntityKey(),
                     p.getOptions().stream().map(o -> new KeyValue(o.getName(), o.getEntityKey())).collect(toSet()));
             productPrices.put(p.getEntityKey(), p.getPrice());
-            productActualPrices.put(p.getEntityKey(), p.getActualPrice());
+            if (!Objects.equals(p.getPrice(), p.getActualPrice())) {
+            	productActualPrices.put(p.getEntityKey(), p.getActualPrice());
+    		}
         });
         
         setLowestPrice(article, product);
