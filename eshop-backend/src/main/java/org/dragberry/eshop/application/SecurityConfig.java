@@ -5,6 +5,7 @@ import org.dragberry.eshop.security.JwtAuthenticationTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -61,11 +62,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
 
                 // don't create session
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS).and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                
+                .and()
                 .authorizeRequests()
-                //.antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-
-                // allow anonymous resource requests
+                .antMatchers(
+                        HttpMethod.GET,
+                        "/",
+                        "/*.html",
+                        "/favicon.ico",
+                        "/**/*.html",
+                        "/**/*.css",
+                        "/**/*.js",
+                        "/**/*.json",
+                        "/**/*.ttf",
+                        "/**/*.woff",
+                        "/**/*.woff2"
+                ).permitAll()
+                .antMatchers("/admin/api/login/**").permitAll()
+                .antMatchers("/admin/index.html").permitAll()
                 .antMatchers("/admin/**").authenticated()
                 .anyRequest().permitAll();
         // Custom JWT based security filter

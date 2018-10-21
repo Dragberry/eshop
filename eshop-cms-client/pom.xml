@@ -18,7 +18,7 @@
 		<resources>
 			<resource>
 				<directory>target/eshop-cms-client</directory>
-				<targetPath>static</targetPath>
+				<targetPath>static/admin</targetPath>
 			</resource>
 		</resources>
 		<plugins>
