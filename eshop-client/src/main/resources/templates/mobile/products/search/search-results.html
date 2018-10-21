@@ -4,14 +4,14 @@
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{mobile/layout/template-with-breadcrumb}">
 <head>
-<title th:text="#{msg.common.searchResults}">Search results</title>
+<title>[[#{msg.common.searchResults}]]: "[[${param.query}]]"</title>
 </head>
 <body>
 	<th:block layout:fragment="main-content">
 		<div class="col-md-9">
 			<div class="row">
 				<div class="col-12 col-xs-12 col-sm-6 col-md-8">
-					<h1 th:text="#{msg.common.searchResults}">Search results</h1>
+					<h1>[[#{msg.common.searchResults}]]: "[[${param.query}]]"</h1>
 				</div>
 				<div class="col-12 col-xs-12 col-sm-6 col-md-4">
 					<div class="input-group">
@@ -30,6 +30,11 @@
 						<form id="filtersForm" th:action="|${@environment.getProperty('url.catalog.search.filter')}|" method="GET">
 						</form>
 					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-12 text-center font-weight-bold" th:if="${#lists.isEmpty(productList)}">
+					[[#{msg.common.noResults}]]
 				</div>
 			</div>
 			<div th:fragment="products" id="productList" class="row">

@@ -240,7 +240,7 @@ public class WebConfig {
                 if (result.isPresent()) {
                     this.page = result.get();
                     this.mobile = MOBILE_PREFIX.equals(matcher.group(1));
-                    return true;
+                    return false;
                 }
             }
             return false;

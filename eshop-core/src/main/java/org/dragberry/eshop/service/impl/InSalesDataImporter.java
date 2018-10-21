@@ -3,7 +3,6 @@ package org.dragberry.eshop.service.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -392,7 +391,9 @@ public class InSalesDataImporter implements DataImporter {
 	}
 
 	private Map<String, ProductLabelType> processLabels(String[] firstLine) {
-        return Arrays.stream(getProperty(firstLine, LABEL).split("##")).filter(StringUtils::isNotBlank).collect(Collectors.toMap(lbl -> {
+        return Arrays.stream(getProperty(firstLine, LABEL).split("##"))
+        		.filter(lbl -> StringUtils.isNotBlank(lbl) && !"Скидка".equals(lbl))
+        		.collect(Collectors.toMap(lbl -> {
         	if ("новое поступление".equals(lbl)) {
         		return "Новинка";
         	}

@@ -7,6 +7,7 @@ import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.MessageFormat;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -119,11 +120,21 @@ public class ProductServiceImpl implements ProductService {
 					product.setCategory(new CategoryItem(dto.getCategoryId(), dto.getCategoryName(), dto.getCategoryReference()));
 					product.setLabels(productArticleRepo.findLabels(dto.getId()).stream()
 							.map(entry -> (Entry<String, ProductLabelType>) entry).collect(labelCollector()));
+					setDiscountLabel(product.getLabels(), product.getPrice(), product.getActualPrice());
 					product.setMainImage(imageService.findMainImage(dto.getId(), dto.getArticle()));
 					product.setDescription(systemService.processTemplate(dto.getDescription()));
 					return product;
 			    }).collect(toList());
 		
+	}
+	
+	private void setDiscountLabel(Map<String, Modifier> labels, BigDecimal price, BigDecimal actualPrice) {
+		String discountLbl = actualPrice != null && actualPrice.compareTo(price) == -1 ? 
+				"Скидка " + price.subtract(actualPrice).multiply(new BigDecimal(100)).divide(price, 0, RoundingMode.UP) + "%"
+				: null;
+		if (discountLbl != null) {
+			labels.put(discountLbl, Modifier.DANGER);
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -145,6 +156,7 @@ public class ProductServiceImpl implements ProductService {
 					product.setCategory(new CategoryItem(dto.getCategoryId(), dto.getCategoryName(), dto.getCategoryReference()));
 					product.setLabels(productArticleRepo.findLabels(dto.getId()).stream()
 							.map(entry -> (Entry<String, ProductLabelType>) entry).collect(labelCollector()));
+					setDiscountLabel(product.getLabels(), product.getPrice(), product.getActualPrice());
 					product.setMainImage(imageService.findMainImage(dto.getId(), dto.getArticle()));
 					product.setDescription(systemService.processTemplate(dto.getDescription()));
 					return product;
@@ -237,6 +249,7 @@ public class ProductServiceImpl implements ProductService {
         }).collect(toList()));
         
 		product.setLabels(article.getLabels().entrySet().stream().collect(labelCollector()));
+		setDiscountLabel(product.getLabels(), product.getPrice(), product.getActualPrice());
         return product;
     }
     
@@ -284,7 +297,11 @@ public class ProductServiceImpl implements ProductService {
 					default:
 						return Modifier.PRIMARY;
 					}
-				});
+				},
+				(k, v) -> {
+					throw new IllegalStateException(MessageFormat.format("Duplicate key: {0}", k));
+				},
+				LinkedHashMap::new);
     }
     
     @Override

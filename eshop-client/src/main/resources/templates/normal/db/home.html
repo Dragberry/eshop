@@ -12,6 +12,25 @@
 	<div layout:fragment="content">
 		<div class="container">
 			<div class="row">
+				<nav class="nav navbar-expand-lg navbar-dark bg-dark w-100 p-2">
+					<div class="collapse navbar-collapse" id="categoryMenu">
+						<ul class="navbar-nav nav-justified w-100">
+							<li class="nav-item">
+								<a class="nav-link" th:href="${@environment.getProperty('url.catalog')}">
+									[[#{msg.menu.catalog}]]
+								</a>
+							</li>
+							<li class="nav-item" th:each="category : ${categoryList}">
+								<a class="nav-link" th:href="@{|${@environment.getProperty('url.catalog')}/${category.reference}|}">
+									[[${category.name}]]
+								</a>
+							</li>
+						</ul>
+					</div>
+				</nav>
+			</div>
+		
+			<div class="row">
 				<div id="mainBannerCarousel" class="carousel slide" data-ride="carousel">
 					<ol class="carousel-indicators">
 					    <li data-target="#mainBannerCarousel" data-slide-to="0" class="active"></li>
@@ -54,7 +73,7 @@
 					</a>
 				</div>
 			</div>
-			
+
 			<div class="row app-info-secondary jumbotron">
         		<div class="container">
 					<div class="row">
