@@ -1,3 +1,16 @@
-<p>
-  order-list works!
-</p>
+<table *ngIf="orderList" class="table">
+  <tr>
+    <th>{{ 'common.id' | translate }}</th>
+    <th>{{ 'common.phone' | translate }}</th>
+    <th>{{ 'common.date' | translate }}</th>
+    <th>{{ 'common.order' | translate }}</th>
+    <th>{{ 'common.status' | translate }}</th>
+  </tr>
+  <tr *ngFor="let order of orderList; let i = index;">
+    <th>{{order.id}}</th>
+    <td>{{order.phone}}</td>
+    <td>{{order.date}}</td>
+    <td>Order</td>
+    <td>{{order.status}}</td>
+  </tr>
+</table>

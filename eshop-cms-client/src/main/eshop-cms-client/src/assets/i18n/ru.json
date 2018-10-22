@@ -15,8 +15,13 @@
     },
     "common": {
       "account": "Аккаунт",
+      "date": "Дата",
+      "id": "ID",
+      "order": "Заказ",
+      "phone": "Телефон",
       "search": "Поиск",
-      "sign-out": "Выйти"
+      "sign-out": "Выйти",
+      "status": "Статус"
     },
     "language": {
       "en": "English",
