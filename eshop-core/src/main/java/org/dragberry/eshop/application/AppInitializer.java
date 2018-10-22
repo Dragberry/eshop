@@ -40,7 +40,7 @@ import lombok.extern.log4j.Log4j;
 
 @Log4j
 @Component
-public class WebAppInitializer {
+public class AppInitializer {
 
 	@Autowired
     private ResourceLoader resourceLoader;

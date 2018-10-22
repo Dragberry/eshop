@@ -1,19 +1,16 @@
-package org.dragberry.eshop.service.impl;
+package org.dragberry.eshop.cms.service.impl;
 
 import java.text.MessageFormat;
 
+import org.dragberry.eshop.cms.security.JwtUserFactory;
 import org.dragberry.eshop.dal.entity.UserAccount;
 import org.dragberry.eshop.dal.repo.UserAccountRepository;
-import org.dragberry.eshop.security.JwtUserFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-/**
- * Created by stephan on 20.03.16.
- */
 @Service
 public class JwtUserDetailsServiceImpl implements UserDetailsService {
 

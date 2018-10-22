@@ -1,12 +1,12 @@
-package org.dragberry.eshop.controller;
+package org.dragberry.eshop.cms.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.dragberry.eshop.cms.security.JwtAuthenticationRequest;
+import org.dragberry.eshop.cms.security.JwtAuthenticationResponse;
+import org.dragberry.eshop.cms.security.JwtTokenUtil;
+import org.dragberry.eshop.cms.security.JwtUser;
 import org.dragberry.eshop.common.Results;
-import org.dragberry.eshop.security.JwtAuthenticationRequest;
-import org.dragberry.eshop.security.JwtAuthenticationResponse;
-import org.dragberry.eshop.security.JwtTokenUtil;
-import org.dragberry.eshop.security.JwtUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +38,7 @@ public class AuthenticationController {
     @Autowired
     private UserDetailsService userDetailsService;
 
-    @RequestMapping(value = "/admin/api/login", method = RequestMethod.POST)
+    @RequestMapping(value = "/admin/login", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest, Device device) throws AuthenticationException {
 
         // Perform the security
@@ -58,7 +58,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(Results.create(new JwtAuthenticationResponse(token, (JwtUser) userDetails)));
     }
 
-    @RequestMapping(value = "/api/refresh", method = RequestMethod.GET)
+    @RequestMapping(value = "/admin/refresh", method = RequestMethod.GET)
     public ResponseEntity<?> refreshAndGetAuthenticationToken(HttpServletRequest request) {
         String token = request.getHeader(tokenHeader);
         String username = jwtTokenUtil.getUsernameFromToken(token);

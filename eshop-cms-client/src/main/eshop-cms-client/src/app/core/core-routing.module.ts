@@ -19,6 +19,11 @@ import { AuthGuard } from './auth/auth.guard';
                     path: 'products',
                     loadChildren: '../products/products.module#ProductsModule',
                     canActivate: [AuthGuard]
+                },
+                {
+                    path: 'orders',
+                    loadChildren: '../orders/orders.module#OrdersModule',
+                    canActivate: [AuthGuard]
                 }
             ]
         },

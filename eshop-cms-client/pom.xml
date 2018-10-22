@@ -13,6 +13,27 @@
 		<artifactId>eshop</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
+	
+	<properties>
+		<jjwt.version>0.7.0</jjwt.version>
+	</properties>
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>${jjwt.version}</version>
+		</dependency>
+		<dependency>
+		  	<groupId>org.dragberry.eshop</groupId>
+		  	<artifactId>eshop-core</artifactId>
+		  	<version>${project.version}</version>
+		</dependency>
+	</dependencies>
 
 	<build>
 		<resources>

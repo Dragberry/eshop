@@ -62,7 +62,7 @@ import lombok.extern.log4j.Log4j;
 
 @Log4j
 @Service("InSalesDataImporter")
-@DependsOn("webAppInitializer")
+@DependsOn("appInitializer")
 public class InSalesDataImporter implements DataImporter {
 
 	private static final String PRODUCT_ARTICLE = "Артикул";

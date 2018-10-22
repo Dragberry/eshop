@@ -4,13 +4,16 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.dragberry.eshop.controller.Controllers;
 import org.dragberry.eshop.dal.entity.Page;
 import org.dragberry.eshop.dal.repo.PageRepository;
 import org.dragberry.eshop.dal.repo.RequestLogRepository;
@@ -25,10 +28,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+import org.springframework.mobile.device.DeviceHandlerMethodArgumentResolver;
 import org.springframework.mobile.device.DeviceResolverRequestFilter;
 import org.springframework.mobile.device.view.LiteDeviceDelegatingViewResolver;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.thymeleaf.IEngineConfiguration;
 import org.thymeleaf.cache.AlwaysValidCacheEntryValidity;
 import org.thymeleaf.cache.ICacheEntryValidity;
@@ -42,8 +49,10 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 import org.thymeleaf.templateresource.ITemplateResource;
 
 @Configuration
-@ComponentScan(basePackageClasses = { AppInfoInterceptor.class, RequestLogFilter.class })
-public class WebConfig {
+@ComponentScan(basePackageClasses = { Controllers.class, AppInfoInterceptor.class, RequestLogFilter.class })
+public class WebConfig implements WebMvcConfigurer {
+    
+    private static final List<String> EXCLUDE_STATIC = Arrays.asList("/images/**", "/js/**", "/css/**", "/webfonts/**");
     
 	private final static String MOBILE_PREFIX = "mobile/";
 	
@@ -67,8 +76,16 @@ public class WebConfig {
     @Autowired
     private RequestLogRepository requestLogRepository;
     
+    @Autowired
+    private AppInfoInterceptor appInfoInterceptor;
+    
     public WebConfig(ObjectProvider<Collection<IDialect>> dialectsProvider) {
         this.dialects = dialectsProvider.getIfAvailable(Collections::emptyList);
+    }
+    
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(appInfoInterceptor).excludePathPatterns(EXCLUDE_STATIC);
     }
     
     @Bean

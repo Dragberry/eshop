@@ -1,4 +1,4 @@
-package org.dragberry.eshop.security;
+package org.dragberry.eshop.cms.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

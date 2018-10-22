@@ -1,13 +1,13 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Observable, Subscription} from 'rxjs';
+import {Observable, Subscription, of} from 'rxjs';
 
 export const LOGIN_URL = '/login';
 export const CURENT_USER_TOKEN = 'currentUserToken';
 export const CURRENT_USER = 'currentUser';
 export const AUTHORISATION = 'Authorisation';
 
-const API_LOGIN_URL = 'api/login';
+const API_LOGIN_URL = 'admin/login';
 
 @Injectable()
 export class AuthenticationService {
@@ -17,20 +17,26 @@ export class AuthenticationService {
   constructor(private http: HttpClient) {}
 
   login(username: string, password: string): Observable<any> {
-    const response = this.http.post<any>(API_LOGIN_URL, JSON.stringify({username: username, password: password}));
-    response.subscribe(
-      (result: any) => {
-        if (result && result.value.token) {
-          if (result.value.token) {
-            localStorage.setItem(CURENT_USER_TOKEN, result.value.token);
-            localStorage.setItem(CURRENT_USER, JSON.stringify(result.value));
+    return new Observable(observer => {
+      this.http.post<any>(API_LOGIN_URL, JSON.stringify({username: username, password: password})).subscribe(
+        (result: any) => {
+          if (result && result.value.token) {
+            if (result.value.token) {
+              localStorage.setItem(CURENT_USER_TOKEN, result.value.token);
+              localStorage.setItem(CURRENT_USER, JSON.stringify(result.value));
+            }
+            if (result.userDetails) {
+              this.userDetails = result.userDetails;
+            }
           }
-          if (result.userDetails) {
-            this.userDetails = result.userDetails;
-          }
-        }
-      });
-    return response;
+          observer.next(result);
+          observer.complete();
+        },
+        (error) => {
+          observer.error(error);
+          observer.complete();
+       });
+    });
   }
 
   logout(): void {

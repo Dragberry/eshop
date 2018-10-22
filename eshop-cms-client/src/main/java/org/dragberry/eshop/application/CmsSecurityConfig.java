@@ -1,7 +1,7 @@
 package org.dragberry.eshop.application;
 
-import org.dragberry.eshop.security.JwtAuthenticationEntryPoint;
-import org.dragberry.eshop.security.JwtAuthenticationTokenFilter;
+import org.dragberry.eshop.cms.security.JwtAuthenticationEntryPoint;
+import org.dragberry.eshop.cms.security.JwtAuthenticationTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class CmsSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
     private JwtAuthenticationEntryPoint unauthorizedHandler;
@@ -56,13 +56,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-                // we don't need CSRF because our token is invulnerable
                 .csrf().disable()
-
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-
-                // don't create session
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 
                 .and()
                 .authorizeRequests()
@@ -79,15 +75,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.woff",
                         "/**/*.woff2"
                 ).permitAll()
-                .antMatchers("/admin/api/login/**").permitAll()
+                .antMatchers("/admin/login/**").permitAll()
                 .antMatchers("/admin/index.html").permitAll()
                 .antMatchers("/admin/**").authenticated()
                 .anyRequest().permitAll();
-        // Custom JWT based security filter
+
         httpSecurity
                 .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
 
-        // disable page caching
         httpSecurity.headers().cacheControl();
     }
 }

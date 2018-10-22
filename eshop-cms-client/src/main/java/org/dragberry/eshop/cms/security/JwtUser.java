@@ -1,4 +1,4 @@
-package org.dragberry.eshop.security;
+package org.dragberry.eshop.cms.security;
 
 import java.time.LocalDateTime;
 import java.util.Collection;

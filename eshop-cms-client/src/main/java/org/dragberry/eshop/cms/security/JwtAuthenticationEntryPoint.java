@@ -1,4 +1,4 @@
-package org.dragberry.eshop.security;
+package org.dragberry.eshop.cms.security;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
