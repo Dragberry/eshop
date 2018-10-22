@@ -1,6 +1,6 @@
 {
-	"/admin": {
-		"target": "http://localhost:8090",
+	"/": {
+		"target": "http://localhost:8090/admin",
 		"secure": false
 	}
 }
