@@ -58,7 +58,7 @@ public class CmsSecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity
                 .csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                 
                 .and()
                 .authorizeRequests()
@@ -66,7 +66,7 @@ public class CmsSecurityConfig extends WebSecurityConfigurerAdapter {
                         HttpMethod.GET,
                         "/",
                         "/*.html",
-                        "/favicon.ico",
+                        "/**/favicon.ico",
                         "/**/*.html",
                         "/**/*.css",
                         "/**/*.js",

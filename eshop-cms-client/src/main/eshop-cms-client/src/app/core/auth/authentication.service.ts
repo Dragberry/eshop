@@ -7,7 +7,7 @@ export const CURENT_USER_TOKEN = 'currentUserToken';
 export const CURRENT_USER = 'currentUser';
 export const AUTHORISATION = 'Authorisation';
 
-const API_LOGIN_URL = 'admin/login';
+const API_LOGIN_URL = 'login';
 
 @Injectable()
 export class AuthenticationService {
