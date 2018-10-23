@@ -7,6 +7,7 @@ import org.dragberry.eshop.cms.service.OrderCmsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -22,7 +23,9 @@ public class OrderController {
 	 * @return
 	 */
 	@GetMapping("/list")
-	public List<OrderCmsModel> getOrders() {
+	public List<OrderCmsModel> getOrders(
+	        @RequestParam(required = true) Long pageNumber,
+	        @RequestParam(required = true) Long pageSize) {
 		return orderService.getOrders();
 	}
 
