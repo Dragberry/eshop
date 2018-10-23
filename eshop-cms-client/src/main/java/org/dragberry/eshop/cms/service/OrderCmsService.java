@@ -1,10 +1,10 @@
 package org.dragberry.eshop.cms.service;
 
-import java.util.List;
-
 import org.dragberry.eshop.cms.model.OrderCmsModel;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 public interface OrderCmsService {
 
-	List<OrderCmsModel> getOrders();
+	Page<OrderCmsModel> getOrders(PageRequest pageRequest);
 }
