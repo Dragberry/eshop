@@ -81,9 +81,18 @@ public class Order extends AuditableEntity {
 	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "order")
 	private List<OrderItem> items;
 	
+	@Column(name = "PAID")
+	private Boolean paid;
+	
 	public static enum OrderStatus implements BaseEnum<Character> {
 
-		NEW('N'), QUICK('Q'), CONFIRMED('C'), DECLINED('D');
+		NEW('N'),
+		PROCESSING('P'),
+		AGREED('A'),
+		SHIPPED('S'),
+		DELIVERED('D'),
+		CANCELLED('C'),
+		RETURNED('R');
 	    
 	    public final Character value;
 	    

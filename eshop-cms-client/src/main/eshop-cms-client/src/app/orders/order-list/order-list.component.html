@@ -11,6 +11,6 @@
     <td>{{order.phone}}</td>
     <td>{{order.date}}</td>
     <td>Order</td>
-    <td>{{order.status}}</td>
+    <td>{{ 'orders.status.' + order.status | translate}}</td>
   </tr>
 </table>

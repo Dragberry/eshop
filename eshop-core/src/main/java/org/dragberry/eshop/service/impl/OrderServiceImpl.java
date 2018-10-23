@@ -87,6 +87,7 @@ public class OrderServiceImpl implements OrderService {
         if (issues.isEmpty()) {
     		Order order = new Order();
     		order.setOrderStatus(OrderStatus.NEW);
+    		order.setPaid(Boolean.FALSE);
     		order.setTotalProductAmount(orderDetails.getTotalProductAmount());
     		order.setShippingCost(orderDetails.getShippingCost());
     		order.setTotalAmount(orderDetails.getTotalAmount());
@@ -147,7 +148,8 @@ public class OrderServiceImpl implements OrderService {
         }
 	    if (issues.isEmpty() && product != null) {
 	        Order order = new Order();
-            order.setOrderStatus(OrderStatus.QUICK);
+            order.setOrderStatus(OrderStatus.NEW);
+            order.setPaid(Boolean.FALSE);
             order.setPhone(orderDetails.getPhone());
             order.setFullName(orderDetails.getFullName());
             order.setAddress(orderDetails.getAddress());

@@ -37,5 +37,16 @@
     	"product-list": {
     		"title": "Список товаров"
     	}
+    },
+    "orders": {
+        "status": {
+            "NEW": "Новый",
+            "PROCESSING": "В обработке",
+            "AGREED": "Согласован",
+            "SHIPPED": "Отгружен",
+            "DELIVERED": "Доставлен",
+            "CANCELLED": "Отменен",
+            "RETURNED": "Возврат"
+        }
     }
 }

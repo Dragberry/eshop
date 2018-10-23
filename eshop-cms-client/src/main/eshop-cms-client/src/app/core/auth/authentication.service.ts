@@ -5,7 +5,7 @@ import {Observable, Subscription, of} from 'rxjs';
 export const LOGIN_URL = '/login';
 export const CURENT_USER_TOKEN = 'currentUserToken';
 export const CURRENT_USER = 'currentUser';
-export const AUTHORISATION = 'Authorisation';
+export const AUTHORIZATION = 'Authorization';
 
 const API_LOGIN_URL = 'login';
 
