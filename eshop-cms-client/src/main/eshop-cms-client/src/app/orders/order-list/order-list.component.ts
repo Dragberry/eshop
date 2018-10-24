@@ -1,3 +1,4 @@
+import { Page } from './../../shared/model/page';
 import { Component, OnInit } from '@angular/core';
 import { OrderService } from '../order.service';
 import { Order } from '../model/order';
@@ -9,13 +10,13 @@ import { Order } from '../model/order';
 })
 export class OrderListComponent implements OnInit {
 
-  orderList: Order[];
+  orders: Page<Order>;
 
   constructor(private orderService: OrderService) { }
 
   ngOnInit() {
-    this.orderService.getOrders({pageNumber: 0, pageSize: 20}).subscribe(orderList => {
-      this.orderList = orderList;
+    this.orderService.getOrders({pageNumber: 0, pageSize: 20}).subscribe(orders => {
+      this.orders = orders;
     });
   }
 

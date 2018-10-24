@@ -1,4 +1,5 @@
-<table *ngIf="orderList" class="table">
+<app-paginator [page]="orders"></app-paginator>
+<table *ngIf="orders" class="table">
   <tr>
     <th>{{ 'common.id' | translate }}</th>
     <th>{{ 'common.phone' | translate }}</th>
@@ -6,7 +7,7 @@
     <th>{{ 'common.order' | translate }}</th>
     <th>{{ 'common.status' | translate }}</th>
   </tr>
-  <tr *ngFor="let order of orderList; let i = index;">
+  <tr *ngFor="let order of orders.content; let i = index;">
     <th>{{order.id}}</th>
     <td>{{order.phone}}</td>
     <td>{{order.date}}</td>
@@ -14,3 +15,4 @@
     <td>{{ 'orders.status.' + order.status | translate}}</td>
   </tr>
 </table>
+<app-paginator [page]="orders"></app-paginator>

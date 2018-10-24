@@ -1,3 +1,4 @@
+import { Page } from './../shared/model/page';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -12,7 +13,7 @@ export class OrderService {
 
   constructor(private http: HttpClient) {}
 
-  getOrders(page: PageableQuery): Observable<Order[]> {
-    return this.http.get<Order[]>(ORDERS_LIST_URL, { params: PageableHttpParams(page) });
+  getOrders(page: PageableQuery): Observable<Page<Order>> {
+    return this.http.get<Page<Order>>(ORDERS_LIST_URL, { params: PageableHttpParams(page) });
   }
 }

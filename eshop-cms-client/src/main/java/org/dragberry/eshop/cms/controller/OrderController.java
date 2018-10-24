@@ -2,8 +2,8 @@ package org.dragberry.eshop.cms.controller;
 
 import org.dragberry.eshop.cms.model.OrderCmsModel;
 import org.dragberry.eshop.cms.service.OrderCmsService;
+import org.dragberry.eshop.common.PageableList;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +23,7 @@ public class OrderController {
 	 * @return
 	 */
 	@GetMapping("/list")
-	public Page<OrderCmsModel> getOrders(
+	public PageableList<OrderCmsModel> getOrders(
 	        @RequestParam(required = true) int pageNumber,
 	        @RequestParam(required = true) int pageSize) {
 		return orderService.getOrders(PageRequest.of(pageNumber, pageSize));

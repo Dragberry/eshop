@@ -4,10 +4,12 @@ import { OrderListComponent } from './order-list/order-list.component';
 import { OrdersRoutingModule } from './orders-routing.module';
 import { OrderService } from './order.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   imports: [
     CommonModule,
+    SharedModule,
     TranslateModule.forChild(),
     OrdersRoutingModule
   ],
