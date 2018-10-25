@@ -6,11 +6,7 @@ import java.time.LocalDateTime;
 
 import org.dragberry.eshop.dal.entity.Order.OrderStatus;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -34,6 +30,8 @@ public class OrderCmsModel implements Serializable {
 	
 	private String email;
 	
+	private Boolean paid = Boolean.FALSE;
+	
 	private Long shippingMethodId;
 	
 	private String shippingMethod;
@@ -42,11 +40,12 @@ public class OrderCmsModel implements Serializable {
 	
 	private String paymentMethod;
 	
-	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
-	@JsonSerialize(using = LocalDateTimeSerializer.class)
+	@JsonFormat(pattern = "yyyy-MM-dd mm:hh:ss")
 	private LocalDateTime date;
 	
 	private OrderStatus status;
 	
 	private Long version;
+	
+	
 }

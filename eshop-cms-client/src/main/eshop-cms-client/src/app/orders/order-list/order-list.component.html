@@ -3,28 +3,40 @@
 <table *ngIf="orders" class="table table-striped table-hover">
   <thead class="thead-dark">
     <tr>
-      <th>{{ 'common.id' | translate }}</th>
-      <th>{{ 'common.date' | translate }}</th>
-      <th>{{ 'common.sum' | translate }}</th>
-      <th>{{ 'common.fullName' | translate }}</th>
-      <th>{{ 'common.phone' | translate }}</th>
-      <th>{{ 'common.order' | translate }}</th>
-      <th>{{ 'common.status' | translate }}</th>
-      <th>{{ 'common.payment' | translate }}</th>
-      <th>{{ 'common.delivery' | translate }}</th>
+      <th>{{'common.id' | translate}}</th>
+      <th>{{'common.date' | translate}}</th>
+      <th>{{'common.sum' | translate}}</th>
+      <th>{{'common.fullName' | translate}}</th>
+      <th>{{'common.phone' | translate}}</th>
+      <th>{{'common.status' | translate}}</th>
+      <th>{{'common.isPaid' | translate}}</th>
+      <th>{{'common.paymentMethod' | translate}}</th>
+      <th>{{'common.shippingMethod' | translate}}</th>
     </tr>
   </thead>
   <tbody>
     <tr *ngFor="let order of orders.content; let i = index;">
       <th>{{order.id}}</th>
       <td>{{order.date}}</td>
-      <td>{{order.totalAmount.toFixed(2)}}</td>
+      <td>
+        <span class="font-weight-bold">
+          {{order.totalAmount.toFixed(2)}}
+        </span>
+      </td>
       <td>{{order.fullName}}</td>
       <td>{{order.phone}}</td>
-      <td>Order</td>
-      <td>{{ 'orders.status.' + order.status | translate}}</td>
-      <td>Payment</td>
-      <td>Delivery</td>
+      <td class="h5">
+          <span appOrderStatus [orderStatus]="order.status">
+            {{'orders.status.' + order.status | translate}}
+          </span>
+      </td>
+      <td class="h5">
+          <span appBooleanBadge [badgeValue]="order.paid">
+              {{'orders.paid.' + order.paid | translate}}
+          </span>
+      </td>
+      <td [title]="order.paymentMethod">{{order.paymentMethod}}</td>
+      <td [title]="order.shippingMethod">{{order.shippingMethod}}</td>
     </tr>
   </tbody>
 </table>

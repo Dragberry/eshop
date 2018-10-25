@@ -5,6 +5,7 @@ import { OrdersRoutingModule } from './orders-routing.module';
 import { OrderService } from './order.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedModule } from '../shared/shared.module';
+import { OrderStatusDirective } from './directives/order-status.directive';
 
 @NgModule({
   imports: [
@@ -14,7 +15,8 @@ import { SharedModule } from '../shared/shared.module';
     OrdersRoutingModule
   ],
   declarations: [
-    OrderListComponent
+    OrderListComponent,
+    OrderStatusDirective
   ],
   providers: [
     OrderService

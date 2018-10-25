@@ -19,10 +19,12 @@
       "delivery": "Доставка",
       "fullName": "Ф.И.О.",
       "id": "ID",
+      "isPaid": "Оплата",
       "order": "Заказ",
-      "payment": "Оплата",
+      "paymentMethod": "Способ оплаты",
       "phone": "Телефон",
       "search": "Поиск",
+      "shippingMethod": "Способ доставки",
       "sign-out": "Выйти",
       "status": "Статус",
       "sum": "Сумма"
@@ -43,14 +45,18 @@
     	}
     },
     "orders": {
-        "status": {
-            "NEW": "Новый",
-            "PROCESSING": "В обработке",
-            "AGREED": "Согласован",
-            "SHIPPED": "Отгружен",
-            "DELIVERED": "Доставлен",
-            "CANCELLED": "Отменен",
-            "RETURNED": "Возврат"
-        }
+      "paid": {
+        "true": "Оплачен",
+        "false": "Не оплачен"
+      },
+      "status": {
+          "NEW": "Новый",
+          "PROCESSING": "В обработке",
+          "AGREED": "Согласован",
+          "SHIPPED": "Отгружен",
+          "DELIVERED": "Доставлен",
+          "CANCELLED": "Отменен",
+          "RETURNED": "Возврат"
+      }
     }
 }

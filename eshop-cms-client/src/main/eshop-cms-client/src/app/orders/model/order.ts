@@ -6,6 +6,7 @@ export class Order {
   address: string;
   comment: string;
   email: string;
+  paid: string;
   shippingMethodId: number;
   shippingMethod: string;
   paymentMethodId: number;

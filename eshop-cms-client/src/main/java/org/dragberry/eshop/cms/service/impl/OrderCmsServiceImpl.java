@@ -31,6 +31,7 @@ public class OrderCmsServiceImpl implements OrderCmsService {
 			order.setDate(entity.getCreatedDate());
 			order.setAddress(entity.getAddress());
 			order.setComment(entity.getComment());
+			order.setPaid(entity.getPaid());
 			if (entity.getShippingMethod() != null) {
     			order.setShippingMethodId(entity.getShippingMethod().getEntityKey());
     			order.setShippingMethod(entity.getShippingMethod().getName());
