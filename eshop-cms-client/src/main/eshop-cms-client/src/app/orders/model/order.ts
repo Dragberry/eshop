@@ -1,6 +1,7 @@
 export class Order {
   id: number;
   phone: string;
+  totalAmount: number;
   fullName: string;
   address: string;
   comment: string;

@@ -26,7 +26,7 @@ public class OrderController {
 	public PageableList<OrderCmsModel> getOrders(
 	        @RequestParam(required = true) int pageNumber,
 	        @RequestParam(required = true) int pageSize) {
-		return orderService.getOrders(PageRequest.of(pageNumber, pageSize));
+		return orderService.getOrders(PageRequest.of(pageNumber - 1, pageSize));
 	}
 
 }

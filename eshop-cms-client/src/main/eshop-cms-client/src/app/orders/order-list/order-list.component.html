@@ -1,18 +1,31 @@
-<app-paginator [page]="orders"></app-paginator>
-<table *ngIf="orders" class="table">
-  <tr>
-    <th>{{ 'common.id' | translate }}</th>
-    <th>{{ 'common.phone' | translate }}</th>
-    <th>{{ 'common.date' | translate }}</th>
-    <th>{{ 'common.order' | translate }}</th>
-    <th>{{ 'common.status' | translate }}</th>
-  </tr>
-  <tr *ngFor="let order of orders.content; let i = index;">
-    <th>{{order.id}}</th>
-    <td>{{order.phone}}</td>
-    <td>{{order.date}}</td>
-    <td>Order</td>
-    <td>{{ 'orders.status.' + order.status | translate}}</td>
-  </tr>
+<h1>Orders</h1>
+<app-paginator [page]="orders" (paginatorEvent)="onPaginator($event)"></app-paginator>
+<table *ngIf="orders" class="table table-striped table-hover">
+  <thead class="thead-dark">
+    <tr>
+      <th>{{ 'common.id' | translate }}</th>
+      <th>{{ 'common.date' | translate }}</th>
+      <th>{{ 'common.sum' | translate }}</th>
+      <th>{{ 'common.fullName' | translate }}</th>
+      <th>{{ 'common.phone' | translate }}</th>
+      <th>{{ 'common.order' | translate }}</th>
+      <th>{{ 'common.status' | translate }}</th>
+      <th>{{ 'common.payment' | translate }}</th>
+      <th>{{ 'common.delivery' | translate }}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let order of orders.content; let i = index;">
+      <th>{{order.id}}</th>
+      <td>{{order.date}}</td>
+      <td>{{order.totalAmount.toFixed(2)}}</td>
+      <td>{{order.fullName}}</td>
+      <td>{{order.phone}}</td>
+      <td>Order</td>
+      <td>{{ 'orders.status.' + order.status | translate}}</td>
+      <td>Payment</td>
+      <td>Delivery</td>
+    </tr>
+  </tbody>
 </table>
-<app-paginator [page]="orders"></app-paginator>
+<app-paginator [page]="orders" (paginatorEvent)="onPaginator($event)"></app-paginator>

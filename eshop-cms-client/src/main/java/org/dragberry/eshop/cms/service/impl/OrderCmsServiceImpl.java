@@ -25,19 +25,24 @@ public class OrderCmsServiceImpl implements OrderCmsService {
 			OrderCmsModel order = new OrderCmsModel();
 			order.setId(entity.getEntityKey());
 			order.setPhone(entity.getPhone());
+			order.setTotalAmount(entity.getTotalAmount());
 			order.setFullName(entity.getFullName());
 			order.setEmail(entity.getEmail());
 			order.setDate(entity.getCreatedDate());
 			order.setAddress(entity.getAddress());
 			order.setComment(entity.getComment());
-			order.setShippingMethodId(entity.getShippingMethod().getEntityKey());
-			order.setShippingMethod(entity.getShippingMethod().getName());
-			order.setPaymentMethodId(entity.getPaymentMethod().getEntityKey());
-			order.setPaymentMethod(entity.getPaymentMethod().getName());
+			if (entity.getShippingMethod() != null) {
+    			order.setShippingMethodId(entity.getShippingMethod().getEntityKey());
+    			order.setShippingMethod(entity.getShippingMethod().getName());
+			}
+			if (entity.getPaymentMethod() != null) {
+    			order.setPaymentMethodId(entity.getPaymentMethod().getEntityKey());
+    			order.setPaymentMethod(entity.getPaymentMethod().getName());
+			}
 			order.setStatus(entity.getOrderStatus());
 			order.setVersion(entity.getVersion());
 			return order;
-		}).collect(Collectors.toList()), page.getNumber(), page.getSize(), page.getTotalPages(), page.getTotalElements());
+		}).collect(Collectors.toList()), page.getNumber() + 1, page.getSize(), 10, page.getTotalElements());
 	}
 
 }

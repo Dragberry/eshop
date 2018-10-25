@@ -16,12 +16,16 @@
     "common": {
       "account": "Аккаунт",
       "date": "Дата",
+      "delivery": "Доставка",
+      "fullName": "Ф.И.О.",
       "id": "ID",
       "order": "Заказ",
+      "payment": "Оплата",
       "phone": "Телефон",
       "search": "Поиск",
       "sign-out": "Выйти",
-      "status": "Статус"
+      "status": "Статус",
+      "sum": "Сумма"
     },
     "language": {
       "en": "English",

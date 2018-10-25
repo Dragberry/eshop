@@ -1,6 +1,7 @@
 package org.dragberry.eshop.cms.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import org.dragberry.eshop.dal.entity.Order.OrderStatus;
@@ -22,6 +23,8 @@ public class OrderCmsModel implements Serializable {
 	private Long id;
 	
 	private String phone;
+	
+	private BigDecimal totalAmount;
 	
 	private String fullName;
 	
