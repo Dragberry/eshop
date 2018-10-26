@@ -3,7 +3,6 @@ import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Order } from './model/order';
-import { PageableQuery, PageableHttpParams } from '../shared/model/pageable-query';
 
 const ORDERS_URL = 'orders';
 const ORDERS_LIST_URL = `${ORDERS_URL}/list`;
@@ -13,7 +12,7 @@ export class OrderService {
 
   constructor(private http: HttpClient) {}
 
-  getOrders(page: PageableQuery): Observable<Page<Order>> {
-    return this.http.get<Page<Order>>(ORDERS_LIST_URL, { params: PageableHttpParams(page) });
+  getOrders(params: HttpParams): Observable<Page<Order>> {
+    return this.http.get<Page<Order>>(ORDERS_LIST_URL, { params: params });
   }
 }

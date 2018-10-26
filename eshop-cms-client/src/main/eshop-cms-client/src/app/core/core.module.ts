@@ -47,7 +47,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     SideMenuComponent,
     MenuItemComponent
   ],
-  exports: [CoreRoutingModule],
+  exports: [
+    CoreRoutingModule
+  ],
   providers: []
 })
 export class CoreModule {

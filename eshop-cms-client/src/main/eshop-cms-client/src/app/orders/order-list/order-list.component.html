@@ -1,17 +1,51 @@
 <h1>Orders</h1>
 <app-paginator [page]="orders" (paginatorEvent)="onPaginator($event)"></app-paginator>
-<table *ngIf="orders" class="table table-striped table-hover">
+<table *ngIf="orders" class="table table-sm table-striped table-hover">
   <thead class="thead-dark">
     <tr>
       <th>{{'common.id' | translate}}</th>
-      <th>{{'common.date' | translate}}</th>
+      <th>
+        <app-table-action-column
+          [columnId]="'date'"
+          [title]="'common.date' | translate"
+          [sortBy]="'date'"
+          (columnAction)="onColumnAction($event)">
+        </app-table-action-column>
       <th>{{'common.sum' | translate}}</th>
       <th>{{'common.fullName' | translate}}</th>
-      <th>{{'common.phone' | translate}}</th>
-      <th>{{'common.status' | translate}}</th>
-      <th>{{'common.isPaid' | translate}}</th>
-      <th>{{'common.paymentMethod' | translate}}</th>
-      <th>{{'common.shippingMethod' | translate}}</th>
+      <th>
+        <app-table-action-column
+          [columnId]="'status'"
+          [title]="'common.status' | translate"
+          [sortBy]="'status'"
+          (columnAction)="onColumnAction($event)">
+        </app-table-action-column>
+      <th>
+        <app-table-action-column
+          [columnId]="'isPaid'"
+          [title]="'common.isPaid' | translate"
+          [sortBy]="'isPaid'"
+          (columnAction)="onColumnAction($event)">
+        </app-table-action-column>
+      <th>
+        <app-table-action-column
+          [columnId]="'paymentMethod'"
+          [title]="'common.paymentMethod' | translate"
+          [sortBy]="'paymentMethod'"
+          [filter]="'list'"
+          [filterOptions]="[{value: 1, name: 'Opt 1'}, {value: 2, name: 'Opt 2'}]"
+          (columnAction)="onColumnAction($event)">
+        </app-table-action-column>
+      </th>
+      <th>
+        <app-table-action-column
+          [columnId]="'shippingMethod'"
+          [title]="'common.shippingMethod' | translate"
+          [sortBy]="'shippingMethod'"
+          [filter]="'list'"
+          [filterOptions]="[{value: 1, name: 'Opt 1'}, {value: 2, name: 'Opt 2'}]"
+          (columnAction)="onColumnAction($event)">
+        </app-table-action-column>
     </tr>
   </thead>
   <tbody>
@@ -24,18 +58,19 @@
         </span>
       </td>
       <td>{{order.fullName}}</td>
-      <td>{{order.phone}}</td>
-      <td class="h5">
+      <td>
           <span appOrderStatus [orderStatus]="order.status">
             {{'orders.status.' + order.status | translate}}
           </span>
       </td>
-      <td class="h5">
+      <td>
           <span appBooleanBadge [badgeValue]="order.paid">
               {{'orders.paid.' + order.paid | translate}}
           </span>
       </td>
-      <td [title]="order.paymentMethod">{{order.paymentMethod}}</td>
+      <td [title]="order.paymentMethod">
+        <span class="text-truncate">{{order.paymentMethod}}</span>
+      </td>
       <td [title]="order.shippingMethod">{{order.shippingMethod}}</td>
     </tr>
   </tbody>

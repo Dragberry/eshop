@@ -15,6 +15,8 @@
     },
     "common": {
       "account": "Аккаунт",
+      "apply": "Применить",
+      "cancel": "Отмена",
       "date": "Дата",
       "delivery": "Доставка",
       "fullName": "Ф.И.О.",
@@ -23,7 +25,9 @@
       "order": "Заказ",
       "paymentMethod": "Способ оплаты",
       "phone": "Телефон",
+      "resetAll": "Сбросить все",
       "search": "Поиск",
+      "selectAll": "Выбрать все",
       "shippingMethod": "Способ доставки",
       "sign-out": "Выйти",
       "status": "Статус",

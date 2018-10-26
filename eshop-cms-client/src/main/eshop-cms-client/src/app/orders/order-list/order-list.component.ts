@@ -2,6 +2,7 @@ import { Page } from './../../shared/model/page';
 import { Component, OnInit } from '@angular/core';
 import { OrderService } from '../order.service';
 import { Order } from '../model/order';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'app-order-list',
@@ -15,6 +16,11 @@ export class OrderListComponent implements OnInit {
   pageSize = 20;
   pageNumber = 1;
 
+  sortBy: string;
+  sortDirection: string;
+
+  filters: Map<string, any[]> = new Map();
+
   constructor(private orderService: OrderService) { }
 
   ngOnInit() {
@@ -22,15 +28,32 @@ export class OrderListComponent implements OnInit {
   }
 
   fetchOrders(): void {
-    this.orderService.getOrders({
-      pageNumber: this.pageNumber,
-      pageSize: this.pageSize
-    }).subscribe(orders => this.orders = orders);
+    let params = new HttpParams()
+      .set('pageNumber', this.pageNumber.toString())
+      .set('pageSize', this.pageSize.toString())
+      .set('sortBy', this.sortBy ? this.sortBy : '')
+      .set('sortDirection', this.sortDirection ? this.sortDirection : '');
+    this.filters.forEach((values, fieldId) => {
+      values.forEach(value => {
+        if (value.selected) {
+          params = params.append(fieldId, value.option.value);
+        }
+      });
+    });
+    this.orderService.getOrders(params)
+    .subscribe(orders => this.orders = orders);
   }
 
-  onPaginator(paginatorEvent: {pageNumber: number, pageSize: number}): void {
-    this.pageSize = paginatorEvent.pageSize;
-    this.pageNumber = paginatorEvent.pageNumber;
+  onPaginator(event: {pageNumber: number, pageSize: number}): void {
+    this.pageSize = event.pageSize;
+    this.pageNumber = event.pageNumber;
+    this.fetchOrders();
+  }
+
+  onColumnAction(event: {columnId: string, filterOptions: any[], sortBy: string, sortDirection: string}): void {
+    this.sortBy = event.sortBy;
+    this.sortDirection = event.sortDirection;
+    this.filters.set(event.columnId, event.filterOptions);
     this.fetchOrders();
   }
 }

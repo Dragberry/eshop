@@ -11,8 +11,8 @@ import { OrderStatusDirective } from './directives/order-status.directive';
   imports: [
     CommonModule,
     SharedModule,
-    TranslateModule.forChild(),
-    OrdersRoutingModule
+    OrdersRoutingModule,
+    TranslateModule.forChild()
   ],
   declarations: [
     OrderListComponent,
