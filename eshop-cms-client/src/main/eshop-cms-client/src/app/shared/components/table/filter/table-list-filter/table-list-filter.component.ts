@@ -12,6 +12,7 @@ export class TableListFilterComponent extends TableFilter {
   columnId: string;
 
   selectedOptions: {selected: boolean, option: {value: any, name: string}}[];
+  sourceSelectedOptions: {selected: boolean, option: {value: any, name: string}}[];
 
   @Input()
   set options(opts: {value: any, name: string}[]) {
@@ -21,14 +22,23 @@ export class TableListFilterComponent extends TableFilter {
   }
 
   getSelectedValues(): {name: string, values: string[]}[] {
+    this.sourceSelectedOptions = this.selectedOptions.map(opt => {
+      return {selected: opt.selected, option: {value: opt.option.value, name: opt.option.name}};
+    });
     return [{name: this.columnId, values: this.selectedOptions.filter(opt => opt.selected).map(opt => opt.option.value)}];
+  }
+
+  reset(): void {
+    this.selectedOptions = this.sourceSelectedOptions.map(opt => {
+      return {selected: opt.selected, option: {value: opt.option.value, name: opt.option.name}};
+    });
   }
 
   selectAll(): void {
     this.selectedOptions.forEach(opt => opt.selected = true);
   }
 
-  resetAll(): void {
+  clearAll(): void {
     this.selectedOptions.forEach(opt => opt.selected = false);
   }
 }

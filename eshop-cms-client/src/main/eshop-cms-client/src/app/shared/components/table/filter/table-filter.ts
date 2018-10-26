@@ -9,5 +9,7 @@ export abstract class TableFilter {
 
   abstract getSelectedValues(): {name: string, values: string[]}[];
 
-  abstract resetAll(): void;
+  abstract reset(): void;
+
+  abstract clearAll(): void;
 }

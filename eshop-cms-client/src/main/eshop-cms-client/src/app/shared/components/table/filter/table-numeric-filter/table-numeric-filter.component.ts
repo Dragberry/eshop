@@ -11,17 +11,27 @@ export class TableNumericFilterComponent extends TableFilter {
   @Input()
   columnId: string;
 
+  sourceFrom: string;
+  sourceTo: string;
+
   from: string;
   to: string;
 
   getSelectedValues(): {name: string, values: string[]}[] {
+    this.sourceFrom = this.from;
+    this.sourceTo = this.to;
     return [
       {name: `${this.columnId}[from]`, values: [this.from]},
       {name: `${this.columnId}[to]`, values: [this.to]}
     ];
   }
 
-  resetAll(): void {
+  reset(): void {
+    this.from = this.sourceFrom;
+    this.to = this.sourceTo;
+  }
+
+  clearAll(): void {
     this.from = null;
     this.to = null;
   }

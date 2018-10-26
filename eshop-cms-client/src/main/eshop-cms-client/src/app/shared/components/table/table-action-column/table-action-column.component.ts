@@ -38,6 +38,10 @@ export class TableActionColumnComponent {
     this.emitActionEvent();
   }
 
+  resetFilter(): void {
+    this.filterComponent.reset();
+  }
+
   hasFilter(): boolean {
     return this.selectedFilterValues && this.selectedFilterValues
       .find(filterValue => !filterValue.values || filterValue.values.length !== 0) != null;
