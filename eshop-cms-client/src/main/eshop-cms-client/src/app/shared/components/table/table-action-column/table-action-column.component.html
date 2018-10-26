@@ -7,24 +7,27 @@
       #dropdown="bs-dropdown"
       [autoClose]="false">
     <button dropdownToggle
-        [id]="columnId + 'Filter'" 
-        class="btn  dropdown-toggle pr-1 pl-1 pt-0 pb-0" 
+        [id]="columnId + 'Filter'"
+        class="btn  dropdown-toggle pr-1 pl-1 pt-0 pb-0"
         [ngClass]="{'btn-dark': !hasFilter(), 'btn-primary': hasFilter()}"
         type="button"
         aria-haspopup="true"
         aria-expanded="false">
       <span class="fa fa-filter"></span>
     </button>
-    <div *dropdownMenu 
+    <div *dropdownMenu
         class="dropdown-menu dropdown-menu-right"
         [attr.aria-labelledby]="columnId + 'Filter'">
       <div class="container">
         <div class="row">
           <div class="col-12">
-            <app-table-list-filter *ngIf="filter == 'list'"
+            <app-table-list-filter #tableFilter *ngIf="filter == 'list'"
               [columnId]="columnId"
               [options]="filterOptions">
             </app-table-list-filter>
+            <app-table-numeric-filter #tableFilter *ngIf="filter == 'numeric'"
+              [columnId]="columnId">
+            </app-table-numeric-filter>
           </div>
           <div class="col-6">
             <button type="button" (click)="applyFilter();dropdown.hide();" class="btn btn-primary btn-block">

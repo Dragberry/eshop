@@ -19,6 +19,7 @@
       "cancel": "Отмена",
       "date": "Дата",
       "delivery": "Доставка",
+      "from": "От",
       "fullName": "Ф.И.О.",
       "id": "ID",
       "isPaid": "Оплата",
@@ -31,7 +32,8 @@
       "shippingMethod": "Способ доставки",
       "sign-out": "Выйти",
       "status": "Статус",
-      "sum": "Сумма"
+      "sum": "Сумма",
+      "to": "До"
     },
     "language": {
       "en": "English",

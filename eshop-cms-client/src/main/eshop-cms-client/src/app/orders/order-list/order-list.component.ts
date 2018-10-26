@@ -33,12 +33,16 @@ export class OrderListComponent implements OnInit {
       .set('pageSize', this.pageSize.toString())
       .set('sortBy', this.sortBy ? this.sortBy : '')
       .set('sortDirection', this.sortDirection ? this.sortDirection : '');
-    this.filters.forEach((values, fieldId) => {
-      values.forEach(value => {
-        if (value.selected) {
-          params = params.append(fieldId, value.option.value);
-        }
-      });
+    this.filters.forEach((fieldFilters, fieldId) => {
+      if (fieldFilters) {
+        fieldFilters.filter(filedFilter => filedFilter != null).forEach(filedFilter => {
+          if (filedFilter.values) {
+            filedFilter.values.filter(value => value != null).forEach(value => {
+              params = params.append(fieldId, value);
+            });
+          }
+        });
+      }
     });
     this.orderService.getOrders(params)
     .subscribe(orders => this.orders = orders);

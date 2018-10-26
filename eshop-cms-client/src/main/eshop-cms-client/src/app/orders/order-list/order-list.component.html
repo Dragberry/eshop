@@ -11,7 +11,14 @@
           [sortBy]="'date'"
           (columnAction)="onColumnAction($event)">
         </app-table-action-column>
-      <th>{{'common.sum' | translate}}</th>
+      <th>
+        <app-table-action-column
+          [columnId]="'totalAmount'"
+          [title]="'common.sum' | translate"
+          [filter]="'numeric'"
+          (columnAction)="onColumnAction($event)">
+        </app-table-action-column>
+      </th>
       <th>{{'common.fullName' | translate}}</th>
       <th>
         <app-table-action-column

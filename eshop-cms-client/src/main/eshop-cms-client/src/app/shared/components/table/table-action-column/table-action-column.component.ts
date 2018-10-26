@@ -1,5 +1,5 @@
-import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
-import { TableListFilterComponent } from '../table-list-filter/table-list-filter.component';
+import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { TableFilter } from '../filter/table-filter';
 
 @Component({
   selector: 'app-table-action-column',
@@ -8,8 +8,8 @@ import { TableListFilterComponent } from '../table-list-filter/table-list-filter
 })
 export class TableActionColumnComponent {
 
-  @ViewChild(TableListFilterComponent)
-  filterComponent: TableListFilterComponent;
+  @ViewChild('tableFilter')
+  filterComponent: TableFilter;
 
   @Input()
   title: string;
@@ -26,7 +26,7 @@ export class TableActionColumnComponent {
   filter: string;
   @Input()
   filterOptions: {value: any, name: string}[];
-  selectedOptions: any[];
+  selectedFilterValues: {name: string, values: string[]}[];
 
   @Output()
   columnAction: EventEmitter<any> = new EventEmitter();
@@ -34,12 +34,13 @@ export class TableActionColumnComponent {
   constructor() { }
 
   applyFilter(): void {
-    this.selectedOptions = this.filterComponent.selectedOptions;
+    this.selectedFilterValues = this.filterComponent.getSelectedValues();
     this.emitActionEvent();
   }
 
   hasFilter(): boolean {
-    return this.selectedOptions && this.selectedOptions.find(opt => opt.selected) != null;
+    return this.selectedFilterValues && this.selectedFilterValues
+      .find(filterValue => !filterValue.values || filterValue.values.length !== 0) != null;
   }
 
   toggleSorting(): void {
@@ -67,7 +68,7 @@ export class TableActionColumnComponent {
   private emitActionEvent() {
     this.columnAction.emit({
       columnId: this.columnId,
-      filterOptions: this.selectedOptions,
+      filterOptions: this.selectedFilterValues,
       sortBy: this.sortBy,
       sortDirection: this.sortDirection
     });
