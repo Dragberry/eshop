@@ -1,23 +1,25 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges, SimpleChange, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Page } from '../../../model/page';
+import { PageableEvent } from '../common/pageable-event';
 
 @Component({
   selector: 'app-paginator',
   templateUrl: './paginator.component.html',
   styleUrls: ['./paginator.component.css']
 })
-export class PaginatorComponent implements OnInit, OnChanges {
-
-  @Input()
-  page: Page<any>;
+export class PaginatorComponent {
 
   @Input()
   pageSizes = [20, 35, 50];
+
+  pageExists: boolean;
   pageNumbers: number[];
   currentPageNumber: number;
+  currentPageSize: number;
+  totalPages: number;
 
   @Output()
-  paginatorEvent: EventEmitter<{pageNumber: number, pageSize: number}> = new EventEmitter();
+  paginatorEvent: EventEmitter<PageableEvent> = new EventEmitter();
 
   isFirstEnabled = false;
   isPreviousEnabled = false;
@@ -26,15 +28,14 @@ export class PaginatorComponent implements OnInit, OnChanges {
 
   constructor() { }
 
-  ngOnInit() {}
-
-  ngOnChanges(changes: SimpleChanges) {
-    let change: SimpleChange;
-    change = changes['page'];
-    if (change && change.currentValue) {
-      const page: Page<any> = change.currentValue;
+  @Input()
+  set page(page: Page<any>) {
+    if (page) {
+      this.pageExists = true;
       this.pageNumbers = Array.apply(null, {length: page.totalPages}).map((value, index) => index + 1);
       this.currentPageNumber = page.pageNumber;
+      this.currentPageSize = page.pageSize;
+      this.totalPages = page.totalPages;
       this.isFirstEnabled = this.currentPageNumber > 1;
       this.isPreviousEnabled = this.currentPageNumber > 1;
       this.isNextEnabled = this.currentPageNumber < page.totalPages;
@@ -43,7 +44,7 @@ export class PaginatorComponent implements OnInit, OnChanges {
   }
 
   onPageSelect(pageNumber: number) {
-    this.paginatorEvent.emit({pageNumber: pageNumber, pageSize: this.page.pageSize});
+    this.paginatorEvent.emit({pageNumber: pageNumber, pageSize: this.currentPageSize});
   }
 
   onPageSizeChanged(pageSize: number) {

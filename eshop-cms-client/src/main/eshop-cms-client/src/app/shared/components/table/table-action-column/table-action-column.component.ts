@@ -1,3 +1,5 @@
+import { ColumnActionEvent } from './../common/column-action-event';
+import { SortDirection } from './../common/sort-direction';
 import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { TableFilter } from '../filter/table-filter';
 
@@ -29,7 +31,7 @@ export class TableActionColumnComponent {
   selectedFilterValues: {name: string, values: string[]}[];
 
   @Output()
-  columnAction: EventEmitter<any> = new EventEmitter();
+  columnAction: EventEmitter<ColumnActionEvent> = new EventEmitter();
 
   constructor() { }
 
@@ -77,10 +79,4 @@ export class TableActionColumnComponent {
       sortDirection: this.sortDirection
     });
   }
-}
-
-enum SortDirection {
-  UNSORTED = 'unsorted',
-  ASC = 'asc',
-  DESC = 'desc'
 }

@@ -21,8 +21,8 @@ export class TableNumericFilterComponent extends TableFilter {
     this.sourceFrom = this.from;
     this.sourceTo = this.to;
     return [
-      {name: `${this.columnId}[from]`, values: [this.from]},
-      {name: `${this.columnId}[to]`, values: [this.to]}
+      {name: `from[${this.columnId}]`, values: [this.from]},
+      {name: `to[${this.columnId}]`, values: [this.to]}
     ];
   }
 

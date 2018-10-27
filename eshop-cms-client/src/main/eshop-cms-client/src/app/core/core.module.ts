@@ -14,6 +14,7 @@ import { httpInterceptorProviders } from './http';
 
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { CollapseModule } from 'ngx-bootstrap/collapse';
+import { NgxMaskModule } from 'ngx-mask';
 import { NavigationService } from './service/navigation.service';
 import { BreadcrumbComponent } from './main/breadcrumb/breadcrumb.component';
 import { SideMenuComponent } from './main/side-menu/side-menu.component';
@@ -38,7 +39,8 @@ export function HttpLoaderFactory(http: HttpClient) {
       }
     }),
     BsDropdownModule.forRoot(),
-    CollapseModule.forRoot()
+    CollapseModule.forRoot(),
+    NgxMaskModule.forRoot()
   ],
   declarations: [
     LoginComponent,

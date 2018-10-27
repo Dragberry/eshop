@@ -1,4 +1,4 @@
-<div *ngIf="page" class="row">
+<div *ngIf="pageExists" class="row">
   <div class="col-6">
     <nav aria-label="paginator">
       <ul class="pagination">
@@ -24,7 +24,7 @@
           </button>
         </li>
         <li class="page-item" [class.disabled]="!isLastEnabled">
-          <button class="page-link" (click)="onPageSelect(page.totalPages)" aria-label="Next" [disabled]="!isLastEnabled">
+          <button class="page-link" (click)="onPageSelect(totalPages)" aria-label="Next" [disabled]="!isLastEnabled">
             <span aria-hidden="true">&raquo;</span>
             <span class="sr-only">Last</span>
           </button>
@@ -35,7 +35,7 @@
   <div class="offset-5 col-1 text-right">
     <select class="form-control" (change)="onPageSizeChanged($event.target.value)">
       <option *ngFor="let pageSize of pageSizes"
-        [selected]="pageSize == page.pageSize"
+        [selected]="pageSize == currentPageSize"
         [value]="pageSize">
         {{pageSize}}
       </option>

@@ -25,7 +25,7 @@ export class TableListFilterComponent extends TableFilter {
     this.sourceSelectedOptions = this.selectedOptions.map(opt => {
       return {selected: opt.selected, option: {value: opt.option.value, name: opt.option.name}};
     });
-    return [{name: this.columnId, values: this.selectedOptions.filter(opt => opt.selected).map(opt => opt.option.value)}];
+    return [{name: `attribute[${this.columnId}]`, values: this.selectedOptions.filter(opt => opt.selected).map(opt => opt.option.value)}];
   }
 
   reset(): void {
