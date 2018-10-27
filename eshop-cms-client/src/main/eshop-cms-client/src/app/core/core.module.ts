@@ -13,6 +13,7 @@ import { AuthenticationService } from './auth/authentication.service';
 import { httpInterceptorProviders } from './http';
 
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { CollapseModule } from 'ngx-bootstrap/collapse';
 import { NgxMaskModule } from 'ngx-mask';
 import { NavigationService } from './service/navigation.service';
@@ -39,6 +40,7 @@ export function HttpLoaderFactory(http: HttpClient) {
       }
     }),
     BsDropdownModule.forRoot(),
+    BsDatepickerModule.forRoot(),
     CollapseModule.forRoot(),
     NgxMaskModule.forRoot()
   ],

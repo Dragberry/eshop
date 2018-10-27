@@ -1,6 +1,6 @@
 <h1>Orders</h1>
-<app-paginator [page]="orders" (paginatorEvent)="onPaginator($event)"></app-paginator>
-<table *ngIf="orders" class="table table-sm table-striped table-hover">
+<app-paginator [page]="page" (paginatorEvent)="onPageableEvent($event)"></app-paginator>
+<table *ngIf="page" class="table table-sm table-striped table-hover">
   <thead class="thead-dark">
     <tr>
       <th>{{'common.id' | translate}}</th>
@@ -9,14 +9,16 @@
           [columnId]="'date'"
           [title]="'common.date' | translate"
           [sortBy]="'date'"
-          (columnAction)="onColumnAction($event)">
+          [filter]="'date'"
+          (columnAction)="onColumnActionEvent($event)">
         </app-table-action-column>
       <th>
         <app-table-action-column
           [columnId]="'totalAmount'"
           [title]="'common.sum' | translate"
+          [sortBy]="'totalAmount'"
           [filter]="'numeric'"
-          (columnAction)="onColumnAction($event)">
+          (columnAction)="onColumnActionEvent($event)">
         </app-table-action-column>
       </th>
       <th>{{'common.fullName' | translate}}</th>
@@ -25,14 +27,14 @@
           [columnId]="'status'"
           [title]="'common.status' | translate"
           [sortBy]="'status'"
-          (columnAction)="onColumnAction($event)">
+          (columnAction)="onColumnActionEvent($event)">
         </app-table-action-column>
       <th>
         <app-table-action-column
           [columnId]="'isPaid'"
           [title]="'common.isPaid' | translate"
           [sortBy]="'isPaid'"
-          (columnAction)="onColumnAction($event)">
+          (columnAction)="onColumnActionEvent($event)">
         </app-table-action-column>
       <th>
         <app-table-action-column
@@ -41,7 +43,7 @@
           [sortBy]="'paymentMethod'"
           [filter]="'list'"
           [filterOptions]="[{value: 1, name: 'Opt 1'}, {value: 2, name: 'Opt 2'}]"
-          (columnAction)="onColumnAction($event)">
+          (columnAction)="onColumnActionEvent($event)">
         </app-table-action-column>
       </th>
       <th>
@@ -51,12 +53,12 @@
           [sortBy]="'shippingMethod'"
           [filter]="'list'"
           [filterOptions]="[{value: 1, name: 'Opt 1'}, {value: 2, name: 'Opt 2'}]"
-          (columnAction)="onColumnAction($event)">
+          (columnAction)="onColumnActionEvent($event)">
         </app-table-action-column>
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let order of orders.content; let i = index;">
+    <tr *ngFor="let order of page.content; let i = index;">
       <th>{{order.id}}</th>
       <td>{{order.date}}</td>
       <td>
@@ -82,4 +84,4 @@
     </tr>
   </tbody>
 </table>
-<app-paginator [page]="orders" (paginatorEvent)="onPaginator($event)"></app-paginator>
+<app-paginator [page]="page" (paginatorEvent)="onPageableEvent($event)"></app-paginator>

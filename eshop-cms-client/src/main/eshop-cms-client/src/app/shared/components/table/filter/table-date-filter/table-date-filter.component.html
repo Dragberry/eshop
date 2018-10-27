@@ -7,24 +7,28 @@
   <div class="col-12">
     <div class="divider dropdown-divider"></div>
   </div>
-  <div class="col-6">
+  <div class="col-12 pb-4">
       <div class="input-group">
         <div class="input-group-prepend">
           <span class="input-group-text" [id]="columnId + 'FromFilter'">
             {{'common.from' | translate}}
           </span>
         </div>
-        <input type="text" mask="0*.00" [dropSpecialCharacters]="false" [(ngModel)]="from" class="form-control" [attr.aria-describedby]="columnId + 'FromFilter'">
+        <input type="text" class="form-control"s
+          bsDatepicker
+          [(ngModel)]="from"
+          [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD hh:mm:ss', containerClass: 'theme-default' }"
+          [attr.aria-describedby]="columnId + 'FromFilter'">
       </div>
   </div>
-  <div class="col-6">
+  <div class="col-12">
       <div class="input-group">
         <div class="input-group-prepend">
           <span class="input-group-text" [id]="columnId + 'ToFilter'">
               {{'common.to' | translate}}
           </span>
         </div>
-        <input type="text" mask="0*.00" [dropSpecialCharacters]="false" [(ngModel)]="to" class="form-control" [attr.aria-describedby]="columnId + 'ToFilter'">
+        <input type="text" bsDatepicker [(ngModel)]="to" class="form-control" [attr.aria-describedby]="columnId + 'ToFilter'">
       </div>
   </div>
   <div class="col-12">

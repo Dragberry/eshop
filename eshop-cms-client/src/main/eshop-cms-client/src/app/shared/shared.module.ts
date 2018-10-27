@@ -9,12 +9,15 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { TranslateModule, TranslatePipe, TranslateDirective } from '@ngx-translate/core';
 import { TableListFilterComponent } from './components/table/filter/table-list-filter/table-list-filter.component';
 import { TableNumericFilterComponent } from './components/table/filter/table-numeric-filter/table-numeric-filter.component';
+import { TableDateFilterComponent } from './components/table/filter/table-date-filter/table-date-filter.component';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     BsDropdownModule,
+    BsDatepickerModule,
     NgxMaskModule.forChild(),
     TranslateModule
   ],
@@ -22,16 +25,19 @@ import { TableNumericFilterComponent } from './components/table/filter/table-num
     BooleanBadgeDirective,
     PaginatorComponent,
     TableActionColumnComponent,
+    TableDateFilterComponent,
     TableListFilterComponent,
     TableNumericFilterComponent
   ],
   exports: [
     BsDropdownModule,
+    BsDatepickerModule,
     TranslatePipe,
     TranslateDirective,
     BooleanBadgeDirective,
     PaginatorComponent,
     TableActionColumnComponent,
+    TableDateFilterComponent,
     TableListFilterComponent,
     TableNumericFilterComponent
   ],

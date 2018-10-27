@@ -2,6 +2,8 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Page } from '../../../model/page';
 import { PageableEvent } from '../common/pageable-event';
 
+const DEFAULT_PAGE_SIZE_OPTIONS = [20, 35, 50];
+
 @Component({
   selector: 'app-paginator',
   templateUrl: './paginator.component.html',
@@ -10,7 +12,7 @@ import { PageableEvent } from '../common/pageable-event';
 export class PaginatorComponent {
 
   @Input()
-  pageSizes = [20, 35, 50];
+  pageSizes = DEFAULT_PAGE_SIZE_OPTIONS;
 
   pageExists: boolean;
   pageNumbers: number[];

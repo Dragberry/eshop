@@ -8,11 +8,8 @@ import { TableFilter } from '../table-filter';
 })
 export class TableListFilterComponent extends TableFilter {
 
-  @Input()
-  columnId: string;
-
   selectedOptions: {selected: boolean, option: {value: any, name: string}}[];
-  sourceSelectedOptions: {selected: boolean, option: {value: any, name: string}}[];
+  private sourceSelectedOptions: {selected: boolean, option: {value: any, name: string}}[];
 
   @Input()
   set options(opts: {value: any, name: string}[]) {

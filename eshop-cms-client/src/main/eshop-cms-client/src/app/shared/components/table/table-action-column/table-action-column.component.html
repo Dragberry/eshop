@@ -28,6 +28,9 @@
             <app-table-numeric-filter #tableFilter *ngIf="filter == 'numeric'"
               [columnId]="columnId">
             </app-table-numeric-filter>
+            <app-table-date-filter #tableFilter *ngIf="filter == 'date'"
+              [columnId]="columnId">
+            </app-table-date-filter>
           </div>
           <div class="col-6">
             <button type="button" (click)="applyFilter();dropdown.hide();" class="btn btn-primary btn-block">
