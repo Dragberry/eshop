@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Order;
 
 import org.springframework.data.domain.Sort.Direction;
 
@@ -14,12 +15,18 @@ public class SortFunction<R extends Roots> {
 	
 	public final Function<R, Expression<?>> function;
 	
+	public final Optional<Direction> defaultDirection; 
+	
 	public static <R extends Roots> SortFunction<R> of(Function<R, Expression<?>> function) {
-		return new SortFunction<R>(function);
+		return new SortFunction<R>(function, Optional.empty());
+	}
+
+	public static <R extends Roots> SortFunction<R> of(Function<R, Expression<?>> function, Direction direction) {
+		return new SortFunction<R>(function, Optional.ofNullable(direction));
 	}
 	
-	public Optional<javax.persistence.criteria.Order> getOrder(SortContext<R> context, String direction) {
-		return Direction.fromOptionalString(direction).map(dir -> {
+	private Optional<Order> getOrder(SortContext<R> context, Optional<Direction> direction) {
+		return direction.map(dir -> {
 			switch (dir) {
 			case ASC:
 				return context.cb.asc(function.apply(context.roots));
@@ -29,6 +36,14 @@ public class SortFunction<R extends Roots> {
 				return null;
 			}
 		});
+	}
+	
+	public Optional<Order> getOrder(SortContext<R> context) {
+		return getOrder(context, defaultDirection);
+	}
+	
+	public Optional<Order> getOrder(SortContext<R> context, String direction) {
+		return getOrder(context, Direction.fromOptionalString(direction));
 	}
 	
 }

@@ -13,7 +13,7 @@ private static final Pattern SORT_PATTERN = Pattern.compile("^(.*?)\\[(.*?)\\]$"
 	
 	private SortUtils() {}
 	
-	public static <R extends Roots> Optional<javax.persistence.criteria.Order> sortBy(
+	public static <R extends Roots> Optional<javax.persistence.criteria.Order> orderBy(
 			Map<String, SortFunction<R>> sortConfig,
 			Map<String, String[]> searchParams, SortContext<R> ctx) {
 		String[] values = searchParams.get(SORT_PARAM);

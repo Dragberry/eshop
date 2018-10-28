@@ -9,6 +9,6 @@ import { TableRangeFilter } from '../table-range-filter';
 export class TableNumericFilterComponent extends TableRangeFilter<number> {
 
   toString(value: number): string {
-    return value ? value.toFixed(2).toString() : null;
+    return value ? value.toString() : null;
   }
 }

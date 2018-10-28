@@ -9,6 +9,6 @@ import { TableRangeFilter } from '../table-range-filter';
 export class TableDateFilterComponent extends TableRangeFilter<Date> {
 
   toString(value: Date): string {
-    return value ? value.toISOString() : null;
+    return value ? value.toISOString().slice(0, -5) : null;
   }
 }

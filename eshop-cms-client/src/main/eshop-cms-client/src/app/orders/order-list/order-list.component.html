@@ -3,7 +3,14 @@
 <table *ngIf="page" class="table table-sm table-striped table-hover">
   <thead class="thead-dark">
     <tr>
-      <th>{{'common.id' | translate}}</th>
+      <th>
+        <app-table-action-column
+          [columnId]="'id'"
+          [title]="'common.id' | translate"
+          [sortBy]="'id'"
+          (columnAction)="onColumnActionEvent($event)">
+        </app-table-action-column>
+      </th>
       <th>
         <app-table-action-column
           [columnId]="'date'"

@@ -28,7 +28,11 @@
               {{'common.to' | translate}}
           </span>
         </div>
-        <input type="text" bsDatepicker [(ngModel)]="to" class="form-control" [attr.aria-describedby]="columnId + 'ToFilter'">
+        <input type="text" class="form-control"
+          bsDatepicker
+          [(ngModel)]="to"
+          [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD hh:mm:ss', containerClass: 'theme-default' }"
+          [attr.aria-describedby]="columnId + 'ToFilter'">
       </div>
   </div>
   <div class="col-12">
