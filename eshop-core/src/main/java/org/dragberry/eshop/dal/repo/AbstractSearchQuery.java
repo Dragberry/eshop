@@ -5,11 +5,14 @@ import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -40,6 +43,8 @@ public abstract class AbstractSearchQuery <T, R extends Roots> {
 	private static final String FROM_PARAM = "from[{0}]";
 	
 	private static final String TO_PARAM = "to[{0}]";
+	
+	private static final String ATTRIBUTE_PARAM = "attribute[{0}]";
 	
 	protected final EntityManager entityManager;
 	protected final CriteriaBuilder cb;
@@ -114,5 +119,16 @@ public abstract class AbstractSearchQuery <T, R extends Roots> {
 			}
 		}
 		return predicates;
+	}
+	
+	protected List<Predicate> in(String param, Path<Long> path, Map<String, String[]> searchParams) {
+		String[] values = searchParams.get(MessageFormat.format(ATTRIBUTE_PARAM, param));
+		if (ArrayUtils.isNotEmpty(values)) {
+			return Arrays.asList(path.in(Arrays.stream(values)
+					.filter(NumberUtils::isCreatable)
+					.map(Long::valueOf)
+					.collect(Collectors.toList())));
+		}
+		return Collections.emptyList();
 	}
 }

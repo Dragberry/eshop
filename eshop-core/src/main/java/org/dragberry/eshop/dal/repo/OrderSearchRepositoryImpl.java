@@ -12,7 +12,6 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Selection;
-
 import org.dragberry.eshop.dal.dto.OrderDTO;
 import org.dragberry.eshop.dal.entity.Order;
 import org.dragberry.eshop.dal.entity.Order_;
@@ -109,9 +108,11 @@ public class OrderSearchRepositoryImpl implements OrderSearchRepository {
 			List<Predicate> predicates = new ArrayList<>();
 			predicates.addAll(numericRange("totalAmount", root.get(Order_.totalAmount), searchParams));
 			predicates.addAll(dateRange("date", root.get(Order_.createdDate), searchParams));
+			predicates.addAll(in("paymentMethod", paymentJoin.get(PaymentMethod_.entityKey), searchParams));
+			predicates.addAll(in("shippingMethod", shippingJoin.get(ShippingMethod_.entityKey), searchParams));
 			return predicates.isEmpty() ? Optional.empty() : Optional.of(cb.and(predicates.toArray(new Predicate[predicates.size()])));
 		}
-	
+
 		@Override
 		protected SortConfig<OrderRoots> getSortConfig() {
 			return SORT_CONFIG;
