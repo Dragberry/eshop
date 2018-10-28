@@ -51,6 +51,7 @@ export abstract class DataTableHolder<T> {
 
 
   onColumnActionEvent(event: ColumnActionEvent): void {
+    this.pageNumber = DEFAULT_PAGE_NUMBER;
     this.sortBy = event.sortBy;
     this.sortDirection = event.sortDirection;
     this.filters.set(event.columnId, event.filterOptions);

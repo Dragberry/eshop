@@ -1,5 +1,7 @@
 package org.dragberry.eshop.cms.controller;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.dragberry.eshop.cms.model.OrderCmsModel;
 import org.dragberry.eshop.cms.service.OrderCmsService;
 import org.dragberry.eshop.common.PageableList;
@@ -25,8 +27,9 @@ public class OrderController {
 	@GetMapping("/list")
 	public PageableList<OrderCmsModel> getOrders(
 	        @RequestParam(required = true) int pageNumber,
-	        @RequestParam(required = true) int pageSize) {
-		return orderService.getOrders(PageRequest.of(pageNumber - 1, pageSize));
+	        @RequestParam(required = true) int pageSize,
+	        HttpServletRequest request) {
+		return orderService.getOrders(PageRequest.of(pageNumber - 1, pageSize), request.getParameterMap());
 	}
 
 }
