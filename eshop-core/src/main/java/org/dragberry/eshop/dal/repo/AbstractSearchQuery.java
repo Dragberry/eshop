@@ -101,7 +101,7 @@ public abstract class AbstractSearchQuery <T, R extends Roots> {
 				LocalDateTime fromDate = LocalDateTime.parse(from[0]);
 				predicates.add(cb.greaterThanOrEqualTo(path, fromDate));
 			} catch (DateTimeParseException exc) {
-				log.warn("Unable to parse date " + from[0]);
+ 				log.warn("Unable to parse date " + from[0]);
 			}
 		}
 		String[] to = searchParams.get(MessageFormat.format(TO_PARAM, param));
