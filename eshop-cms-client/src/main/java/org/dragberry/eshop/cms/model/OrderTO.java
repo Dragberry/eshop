@@ -12,7 +12,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class OrderCmsModel implements Serializable {
+public class OrderTO implements Serializable {
 
 	private static final long serialVersionUID = 2253922422700962998L;
 

@@ -1,13 +1,13 @@
-import { Page } from './../../shared/model/page';
+import { Page } from './../../../shared/model/page';
 import { Component, OnInit } from '@angular/core';
-import { OrderService } from '../service/order.service';
-import { Order } from '../model/order';
+import { OrderService } from '../../service/order.service';
+import { Order } from '../../model/order';
 import { HttpParams } from '@angular/common/http';
-import { DataTableHolder } from '../../shared/components/table/data-table-holder';
+import { DataTableHolder } from '../../../shared/components/table/data-table-holder';
 import { Observable } from 'rxjs';
-import { ShippingService } from '../service/shipping.service';
-import { PaymentService } from '../service/payment.service';
-import { OrderStatus } from '../model/order-status';
+import { ShippingService } from '../../service/shipping.service';
+import { PaymentService } from '../../service/payment.service';
+import { OrderStatus } from '../../model/order-status';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({

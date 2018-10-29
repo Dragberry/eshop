@@ -80,7 +80,9 @@
       </thead>
       <tbody class="small">
         <tr *ngFor="let order of page.content; let i = index;">
-          <th>{{order.id}}</th>
+          <th>
+            <a  routerLink="/orders/details/{{order.id}}">{{order.id}}</a>
+          </th>
           <td>{{order.date}}</td>
           <td>
             <span class="font-weight-bold">
