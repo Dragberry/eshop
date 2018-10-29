@@ -12,7 +12,6 @@ export class OrderStatusDirective implements OnChanges {
   constructor(private renderer: Renderer, private el: ElementRef) {
     renderer.setElementClass(el.nativeElement, 'w-100', true);
     renderer.setElementClass(el.nativeElement, 'badge', true);
-    renderer.setElementClass(el.nativeElement, 'badge-pill', true);
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -41,8 +40,21 @@ export class OrderStatusDirective implements OnChanges {
         default:
           statusClass = 'badge-secondary';
       }
+      this.clearClases([
+        'badge-danger',
+        'badge-warning',
+        'badge-primary',
+        'badge-light',
+        'badge-success',
+        'badge-dark',
+        'badge-secondary'
+      ]);
       this.renderer.setElementClass(this.el.nativeElement, statusClass, true);
     }
+  }
+
+  clearClases(classes: string[]) {
+    classes.forEach(clazz => this.renderer.setElementClass(this.el.nativeElement, clazz, false));
   }
 
 }

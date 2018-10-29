@@ -13,8 +13,6 @@ import org.dragberry.eshop.common.PageableList;
 import org.dragberry.eshop.dal.dto.OrderDTO;
 import org.dragberry.eshop.dal.entity.Product;
 import org.dragberry.eshop.dal.repo.OrderRepository;
-import org.dragberry.eshop.model.payment.PaymentMethodTO;
-import org.dragberry.eshop.model.shipping.ShippingMethodTO;
 import org.dragberry.eshop.utils.ProductFullTitleBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -66,15 +64,8 @@ public class OrderCmsServiceImpl implements OrderCmsService {
             order.setPaid(entity.getPaid());
             order.setStatus(entity.getOrderStatus());
             order.setVersion(entity.getVersion());
-			order.setPaymentMethod(new PaymentMethodTO(
-					entity.getPaymentMethod().getEntityKey(),
-					entity.getPaymentMethod().getName(),
-					entity.getPaymentMethod().getDescription()));
-            order.setShippingMethod(new ShippingMethodTO(
-            		entity.getShippingMethod().getEntityKey(),
-            		entity.getShippingMethod().getName(),
-            		entity.getShippingMethod().getDescription(),
-            		entity.getShippingMethod().getCost()));
+			order.setPaymentMethodId(entity.getPaymentMethod().getEntityKey());
+            order.setShippingMethodId(entity.getShippingMethod().getEntityKey());
             order.setItems(entity.getItems().stream().map(item -> {
             	OrderItemTO itemTO = new OrderItemTO();
             	itemTO.setId(item.getEntityKey());

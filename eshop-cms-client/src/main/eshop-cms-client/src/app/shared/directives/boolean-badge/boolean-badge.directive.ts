@@ -17,7 +17,6 @@ export class BooleanBadgeDirective implements OnChanges {
   constructor(private renderer: Renderer, private el: ElementRef) {
     renderer.setElementClass(el.nativeElement, 'w-100', true);
     renderer.setElementClass(el.nativeElement, 'badge', true);
-    renderer.setElementClass(el.nativeElement, 'badge-pill', true);
   }
 
   ngOnChanges(changes: SimpleChanges) {

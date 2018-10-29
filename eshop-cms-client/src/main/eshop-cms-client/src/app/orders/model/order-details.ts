@@ -11,8 +11,8 @@ export class OrderDetails {
     comment: string;
     email: string;
     paid: string;
-    shippingMethod: ShippingMethod;
-    paymentMethod: PaymentMethod;
+    shippingMethodId: number;
+    paymentMethodId: number;
     date: string;
     status: string;
     version: number;
