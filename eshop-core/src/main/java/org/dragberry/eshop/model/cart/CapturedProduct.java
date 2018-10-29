@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.dragberry.eshop.model.common.KeyValue;
 import org.dragberry.eshop.model.product.CategoryItem;
+import org.dragberry.eshop.utils.ProductFullTitleBuilder;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

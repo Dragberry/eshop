@@ -1,3 +1,22 @@
-<p>
-  order-details works!
-</p>
+<ng-container *ngIf="order">
+  <h1>Order #{{order.id}} on {{order.date}}</h1>
+  <div class="form-row">
+    <div class="col-3">
+      <select *ngIf="orderStatuses" [(ngModel)]="order.status" class="form-control">
+        <option *ngFor="let status of orderStatuses" [value]="status.value">
+          {{status.name}}
+        </option>
+      </select>
+    </div>
+    <div class="col-3">
+      <select *ngIf="paidStatuses" [(ngModel)]="order.paid" class="form-control">
+        <option *ngFor="let status of paidStatuses" [value]="status.value">
+          {{status.name}}
+        </option>
+      </select>
+    </div>
+    <div class="col-3">
+      <input type="text" class="form-control" placeholder="Zip">
+    </div>
+  </div>
+</ng-container>

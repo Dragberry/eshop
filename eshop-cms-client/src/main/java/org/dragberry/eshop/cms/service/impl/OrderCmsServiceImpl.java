@@ -5,11 +5,15 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.dragberry.eshop.cms.model.OrderDetailsTO;
+import org.dragberry.eshop.cms.model.OrderItemTO;
+import org.dragberry.eshop.cms.model.OrderProductTO;
 import org.dragberry.eshop.cms.model.OrderTO;
 import org.dragberry.eshop.cms.service.OrderCmsService;
 import org.dragberry.eshop.common.PageableList;
 import org.dragberry.eshop.dal.dto.OrderDTO;
+import org.dragberry.eshop.dal.entity.Product;
 import org.dragberry.eshop.dal.repo.OrderRepository;
+import org.dragberry.eshop.utils.ProductFullTitleBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -60,6 +64,25 @@ public class OrderCmsServiceImpl implements OrderCmsService {
             order.setPaid(entity.getPaid());
             order.setStatus(entity.getOrderStatus());
             order.setVersion(entity.getVersion());
+            order.setItems(entity.getItems().stream().map(item -> {
+            	OrderItemTO itemTO = new OrderItemTO();
+            	itemTO.setId(item.getEntityKey());
+            	itemTO.setPrice(item.getPrice());
+            	itemTO.setQuantity(item.getQuantity());
+            	itemTO.setTotalAmount(item.getTotalAmount());
+            	itemTO.setVersion(item.getVersion());
+            	OrderProductTO productTO = new OrderProductTO();
+            	Product product = item.getProduct();
+				productTO.setProductId(product.getEntityKey());
+				productTO.setProductArticleId(product.getProductArticle().getEntityKey());
+				productTO.setArticle(product.getProductArticle().getArticle());
+				productTO.setPrice(product.getPrice());
+				productTO.setActualPrice(product.getActualPrice());
+				productTO.setReference(product.getProductArticle().getReference());
+				productTO.setFullTitle(ProductFullTitleBuilder.buildFullTitle(product));
+				itemTO.setProduct(productTO);
+            	return itemTO;
+            }).collect(Collectors.toList()));
 	        return order;
 	    });
 	}

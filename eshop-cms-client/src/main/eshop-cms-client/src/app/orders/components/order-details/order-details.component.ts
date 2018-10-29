@@ -1,3 +1,4 @@
+import { NameValue } from './../../../shared/components/table/common/name-value';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
@@ -11,6 +12,9 @@ import { OrderDetails } from '../../model/order-details';
 })
 export class OrderDetailsComponent implements OnInit {
 
+  orderStatuses: NameValue<string>[];
+  paidStatuses: NameValue<boolean>[];
+
   order: OrderDetails;
 
   constructor(
@@ -21,6 +25,19 @@ export class OrderDetailsComponent implements OnInit {
     this.route.paramMap.pipe(switchMap((params: ParamMap) => {
       return this.orderService.getOrderDetails(params.get('id'));
     })).subscribe(order => this.order = order);
+    this.fetchOrderStatuses();
+    this.fetchPaidStatuses();
   }
 
+  fetchOrderStatuses(): void {
+    this.orderService.fetchOrderStatuses().subscribe(orderStatuses => {
+      this.orderStatuses = orderStatuses;
+    });
+  }
+
+  fetchPaidStatuses(): void {
+    this.orderService.fetchPaidStatuses().subscribe(paidStatuses => {
+      this.paidStatuses = paidStatuses;
+    });
+  }
 }

@@ -3,8 +3,11 @@ package org.dragberry.eshop.cms.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.dragberry.eshop.dal.entity.Order.OrderStatus;
+import org.dragberry.eshop.model.payment.PaymentMethodTO;
+import org.dragberry.eshop.model.shipping.ShippingMethodTO;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
@@ -30,15 +33,11 @@ public class OrderDetailsTO implements Serializable {
 	
 	private String email;
 	
-	private Boolean paid = Boolean.FALSE;
+	private Boolean paid;
 	
-	private Long shippingMethodId;
+	private ShippingMethodTO shippingMethod;
 	
-	private String shippingMethod;
-	
-	private Long paymentMethodId;
-	
-	private String paymentMethod;
+	private PaymentMethodTO paymentMethod;
 	
 	@JsonFormat(pattern = "yyyy-MM-dd mm:hh:ss")
 	private LocalDateTime date;
@@ -47,5 +46,5 @@ public class OrderDetailsTO implements Serializable {
 	
 	private Long version;
 	
-	
+	private List<OrderItemTO> items;
 }

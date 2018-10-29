@@ -30,6 +30,7 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
     TableNumericFilterComponent
   ],
   exports: [
+    FormsModule,
     BsDropdownModule,
     BsDatepickerModule,
     TranslatePipe,

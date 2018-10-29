@@ -1,3 +1,4 @@
+import { NameValue } from './../../../shared/components/table/common/name-value';
 import { Page } from './../../../shared/model/page';
 import { Component, OnInit } from '@angular/core';
 import { OrderService } from '../../service/order.service';
@@ -7,8 +8,6 @@ import { DataTableHolder } from '../../../shared/components/table/data-table-hol
 import { Observable } from 'rxjs';
 import { ShippingService } from '../../service/shipping.service';
 import { PaymentService } from '../../service/payment.service';
-import { OrderStatus } from '../../model/order-status';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-order-list',
@@ -17,15 +16,14 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class OrderListComponent extends DataTableHolder<Order> implements OnInit {
 
-  paymentMethods: {value: string, name: string}[];
-  shippingMethods: {value: string, name: string}[];
-  orderStatuses: {value: string, name: string}[];
-  paidStatuses: {value: string, name: string}[];
+  paymentMethods: NameValue<string>[];
+  shippingMethods: NameValue<string>[];
+  orderStatuses: NameValue<string>[];
+  paidStatuses: NameValue<boolean>[];
 
   constructor(private orderService: OrderService,
     private paymentService: PaymentService,
-    private shippingService: ShippingService,
-    private translateService: TranslateService) {
+    private shippingService: ShippingService) {
     super();
   }
 
@@ -42,26 +40,14 @@ export class OrderListComponent extends DataTableHolder<Order> implements OnInit
   }
 
   fetchPaidStatuses(): void {
-    this.paidStatuses = [];
-    [true, false].forEach(value => {
-      this.translateService.get(`orders.paid.${value}`).subscribe(translated => {
-        this.paidStatuses.push({
-          value: String(value),
-          name: translated
-        });
-      });
+    this.orderService.fetchPaidStatuses().subscribe(paidStatuses => {
+      this.paidStatuses = paidStatuses;
     });
   }
 
   fetchOrderStatuses(): void {
-    this.orderStatuses = [];
-    Object.entries(OrderStatus).forEach(status => {
-      this.translateService.get(`orders.status.${status[1]}`).subscribe(translated => {
-        this.orderStatuses.push({
-          value: status[1],
-          name: translated
-        });
-      });
+    this.orderService.fetchOrderStatuses().subscribe(orderStatuses => {
+      this.orderStatuses = orderStatuses;
     });
   }
 
