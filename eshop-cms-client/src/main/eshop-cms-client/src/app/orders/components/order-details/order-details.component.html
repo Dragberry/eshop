@@ -16,7 +16,11 @@
       </select>
     </div>
     <div class="col-3">
-      <input type="text" class="form-control" placeholder="Zip">
+      <select *ngIf="paymentMethods" [(ngModel)]="order.paymentMethod" class="form-control">
+        <option *ngFor="let pm of paymentMethods" [ngValue]="pm">
+          {{pm.name}}
+        </option>
+      </select>
     </div>
   </div>
 </ng-container>

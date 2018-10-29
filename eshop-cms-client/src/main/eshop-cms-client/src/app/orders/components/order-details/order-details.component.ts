@@ -1,3 +1,5 @@
+import { PaymentMethod } from './../../model/payment-method';
+import { PaymentService } from './../../service/payment.service';
 import { NameValue } from './../../../shared/components/table/common/name-value';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
@@ -14,19 +16,27 @@ export class OrderDetailsComponent implements OnInit {
 
   orderStatuses: NameValue<string>[];
   paidStatuses: NameValue<boolean>[];
+  paymentMethods: PaymentMethod[];
 
   order: OrderDetails;
 
   constructor(
     private route: ActivatedRoute,
-    private orderService: OrderService) {}
+    private orderService: OrderService,
+    private paymentService: PaymentService) {}
 
   ngOnInit() {
     this.route.paramMap.pipe(switchMap((params: ParamMap) => {
       return this.orderService.getOrderDetails(params.get('id'));
     })).subscribe(order => this.order = order);
+    this.fetchPaymentMethods();
     this.fetchOrderStatuses();
     this.fetchPaidStatuses();
+  }
+
+  fetchPaymentMethods(): void {
+    this.paymentService.getAllPaymentMethods()
+      .subscribe(list => this.paymentMethods = list);
   }
 
   fetchOrderStatuses(): void {
