@@ -9,7 +9,7 @@
       </select>
     </div>
     <div class="col-3">
-      <select *ngIf="paidStatuses" [(ngModel)]="order.paid" class="form-control">
+      <select *ngIf="paidStatuses" appBooleanBadge [badgeValue]="order.paid" [(ngModel)]="order.paid" class="form-control">
         <option *ngFor="let status of paidStatuses" [value]="status.value">
           {{status.name}}
         </option>
