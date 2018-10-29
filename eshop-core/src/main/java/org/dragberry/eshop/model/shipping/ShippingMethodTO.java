@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class ShippingMethod {
+public class ShippingMethodTO {
 
 	private Long id;
 	

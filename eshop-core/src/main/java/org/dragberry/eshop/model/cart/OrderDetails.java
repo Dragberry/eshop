@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.dragberry.eshop.model.payment.PaymentMethod;
-import org.dragberry.eshop.model.shipping.ShippingMethod;
+import org.dragberry.eshop.model.payment.PaymentMethodTO;
+import org.dragberry.eshop.model.shipping.ShippingMethodTO;
 
 import lombok.Data;
 
@@ -30,9 +30,9 @@ public class OrderDetails {
 	
 	private BigDecimal totalAmount;
 	
-	private ShippingMethod shippingMethod;
+	private ShippingMethodTO shippingMethod;
 	
-	private PaymentMethod paymentMethod;
+	private PaymentMethodTO paymentMethod;
 	
 	private Map<CapturedProduct, CapturedProductState> products = new HashMap<>();
 	

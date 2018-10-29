@@ -3,9 +3,10 @@ package org.dragberry.eshop.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.dragberry.eshop.dal.entity.ShippingMethod;
 import org.dragberry.eshop.dal.entity.ShippingMethod.Status;
 import org.dragberry.eshop.dal.repo.ShippingMethodRepository;
-import org.dragberry.eshop.model.shipping.ShippingMethod;
+import org.dragberry.eshop.model.shipping.ShippingMethodTO;
 import org.dragberry.eshop.service.ShippingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,10 +18,14 @@ public class ShippingServiceImpl implements ShippingService {
     private ShippingMethodRepository shippingMethodRepo;
     
 	@Override
-	public List<ShippingMethod> getShippingMethods() {
-		return shippingMethodRepo.findByStatusOrderByOrder(Status.ACTIVE).stream().map(sm -> {
-		    return new ShippingMethod(sm.getEntityKey(), sm.getName(), sm.getDescription(), sm.getCost());
-		}).collect(Collectors.toList());
+	public List<ShippingMethodTO> getShippingMethods(List<Status> statuses) {
+	    List<ShippingMethod> result = statuses.isEmpty() ?
+	            shippingMethodRepo.findAllByOrderByOrder() : shippingMethodRepo.findByStatusOrdered(statuses);
+		return result.stream().map(sm -> new ShippingMethodTO(
+		        sm.getEntityKey(),
+		        sm.getName(),
+		        sm.getDescription(),
+		        sm.getCost())).collect(Collectors.toList());
 	}
 
 }

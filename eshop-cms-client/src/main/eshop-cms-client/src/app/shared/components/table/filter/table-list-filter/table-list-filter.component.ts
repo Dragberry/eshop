@@ -13,6 +13,9 @@ export class TableListFilterComponent extends TableFilter {
 
   @Input()
   set options(opts: {value: any, name: string}[]) {
+    this.sourceSelectedOptions = opts.map(opt => {
+      return {selected: false, option: opt};
+    });
     this.selectedOptions = opts.map(opt => {
       return {selected: false, option: opt};
     });

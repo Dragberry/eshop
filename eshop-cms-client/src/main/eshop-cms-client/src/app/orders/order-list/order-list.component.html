@@ -49,7 +49,7 @@
           [title]="'common.paymentMethod' | translate"
           [sortBy]="'paymentMethod'"
           [filter]="'list'"
-          [filterOptions]="[{value: 1, name: 'Opt 1'}, {value: 2, name: 'Opt 2'}]"
+          [filterOptions]="paymentMethods"
           (columnAction)="onColumnActionEvent($event)">
         </app-table-action-column>
       </th>
@@ -59,7 +59,7 @@
           [title]="'common.shippingMethod' | translate"
           [sortBy]="'shippingMethod'"
           [filter]="'list'"
-          [filterOptions]="[{value: 1, name: 'Opt 1'}, {value: 2, name: 'Opt 2'}]"
+          [filterOptions]="shippingMethods"
           (columnAction)="onColumnActionEvent($event)">
         </app-table-action-column>
     </tr>

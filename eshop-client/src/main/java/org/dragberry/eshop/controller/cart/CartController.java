@@ -16,15 +16,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.dragberry.eshop.common.IssueTO;
 import org.dragberry.eshop.common.ResultTO;
 import org.dragberry.eshop.controller.exception.BadRequestException;
+import org.dragberry.eshop.dal.entity.PaymentMethod;
+import org.dragberry.eshop.dal.entity.ShippingMethod;
 import org.dragberry.eshop.model.cart.CapturedProduct;
 import org.dragberry.eshop.model.cart.CapturedProductState;
 import org.dragberry.eshop.model.cart.CartState;
 import org.dragberry.eshop.model.cart.OrderDetails;
 import org.dragberry.eshop.model.cart.OrderDetailsForm;
 import org.dragberry.eshop.model.cart.QuickOrderDetails;
-import org.dragberry.eshop.model.payment.PaymentMethod;
+import org.dragberry.eshop.model.payment.PaymentMethodTO;
 import org.dragberry.eshop.model.product.ProductArticleOptions;
-import org.dragberry.eshop.model.shipping.ShippingMethod;
+import org.dragberry.eshop.model.shipping.ShippingMethodTO;
 import org.dragberry.eshop.service.AppInfoService;
 import org.dragberry.eshop.service.ShippingService;
 import org.dragberry.eshop.service.NotificationService;
@@ -98,7 +100,7 @@ public class CartController {
     private ProductService productService;
     
     @Autowired
-    private ShippingService deliveryService;
+    private ShippingService shippingService;
     
     @Autowired
     private PaymentService paymentService;
@@ -113,17 +115,17 @@ public class CartController {
     
     private CartStep cartStep = CartStep.EDITING;
     
-    private List<ShippingMethod> shippingMethods;
+    private List<ShippingMethodTO> shippingMethods;
     
-    private List<PaymentMethod> paymentMethods;
+    private List<PaymentMethodTO> paymentMethods;
     
     /**
      * Initialize
      */
     @PostConstruct
     public void init() {
-    	shippingMethods = deliveryService.getShippingMethods();
-    	paymentMethods = paymentService.getPaymentMethods();
+    	shippingMethods = shippingService.getShippingMethods(Arrays.asList(ShippingMethod.Status.ACTIVE));
+    	paymentMethods = paymentService.getPaymentMethods(Arrays.asList(PaymentMethod.Status.ACTIVE));
     }
 
     /**
@@ -398,11 +400,11 @@ public class CartController {
             }
         });
 
-        executors.put(CartAction.SHIPPING_METHOD, new CartActionExecutor<ShippingMethod>() {
+        executors.put(CartAction.SHIPPING_METHOD, new CartActionExecutor<ShippingMethodTO>() {
 
             @Override
-            public CartState<ShippingMethod> execute(CartStateChange change) {
-                ShippingMethod method = shippingMethods.stream().filter(dm -> dm.getId().equals(change.getEntityId()))
+            public CartState<ShippingMethodTO> execute(CartStateChange change) {
+                ShippingMethodTO method = shippingMethods.stream().filter(dm -> dm.getId().equals(change.getEntityId()))
                         .findFirst().orElseThrow(BadRequestException::new);
                 order.setShippingMethod(method);
                 return updateCartState(method);
