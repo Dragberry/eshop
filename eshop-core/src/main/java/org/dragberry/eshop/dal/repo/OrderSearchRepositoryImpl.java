@@ -12,8 +12,10 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Selection;
+
 import org.dragberry.eshop.dal.dto.OrderDTO;
 import org.dragberry.eshop.dal.entity.Order;
+import org.dragberry.eshop.dal.entity.Order.OrderStatus;
 import org.dragberry.eshop.dal.entity.Order_;
 import org.dragberry.eshop.dal.entity.PaymentMethod;
 import org.dragberry.eshop.dal.entity.PaymentMethod_;
@@ -30,6 +32,14 @@ import org.springframework.data.domain.Sort.Direction;
 import lombok.AllArgsConstructor;
 
 public class OrderSearchRepositoryImpl implements OrderSearchRepository {
+    
+    private static final String ID = "id";
+    private static final String STATUS = "status";
+    private static final String SHIPPING_METHOD = "shippingMethod";
+    private static final String PAYMENT_METHOD = "paymentMethod";
+    private static final String DATE = "date";
+    private static final String TOTAL_AMOUNT = "totalAmount";
+    private static final String IS_PAID = "isPaid";
 
 	@AllArgsConstructor(staticName = "of")
 	private static class OrderRoots implements Roots {
@@ -42,13 +52,13 @@ public class OrderSearchRepositoryImpl implements OrderSearchRepository {
 		
 		private final Map<String, SortFunction<OrderRoots>> config = new HashMap<>();
 		{
-			config.put("id", SortFunction.of(roots -> roots.order.get(Order_.entityKey)));
-			config.put("date", SortFunction.of(roots -> roots.order.get(Order_.createdDate)));
-			config.put("totalAmount", SortFunction.of(roots -> roots.order.get(Order_.totalAmount)));
-			config.put("status", SortFunction.of(roots -> roots.order.get(Order_.orderStatus)));
-			config.put("isPaid", SortFunction.of(roots -> roots.order.get(Order_.paid)));
-			config.put("paymentMethod", SortFunction.of(roots -> roots.paymentMethod.get(PaymentMethod_.name)));
-			config.put("shippingMethod", SortFunction.of(roots -> roots.shippingMethod.get(ShippingMethod_.name)));
+			config.put(ID, SortFunction.of(roots -> roots.order.get(Order_.entityKey)));
+			config.put(DATE, SortFunction.of(roots -> roots.order.get(Order_.createdDate)));
+			config.put(TOTAL_AMOUNT, SortFunction.of(roots -> roots.order.get(Order_.totalAmount)));
+			config.put(STATUS, SortFunction.of(roots -> roots.order.get(Order_.orderStatus)));
+			config.put(IS_PAID, SortFunction.of(roots -> roots.order.get(Order_.paid)));
+			config.put(PAYMENT_METHOD, SortFunction.of(roots -> roots.paymentMethod.get(PaymentMethod_.name)));
+			config.put(SHIPPING_METHOD, SortFunction.of(roots -> roots.shippingMethod.get(ShippingMethod_.name)));
 		}
 		
 		@Override
@@ -72,7 +82,7 @@ public class OrderSearchRepositoryImpl implements OrderSearchRepository {
 	
 	private class OrderSearchQuery extends AbstractSearchQuery<OrderDTO, OrderRoots> {
 		
-		private final Root<Order> root;
+        private final Root<Order> root;
 		private final Join<Order, ShippingMethod> shippingJoin;
 		private final Join<Order, PaymentMethod> paymentJoin;
 		
@@ -106,10 +116,11 @@ public class OrderSearchRepositoryImpl implements OrderSearchRepository {
 		@Override
 		protected Optional<Predicate> where(Map<String, String[]> searchParams) {
 			List<Predicate> predicates = new ArrayList<>();
-			predicates.addAll(numericRange("totalAmount", root.get(Order_.totalAmount), searchParams));
-			predicates.addAll(dateRange("date", root.get(Order_.createdDate), searchParams));
-			predicates.addAll(in("paymentMethod", paymentJoin.get(PaymentMethod_.entityKey), searchParams));
-			predicates.addAll(in("shippingMethod", shippingJoin.get(ShippingMethod_.entityKey), searchParams));
+			predicates.addAll(numericRange(TOTAL_AMOUNT, root.get(Order_.totalAmount), searchParams));
+			predicates.addAll(dateRange(DATE, root.get(Order_.createdDate), searchParams));
+			predicates.addAll(in(PAYMENT_METHOD, paymentJoin.get(PaymentMethod_.entityKey), searchParams));
+			predicates.addAll(in(SHIPPING_METHOD, shippingJoin.get(ShippingMethod_.entityKey), searchParams));
+			predicates.addAll(in(STATUS, root.get(Order_.orderStatus), OrderStatus.class, searchParams));
 			return predicates.isEmpty() ? Optional.empty() : Optional.of(cb.and(predicates.toArray(new Predicate[predicates.size()])));
 		}
 

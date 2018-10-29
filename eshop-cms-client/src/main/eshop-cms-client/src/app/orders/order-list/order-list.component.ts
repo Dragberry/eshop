@@ -7,6 +7,8 @@ import { DataTableHolder } from '../../shared/components/table/data-table-holder
 import { Observable } from 'rxjs';
 import { ShippingService } from '../service/shipping.service';
 import { PaymentService } from '../service/payment.service';
+import { OrderStatus } from '../model/order-status';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-order-list',
@@ -15,18 +17,21 @@ import { PaymentService } from '../service/payment.service';
 })
 export class OrderListComponent extends DataTableHolder<Order> implements OnInit {
 
-  paymentMethods: {value: number, name: string}[];
-  shippingMethods: {value: number, name: string}[];
+  paymentMethods: {value: string, name: string}[];
+  shippingMethods: {value: string, name: string}[];
+  orderStatuses: {value: string, name: string}[];
 
   constructor(private orderService: OrderService,
     private paymentService: PaymentService,
-    private shippingService: ShippingService) {
+    private shippingService: ShippingService,
+    private translateService: TranslateService) {
     super();
   }
 
   ngOnInit() {
     this.fetchPaymentMethods();
     this.fetchShippingMethods();
+    this.fetchOrderStatuses();
     this.fetchPage();
   }
 
@@ -34,11 +39,23 @@ export class OrderListComponent extends DataTableHolder<Order> implements OnInit
     return this.orderService.getOrders(params);
   }
 
+  fetchOrderStatuses(): void {
+    this.orderStatuses = [];
+    Object.entries(OrderStatus).forEach(status => {
+      this.translateService.get(`orders.status.${status[1]}`).subscribe(translated => {
+        this.orderStatuses.push({
+          value: status[1],
+          name: translated
+        });
+      });
+    });
+  }
+
   fetchPaymentMethods(): void {
     this.paymentService.getActivePaymentMethods()
       .subscribe(list => {
         this.paymentMethods = list.map(sm => {
-          return {value: sm.id, name: sm.name};
+          return {value: sm.id.toString(), name: sm.name};
         });
       });
   }
@@ -47,7 +64,7 @@ export class OrderListComponent extends DataTableHolder<Order> implements OnInit
     this.shippingService.getActiveShippingMethods()
       .subscribe(list => {
         this.shippingMethods = list.map(sm => {
-          return {value: sm.id, name: sm.name};
+          return {value: sm.id.toString(), name: sm.name};
         });
       });
   }

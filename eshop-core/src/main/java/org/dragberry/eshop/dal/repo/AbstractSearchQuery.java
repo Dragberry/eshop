@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -23,6 +24,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Selection;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.dragberry.eshop.dal.sort.Roots;
 import org.dragberry.eshop.dal.sort.SortConfig;
@@ -121,14 +123,20 @@ public abstract class AbstractSearchQuery <T, R extends Roots> {
 		return predicates;
 	}
 	
+	protected <E> List<Predicate> in(String param, Path<E> path, Map<String, String[]> searchParams, java.util.function.Predicate<String> isValid, Function<String, E> mapper) {
+        String[] values = searchParams.get(MessageFormat.format(ATTRIBUTE_PARAM, param));
+        if (ArrayUtils.isNotEmpty(values)) {
+            return Arrays.asList(path.in(Arrays.stream(values)
+                    .filter(isValid).map(mapper).collect(Collectors.toList())));
+        }
+        return Collections.emptyList();
+    }
+	
+	protected <E extends Enum<E>> List<Predicate> in(String param, Path<E> path, Class<E> clazz, Map<String, String[]> searchParams) {
+        return in(param, path, searchParams, value -> EnumUtils.isValidEnum(clazz, value), value -> EnumUtils.getEnum(clazz, value));
+    }
+	
 	protected List<Predicate> in(String param, Path<Long> path, Map<String, String[]> searchParams) {
-		String[] values = searchParams.get(MessageFormat.format(ATTRIBUTE_PARAM, param));
-		if (ArrayUtils.isNotEmpty(values)) {
-			return Arrays.asList(path.in(Arrays.stream(values)
-					.filter(NumberUtils::isCreatable)
-					.map(Long::valueOf)
-					.collect(Collectors.toList())));
-		}
-		return Collections.emptyList();
+	    return in(param, path, searchParams, NumberUtils::isCreatable, Long::valueOf);
 	}
 }
