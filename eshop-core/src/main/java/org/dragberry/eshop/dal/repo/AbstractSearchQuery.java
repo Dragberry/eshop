@@ -132,11 +132,15 @@ public abstract class AbstractSearchQuery <T, R extends Roots> {
         return Collections.emptyList();
     }
 	
-	protected <E extends Enum<E>> List<Predicate> in(String param, Path<E> path, Class<E> clazz, Map<String, String[]> searchParams) {
+	protected <E extends Enum<E>> List<Predicate> inEnum(String param, Path<E> path, Class<E> clazz, Map<String, String[]> searchParams) {
         return in(param, path, searchParams, value -> EnumUtils.isValidEnum(clazz, value), value -> EnumUtils.getEnum(clazz, value));
     }
 	
-	protected List<Predicate> in(String param, Path<Long> path, Map<String, String[]> searchParams) {
+	protected List<Predicate> inLong(String param, Path<Long> path, Map<String, String[]> searchParams) {
 	    return in(param, path, searchParams, NumberUtils::isCreatable, Long::valueOf);
 	}
+	
+	protected List<Predicate> inBoolean(String param, Path<Boolean> path, Map<String, String[]> searchParams) {
+        return in(param, path, searchParams,  val -> true, Boolean::parseBoolean);
+    }
 }

@@ -118,9 +118,10 @@ public class OrderSearchRepositoryImpl implements OrderSearchRepository {
 			List<Predicate> predicates = new ArrayList<>();
 			predicates.addAll(numericRange(TOTAL_AMOUNT, root.get(Order_.totalAmount), searchParams));
 			predicates.addAll(dateRange(DATE, root.get(Order_.createdDate), searchParams));
-			predicates.addAll(in(PAYMENT_METHOD, paymentJoin.get(PaymentMethod_.entityKey), searchParams));
-			predicates.addAll(in(SHIPPING_METHOD, shippingJoin.get(ShippingMethod_.entityKey), searchParams));
-			predicates.addAll(in(STATUS, root.get(Order_.orderStatus), OrderStatus.class, searchParams));
+			predicates.addAll(inLong(PAYMENT_METHOD, paymentJoin.get(PaymentMethod_.entityKey), searchParams));
+			predicates.addAll(inLong(SHIPPING_METHOD, shippingJoin.get(ShippingMethod_.entityKey), searchParams));
+			predicates.addAll(inEnum(STATUS, root.get(Order_.orderStatus), OrderStatus.class, searchParams));
+			predicates.addAll(inBoolean(IS_PAID, root.get(Order_.paid), searchParams));
 			return predicates.isEmpty() ? Optional.empty() : Optional.of(cb.and(predicates.toArray(new Predicate[predicates.size()])));
 		}
 

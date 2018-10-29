@@ -43,6 +43,8 @@
           [columnId]="'isPaid'"
           [title]="'common.isPaid' | translate"
           [sortBy]="'isPaid'"
+          [filter]="'list'"
+          [filterOptions]="paidStatuses"
           (columnAction)="onColumnActionEvent($event)">
         </app-table-action-column>
       <th>

@@ -20,6 +20,7 @@ export class OrderListComponent extends DataTableHolder<Order> implements OnInit
   paymentMethods: {value: string, name: string}[];
   shippingMethods: {value: string, name: string}[];
   orderStatuses: {value: string, name: string}[];
+  paidStatuses: {value: string, name: string}[];
 
   constructor(private orderService: OrderService,
     private paymentService: PaymentService,
@@ -32,11 +33,24 @@ export class OrderListComponent extends DataTableHolder<Order> implements OnInit
     this.fetchPaymentMethods();
     this.fetchShippingMethods();
     this.fetchOrderStatuses();
+    this.fetchPaidStatuses();
     this.fetchPage();
   }
 
   invokeService(params: HttpParams): Observable<Page<Order>> {
     return this.orderService.getOrders(params);
+  }
+
+  fetchPaidStatuses(): void {
+    this.paidStatuses = [];
+    [true, false].forEach(value => {
+      this.translateService.get(`orders.paid.${value}`).subscribe(translated => {
+        this.paidStatuses.push({
+          value: String(value),
+          name: translated
+        });
+      });
+    });
   }
 
   fetchOrderStatuses(): void {
