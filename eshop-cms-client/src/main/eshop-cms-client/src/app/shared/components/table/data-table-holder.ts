@@ -4,11 +4,16 @@ import { SortDirection } from './common/sort-direction';
 import { Page } from '../../model/page';
 import { PageableEvent } from './common/pageable-event';
 import { Observable } from 'rxjs';
+import { ViewChildren, QueryList } from '@angular/core';
+import { TableActionColumnComponent } from './table-action-column/table-action-column.component';
 
 const DEFAULT_PAGE_NUMBER = 1;
 const DEFAULT_PAGE_SIZE = 20;
 
 export abstract class DataTableHolder<T> {
+
+  @ViewChildren(TableActionColumnComponent)
+  columns!: QueryList<TableActionColumnComponent>;
 
   private pageSize = DEFAULT_PAGE_SIZE;
   private pageNumber = DEFAULT_PAGE_NUMBER;
@@ -54,7 +59,25 @@ export abstract class DataTableHolder<T> {
     this.pageNumber = DEFAULT_PAGE_NUMBER;
     this.sortBy = event.sortBy;
     this.sortDirection = event.sortDirection;
+    this.columns.forEach(column => {
+      if (column.sortBy !== this.sortBy) {
+        column.clearSorting();
+      }
+    });
     this.filters.set(event.columnId, event.filterOptions);
+    this.fetchPage();
+  }
+
+  resetAll(): void {
+    this.columns.forEach(column => {
+      column.clearSorting();
+      column.clearFilter();
+      this.sortBy = null;
+      this.sortDirection = SortDirection.UNSORTED;
+      this.filters.clear();
+    });
+    this.pageNumber = DEFAULT_PAGE_NUMBER;
+    this.pageSize = DEFAULT_PAGE_SIZE;
     this.fetchPage();
   }
 }

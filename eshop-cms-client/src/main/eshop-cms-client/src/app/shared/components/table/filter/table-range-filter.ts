@@ -14,10 +14,14 @@ export abstract class TableRangeFilter<T> extends TableFilter {
   getSelectedValues(): {name: string, values: string[]}[] {
     this.sourceFrom = this.from;
     this.sourceTo = this.to;
-    return [
-      {name: `from[${this.columnId}]`, values: [this.toString(this.from)]},
-      {name: `to[${this.columnId}]`, values: [this.toString(this.to)]}
-    ];
+    const result: {name: string, values: string[]}[] = [];
+    if (this.from) {
+      result.push({name: `from[${this.columnId}]`, values: [this.toString(this.from)]});
+    }
+    if (this.to) {
+      result.push({name: `to[${this.columnId}]`, values: [this.toString(this.to)]});
+    }
+    return result;
   }
 
   reset(): void {

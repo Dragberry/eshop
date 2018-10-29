@@ -1,5 +1,5 @@
 <div *ngIf="pageExists" class="row">
-  <div class="col-6">
+  <div class="col-12">
     <nav aria-label="paginator">
       <ul class="pagination">
         <li class="page-item" [class.disabled]="!isFirstEnabled">
@@ -29,16 +29,19 @@
             <span class="sr-only">Last</span>
           </button>
         </li>
+        <li class="page-item">
+            <div class="form-inline">
+              <label class="pl-2 pr-1">{{'common.showElementsOnPage' | translate}}:</label>
+              <select class="form-control" (change)="onPageSizeChanged($event.target.value)">
+                  <option *ngFor="let pageSize of pageSizes"
+                    [selected]="pageSize == currentPageSize"
+                    [value]="pageSize">
+                    {{pageSize}}
+                  </option>
+              </select>
+            </div>
+        </li>
       </ul>
     </nav>
-  </div>
-  <div class="offset-5 col-1 text-right">
-    <select class="form-control" (change)="onPageSizeChanged($event.target.value)">
-      <option *ngFor="let pageSize of pageSizes"
-        [selected]="pageSize == currentPageSize"
-        [value]="pageSize">
-        {{pageSize}}
-      </option>
-    </select>
   </div>
 </div>

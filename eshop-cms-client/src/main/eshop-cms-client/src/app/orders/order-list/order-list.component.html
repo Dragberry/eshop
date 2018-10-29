@@ -1,4 +1,7 @@
 <h1>Orders</h1>
+<button type="button" class="btn btn-link" (click)=resetAll()>
+  Reset
+</button>
 <app-paginator [page]="page" (paginatorEvent)="onPageableEvent($event)"></app-paginator>
 <table *ngIf="page" class="table table-sm table-striped table-hover">
   <thead class="thead-dark">

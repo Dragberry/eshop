@@ -41,12 +41,26 @@ export class TableActionColumnComponent {
   }
 
   resetFilter(): void {
-    this.filterComponent.reset();
+    if (this.filterComponent) {
+      this.filterComponent.reset();
+    }
+  }
+
+  clearFilter(): void {
+    if (this.filterComponent) {
+      this.filterComponent.clearAll();
+      this.selectedFilterValues = [];
+    }
   }
 
   hasFilter(): boolean {
     return this.selectedFilterValues && this.selectedFilterValues
       .find(filterValue => !filterValue.values || filterValue.values.length !== 0) != null;
+  }
+
+  clearSorting(): void {
+    this.sortDirection = SortDirection.UNSORTED;
+    this.sortClass = 'fa-sort';
   }
 
   toggleSorting(): void {
