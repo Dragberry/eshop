@@ -83,7 +83,7 @@
           <th>
             <a  routerLink="/orders/details/{{order.id}}">{{order.id}}</a>
           </th>
-          <td>{{order.date}}</td>
+          <td>{{order.date | formatDate}}</td>
           <td>
             <span class="font-weight-bold">
               {{order.totalAmount.toFixed(2)}}

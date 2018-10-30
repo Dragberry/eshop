@@ -11,6 +11,7 @@ import { TableListFilterComponent } from './components/table/filter/table-list-f
 import { TableNumericFilterComponent } from './components/table/filter/table-numeric-filter/table-numeric-filter.component';
 import { TableDateFilterComponent } from './components/table/filter/table-date-filter/table-date-filter.component';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { FormatDate } from './pipes/format-date.pipe';
 
 @NgModule({
   imports: [
@@ -27,7 +28,8 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
     TableActionColumnComponent,
     TableDateFilterComponent,
     TableListFilterComponent,
-    TableNumericFilterComponent
+    TableNumericFilterComponent,
+    FormatDate
   ],
   exports: [
     FormsModule,
@@ -40,7 +42,8 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
     TableActionColumnComponent,
     TableDateFilterComponent,
     TableListFilterComponent,
-    TableNumericFilterComponent
+    TableNumericFilterComponent,
+    FormatDate
   ],
   providers: []
 })
