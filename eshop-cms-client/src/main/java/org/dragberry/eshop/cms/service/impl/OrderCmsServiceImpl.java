@@ -20,8 +20,10 @@ import org.dragberry.eshop.dal.dto.OrderDTO;
 import org.dragberry.eshop.dal.entity.Order;
 import org.dragberry.eshop.dal.entity.PaymentMethod;
 import org.dragberry.eshop.dal.entity.Product;
+import org.dragberry.eshop.dal.entity.ProductArticle;
 import org.dragberry.eshop.dal.repo.OrderRepository;
 import org.dragberry.eshop.dal.repo.PaymentMethodRepository;
+import org.dragberry.eshop.service.ImageService;
 import org.dragberry.eshop.utils.ProductFullTitleBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -36,6 +38,9 @@ public class OrderCmsServiceImpl implements OrderCmsService {
 	
 	@Autowired
     private PaymentMethodRepository paymentMethodRepo;
+	
+	@Autowired
+	private ImageService imageService;
 	
 	@Override
 	public PageableList<OrderTO> getOrders(PageRequest pageRequest, Map<String, String[]> params) {
@@ -63,7 +68,7 @@ public class OrderCmsServiceImpl implements OrderCmsService {
 	
 	@Override
 	public Optional<OrderDetailsTO> getOrderDetails(Long id) {
-	    return orderRepo.findById(id).map(OrderCmsServiceImpl::mapDetails);
+	    return orderRepo.findById(id).map(this::mapDetails);
 	}
 
 	@Override
@@ -84,7 +89,7 @@ public class OrderCmsServiceImpl implements OrderCmsService {
 	    });
 	}
 	
-	private static OrderDetailsTO mapDetails(Order entity) {
+	private OrderDetailsTO mapDetails(Order entity) {
         OrderDetailsTO order = new OrderDetailsTO();
         order.setId(entity.getEntityKey());
         order.setPhone(entity.getPhone());
@@ -109,11 +114,13 @@ public class OrderCmsServiceImpl implements OrderCmsService {
             OrderProductTO productTO = new OrderProductTO();
             Product product = item.getProduct();
             productTO.setProductId(product.getEntityKey());
-            productTO.setProductArticleId(product.getProductArticle().getEntityKey());
-            productTO.setArticle(product.getProductArticle().getArticle());
+            ProductArticle productArticle = product.getProductArticle();
+			productTO.setProductArticleId(productArticle.getEntityKey());
+            productTO.setArticle(productArticle.getArticle());
+            productTO.setMainImage(imageService.findMainImage(productArticle.getEntityKey(), productArticle.getArticle()));
             productTO.setPrice(product.getPrice());
             productTO.setActualPrice(product.getActualPrice());
-            productTO.setReference(product.getProductArticle().getReference());
+            productTO.setReference(productArticle.getReference());
             productTO.setFullTitle(ProductFullTitleBuilder.buildFullTitle(product));
             itemTO.setProduct(productTO);
             return itemTO;
