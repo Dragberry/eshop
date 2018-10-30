@@ -7,6 +7,7 @@ import { Injectable } from '@angular/core';
 import { Order } from '../model/order';
 import { OrderDetails } from '../model/order-details';
 import { TranslateService } from '@ngx-translate/core';
+import { Result } from 'src/app/shared/model/result';
 
 const ORDERS_URL = 'orders';
 
@@ -25,8 +26,8 @@ export class OrderService {
     return this.http.get<OrderDetails>(`${ORDERS_URL}/${id}`);
   }
 
-  updateOrder(order: OrderDetails): Observable<OrderDetails> {
-    return this.http.patch<OrderDetails>(`${ORDERS_URL}/${order.id}`, order);
+  updateOrder(order: OrderDetails): Observable<Result<OrderDetails>> {
+    return this.http.put<Result<OrderDetails>>(`${ORDERS_URL}/${order.id}`, order);
   }
 
   fetchOrderStatuses(): Observable<NameValue<string>[]> {

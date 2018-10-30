@@ -51,7 +51,11 @@ export class OrderDetailsComponent implements OnInit {
     });
   }
 
-  onStatusChanged(): void {
-    this.orderService.updateOrder(this.order).subscribe(order => this.order = order);
+  updateOrder(): void {
+    this.orderService.updateOrder(this.order).subscribe(result => {
+      if (!result.issues) {
+        this.order = result.value;
+      }
+    });
   }
 }

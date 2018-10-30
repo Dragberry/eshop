@@ -5,21 +5,26 @@
       <select *ngIf="orderStatuses" class="form-control"
         appOrderStatus [orderStatus]="order.status"
         [(ngModel)]="order.status"
-        (change)="onStatusChanged()">
+        (change)="updateOrder()">
         <option *ngFor="let status of orderStatuses" [value]="status.value">
           {{status.name}}
         </option>
       </select>
     </div>
     <div class="col-3">
-      <select *ngIf="paidStatuses" appBooleanBadge [badgeValue]="order.paid" [(ngModel)]="order.paid" class="form-control">
+      <select *ngIf="paidStatuses" class="form-control"
+        appBooleanBadge [badgeValue]="order.paid"
+        [(ngModel)]="order.paid"
+        (change)="updateOrder()">
         <option *ngFor="let status of paidStatuses" [value]="status.value">
           {{status.name}}
         </option>
       </select>
     </div>
     <div class="col-3">
-      <select *ngIf="paymentMethods" [(ngModel)]="order.paymentMethodId" class="form-control">
+      <select *ngIf="paymentMethods" class="form-control"
+        [(ngModel)]="order.paymentMethodId"
+        (change)="updateOrder()">
         <option *ngFor="let pm of paymentMethods" [value]="pm.id">
           {{pm.name}}
         </option>
