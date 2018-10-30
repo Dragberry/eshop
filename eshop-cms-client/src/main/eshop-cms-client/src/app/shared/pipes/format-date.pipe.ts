@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { Pipe, PipeTransform, Inject, LOCALE_ID } from '@angular/core';
 import { DatePipe } from '@angular/common';
 
 const DATE_TIME_FORMAT = 'yyyy/MM/dd hh:mm:ss';
@@ -8,10 +8,10 @@ const DATE_TIME_FORMAT = 'yyyy/MM/dd hh:mm:ss';
 })
 export class FormatDate implements PipeTransform {
 
-  constructor(private datePipe: DatePipe) {}
+  constructor(@Inject(LOCALE_ID) private locale: string) {}
 
   transform(value: string): string {
-    return this.datePipe.transform(new Date(value), DATE_TIME_FORMAT);
+    return new DatePipe(this.locale).transform(new Date(value), DATE_TIME_FORMAT);
   }
 
 }
