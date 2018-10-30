@@ -1,8 +1,11 @@
 <ng-container *ngIf="order">
-  <h1>Order #{{order.id}} on {{order.date}}</h1>
+  <h1>Order #{{order.id}} on {{order.date  | formatDate}}</h1>
   <div class="form-row">
     <div class="col-3">
-      <select *ngIf="orderStatuses" appOrderStatus [orderStatus]="order.status" [(ngModel)]="order.status" class="form-control">
+      <select *ngIf="orderStatuses" class="form-control"
+        appOrderStatus [orderStatus]="order.status"
+        [(ngModel)]="order.status"
+        (change)="onStatusChanged()">
         <option *ngFor="let status of orderStatuses" [value]="status.value">
           {{status.name}}
         </option>

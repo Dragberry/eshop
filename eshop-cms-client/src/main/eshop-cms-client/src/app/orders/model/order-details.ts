@@ -1,6 +1,4 @@
 import { OrderItem } from './order-item';
-import { PaymentMethod } from './payment-method';
-import { ShippingMethod } from './shipping-method';
 
 export class OrderDetails {
     id: number;
@@ -13,7 +11,7 @@ export class OrderDetails {
     paid: string;
     shippingMethodId: number;
     paymentMethodId: number;
-    date: string;
+    date: Date;
     status: string;
     version: number;
     items: OrderItem[];

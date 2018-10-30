@@ -9,8 +9,6 @@ import { OrderDetails } from '../model/order-details';
 import { TranslateService } from '@ngx-translate/core';
 
 const ORDERS_URL = 'orders';
-const ORDERS_LIST_URL = `${ORDERS_URL}/list`;
-const ORDERS_DETAILS_URL = `${ORDERS_URL}/details`;
 
 @Injectable()
 export class OrderService {
@@ -18,6 +16,18 @@ export class OrderService {
   constructor(
     private http: HttpClient,
     private translateService: TranslateService) {}
+
+  getOrders(params: HttpParams): Observable<Page<Order>> {
+    return this.http.get<Page<Order>>(ORDERS_URL, { params: params });
+  }
+
+  getOrderDetails(id: string): Observable<OrderDetails> {
+    return this.http.get<OrderDetails>(`${ORDERS_URL}/${id}`);
+  }
+
+  updateOrder(order: OrderDetails): Observable<OrderDetails> {
+    return this.http.patch<OrderDetails>(`${ORDERS_URL}/${order.id}`, order);
+  }
 
   fetchOrderStatuses(): Observable<NameValue<string>[]> {
     const orderStatuses = [];
@@ -49,13 +59,5 @@ export class OrderService {
       observer.next(paidStatuses);
       observer.complete();
     });
-  }
-
-  getOrders(params: HttpParams): Observable<Page<Order>> {
-    return this.http.get<Page<Order>>(ORDERS_LIST_URL, { params: params });
-  }
-
-  getOrderDetails(id: string): Observable<OrderDetails> {
-    return this.http.get<OrderDetails>(`${ORDERS_DETAILS_URL}/${id}`);
   }
 }

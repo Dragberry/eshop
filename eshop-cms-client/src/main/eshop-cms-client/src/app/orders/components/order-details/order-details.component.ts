@@ -50,4 +50,8 @@ export class OrderDetailsComponent implements OnInit {
       this.paidStatuses = paidStatuses;
     });
   }
+
+  onStatusChanged(): void {
+    this.orderService.updateOrder(this.order).subscribe(order => this.order = order);
+  }
 }

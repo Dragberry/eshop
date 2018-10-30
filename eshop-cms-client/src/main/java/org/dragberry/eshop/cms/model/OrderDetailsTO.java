@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.dragberry.eshop.dal.entity.Order.OrderStatus;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -37,7 +36,6 @@ public class OrderDetailsTO implements Serializable {
 	
 	private Long paymentMethodId;
 	
-	@JsonFormat(pattern = "yyyy-MM-dd mm:hh:ss")
 	private LocalDateTime date;
 	
 	private OrderStatus status;

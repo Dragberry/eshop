@@ -7,12 +7,17 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mobile.device.DeviceHandlerMethodArgumentResolver;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 @SpringBootApplication
 @ComponentScan(basePackageClasses = { Application.class })
@@ -27,6 +32,16 @@ public class Application implements WebMvcConfigurer {
             "classpath:/static/",
             "classpath:/public/"
     };
+    
+    @Override
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+        Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
+        builder.serializationInclusion(Include.NON_EMPTY);
+        builder.serializationInclusion(Include.NON_NULL);
+        builder.indentOutput(true);
+        builder.featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        converters.add(new MappingJackson2HttpMessageConverter(builder.build()));
+    }
     
     @Bean
     public DeviceHandlerMethodArgumentResolver deviceResolver() {

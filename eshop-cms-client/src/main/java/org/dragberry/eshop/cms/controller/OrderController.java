@@ -9,14 +9,15 @@ import org.dragberry.eshop.common.PageableList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("${cms.context}/orders")
 public class OrderController {
 	
 	@Autowired
@@ -26,7 +27,7 @@ public class OrderController {
 	 * Get the list of orders
 	 * @return
 	 */
-	@GetMapping("/list")
+	@GetMapping("${cms.context}/orders")
 	public PageableList<OrderTO> getOrders(
 	        @RequestParam(required = true) int pageNumber,
 	        @RequestParam(required = true) int pageSize,
@@ -34,9 +35,15 @@ public class OrderController {
 		return orderService.getOrders(PageRequest.of(pageNumber - 1, pageSize), request.getParameterMap());
 	}
 	
-	@GetMapping("/details/{id}")
+	@GetMapping("${cms.context}/orders/{id}")
 	public OrderDetailsTO getOrderDetails(@PathVariable Long id) {
 	    return orderService.getOrderDetails(id).orElseThrow(RuntimeException::new);
 	}
+	
+	@PatchMapping("${cms.context}/orders/{id}")
+	@ResponseBody
+    public OrderDetailsTO updateDetails(@PathVariable Long id, @RequestBody OrderDetailsTO order) {
+        return order;
+    }
 
 }
