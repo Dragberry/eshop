@@ -88,6 +88,18 @@ public class OrderCmsServiceImpl implements OrderCmsService {
 	            return order.getItems().stream().noneMatch(item -> itemEntity.getEntityKey().equals(item.getId()));
 	        });
 	        
+	        entity.getItems().forEach(itemEntity -> {
+	        	order.getItems().stream()
+	        		.filter(item -> itemEntity.getEntityKey().equals(item.getId())).findFirst()
+	        		.ifPresent(item -> {
+	        			itemEntity.setPrice(item.getPrice());
+	        			itemEntity.setQuantity(item.getQuantity());
+	        			itemEntity.setTotalAmount(item.getTotalAmount());
+	        			itemEntity.setVersion(item.getVersion());
+	        	});
+	        });
+	        
+	        
 	        return issues.isEmpty() ? orderRepo.save(entity) : entity;
 	    }).map(entity -> {
             return Results.create(mapDetails(entity), issues);

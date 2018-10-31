@@ -40,6 +40,7 @@ import { ConfirmationModalComponent } from './components/confirmation-modal/conf
     BsDropdownModule,
     BsDatepickerModule,
     ModalModule,
+    NgxMaskModule,
     TranslatePipe,
     TranslateDirective,
     BooleanBadgeDirective,

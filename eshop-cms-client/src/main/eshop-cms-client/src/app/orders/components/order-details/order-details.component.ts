@@ -1,7 +1,7 @@
 import { PaymentMethod } from './../../model/payment-method';
 import { PaymentService } from './../../service/payment.service';
 import { NameValue } from './../../../shared/components/table/common/name-value';
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
 import { OrderService } from '../../service/order.service';
@@ -70,15 +70,27 @@ export class OrderDetailsComponent implements OnInit {
     return !this.editedOrderitem || this.editedOrderitem.id === item.id;
   }
 
-  showUpdateOrderItemConfirmation(): void {
+  onItemEdit(): void {
+    this.editedOrderitem.totalAmount = parseFloat((this.editedOrderitem.price * this.editedOrderitem.quantity).toFixed(2));
+  }
 
+  saveEditedOrderItem(oldItem: OrderItem): void {
+    if (oldItem.price.toString() !== this.editedOrderitem.price.toString()
+      || oldItem.quantity.toString() !== this.editedOrderitem.quantity.toString()
+      || oldItem.totalAmount.toString() !== this.editedOrderitem.totalAmount.toString()) {
+        oldItem.price = this.editedOrderitem.price;
+        oldItem.quantity = this.editedOrderitem.quantity;
+        oldItem.totalAmount = this.editedOrderitem.totalAmount;
+        this.updateOrder();
+      }
+      this.editedOrderitem = null;
   }
 
   cancelOrderItemEditing(): void {
     this.editedOrderitem = null;
   }
 
-  showRemoveOrderItemConfirmation(template: TemplateRef<any>, item: OrderItem) {
+  showRemoveOrderItemConfirmation(item: OrderItem) {
     this.confirmationModalRef = this.modalService.show(ConfirmationModalComponent, {
       initialState: {
         messageKey: 'orders.messages.confirmRemovingOrderItem',

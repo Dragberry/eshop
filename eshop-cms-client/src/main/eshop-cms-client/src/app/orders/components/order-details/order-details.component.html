@@ -64,9 +64,24 @@
                   <span class="d-block">{{item.product.fullTitle}}</span>
                   <span class="d-block font-weight-bold small">{{'common.article' | translate}}: {{item.product.article}}</span>
                 </td>
-                <td class="align-middle text-right text-nowrap">{{item.price}}</td>
-                <td class="align-middle text-right text-nowrap">{{item.quantity}}</td>
-                <td class="align-middle text-right text-nowrap">{{item.totalAmount}}</td>
+                <td class="align-middle text-right text-nowrap">
+                  <input *ngIf="isItemEdited(item)" type="text" class="form-control"
+                    [(ngModel)]="editedOrderitem.price"
+                    mask="0*.00" [dropSpecialCharacters]="false"
+                    (keyup)="onItemEdit()">
+                  <span *ngIf="!isItemEdited(item)">{{item.price}}</span>
+                </td>
+                <td class="align-middle text-right text-nowrap">
+                  <input *ngIf="isItemEdited(item)" type="text" class="form-control"
+                    [(ngModel)]="editedOrderitem.quantity"
+                    mask="0*" [dropSpecialCharacters]="false"
+                    (keyup)="onItemEdit()">
+                    <span *ngIf="!isItemEdited(item)">{{item.quantity}}</span>
+                </td>
+                <td class="align-middle text-right text-nowrap">
+                  <span *ngIf="isItemEdited(item)">{{editedOrderitem.totalAmount}}</span>
+                  <span *ngIf="!isItemEdited(item)">{{item.totalAmount}}</span>
+                </td>
                 <td class="align-middle text-center">
                   <div class="btn-group btn-group-justified">
                     <ng-container *ngIf="!isItemEdited(item)">
@@ -86,17 +101,17 @@
                       </button>
                     </ng-container>
                     <ng-container *ngIf="isItemEdited(item)">
-                        <button type="button" class="btn btn-primary"
-                          title="{{'common.save' | translate}}"
-                          (click)="showUpdateOrderItemConfirmation(item)">
-                          <span class="fa fa-check"></span>
+                      <button type="button" class="btn btn-secondary"
+                        title="{{'common.cancel' | translate}}"
+                        (click)="cancelOrderItemEditing()">
+                        <span class="fa fa-times"></span>
+                      </button>
+                      <button type="button" class="btn btn-primary"
+                        title="{{'common.save' | translate}}"
+                        (click)="saveEditedOrderItem(item)">
+                        <span class="fa fa-check"></span>
                         </button>
-                        <button type="button" class="btn btn-secondary"
-                          title="{{'common.cancel' | translate}}"
-                          (click)="cancelOrderItemEditing()">
-                          <span class="fa fa-times"></span>
-                        </button>
-                      </ng-container>
+                    </ng-container>
                   </div>
                 </td>
               </tr>

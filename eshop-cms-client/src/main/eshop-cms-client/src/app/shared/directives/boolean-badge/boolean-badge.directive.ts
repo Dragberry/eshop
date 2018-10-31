@@ -1,12 +1,9 @@
-import { Directive, Input, Renderer, ElementRef, OnChanges, SimpleChange, SimpleChanges } from '@angular/core';
+import { Directive, Input, Renderer, ElementRef } from '@angular/core';
 
 @Directive({
   selector: '[appBooleanBadge]'
 })
-export class BooleanBadgeDirective implements OnChanges {
-
-  @Input()
-  badgeValue: boolean;
+export class BooleanBadgeDirective {
 
   @Input()
   trueClass = 'badge-success';
@@ -19,14 +16,10 @@ export class BooleanBadgeDirective implements OnChanges {
     renderer.setElementClass(el.nativeElement, 'badge', true);
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    const change: SimpleChange = changes['badgeValue'];
-    if (change) {
-      if (change.currentValue) {
-        this.renderer.setElementClass(this.el.nativeElement, this.trueClass, true);
-      } else {
-        this.renderer.setElementClass(this.el.nativeElement, this.falseClass, true);
-      }
-    }
+  @Input()
+  set badgeValue(badgeValue: boolean) {
+    this.renderer.setElementClass(this.el.nativeElement, this.trueClass, badgeValue);
+    this.renderer.setElementClass(this.el.nativeElement, this.falseClass, !badgeValue);
   }
+
 }
