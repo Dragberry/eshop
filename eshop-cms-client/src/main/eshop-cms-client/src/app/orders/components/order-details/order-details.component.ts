@@ -24,6 +24,7 @@ export class OrderDetailsComponent implements OnInit {
   paymentMethods: PaymentMethod[];
 
   order: OrderDetails;
+  editedOrderitem: OrderItem;
 
   constructor(
     private route: ActivatedRoute,
@@ -55,6 +56,26 @@ export class OrderDetailsComponent implements OnInit {
     this.orderService.fetchPaidStatuses().subscribe(paidStatuses => {
       this.paidStatuses = paidStatuses;
     });
+  }
+
+  editItem(item: OrderItem): void {
+    this.editedOrderitem = {...item};
+  }
+
+  isItemEdited(item: OrderItem): boolean {
+    return this.editedOrderitem && this.editedOrderitem.id === item.id;
+  }
+
+  isItemEnabled(item: OrderItem): boolean {
+    return !this.editedOrderitem || this.editedOrderitem.id === item.id;
+  }
+
+  showUpdateOrderItemConfirmation(): void {
+
+  }
+
+  cancelOrderItemEditing(): void {
+    this.editedOrderitem = null;
   }
 
   showRemoveOrderItemConfirmation(template: TemplateRef<any>, item: OrderItem) {
