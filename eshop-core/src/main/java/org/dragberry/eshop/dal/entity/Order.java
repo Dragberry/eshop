@@ -78,7 +78,7 @@ public class Order extends AuditableEntity {
     @JoinColumn(name = "SHIPPING_METHOD_KEY", referencedColumnName = "SHIPPING_METHOD_KEY")
 	private ShippingMethod shippingMethod;
 	
-	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "order")
+	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<OrderItem> items;
 	
 	@Column(name = "PAID")

@@ -1,0 +1,27 @@
+<div class="modal-header">
+  <h4 class="modal-title pull-left">{{title}}</h4>
+  <button type="button" class="close pull-right" aria-label="Close" (click)="cancel()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body text-center">
+  {{message}}
+</div>
+<div class="modal-footer">
+  <div class="container col-md-12">
+    <div class="row">
+      <div class="col-xs-12 col-md-6">
+        <button type="button" class="btn btn-success btn-block"
+          (click)="confirm()">
+          {{'common.confirm' | translate}}
+        </button>
+      </div>
+      <div class="col-xs-12 col-md-6">
+        <button type="button" class="btn btn-secondary btn-block"
+          (click)="cancel()">
+          {{'common.cancel' | translate}}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

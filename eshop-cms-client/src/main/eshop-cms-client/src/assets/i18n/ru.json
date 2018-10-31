@@ -19,6 +19,7 @@
       "apply": "Применить",
       "article": "Артикул",
       "cancel": "Отмена",
+      "confirm": "Ок",
       "date": "Дата",
       "delivery": "Доставка",
       "editOrderItem": "Редактировать позицию",
@@ -45,7 +46,11 @@
       "status": "Статус",
       "sum": "Сумма",
       "to": "До",
-      "total": "Итого"
+      "total": "Итого",
+      "messages": {
+        "confirmationDefaultMessage": "вы уверены, что хотите совершить это действие?",
+        "confirmationTitle": "Подтвердите действие"
+      }
     },
     "language": {
       "en": "English",
@@ -63,18 +68,21 @@
     	}
     },
     "orders": {
-      "paid": {
-        "true": "Оплачен",
-        "false": "Не оплачен"
-      },
-      "status": {
-          "NEW": "Новый",
-          "PROCESSING": "В обработке",
-          "AGREED": "Согласован",
-          "SHIPPED": "Отгружен",
-          "DELIVERED": "Доставлен",
-          "CANCELLED": "Отменен",
-          "RETURNED": "Возврат"
-      }
+        "messages": {
+            "confirmRemovingOrderItem": "Вы уверены, что хотите убрать эту позицию из заказа?"
+        }, 
+        "paid": {
+            "true": "Оплачен",
+            "false": "Не оплачен"
+        },
+        "status": {
+            "NEW": "Новый",
+            "PROCESSING": "В обработке",
+            "AGREED": "Согласован",
+            "SHIPPED": "Отгружен",
+            "DELIVERED": "Доставлен",
+            "CANCELLED": "Отменен",
+            "RETURNED": "Возврат"
+        }
     }
 }

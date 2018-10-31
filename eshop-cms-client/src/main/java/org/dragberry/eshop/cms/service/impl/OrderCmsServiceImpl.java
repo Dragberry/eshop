@@ -83,6 +83,11 @@ public class OrderCmsServiceImpl implements OrderCmsService {
 	        if (!pm.isPresent()) {
 	            issues.add(Issues.error("paymentMethodInvalid"));
 	        }
+	        
+	        entity.getItems().removeIf(itemEntity -> {
+	            return order.getItems().stream().noneMatch(item -> itemEntity.getEntityKey().equals(item.getId()));
+	        });
+	        
 	        return issues.isEmpty() ? orderRepo.save(entity) : entity;
 	    }).map(entity -> {
             return Results.create(mapDetails(entity), issues);

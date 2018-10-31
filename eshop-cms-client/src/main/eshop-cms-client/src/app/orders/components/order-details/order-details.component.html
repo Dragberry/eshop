@@ -69,10 +69,13 @@
                 <td class="align-middle text-right text-nowrap">{{item.totalAmount}}</td>
                 <td class="align-middle text-center">
                     <div class="btn-group btn-group-justified">
-                      <button type="button" class="btn btn-danger" title="{{'common.removeOrderItem' | translate}}">
+                      <button type="button" class="btn btn-danger"
+                        title="{{'common.removeOrderItem' | translate}}"
+                        (click)="showRemoveOrderItemConfirmation(confirmationModal, item)">
                         <span class="fa fa-close"></span>
                       </button>
-                      <button type="button" class="btn btn-warning" title="{{'common.editOrderItem' | translate}}">
+                      <button type="button" class="btn btn-warning"
+                        title="{{'common.editOrderItem' | translate}}">
                         <span class="fa fa-pencil"></span>
                       </button>
                     </div>

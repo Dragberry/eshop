@@ -12,6 +12,8 @@ import { TableNumericFilterComponent } from './components/table/filter/table-num
 import { TableDateFilterComponent } from './components/table/filter/table-date-filter/table-date-filter.component';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { FormatDate } from './pipes/format-date.pipe';
+import { ModalModule } from 'ngx-bootstrap/modal';
+import { ConfirmationModalComponent } from './components/confirmation-modal/confirmation-modal.component';
 
 @NgModule({
   imports: [
@@ -19,11 +21,13 @@ import { FormatDate } from './pipes/format-date.pipe';
     FormsModule,
     BsDropdownModule,
     BsDatepickerModule,
+    ModalModule,
     NgxMaskModule.forChild(),
     TranslateModule
   ],
   declarations: [
     BooleanBadgeDirective,
+    ConfirmationModalComponent,
     PaginatorComponent,
     TableActionColumnComponent,
     TableDateFilterComponent,
@@ -35,15 +39,20 @@ import { FormatDate } from './pipes/format-date.pipe';
     FormsModule,
     BsDropdownModule,
     BsDatepickerModule,
+    ModalModule,
     TranslatePipe,
     TranslateDirective,
     BooleanBadgeDirective,
+    ConfirmationModalComponent,
     PaginatorComponent,
     TableActionColumnComponent,
     TableDateFilterComponent,
     TableListFilterComponent,
     TableNumericFilterComponent,
     FormatDate
+  ],
+  entryComponents: [
+    ConfirmationModalComponent
   ],
   providers: []
 })
