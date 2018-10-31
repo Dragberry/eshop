@@ -144,5 +144,24 @@
         </div>
       </div>
     </div>
+    <div class="col-4">
+      <div class="card">
+        <div class="card-header bg-dark text-white">
+          <span>{{'common.orderInfo' | translate}}</span>
+          <button type="button" class="btn btn-dark text-warning"
+            title="{{'common.edit' | translate}}">
+            <span class="fa fa-pencil"></span>
+          </button>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">{{order.fullName}}</h5>
+          <p class="card-text">{{order.phone}}</p>
+          <address>
+            <span class="d-block font-weight-bold">{{'common.address' | translate}}</span>
+            <span class="d-block">{{order.address}}</span>
+          </address>
+        </div>
+      </div>
+    </div>
   </div>
 </ng-container>

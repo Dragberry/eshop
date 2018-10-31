@@ -13,7 +13,7 @@
     <table *ngIf="page" class="table table-sm table-striped table-hover">
       <thead class="thead-dark">
         <tr>
-          <th>
+          <th class="text-center">
             <app-table-action-column
               [columnId]="'id'"
               [title]="'common.id' | translate"
@@ -21,7 +21,7 @@
               (columnAction)="onColumnActionEvent($event)">
             </app-table-action-column>
           </th>
-          <th>
+          <th class="text-center">
             <app-table-action-column
               [columnId]="'date'"
               [title]="'common.date' | translate"
@@ -29,7 +29,7 @@
               [filter]="'date'"
               (columnAction)="onColumnActionEvent($event)">
             </app-table-action-column>
-          <th>
+          <th class="text-right">
             <app-table-action-column
               [columnId]="'totalAmount'"
               [title]="'common.sum' | translate"
@@ -38,8 +38,8 @@
               (columnAction)="onColumnActionEvent($event)">
             </app-table-action-column>
           </th>
-          <th>{{'common.fullName' | translate}}</th>
-          <th>
+          <th class="text-center">{{'common.fullName' | translate}}</th>
+          <th class="text-center">
             <app-table-action-column
               [columnId]="'status'"
               [title]="'common.status' | translate"
@@ -48,7 +48,7 @@
               [filterOptions]="orderStatuses"
               (columnAction)="onColumnActionEvent($event)">
             </app-table-action-column>
-          <th>
+          <th class="text-center">
             <app-table-action-column
               [columnId]="'isPaid'"
               [title]="'common.isPaid' | translate"
@@ -57,7 +57,8 @@
               [filterOptions]="paidStatuses"
               (columnAction)="onColumnActionEvent($event)">
             </app-table-action-column>
-          <th>
+          </th>
+          <th class="text-center">
             <app-table-action-column
               [columnId]="'paymentMethod'"
               [title]="'common.paymentMethod' | translate"
@@ -67,7 +68,7 @@
               (columnAction)="onColumnActionEvent($event)">
             </app-table-action-column>
           </th>
-          <th>
+          <th class="text-center">
             <app-table-action-column
               [columnId]="'shippingMethod'"
               [title]="'common.shippingMethod' | translate"
@@ -80,11 +81,11 @@
       </thead>
       <tbody class="small">
         <tr *ngFor="let order of page.content; let i = index;">
-          <th>
+          <th class="text-right">
             <a  routerLink="/orders/details/{{order.id}}">{{order.id}}</a>
           </th>
-          <td>{{order.date | formatDate}}</td>
-          <td>
+          <td class="text-center">{{order.date | formatDate}}</td>
+          <td class="text-right">
             <span class="font-weight-bold">
               {{order.totalAmount.toFixed(2)}}
             </span>

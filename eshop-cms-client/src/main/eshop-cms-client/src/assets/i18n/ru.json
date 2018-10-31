@@ -16,12 +16,15 @@
     "common": {
       "account": "Аккаунт",
       "action": "Действие",
+      "address": "Адрес",
       "apply": "Применить",
       "article": "Артикул",
       "cancel": "Отмена",
       "confirm": "Ок",
       "date": "Дата",
+      "deliver": "Доставить",
       "delivery": "Доставка",
+      "edit": "Редактировать",
       "editOrderItem": "Редактировать позицию",
       "from": "От",
       "fullName": "Ф.И.О.",
@@ -29,6 +32,7 @@
       "image": "Изображение",
       "isPaid": "Оплата",
       "order": "Заказ",
+      "orderInfo": "Информация о заказе",
       "quantity": "Количество",
       "quantityShort": "Кол-во",
       "paymentMethod": "Способ оплаты",
@@ -71,7 +75,7 @@
     "orders": {
         "messages": {
             "confirmRemovingOrderItem": "Вы уверены, что хотите убрать эту позицию из заказа?"
-        }, 
+        },
         "paid": {
             "true": "Оплачен",
             "false": "Не оплачен"
