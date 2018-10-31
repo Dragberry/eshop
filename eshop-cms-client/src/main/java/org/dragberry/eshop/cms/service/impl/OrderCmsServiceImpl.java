@@ -21,8 +21,10 @@ import org.dragberry.eshop.dal.entity.Order;
 import org.dragberry.eshop.dal.entity.PaymentMethod;
 import org.dragberry.eshop.dal.entity.Product;
 import org.dragberry.eshop.dal.entity.ProductArticle;
+import org.dragberry.eshop.dal.entity.ShippingMethod;
 import org.dragberry.eshop.dal.repo.OrderRepository;
 import org.dragberry.eshop.dal.repo.PaymentMethodRepository;
+import org.dragberry.eshop.dal.repo.ShippingMethodRepository;
 import org.dragberry.eshop.service.ImageService;
 import org.dragberry.eshop.utils.ProductFullTitleBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,9 @@ public class OrderCmsServiceImpl implements OrderCmsService {
 	
 	@Autowired
     private PaymentMethodRepository paymentMethodRepo;
+	
+	@Autowired
+    private ShippingMethodRepository shippingMethodRepo;
 	
 	@Autowired
 	private ImageService imageService;
@@ -83,6 +88,11 @@ public class OrderCmsServiceImpl implements OrderCmsService {
 	        if (!pm.isPresent()) {
 	            issues.add(Issues.error("paymentMethodInvalid"));
 	        }
+	        Optional<ShippingMethod> sm = shippingMethodRepo.findById(order.getShippingMethodId());
+	        sm.ifPresent(entity::setShippingMethod);
+	        if (!sm.isPresent()) {
+	            issues.add(Issues.error("shippingMethodInvalid"));
+	        }
 	        
 	        entity.getItems().removeIf(itemEntity -> {
 	            return order.getItems().stream().noneMatch(item -> itemEntity.getEntityKey().equals(item.getId()));
@@ -98,7 +108,10 @@ public class OrderCmsServiceImpl implements OrderCmsService {
 	        			itemEntity.setVersion(item.getVersion());
 	        	});
 	        });
-	        
+
+	        entity.setTotalProductAmount(order.getTotalProductAmount());
+	        entity.setShippingCost(order.getShippingCost());
+	        entity.setTotalAmount(order.getTotalAmount());
 	        
 	        return issues.isEmpty() ? orderRepo.save(entity) : entity;
 	    }).map(entity -> {

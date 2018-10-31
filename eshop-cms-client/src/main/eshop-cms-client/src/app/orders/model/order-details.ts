@@ -3,6 +3,8 @@ import { OrderItem } from './order-item';
 export class OrderDetails {
     id: number;
     phone: string;
+    totalProductAmount: number;
+    shippingCost: number;
     totalAmount: number;
     fullName: string;
     address: string;

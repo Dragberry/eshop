@@ -116,6 +116,30 @@
                 </td>
               </tr>
             </tbody>
+            <tfoot class="thead-dark">
+              <tr>
+                <th colspan="2" class="align-middle text-nowrap">
+                  {{'common.delivery' | translate}}
+                </th>
+                <th>
+                  <select *ngIf="shippingMethods" class="form-control"
+                    [(ngModel)]="selectedShippingMethod"
+                    (change)="onShippingMethodChanged()">
+                    <option *ngFor="let sm of shippingMethods" [ngValue]="sm">
+                      {{sm.name}} - {{sm.cost}}
+                    </option>
+                  </select>
+                </th>
+                <th colspan="2"></th>
+                <th class="align-middle text-right text-nowrap">{{selectedShippingMethod.cost}}</th>
+                <th colspan="2"></th>
+              </tr>
+              <tr>
+                <th colspan="5" class="align-middle text-right text-nowrap">{{'common.total' | translate}}: </th>
+                <th class="align-middle text-right text-nowrap">{{order.totalAmount}}</th>
+                <th colspan="2"></th>
+              </tr>
+            </tfoot>
           </table>
         </div>
       </div>

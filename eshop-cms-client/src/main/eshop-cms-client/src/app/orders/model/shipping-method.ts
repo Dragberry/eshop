@@ -6,4 +6,5 @@ export enum ShippingMethodStatus {
 export class ShippingMethod {
     id: number;
     name: string;
+    cost: number;
 }

@@ -20,7 +20,11 @@ public class OrderDetailsTO implements Serializable {
 	
 	private String phone;
 	
-	private BigDecimal totalAmount;
+	private BigDecimal totalProductAmount;
+	
+	private BigDecimal shippingCost;
+	
+    private BigDecimal totalAmount;
 	
 	private String fullName;
 	
