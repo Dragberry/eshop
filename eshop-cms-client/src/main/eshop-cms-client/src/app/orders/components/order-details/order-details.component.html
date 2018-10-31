@@ -62,24 +62,20 @@
                 </td>
                 <td class="align-middle">
                   <span class="d-block">{{item.product.fullTitle}}</span>
-                  <span class="d-block font-weight-bold small">Article: {{item.product.article}}</span>
+                  <span class="d-block font-weight-bold small">{{'common.article' | translate}}: {{item.product.article}}</span>
                 </td>
-                <td class="align-middle text-nowrap">{{item.price}}</td>
-                <td class="align-middle text-nowrap">{{item.quantity}}</td>
-                <td class="align-middle text-nowrap">{{item.totalAmount}}</td>
-                <td class="align-middle">
-                  <div class="row">
-                    <div class="col-6">
+                <td class="align-middle text-right text-nowrap">{{item.price}}</td>
+                <td class="align-middle text-right text-nowrap">{{item.quantity}}</td>
+                <td class="align-middle text-right text-nowrap">{{item.totalAmount}}</td>
+                <td class="align-middle text-center">
+                    <div class="btn-group btn-group-justified">
                       <button type="button" class="btn btn-danger" title="{{'common.removeOrderItem' | translate}}">
                         <span class="fa fa-close"></span>
                       </button>
-                    </div>
-                    <div class="col-6">
                       <button type="button" class="btn btn-warning" title="{{'common.editOrderItem' | translate}}">
                         <span class="fa fa-pencil"></span>
                       </button>
                     </div>
-                  </div>
                 </td>
               </tr>
             </tbody>
