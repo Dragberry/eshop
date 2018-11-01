@@ -81,8 +81,15 @@ public class OrderCmsServiceImpl implements OrderCmsService {
 	    List<IssueTO> issues = new ArrayList<>();
 	    return orderRepo.findById(id).map(entity -> {
 	        entity.setVersion(order.getVersion());
-	        entity.setOrderStatus(order.getStatus());
-	        entity.setPaid(order.getPaid());
+	        entity.setPhone(order.getPhone());
+	        entity.setFullName(order.getFullName());
+	        entity.setAddress(order.getAddress());
+	        entity.setEmail(order.getEmail());
+	        entity.setComment(order.getComment());
+//	        entity.setCustomerComment(order.getCustomerComment());
+//	        entity.setDeliveryDateFrom(order.getDeliveryDateFrom());
+//	        entity.setDeliveryDateTo(order.getDeliveryDateTo());
+	        
 	        Optional<PaymentMethod> pm = paymentMethodRepo.findById(order.getPaymentMethodId());
 	        pm.ifPresent(entity::setPaymentMethod);
 	        if (!pm.isPresent()) {
@@ -93,6 +100,12 @@ public class OrderCmsServiceImpl implements OrderCmsService {
 	        if (!sm.isPresent()) {
 	            issues.add(Issues.error("shippingMethodInvalid"));
 	        }
+
+	        entity.setShippingCost(order.getShippingCost());
+	        entity.setTotalProductAmount(order.getTotalProductAmount());
+	        entity.setTotalAmount(order.getTotalAmount());
+	        entity.setPaid(order.getPaid());
+	        entity.setOrderStatus(order.getStatus());
 	        
 	        entity.getItems().removeIf(itemEntity -> {
 	            return order.getItems().stream().noneMatch(item -> itemEntity.getEntityKey().equals(item.getId()));
@@ -109,10 +122,6 @@ public class OrderCmsServiceImpl implements OrderCmsService {
 	        	});
 	        });
 
-	        entity.setTotalProductAmount(order.getTotalProductAmount());
-	        entity.setShippingCost(order.getShippingCost());
-	        entity.setTotalAmount(order.getTotalAmount());
-	        
 	        return issues.isEmpty() ? orderRepo.save(entity) : entity;
 	    }).map(entity -> {
             return Results.create(mapDetails(entity), issues);

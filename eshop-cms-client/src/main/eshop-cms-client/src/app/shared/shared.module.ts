@@ -14,6 +14,7 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { FormatDate } from './pipes/format-date.pipe';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { ConfirmationModalComponent } from './components/confirmation-modal/confirmation-modal.component';
+import { TimepickerModule } from 'ngx-bootstrap/timepicker';
 
 @NgModule({
   imports: [
@@ -23,7 +24,8 @@ import { ConfirmationModalComponent } from './components/confirmation-modal/conf
     BsDatepickerModule,
     ModalModule,
     NgxMaskModule.forChild(),
-    TranslateModule
+    TranslateModule,
+    TimepickerModule
   ],
   declarations: [
     BooleanBadgeDirective,
@@ -43,6 +45,7 @@ import { ConfirmationModalComponent } from './components/confirmation-modal/conf
     NgxMaskModule,
     TranslatePipe,
     TranslateDirective,
+    TimepickerModule,
     BooleanBadgeDirective,
     ConfirmationModalComponent,
     PaginatorComponent,

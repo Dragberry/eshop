@@ -28,8 +28,8 @@ export class OrderDetailsComponent implements OnInit {
   shippingMethods: ShippingMethod[];
 
   order: OrderDetails;
+  editedOrder: OrderDetails;
   editedOrderItem: OrderItem;
-  editedOrderInfo: any;
   selectedShippingMethod: ShippingMethod;
 
   constructor(
@@ -130,6 +130,39 @@ export class OrderDetailsComponent implements OnInit {
     this.order.totalProductAmount = totalAmount;
     this.order.shippingCost = this.selectedShippingMethod.cost;
     this.order.totalAmount = this.order.totalProductAmount + this.order.shippingCost;
+  }
+
+  editOrderDetails(): void {
+    this.editedOrder = this.copyOrderDetails(this.order);
+  }
+
+  saveEditedOrderDetails(): void {
+    this.order = this.copyOrderDetails(this.editedOrder, this.order);
+    this.editedOrder = null;
+    this.updateOrder();
+  }
+
+  cancelOrderEditing(): void {
+    this.editedOrder = null;
+  }
+
+  private copyOrderDetails(src: OrderDetails, dst?: OrderDetails): OrderDetails {
+    if (!dst) {
+      dst = new OrderDetails();
+    }
+    dst.id = src.id;
+    dst.date = src.date;
+    dst.version = src.version;
+
+    dst.phone = src.phone;
+    dst.fullName = src.fullName;
+    dst.address = src.address;
+    dst.email = src.email;
+    dst.comment = src.comment;
+    dst.customerComment = src.customerComment;
+    dst.deliveryDateFrom = src.deliveryDateFrom;
+    dst.deliveryDateTo = src.deliveryDateTo;
+    return dst;
   }
 
   updateOrder(): void {

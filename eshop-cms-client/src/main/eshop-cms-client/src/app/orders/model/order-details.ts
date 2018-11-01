@@ -2,19 +2,25 @@ import { OrderItem } from './order-item';
 
 export class OrderDetails {
     id: number;
+    date: Date;
+    version: number;
+
     phone: string;
-    totalProductAmount: number;
-    shippingCost: number;
-    totalAmount: number;
     fullName: string;
     address: string;
-    comment: string;
     email: string;
-    paid: string;
-    shippingMethodId: number;
+    comment: string;
+    customerComment: string;
+    deliveryDateFrom: Date;
+    deliveryDateTo: Date;
+
     paymentMethodId: number;
-    date: Date;
+    shippingMethodId: number;
+    shippingCost: number;
+    totalProductAmount: number;
+    totalAmount: number;
+    paid: string;
     status: string;
-    version: number;
+
     items: OrderItem[];
 }

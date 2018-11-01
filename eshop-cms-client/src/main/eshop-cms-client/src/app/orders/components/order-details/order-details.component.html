@@ -145,11 +145,12 @@
       </div>
     </div>
     <div class="col-4">
-      <div class="card" *ngIf="!editedOrderInfo">
+      <div class="card" *ngIf="!editedOrder">
         <div class="card-header bg-dark text-white">
-          <span>{{'common.orderInfo' | translate}}</span>
+          <span>{{'common.deliveryInfo' | translate}}</span>
           <button type="button" class="btn btn-dark text-warning"
-            title="{{'common.edit' | translate}}">
+            title="{{'common.edit' | translate}}"
+            (click)="editOrderDetails()">
             <span class="fa fa-pencil"></span>
           </button>
         </div>
@@ -160,6 +161,65 @@
             <span class="d-block font-weight-bold">{{'common.address' | translate}}</span>
             <span class="d-block">{{order.address}}</span>
           </address>
+        </div>
+      </div>
+
+      <div class="card" *ngIf="editedOrder">
+        <div class="card-header bg-dark text-white">
+          <span>{{'common.deliveryInfo' | translate}}</span>
+          <div class="btn-group btn-group-justified">
+            <button type="button" class="btn btn-dark text-primary"
+              title="{{'common.save' | translate}}"
+              (click)="saveEditedOrderDetails()">
+              <span class="fa fa-check"></span>
+            </button>
+            <button type="button" class="btn btn-dark text-danger"
+              title="{{'common.cancel' | translate}}"
+              (click)="cancelOrderEditing()">
+              <span class="fa fa-times"></span>
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="form-group">
+            <label for="fullName">{{'common.fullName' | translate}}</label>
+            <input id="fullName" type="text" class="form-control" [(ngModel)]="editedOrder.fullName">
+          </div>
+          <div class="form-group">
+            <label for="phone">{{'common.phone' | translate}}</label>
+            <input id="phone" type="text" class="form-control" [(ngModel)]="editedOrder.phone">
+          </div>
+          <div class="form-group">
+            <label for="address">{{'common.address' | translate}}</label>
+            <textarea id="address" class="form-control" [(ngModel)]="editedOrder.address"></textarea>
+          </div>
+          <div class="row align-middle ">
+            <div class="col-12">
+                <label for="deliveryDate">{{'common.deliveryDate' | translate}}: {{'common.fromToDate' | translate}}</label>
+            </div>
+            <div class="col-6">
+              <input type="text" class="form-control" readonly="true"
+                [(ngModel)]="editedOrder.deliveryDateFrom"
+                bsDatepicker
+                [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD hh:mm:ss', containerClass: 'theme-default' }">
+                <timepicker [showMeridian]="false" [(ngModel)]="editedOrder.deliveryDateFrom"></timepicker>
+            </div>
+            <div class="col-6">
+              <input type="text" class="form-control" readonly="true"
+                [(ngModel)]="editedOrder.deliveryDateTo"
+                bsDatepicker
+                [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD hh:mm:ss', containerClass: 'theme-default' }">
+                <timepicker [showMeridian]="false" [(ngModel)]="editedOrder.deliveryDateTo"></timepicker>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="customerComment">{{'common.customerComment' | translate}}</label>
+            <textarea id="customerComment" class="form-control" [(ngModel)]="editedOrder.customerComment"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="email">{{'common.email' | translate}}</label>
+            <input id="email" type="text" class="form-control" [(ngModel)]="editedOrder.email">
+          </div>
         </div>
       </div>
     </div>

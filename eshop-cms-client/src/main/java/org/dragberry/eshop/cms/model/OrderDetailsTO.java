@@ -18,33 +18,42 @@ public class OrderDetailsTO implements Serializable {
 
 	private Long id;
 	
+	private LocalDateTime date;
+	
+	private Long version;
+	
+	
 	private String phone;
+	
+	private String fullName;
+	
+	private String address;
+	
+	private String email;
+
+	private String comment;
+	
+	private String customerComment;
+	
+	private LocalDateTime deliveryDateFrom;
+	
+	private LocalDateTime deliveryDateTo;
+	
+	
+	private Long paymentMethodId;
+	
+	private Long shippingMethodId;
 	
 	private BigDecimal totalProductAmount;
 	
 	private BigDecimal shippingCost;
 	
     private BigDecimal totalAmount;
-	
-	private String fullName;
-	
-	private String address;
-	
-	private String comment;
-	
-	private String email;
-	
-	private Boolean paid;
-	
-	private Long shippingMethodId;
-	
-	private Long paymentMethodId;
-	
-	private LocalDateTime date;
+    
+    private Boolean paid;
 	
 	private OrderStatus status;
 	
-	private Long version;
 	
 	private List<OrderItemTO> items;
 }
