@@ -66,20 +66,20 @@
                 </td>
                 <td class="align-middle text-right text-nowrap">
                   <input *ngIf="isItemEdited(item)" type="text" class="form-control"
-                    [(ngModel)]="editedOrderitem.price"
+                    [(ngModel)]="editedOrderItem.price"
                     mask="0*.00" [dropSpecialCharacters]="false"
                     (keyup)="onItemEdit()">
                   <span *ngIf="!isItemEdited(item)">{{item.price}}</span>
                 </td>
                 <td class="align-middle text-right text-nowrap">
                   <input *ngIf="isItemEdited(item)" type="text" class="form-control"
-                    [(ngModel)]="editedOrderitem.quantity"
+                    [(ngModel)]="editedOrderItem.quantity"
                     mask="0*" [dropSpecialCharacters]="false"
                     (keyup)="onItemEdit()">
                     <span *ngIf="!isItemEdited(item)">{{item.quantity}}</span>
                 </td>
                 <td class="align-middle text-right text-nowrap">
-                  <span *ngIf="isItemEdited(item)">{{editedOrderitem.totalAmount}}</span>
+                  <span *ngIf="isItemEdited(item)">{{editedOrderItem.totalAmount}}</span>
                   <span *ngIf="!isItemEdited(item)">{{item.totalAmount}}</span>
                 </td>
                 <td class="align-middle text-center">
@@ -145,7 +145,7 @@
       </div>
     </div>
     <div class="col-4">
-      <div class="card">
+      <div class="card" *ngIf="!editedOrderInfo">
         <div class="card-header bg-dark text-white">
           <span>{{'common.orderInfo' | translate}}</span>
           <button type="button" class="btn btn-dark text-warning"
