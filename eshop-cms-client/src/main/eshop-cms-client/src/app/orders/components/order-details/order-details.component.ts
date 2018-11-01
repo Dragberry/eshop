@@ -28,7 +28,8 @@ export class OrderDetailsComponent implements OnInit {
   shippingMethods: ShippingMethod[];
 
   order: OrderDetails;
-  editedOrderitem: OrderItem;
+  editedOrderItem: OrderItem;
+  editedOrderInfo: any;
   selectedShippingMethod: ShippingMethod;
 
   constructor(
@@ -63,37 +64,37 @@ export class OrderDetailsComponent implements OnInit {
   }
 
   editItem(item: OrderItem): void {
-    this.editedOrderitem = {...item};
+    this.editedOrderItem = {...item};
   }
 
   isItemEdited(item: OrderItem): boolean {
-    return this.editedOrderitem && this.editedOrderitem.id === item.id;
+    return this.editedOrderItem && this.editedOrderItem.id === item.id;
   }
 
   isItemEnabled(item: OrderItem): boolean {
-    return !this.editedOrderitem || this.editedOrderitem.id === item.id;
+    return !this.editedOrderItem || this.editedOrderItem.id === item.id;
   }
 
   onItemEdit(): void {
-    this.editedOrderitem.totalAmount = parseFloat((this.editedOrderitem.price * this.editedOrderitem.quantity).toFixed(2));
+    this.editedOrderItem.totalAmount = parseFloat((this.editedOrderItem.price * this.editedOrderItem.quantity).toFixed(2));
   }
 
   saveEditedOrderItem(oldItem: OrderItem): void {
-    if (oldItem.price.toString() !== this.editedOrderitem.price.toString()
-      || oldItem.quantity.toString() !== this.editedOrderitem.quantity.toString()
-      || oldItem.totalAmount.toString() !== this.editedOrderitem.totalAmount.toString()) {
-        oldItem.price = this.editedOrderitem.price;
-        oldItem.quantity = this.editedOrderitem.quantity;
-        oldItem.totalAmount = this.editedOrderitem.totalAmount;
+    if (oldItem.price.toString() !== this.editedOrderItem.price.toString()
+      || oldItem.quantity.toString() !== this.editedOrderItem.quantity.toString()
+      || oldItem.totalAmount.toString() !== this.editedOrderItem.totalAmount.toString()) {
+        oldItem.price = this.editedOrderItem.price;
+        oldItem.quantity = this.editedOrderItem.quantity;
+        oldItem.totalAmount = this.editedOrderItem.totalAmount;
         this.calculateTotalAmount();
         this.updateOrder();
       }
-      this.editedOrderitem = null;
+      this.editedOrderItem = null;
   }
 
   cancelOrderItemEditing(): void {
     this.calculateTotalAmount();
-    this.editedOrderitem = null;
+    this.editedOrderItem = null;
   }
 
   showRemoveOrderItemConfirmation(item: OrderItem) {
