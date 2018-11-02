@@ -68,7 +68,7 @@ public class OrderSearchRepositoryImpl implements OrderSearchRepository {
 		
 		@Override
 		public SortFunction<OrderRoots> getDefault() {
-			return SortFunction.of(roots -> roots.order.get(Order_.createdDate), Direction.DESC);
+			return SortFunction.of(roots -> roots.order.get(Order_.orderDate), Direction.DESC);
 		}
 	};
 	

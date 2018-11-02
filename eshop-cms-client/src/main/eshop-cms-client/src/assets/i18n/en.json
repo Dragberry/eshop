@@ -1,36 +1,103 @@
 {
-	"login": {
-		"forgot-password": "Forgot password?",
-		"login-page": "Login page",
-		"password": "Password",
-		"remember-me": "Remember me",
-		"sign-in": "Sign in",
-		"username": "Username",
-		"error": {
-			"401": "Username and/or password are invalid!",
-			"general": "An error has occured on the server",
-			"password-is-required": "Password is required!",
-			"username-is-required": "Username is required!"
-		}
-	},
-	"common": {
-		"account": "Account",
-		"search": "Search",
-		"sign-out": "Sign out"
-	},
-	"language": {
-		"en": "English",
-		"ru": "Русский"
-	},
-	"main-menu": {
-		"dashboard": "Dashboard",
-		"products": "Products",
-		"orders": "Orders",
-		"customers": "Customers"
-	},
-	"products": {
-		"product-list": {
-			"title": "Product list"
-		}
-	}
+  "login": {
+      "forgot-password": "Забыли пароль?",
+      "login-page": "Страница входа",
+      "password": "Пароль",
+      "remember-me": "Запомнить меня",
+      "sign-in": "Войти",
+      "username": "Имя пользователя",
+      "error": {
+          "401": "Имя пользователя и/или пароль не верны!",
+    "general": "Произошла ошибка на сервере!",
+          "password-is-required": "Вы не ввели пароль!",
+          "username-is-required": "Вы не ввели имя пользователя!"
+      }
+  },
+  "common": {
+    "account": "Аккаунт",
+    "action": "Действие",
+    "address": "Адрес",
+    "apply": "Применить",
+    "article": "Артикул",
+    "cancel": "Отмена",
+    "comment": "Комментарий",
+    "comments": "Комментарии",
+    "confirm": "Ок",
+    "customerComment": "Комментарий покупателя",
+    "date": "Дата",
+    "deliver": "Доставить",
+    "delivery": "Доставка",
+    "deliveryDate": "Дата доставки",
+    "deliveryInfo": "Детали доставки",
+    "deliveryTime": "Время доставки",
+    "edit": "Редактировать",
+    "editOrderItem": "Редактировать позицию",
+    "email": "E-Mail",
+    "from": "От",
+    "fromToDate": "с / по",
+    "fullName": "Ф.И.О.",
+    "id": "ID",
+    "image": "Изображение",
+    "isPaid": "Оплата",
+    "order": "Заказ",
+    "orderFields": "Поля заказа",
+    "orderInfo": "Информация о заказе",
+    "quantity": "Количество",
+    "quantityShort": "Кол-во",
+    "paymentMethod": "Способ оплаты",
+    "phone": "Телефон",
+    "price": "Стоимость",
+    "print": "Печать",
+    "productItem": "Позиция",
+    "removeOrderItem": "Удалить позицию",
+    "resetAll": "Сбросить все",
+    "save": "Сохранить",
+    "search": "Поиск",
+    "selectAll": "Выбрать все",
+    "shippingMethod": "Способ доставки",
+    "showElementsOnPage": "Показывать на странице",
+    "shopComment": "Комментарий продавца",
+    "sign-out": "Выйти",
+    "status": "Статус",
+    "sum": "Сумма",
+    "to": "До",
+    "total": "Итого",
+    "messages": {
+      "confirmationDefaultMessage": "вы уверены, что хотите совершить это действие?",
+      "confirmationTitle": "Подтвердите действие"
+    }
+  },
+  "language": {
+    "en": "English",
+    "ru": "Русский"
+  },
+  "main-menu": {
+    "dashboard": "Главная",
+    "products": "Товары",
+    "orders": "Заказы",
+    "customers": "Клиенты"
+  },
+  "products": {
+    "product-list": {
+      "title": "Список товаров"
+    }
+  },
+  "orders": {
+      "messages": {
+          "confirmRemovingOrderItem": "Вы уверены, что хотите убрать эту позицию из заказа?"
+      },
+      "paid": {
+          "true": "Оплачен",
+          "false": "Не оплачен"
+      },
+      "status": {
+          "NEW": "Новый",
+          "PROCESSING": "В обработке",
+          "AGREED": "Согласован",
+          "SHIPPED": "Отгружен",
+          "DELIVERED": "Доставлен",
+          "CANCELLED": "Отменен",
+          "RETURNED": "Возврат"
+      }
+  }
 }
