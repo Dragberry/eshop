@@ -11,7 +11,11 @@ export class FormatDate implements PipeTransform {
   constructor(@Inject(LOCALE_ID) private locale: string) {}
 
   transform(value: string): string {
-    return new DatePipe(this.locale).transform(new Date(value), DATE_TIME_FORMAT);
+    try {
+      return new DatePipe(this.locale).transform(new Date(value), DATE_TIME_FORMAT);
+    } catch (e) {
+      return '--';
+    }
   }
 
 }

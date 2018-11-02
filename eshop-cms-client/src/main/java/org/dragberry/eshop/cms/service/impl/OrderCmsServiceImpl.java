@@ -87,6 +87,7 @@ public class OrderCmsServiceImpl implements OrderCmsService {
 	        entity.setEmail(order.getEmail());
 	        entity.setComment(order.getComment());
 	        entity.setCustomerComment(order.getCustomerComment());
+	        entity.setShopComment(order.getShopComment());
 	        entity.setDeliveryDateFrom(order.getDeliveryDateFrom());
 	        entity.setDeliveryDateTo(order.getDeliveryDateTo());
 	        
@@ -140,6 +141,7 @@ public class OrderCmsServiceImpl implements OrderCmsService {
         order.setEmail(entity.getEmail());
         order.setComment(entity.getComment());
         order.setCustomerComment(entity.getCustomerComment());
+        order.setShopComment(entity.getShopComment());
         order.setDeliveryDateFrom(entity.getDeliveryDateFrom());
         order.setDeliveryDateTo(entity.getDeliveryDateTo());
         

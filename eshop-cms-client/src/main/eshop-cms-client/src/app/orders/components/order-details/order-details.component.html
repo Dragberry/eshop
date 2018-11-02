@@ -86,15 +86,15 @@
                   <div class="btn-group btn-group-justified">
                     <ng-container *ngIf="!isItemEdited(item)">
                       <button type="button" class="btn btn-danger"
-                        [disabled]="!isItemEnabled(item)"
-                        [class.disabled]="!isItemEnabled(item)"
+                        [disabled]="!isOrderItemCanBeEdited(item)"
+                        [class.disabled]="!isOrderItemCanBeEdited(item)"
                         title="{{'common.removeOrderItem' | translate}}"
                         (click)="showRemoveOrderItemConfirmation(item)">
                         <span class="fa fa-times"></span>
                       </button>
                       <button type="button" class="btn btn-warning"
-                        [class.disabled]="!isItemEnabled(item)"
-                        [disabled]="!isItemEnabled(item)"
+                        [class.disabled]="!isOrderItemCanBeEdited(item)"
+                        [disabled]="!isOrderItemCanBeEdited(item)"
                         title="{{'common.editOrderItem' | translate}}"
                         (click)="editItem(item)">
                         <span class="fa fa-pencil"></span>
@@ -143,24 +143,115 @@
           </table>
         </div>
       </div>
+      <div class="row">
+        <div class="col-12">
+         <div class="card" *ngIf="!editedOrderFields">
+            <div class="card-header bg-dark text-white">
+              <span>{{'common.orderFields' | translate}}</span>
+              <button type="button" class="btn btn-dark text-warning"
+                [disabled]="!isOrderFieldsCanBeEdited()"
+                title="{{'common.edit' | translate}}"
+                (click)="editOrderFields()">
+                <span class="fa fa-pencil"></span>
+              </button>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-3">
+                  <span class="font-weight-bold">{{'common.comment' | translate}}:</span>
+                </div>
+                <div class="col-9">
+                  <p>{{order.comment || '--'}}</p>
+                </div>
+                <div class="col-3">
+                  <span class="font-weight-bold">{{'common.shopComment' | translate}}:</span>
+                </div>
+                <div class="col-9">
+                  <p>{{order.shopComment || '--'}}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card" *ngIf="editedOrderFields">
+            <div class="card-header bg-dark text-white">
+              <span>{{'common.orderFields' | translate}}</span>
+              <button type="button" class="btn btn-dark text-primary"
+                title="{{'common.save' | translate}}"
+                (click)="saveEditedOrderFields()">
+                <span class="fa fa-check"></span>
+              </button>
+              <button type="button" class="btn btn-dark text-danger"
+                title="{{'common.cancel' | translate}}"
+                (click)="cancelOrderFieldsEditing()">
+                <span class="fa fa-times"></span>
+              </button>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-3">
+                  <span class="font-weight-bold">{{'common.comment' | translate}}:</span>
+                </div>
+                <div class="col-9">
+                  <div class="form-group">
+                    <textarea id="comment" class="form-control" [(ngModel)]="editedOrderFields.comment"></textarea>
+                  </div>
+                </div>
+                <div class="col-3">
+                  <span class="font-weight-bold">{{'common.shopComment' | translate}}:</span>
+                </div>
+                <div class="col-9">
+                  <div class="form-group">
+                    <textarea id="shopComment" class="form-control" [(ngModel)]="editedOrderFields.shopComment"></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+
     <div class="col-4">
       <div class="card" *ngIf="!editedOrder">
         <div class="card-header bg-dark text-white">
           <span>{{'common.deliveryInfo' | translate}}</span>
           <button type="button" class="btn btn-dark text-warning"
+            [disabled]="!isOrderCanBeEdited()"
             title="{{'common.edit' | translate}}"
             (click)="editOrderDetails()">
             <span class="fa fa-pencil"></span>
           </button>
         </div>
         <div class="card-body">
-          <h5 class="card-title">{{order.fullName}}</h5>
-          <p class="card-text">{{order.phone}}</p>
-          <address>
-            <span class="d-block font-weight-bold">{{'common.address' | translate}}</span>
-            <span class="d-block">{{order.address}}</span>
-          </address>
+          <div class="row">
+            <div class="col-12">
+              <h5 class="card-title">{{order.fullName || '--'}}</h5>
+              <p class="card-text">{{order.phone || '--'}}</p>
+              <address>
+                <span class="d-block font-weight-bold">{{'common.address' | translate}}</span>
+                <span class="d-block">{{order.address || '--'}}</span>
+              </address>
+            </div>
+            <div class="col-12">
+                <span class="d-block font-weight-bold">
+                  {{'common.deliveryDate' | translate}}: {{'common.fromToDate' | translate}}
+                </span>
+            </div>
+            <div class="col-6">
+              <p>{{order.deliveryDateFrom | formatDate}}</p>
+            </div>
+            <div class="col-6">
+              <p>{{order.deliveryDateTo | formatDate}}</p>
+            </div>
+            <div class="col-12">
+              <span class="d-block font-weight-bold">{{'common.customerComment' | translate}}</span>
+              <p class="d-block">{{order.customerComment}}</p>
+            </div>
+            <div class="col-12">
+              <span class="d-block font-weight-bold">{{'common.email' | translate}}</span>
+              <p class="d-block">{{order.email}}</p>
+            </div>
+          </div>
         </div>
       </div>
 

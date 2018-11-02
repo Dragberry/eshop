@@ -29,6 +29,7 @@ export class OrderDetailsComponent implements OnInit {
 
   order: OrderDetails;
   editedOrder: OrderDetails;
+  editedOrderFields: OrderDetails;
   editedOrderItem: OrderItem;
   selectedShippingMethod: ShippingMethod;
 
@@ -71,8 +72,8 @@ export class OrderDetailsComponent implements OnInit {
     return this.editedOrderItem && this.editedOrderItem.id === item.id;
   }
 
-  isItemEnabled(item: OrderItem): boolean {
-    return !this.editedOrderItem || this.editedOrderItem.id === item.id;
+  isOrderItemCanBeEdited(item: OrderItem): boolean {
+    return !this.editedOrder && !this.editedOrderFields && (!this.editedOrderItem || this.editedOrderItem.id === item.id);
   }
 
   onItemEdit(): void {
@@ -132,6 +133,10 @@ export class OrderDetailsComponent implements OnInit {
     this.order.totalAmount = this.order.totalProductAmount + this.order.shippingCost;
   }
 
+  isOrderCanBeEdited(): boolean {
+    return !this.editedOrder && !this.editedOrderFields && !this.editedOrderItem;
+  }
+
   editOrderDetails(): void {
     this.editedOrder = this.copyOrderDetails(this.order);
   }
@@ -144,6 +149,24 @@ export class OrderDetailsComponent implements OnInit {
 
   cancelOrderEditing(): void {
     this.editedOrder = null;
+  }
+
+  isOrderFieldsCanBeEdited(): boolean {
+    return !this.editedOrderFields && !this.editedOrder && !this.editedOrderItem;
+  }
+
+  editOrderFields(): void {
+    this.editedOrderFields = this.copyOrderDetails(this.order);
+  }
+
+  cancelOrderFieldsEditing(): void {
+    this.editedOrderFields = null;
+  }
+
+  saveEditedOrderFields(): void {
+    this.order = this.copyOrderDetails(this.editedOrderFields, this.order);
+    this.editedOrderFields = null;
+    this.updateOrder();
   }
 
   private copyOrderDetails(src: OrderDetails, dst?: OrderDetails): OrderDetails {
