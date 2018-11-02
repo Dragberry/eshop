@@ -23,7 +23,7 @@ export abstract class DataTableHolder<T> {
 
   private filters: Map<string, {name: string, values: string[]}[]> = new Map();
 
-  protected page: Page<T>;
+  page: Page<T>;
 
   public fetchPage(): void {
     let params = new HttpParams()

@@ -3,7 +3,7 @@ import { Input } from '@angular/core';
 export abstract class TableFilter {
 
   @Input()
-  protected columnId: string;
+  columnId: string;
 
   constructor() { }
 
