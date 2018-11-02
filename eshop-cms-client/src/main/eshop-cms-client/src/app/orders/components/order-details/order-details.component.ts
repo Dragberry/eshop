@@ -151,7 +151,7 @@ export class OrderDetailsComponent implements OnInit {
       dst = new OrderDetails();
     }
     dst.id = src.id;
-    dst.date = src.date;
+    dst.orderDate = src.orderDate;
     dst.version = src.version;
 
     dst.phone = src.phone;
@@ -160,6 +160,7 @@ export class OrderDetailsComponent implements OnInit {
     dst.email = src.email;
     dst.comment = src.comment;
     dst.customerComment = src.customerComment;
+    dst.shopComment = src.shopComment;
     dst.deliveryDateFrom = src.deliveryDateFrom;
     dst.deliveryDateTo = src.deliveryDateTo;
     return dst;

@@ -53,7 +53,7 @@ public class OrderSearchRepositoryImpl implements OrderSearchRepository {
 		private final Map<String, SortFunction<OrderRoots>> config = new HashMap<>();
 		{
 			config.put(ID, SortFunction.of(roots -> roots.order.get(Order_.entityKey)));
-			config.put(DATE, SortFunction.of(roots -> roots.order.get(Order_.createdDate)));
+			config.put(DATE, SortFunction.of(roots -> roots.order.get(Order_.orderDate)));
 			config.put(TOTAL_AMOUNT, SortFunction.of(roots -> roots.order.get(Order_.totalAmount)));
 			config.put(STATUS, SortFunction.of(roots -> roots.order.get(Order_.orderStatus)));
 			config.put(IS_PAID, SortFunction.of(roots -> roots.order.get(Order_.paid)));
@@ -97,7 +97,7 @@ public class OrderSearchRepositoryImpl implements OrderSearchRepository {
 		protected List<Selection<?>> getSelectionList() {
 			return Arrays.asList(
 					root.get(Order_.entityKey),
-					root.get(Order_.createdDate),
+					root.get(Order_.orderDate),
 					root.get(Order_.totalAmount),
 					root.get(Order_.fullName),
 					root.get(Order_.phone),

@@ -18,7 +18,7 @@ public class OrderDetailsTO implements Serializable {
 
 	private Long id;
 	
-	private LocalDateTime date;
+	private LocalDateTime orderDate;
 	
 	private Long version;
 	
@@ -34,6 +34,8 @@ public class OrderDetailsTO implements Serializable {
 	private String comment;
 	
 	private String customerComment;
+	
+	private String shopComment;
 	
 	private LocalDateTime deliveryDateFrom;
 	

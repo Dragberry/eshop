@@ -53,11 +53,11 @@ public class OrderCmsServiceImpl implements OrderCmsService {
 		return PageableList.of(page.stream().map(entity -> {
 			OrderTO order = new OrderTO();
 			order.setId(entity.getId());
+			order.setDate(entity.getOrderDate());
 			order.setPhone(entity.getPhone());
 			order.setTotalAmount(entity.getTotalAmount());
 			order.setFullName(entity.getFullName());
 			order.setEmail(entity.getEmail());
-			order.setDate(entity.getDate());
 			order.setAddress(entity.getAddress());
 			order.setComment(entity.getComment());
 			order.setPaid(entity.getPaid());
@@ -86,9 +86,9 @@ public class OrderCmsServiceImpl implements OrderCmsService {
 	        entity.setAddress(order.getAddress());
 	        entity.setEmail(order.getEmail());
 	        entity.setComment(order.getComment());
-//	        entity.setCustomerComment(order.getCustomerComment());
-//	        entity.setDeliveryDateFrom(order.getDeliveryDateFrom());
-//	        entity.setDeliveryDateTo(order.getDeliveryDateTo());
+	        entity.setCustomerComment(order.getCustomerComment());
+	        entity.setDeliveryDateFrom(order.getDeliveryDateFrom());
+	        entity.setDeliveryDateTo(order.getDeliveryDateTo());
 	        
 	        Optional<PaymentMethod> pm = paymentMethodRepo.findById(order.getPaymentMethodId());
 	        pm.ifPresent(entity::setPaymentMethod);
@@ -131,18 +131,26 @@ public class OrderCmsServiceImpl implements OrderCmsService {
 	private OrderDetailsTO mapDetails(Order entity) {
         OrderDetailsTO order = new OrderDetailsTO();
         order.setId(entity.getEntityKey());
-        order.setPhone(entity.getPhone());
-        order.setTotalAmount(entity.getTotalAmount());
-        order.setFullName(entity.getFullName());
-        order.setEmail(entity.getEmail());
-        order.setDate(entity.getCreatedDate());
-        order.setAddress(entity.getAddress());
-        order.setComment(entity.getComment());
-        order.setPaid(entity.getPaid());
-        order.setStatus(entity.getOrderStatus());
+        order.setOrderDate(entity.getOrderDate());
         order.setVersion(entity.getVersion());
+        
+        order.setPhone(entity.getPhone());
+        order.setFullName(entity.getFullName());
+        order.setAddress(entity.getAddress());
+        order.setEmail(entity.getEmail());
+        order.setComment(entity.getComment());
+        order.setCustomerComment(entity.getCustomerComment());
+        order.setDeliveryDateFrom(entity.getDeliveryDateFrom());
+        order.setDeliveryDateTo(entity.getDeliveryDateTo());
+        
         order.setPaymentMethodId(entity.getPaymentMethod().getEntityKey());
         order.setShippingMethodId(entity.getShippingMethod().getEntityKey());
+        order.setShippingCost(entity.getShippingCost());
+        order.setTotalProductAmount(entity.getTotalProductAmount());
+        order.setTotalAmount(entity.getTotalAmount());
+        order.setPaid(entity.getPaid());
+        order.setStatus(entity.getOrderStatus());
+        
         order.setItems(entity.getItems().stream().map(item -> {
             OrderItemTO itemTO = new OrderItemTO();
             itemTO.setId(item.getEntityKey());

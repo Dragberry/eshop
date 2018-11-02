@@ -2,7 +2,7 @@ import { OrderItem } from './order-item';
 
 export class OrderDetails {
     id: number;
-    date: Date;
+    orderDate: Date;
     version: number;
 
     phone: string;
@@ -11,6 +11,7 @@ export class OrderDetails {
     email: string;
     comment: string;
     customerComment: string;
+    shopComment: string;
     deliveryDateFrom: Date;
     deliveryDateTo: Date;
 
