@@ -27,6 +27,8 @@ export class OrderDetailsItemsComponent implements OnChanges {
 
   editedOrderItem: OrderItem;
 
+  orderItemBeingAdded: boolean;
+
   @Output()
   orderEdited: EventEmitter<OrderDetails> = new EventEmitter();
 
@@ -115,5 +117,23 @@ export class OrderDetailsItemsComponent implements OnChanges {
     this.order.totalProductAmount = totalAmount;
     this.order.shippingCost = this.selectedShippingMethod.cost;
     this.order.totalAmount = this.order.totalProductAmount + this.order.shippingCost;
+  }
+
+  requestAddingOrderItem(): void {
+    this.orderItemBeingAdded = true;
+    this.orderBeingEdited.emit(true);
+  }
+
+  isOrderItemBeingAdded(): boolean {
+    return !this.orderLocked && this.orderItemBeingAdded;
+  }
+
+  confirmAddingOrderItem(): void {
+
+  }
+
+  cancelAddingOrderItem(): void {
+    this.orderItemBeingAdded = false;
+    this.orderBeingEdited.emit(false);
   }
 }

@@ -16,6 +16,7 @@
     "common": {
       "account": "Аккаунт",
       "action": "Действие",
+      "addOrderItem": "Добавить позицию",
       "address": "Адрес",
       "apply": "Применить",
       "article": "Артикул",

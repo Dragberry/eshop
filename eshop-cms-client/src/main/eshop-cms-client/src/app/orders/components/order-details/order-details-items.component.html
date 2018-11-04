@@ -1,13 +1,42 @@
 <table class="table table-sm table-striped table-hover">
-  <thead class="thead-dark">
+  <thead class="bg-dark text-white">
     <tr>
-      <th>#</th>
-      <th class="text-nowrap">{{'common.image' | translate}}</th>
-      <th class="text-nowrap">{{'common.productItem' | translate}}</th>
-      <th class="text-nowrap">{{'common.price' | translate}}</th>
-      <th class="text-nowrap">{{'common.quantityShort' | translate}}</th>
-      <th class="text-nowrap">{{'common.sum' | translate}}</th>
-      <th class="text-nowrap">{{'common.action' | translate}}</th>
+      <th class="align-middle">#</th>
+      <th class="align-middle text-nowrap">{{'common.image' | translate}}</th>
+      <th class="align-middle text-nowrap">
+        <ng-container
+          *ngIf="isOrderItemBeingAdded(); then editableAddOrderItem; else readonlyAddOrderItem">
+        </ng-container>
+        <ng-template #editableAddOrderItem>
+          <div class="input-group">
+            <span class="input-group-btn">
+              <button type="button" class="btn btn-dark text-primary"
+                title="{{'common.addOrderItem' | translate}}"
+                (click)="confirmAddingOrderItem()">
+                <span class="fa fa-check"></span>
+              </button>
+              <button type="button" class="btn btn-dark text-danger"
+                title="{{'common.cancel' | translate}}"
+                (click)="cancelAddingOrderItem()">
+                <span class="fa fa-times"></span>
+              </button>
+            </span>
+            <input type="text" autofocus class="form-control">
+          </div>
+        </ng-template>
+        <ng-template #readonlyAddOrderItem>
+          <span class="mr-2">{{'common.productItem' | translate}}</span>
+          <button type="button" class="btn btn-dark text-primary"
+            title="{{'common.addOrderItem' | translate}}"
+            (click)="requestAddingOrderItem()">
+            <span class="fa fa-plus"></span>
+          </button>
+        </ng-template>
+      </th>
+      <th class="align-middle text-nowrap">{{'common.price' | translate}}</th>
+      <th class="align-middle text-nowrap">{{'common.quantityShort' | translate}}</th>
+      <th class="align-middle text-nowrap">{{'common.sum' | translate}}</th>
+      <th class="align-middle text-nowrap">{{'common.action' | translate}}</th>
     </tr>
   </thead>
   <tbody>
@@ -99,7 +128,7 @@
       </ng-template>
     </tr>
   </tbody>
-  <tfoot class="thead-dark">
+  <tfoot class="bg-dark text-white">
     <tr>
       <th colspan="2" class="align-middle text-nowrap">
         {{'common.delivery' | translate}}
