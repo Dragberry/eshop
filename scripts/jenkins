@@ -1,0 +1,15 @@
+node {
+    def mvnHome
+    stage('Preparation') {
+        git branch: 'cms', url: 'https://github.com/MaksimDragun/eshop.git'
+    }
+    stage('Build') {
+        sh 'mvn clean install'
+    }
+    stage('Deploy') {
+        sh 'pid=$(lsof -i:8090 -t);  [ -z "$pid" ] || kill -TERM $pid || kill -KILL $pid'
+        withEnv(['JENKINS_NODE_COOKIE=dontkill']) {
+            sh 'nohup java -jar ./eshop-backend/target/eshop-backend-1.0.0-SNAPSHOT.jar &'
+        }
+    }
+}
