@@ -12,7 +12,9 @@ public class OrderProductTO {
 
 	private Long productId;
 
-	private String fullTitle;
+	private String title;
+	
+	private String optionsTitle;
 
 	private String article;
 

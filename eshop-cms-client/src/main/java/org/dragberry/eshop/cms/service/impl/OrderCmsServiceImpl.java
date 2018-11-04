@@ -26,7 +26,7 @@ import org.dragberry.eshop.dal.repo.OrderRepository;
 import org.dragberry.eshop.dal.repo.PaymentMethodRepository;
 import org.dragberry.eshop.dal.repo.ShippingMethodRepository;
 import org.dragberry.eshop.service.ImageService;
-import org.dragberry.eshop.utils.ProductFullTitleBuilder;
+import org.dragberry.eshop.utils.ProductTitleBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -170,7 +170,8 @@ public class OrderCmsServiceImpl implements OrderCmsService {
             productTO.setPrice(product.getPrice());
             productTO.setActualPrice(product.getActualPrice());
             productTO.setReference(productArticle.getReference());
-            productTO.setFullTitle(ProductFullTitleBuilder.buildFullTitle(product));
+            productTO.setTitle(productArticle.getTitle());
+            productTO.setOptionsTitle(ProductTitleBuilder.buildOptionsTitle(product));
             itemTO.setProduct(productTO);
             return itemTO;
         }).collect(Collectors.toList())); 

@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.dragberry.eshop.model.common.KeyValue;
 import org.dragberry.eshop.model.product.CategoryItem;
-import org.dragberry.eshop.utils.ProductFullTitleBuilder;
+import org.dragberry.eshop.utils.ProductTitleBuilder;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -40,7 +40,7 @@ public class CapturedProduct {
     private Set<KeyValue> options  = new HashSet<>();
     
     public void updateFullTitle() {
-        this.fullTitle = ProductFullTitleBuilder.buildFullTitle(title, options);
+        this.fullTitle = ProductTitleBuilder.buildFullTitle(title, options);
     }
     
 }

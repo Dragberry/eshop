@@ -1,3 +1,4 @@
+import { OrderDetailsItemsComponent } from './components/order-details/order-details-items.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OrderDetailsComponent } from './components/order-details/order-details.component';
@@ -18,6 +19,7 @@ import { PaymentService } from './service/payment.service';
   declarations: [
     OrderListComponent,
     OrderDetailsComponent,
+    OrderDetailsItemsComponent,
     OrderStatusDirective
   ],
   providers: [

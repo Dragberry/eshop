@@ -1,0 +1,126 @@
+<table class="table table-sm table-striped table-hover">
+  <thead class="thead-dark">
+    <tr>
+      <th>#</th>
+      <th class="text-nowrap">{{'common.image' | translate}}</th>
+      <th class="text-nowrap">{{'common.productItem' | translate}}</th>
+      <th class="text-nowrap">{{'common.price' | translate}}</th>
+      <th class="text-nowrap">{{'common.quantityShort' | translate}}</th>
+      <th class="text-nowrap">{{'common.sum' | translate}}</th>
+      <th class="text-nowrap">{{'common.action' | translate}}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of order.items; let i = index">
+      <ng-container
+        *ngIf="isItemEdited(item); then editableOrderItem; else readonlyOrderItem">
+      </ng-container>
+
+      <ng-template #readonlyOrderItem>
+        <th class="align-middle">{{i + 1}}</th>
+        <td>
+          <img class="product-image img-fluid img-thumbnail"
+            src="{{'/images/' + item.product.productArticleId + '/' + item.product.article + '/' + item.product.mainImage}}">
+        </td>
+        <td class="align-middle">
+          <span class="d-block">{{item.product.title}}</span>
+          <span *ngIf="item.product.optionsTitle" class="d-block font-italic small">{{item.product.optionsTitle}}</span>
+          <span class="d-block font-weight-bold small">{{'common.article' | translate}}: {{item.product.article}}</span>
+        </td>
+        <td class="align-middle text-right text-nowrap">
+          <span>{{item.price}}</span>
+        </td>
+        <td class="align-middle text-right text-nowrap">
+          <span>{{item.quantity}}</span>
+        </td>
+        <td class="align-middle text-right text-nowrap">
+          <span>{{item.totalAmount}}</span>
+        </td>
+        <td class="align-middle text-center">
+          <div class="btn-group btn-group-justified">
+            <button type="button" class="btn btn-danger"
+              [disabled]="!isOrderItemCanBeEdited(item)"
+              [class.disabled]="!isOrderItemCanBeEdited(item)"
+              title="{{'common.removeOrderItem' | translate}}"
+              (click)="showRemoveOrderItemConfirmation(item)">
+              <span class="fa fa-times"></span>
+            </button>
+            <button type="button" class="btn btn-warning"
+              [class.disabled]="!isOrderItemCanBeEdited(item)"
+              [disabled]="!isOrderItemCanBeEdited(item)"
+              title="{{'common.editOrderItem' | translate}}"
+              (click)="editItem(item)">
+              <span class="fa fa-pencil"></span>
+            </button>
+          </div>
+        </td>
+      </ng-template>
+
+      <ng-template #editableOrderItem>
+        <th class="align-middle">{{i + 1}}</th>
+        <td>
+          <img class="product-image img-fluid img-thumbnail"
+            src="{{'/images/' + item.product.productArticleId + '/' + item.product.article + '/' + item.product.mainImage}}">
+        </td>
+        <td class="align-middle">
+          <span class="d-block">{{item.product.title}}</span>
+          <span *ngIf="item.product.optionsTitle" class="d-block font-italic small">{{item.product.optionsTitle}}</span>
+          <span class="d-block font-weight-bold small">{{'common.article' | translate}}: {{item.product.article}}</span>
+        </td>
+        <td class="align-middle text-right text-nowrap">
+          <input type="text" class="form-control"
+            [(ngModel)]="editedOrderItem.price"
+            mask="0*.00" [dropSpecialCharacters]="false"
+            (keyup)="onItemEdit()">
+        </td>
+        <td class="align-middle text-right text-nowrap">
+          <input type="text" class="form-control"
+            [(ngModel)]="editedOrderItem.quantity"
+            mask="0*" [dropSpecialCharacters]="false"
+            (keyup)="onItemEdit()">
+        </td>
+        <td class="align-middle text-right text-nowrap">
+          <span>{{editedOrderItem.totalAmount}}</span>
+        </td>
+        <td class="align-middle text-center">
+          <div class="btn-group btn-group-justified">
+            <button type="button" class="btn btn-secondary"
+              title="{{'common.cancel' | translate}}"
+              (click)="cancelOrderItemEditing()">
+              <span class="fa fa-times"></span>
+            </button>
+            <button type="button" class="btn btn-primary"
+              title="{{'common.save' | translate}}"
+              (click)="saveEditedOrderItem(item)">
+              <span class="fa fa-check"></span>
+            </button>
+          </div>
+        </td>
+      </ng-template>
+    </tr>
+  </tbody>
+  <tfoot class="thead-dark">
+    <tr>
+      <th colspan="2" class="align-middle text-nowrap">
+        {{'common.delivery' | translate}}
+      </th>
+      <th>
+        <select *ngIf="shippingMethods" class="form-control"
+          [(ngModel)]="selectedShippingMethod"
+          (change)="onShippingMethodChanged()">
+          <option *ngFor="let sm of shippingMethods" [ngValue]="sm">
+            {{sm.name}} - {{sm.cost}}
+          </option>
+        </select>
+      </th>
+      <th colspan="2"></th>
+      <th class="align-middle text-right text-nowrap">{{selectedShippingMethod.cost}}</th>
+      <th colspan="2"></th>
+    </tr>
+    <tr>
+      <th colspan="5" class="align-middle text-right text-nowrap">{{'common.total' | translate}}: </th>
+      <th class="align-middle text-right text-nowrap">{{order.totalAmount}}</th>
+      <th colspan="2"></th>
+    </tr>
+  </tfoot>
+</table>
