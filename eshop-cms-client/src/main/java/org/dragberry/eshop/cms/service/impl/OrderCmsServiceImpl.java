@@ -19,10 +19,8 @@ import org.dragberry.eshop.common.Results;
 import org.dragberry.eshop.dal.dto.OrderDTO;
 import org.dragberry.eshop.dal.entity.Order;
 import org.dragberry.eshop.dal.entity.OrderItem;
-import org.dragberry.eshop.dal.entity.PaymentMethod;
 import org.dragberry.eshop.dal.entity.Product;
 import org.dragberry.eshop.dal.entity.ProductArticle;
-import org.dragberry.eshop.dal.entity.ShippingMethod;
 import org.dragberry.eshop.dal.repo.OrderRepository;
 import org.dragberry.eshop.dal.repo.PaymentMethodRepository;
 import org.dragberry.eshop.dal.repo.ProductRepository;
@@ -96,16 +94,12 @@ public class OrderCmsServiceImpl implements OrderCmsService {
 	        entity.setDeliveryDateFrom(order.getDeliveryDateFrom());
 	        entity.setDeliveryDateTo(order.getDeliveryDateTo());
 	        
-	        Optional<PaymentMethod> pm = paymentMethodRepo.findById(order.getPaymentMethodId());
-	        pm.ifPresent(entity::setPaymentMethod);
-	        if (!pm.isPresent()) {
-	            issues.add(Issues.error("paymentMethodInvalid"));
-	        }
-	        Optional<ShippingMethod> sm = shippingMethodRepo.findById(order.getShippingMethodId());
-	        sm.ifPresent(entity::setShippingMethod);
-	        if (!sm.isPresent()) {
-	            issues.add(Issues.error("shippingMethodInvalid"));
-	        }
+	        paymentMethodRepo.findById(order.getPaymentMethodId())
+	            .ifPresentOrElse(entity::setPaymentMethod,
+	                    () -> issues.add(Issues.error("paymentMethodInvalid")));
+	        shippingMethodRepo.findById(order.getShippingMethodId())
+	            .ifPresentOrElse(entity::setShippingMethod,
+	                    () -> issues.add(Issues.error("shippingMethodInvalid")));
 
 	        entity.setShippingCost(order.getShippingCost());
 	        entity.setTotalProductAmount(order.getTotalProductAmount());
@@ -130,7 +124,8 @@ public class OrderCmsServiceImpl implements OrderCmsService {
         	                newItemEntity.setQuantity(item.getQuantity());
         	                newItemEntity.setTotalAmount(item.getTotalAmount());
         	                productRepo.findById(item.getProduct().getProductId())
-        	                    .ifPresentOrElse(newItemEntity::setProduct, () -> issues.add(Issues.error("orders.product.invalid")));
+        	                    .ifPresentOrElse(newItemEntity::setProduct,
+        	                            () -> issues.add(Issues.error("orders.product.invalid")));
         	                return newItemEntity;
     	                });
 	        }).collect(Collectors.toList());
