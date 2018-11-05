@@ -22,7 +22,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>8</java.version>
+		<java.version>9</java.version>
 		<spring-mobile.version>2.0.0.M3</spring-mobile.version>
 		<commons-collections4.version>4.0</commons-collections4.version>
 		<commons-io.version>2.6</commons-io.version>

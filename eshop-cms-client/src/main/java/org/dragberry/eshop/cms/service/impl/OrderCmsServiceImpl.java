@@ -18,12 +18,14 @@ import org.dragberry.eshop.common.ResultTO;
 import org.dragberry.eshop.common.Results;
 import org.dragberry.eshop.dal.dto.OrderDTO;
 import org.dragberry.eshop.dal.entity.Order;
+import org.dragberry.eshop.dal.entity.OrderItem;
 import org.dragberry.eshop.dal.entity.PaymentMethod;
 import org.dragberry.eshop.dal.entity.Product;
 import org.dragberry.eshop.dal.entity.ProductArticle;
 import org.dragberry.eshop.dal.entity.ShippingMethod;
 import org.dragberry.eshop.dal.repo.OrderRepository;
 import org.dragberry.eshop.dal.repo.PaymentMethodRepository;
+import org.dragberry.eshop.dal.repo.ProductRepository;
 import org.dragberry.eshop.dal.repo.ShippingMethodRepository;
 import org.dragberry.eshop.service.ImageService;
 import org.dragberry.eshop.utils.ProductTitleBuilder;
@@ -37,6 +39,9 @@ public class OrderCmsServiceImpl implements OrderCmsService {
 
 	@Autowired
 	private OrderRepository orderRepo;
+	
+	@Autowired
+    private ProductRepository productRepo;
 	
 	@Autowired
     private PaymentMethodRepository paymentMethodRepo;
@@ -108,21 +113,30 @@ public class OrderCmsServiceImpl implements OrderCmsService {
 	        entity.setPaid(order.getPaid());
 	        entity.setOrderStatus(order.getStatus());
 	        
-	        entity.getItems().removeIf(itemEntity -> {
-	            return order.getItems().stream().noneMatch(item -> itemEntity.getEntityKey().equals(item.getId()));
-	        });
+	        List<OrderItem> items = order.getItems().stream().map(item -> {
+	            return entity.getItems().stream()
+	                    .filter(itemEntity -> itemEntity.getEntityKey().equals(item.getId())).findFirst()
+	                    .map(itemEntity -> {
+        	                itemEntity.setPrice(item.getPrice());
+        	                itemEntity.setQuantity(item.getQuantity());
+        	                itemEntity.setTotalAmount(item.getTotalAmount());
+        	                itemEntity.setVersion(item.getVersion());
+        	                return itemEntity;
+        	            })
+        	            .orElseGet(() -> {
+        	                OrderItem newItemEntity = new OrderItem();
+        	                newItemEntity.setOrder(entity);
+        	                newItemEntity.setPrice(item.getPrice());
+        	                newItemEntity.setQuantity(item.getQuantity());
+        	                newItemEntity.setTotalAmount(item.getTotalAmount());
+        	                productRepo.findById(item.getProduct().getProductId())
+        	                    .ifPresentOrElse(newItemEntity::setProduct, () -> issues.add(Issues.error("orders.product.invalid")));
+        	                return newItemEntity;
+    	                });
+	        }).collect(Collectors.toList());
+	        entity.getItems().clear();
+	        entity.getItems().addAll(items);
 	        
-	        entity.getItems().forEach(itemEntity -> {
-	        	order.getItems().stream()
-	        		.filter(item -> itemEntity.getEntityKey().equals(item.getId())).findFirst()
-	        		.ifPresent(item -> {
-	        			itemEntity.setPrice(item.getPrice());
-	        			itemEntity.setQuantity(item.getQuantity());
-	        			itemEntity.setTotalAmount(item.getTotalAmount());
-	        			itemEntity.setVersion(item.getVersion());
-	        	});
-	        });
-
 	        return issues.isEmpty() ? orderRepo.save(entity) : entity;
 	    }).map(entity -> {
             return Results.create(mapDetails(entity), issues);

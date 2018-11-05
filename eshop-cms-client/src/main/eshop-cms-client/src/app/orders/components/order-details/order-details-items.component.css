@@ -1,3 +1,11 @@
 .product-image {
   max-height: 9rem;
 }
+
+.dropdown-menu.suggested-products {
+	min-width: max-content;
+}
+
+.suggested-product:hover {
+  cursor: pointer;
+}

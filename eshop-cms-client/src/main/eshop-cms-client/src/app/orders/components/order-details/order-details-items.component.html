@@ -10,18 +10,47 @@
         <ng-template #editableAddOrderItem>
           <div class="input-group">
             <span class="input-group-btn">
-              <button type="button" class="btn btn-dark text-primary"
-                title="{{'common.addOrderItem' | translate}}"
-                (click)="confirmAddingOrderItem()">
-                <span class="fa fa-check"></span>
-              </button>
               <button type="button" class="btn btn-dark text-danger"
                 title="{{'common.cancel' | translate}}"
                 (click)="cancelAddingOrderItem()">
                 <span class="fa fa-times"></span>
               </button>
             </span>
-            <input type="text" autofocus class="form-control">
+            <input type="text" [(ngModel)]="productSearchQuery" class="form-control" (keyup)="loadSuggestedProductsList()">
+            <div dropdown class="dropdown d-inline" #addOrderItemOptions="bs-dropdown">
+              <button dropdownToggle id="addOrderItemOptionsTrigger"
+                class="dropdown-toggle d-none"
+                type="button"
+                aria-haspopup="true"
+                aria-expanded="false">
+              </button>
+              <div *dropdownMenu class="dropdown-menu dropdown-menu-right suggested-products" role="menu" aria-labelledby="addOrderItemOptionsTrigger">
+                <div class="list-group">
+                  <div *ngFor="let product of suggestedProductsList"
+                    class="list-group-item list-group-item-action"
+                    (click)="confirmAddingOrderItem(product)">
+                    <div class="row suggested-product">
+                      <div class="col-9">
+                        <span class="d-block">{{product.title}}</span>
+                        <span class="d-block small font-italic">{{product.optionsTitle}}</span>
+                      </div>
+                      <div class="col-3 text-right">
+                        <ng-container
+                          *ngIf="product.actualPrice; then actualPriceExists; else actualPriceDoesntExist">
+                        </ng-container>
+                        <ng-template #actualPriceExists>
+                          <span class="d-block">{{product.actualPrice}} Руб.</span>
+                          <span class="d-block small"><del>{{product.price}} Руб.</del></span>
+                        </ng-template>
+                        <ng-template #actualPriceDoesntExist>
+                          <span class="d-block">{{product.price}} Руб.</span>
+                        </ng-template>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </ng-template>
         <ng-template #readonlyAddOrderItem>

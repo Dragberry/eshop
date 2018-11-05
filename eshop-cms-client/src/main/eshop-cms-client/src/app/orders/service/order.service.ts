@@ -8,6 +8,7 @@ import { Order } from '../model/order';
 import { OrderDetails } from '../model/order-details';
 import { TranslateService } from '@ngx-translate/core';
 import { Result } from 'src/app/shared/model/result';
+import { OrderProduct } from '../model/order-product';
 
 const ORDERS_URL = 'orders';
 
@@ -28,6 +29,24 @@ export class OrderService {
 
   updateOrder(order: OrderDetails): Observable<Result<OrderDetails>> {
     return this.http.put<Result<OrderDetails>>(`${ORDERS_URL}/${order.id}`, order);
+  }
+
+  searchProducts(query: string): Observable<Page<OrderProduct>> {
+    return this.http.get<Page<OrderProduct>>(`products/search`, {
+      params: new HttpParams()
+        .append('query', query)
+        .append('pageSize', '20')
+        .append('pageNumber', '1')
+    });
+  }
+
+  getProductsForArticle(articleId: number): Observable<Page<OrderProduct>> {
+    return this.http.get<Page<OrderProduct>>(`/product-article/${articleId}/products`, {
+      params: new HttpParams()
+        .append('articleId', articleId.toString())
+        .append('pageSize', '-1')
+        .append('pageNumber', '1')
+    });
   }
 
   fetchOrderStatuses(): Observable<NameValue<string>[]> {

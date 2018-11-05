@@ -3,8 +3,10 @@ package org.dragberry.eshop.cms.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import org.dragberry.eshop.cms.model.OrderDetailsTO;
+import org.dragberry.eshop.cms.model.OrderProductTO;
 import org.dragberry.eshop.cms.model.OrderTO;
 import org.dragberry.eshop.cms.service.OrderCmsService;
+import org.dragberry.eshop.cms.service.ProductCmsService;
 import org.dragberry.eshop.common.PageableList;
 import org.dragberry.eshop.common.ResultTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,9 @@ public class OrderController {
 	
 	@Autowired
 	private OrderCmsService orderService;
+	
+	@Autowired
+    private ProductCmsService productService;
 	
 	/**
 	 * Get the list of orders
@@ -47,4 +52,15 @@ public class OrderController {
         return orderService.updateOrder(id, order).orElseThrow(RuntimeException::new);
     }
 
+	/**
+     * Get the list of product for the given query. It is used to quick product search to add new order item to existing order
+     * @return
+     */
+    @GetMapping("${cms.context}/products/search")
+    public PageableList<OrderProductTO> searchProducts(
+            @RequestParam(required = true) int pageNumber,
+            @RequestParam(required = true) int pageSize,
+            @RequestParam(required = true) String query) {
+        return productService.searchProducts(PageRequest.of(pageNumber - 1, pageSize), query);
+    }
 }

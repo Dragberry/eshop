@@ -2,8 +2,11 @@ import { ConfirmationModalComponent } from 'src/app/shared/components/confirmati
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { OrderItem } from './../../model/order-item';
 import { OrderDetails } from './../../model/order-details';
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, SimpleChange } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, SimpleChange, ViewChild } from '@angular/core';
 import { ShippingMethod } from '../../model/shipping-method';
+import { BsDropdownDirective } from 'ngx-bootstrap/dropdown';
+import { OrderProduct } from '../../model/order-product';
+import { OrderService } from '../../service/order.service';
 
 @Component({
   selector: 'app-order-details-items',
@@ -11,6 +14,9 @@ import { ShippingMethod } from '../../model/shipping-method';
   styleUrls: ['./order-details-items.component.css']
 })
 export class OrderDetailsItemsComponent implements OnChanges {
+
+  @ViewChild('addOrderItemOptions')
+  addOrderItemOptions: BsDropdownDirective;
 
   confirmationModalRef: BsModalRef;
 
@@ -29,13 +35,19 @@ export class OrderDetailsItemsComponent implements OnChanges {
 
   orderItemBeingAdded: boolean;
 
+  searchProductsDelay: any;
+  productSearchQuery: string;
+  suggestedProductsList: OrderProduct[];
+
   @Output()
   orderEdited: EventEmitter<OrderDetails> = new EventEmitter();
 
   @Output()
   orderBeingEdited: EventEmitter<boolean> = new EventEmitter();
 
-  constructor(private modalService: BsModalService) {}
+  constructor(
+    private modalService: BsModalService,
+    private orderService: OrderService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes) {
@@ -128,12 +140,41 @@ export class OrderDetailsItemsComponent implements OnChanges {
     return !this.orderLocked && this.orderItemBeingAdded;
   }
 
-  confirmAddingOrderItem(): void {
-
+  confirmAddingOrderItem(product: OrderProduct): void {
+    this.orderItemBeingAdded = false;
+    const existingItem: OrderItem = this.order.items.find(item => item.product.productId === product.productId);
+    if (existingItem) {
+      existingItem.quantity += 1;
+      existingItem.totalAmount = existingItem.price * existingItem.quantity;
+    } else {
+      this.order.items.push({
+        id: null,
+        product: product,
+        price: product.price,
+        quantity: 1,
+        totalAmount: product.price,
+        version: 0
+      });
+    }
+    this.calculateTotalAmount();
+    this.orderBeingEdited.emit(false);
+    this.orderEdited.emit(this.order);
   }
 
   cancelAddingOrderItem(): void {
     this.orderItemBeingAdded = false;
     this.orderBeingEdited.emit(false);
+  }
+
+  loadSuggestedProductsList(): void {
+    clearTimeout(this.searchProductsDelay);
+    this.searchProductsDelay = setTimeout(() => {
+      if (this.productSearchQuery && this.productSearchQuery.length > 1) {
+        this.orderService.searchProducts(this.productSearchQuery).subscribe(page => {
+          this.suggestedProductsList = page.content;
+          this.addOrderItemOptions.show();
+        });
+      }
+    }, 300);
   }
 }
