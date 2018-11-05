@@ -60,7 +60,7 @@ export class OrderDetailsItemsComponent implements OnChanges {
   }
 
   isOrderItemCanBeEdited(item: OrderItem): boolean {
-    return !this.orderLocked && (!this.editedOrderItem || this.editedOrderItem.id === item.id);
+    return !this.orderLocked && !this.orderItemBeingAdded && (!this.editedOrderItem || this.editedOrderItem.id === item.id);
   }
 
   editItem(item: OrderItem): void {
