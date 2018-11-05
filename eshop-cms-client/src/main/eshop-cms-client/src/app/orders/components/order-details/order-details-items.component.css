@@ -1,9 +1,10 @@
 .product-image {
-  max-height: 9rem;
+  max-height: 5rem;
 }
 
 .dropdown-menu.suggested-products {
-	min-width: max-content;
+  min-width: max-content;
+  padding: 0;
 }
 
 .suggested-product:hover {

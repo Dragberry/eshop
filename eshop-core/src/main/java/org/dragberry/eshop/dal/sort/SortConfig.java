@@ -4,6 +4,8 @@ public interface SortConfig<R extends Roots> {
 	
 	SortFunction<R> getDefault();
 	
-	SortFunction<R> get(String param);
+	default SortFunction<R> get(String param) {
+		return getDefault();
+	}
 
 }

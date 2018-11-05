@@ -26,13 +26,26 @@
               </button>
               <div *dropdownMenu class="dropdown-menu dropdown-menu-right suggested-products" role="menu" aria-labelledby="addOrderItemOptionsTrigger">
                 <div class="list-group">
+                  <div *ngIf="!suggestedProductsList || suggestedProductsList.length == 0"
+                    class="list-group-item list-group-item-action">
+                    <div class="row suggested-product">
+                      <div class="col-12 text-justify">
+                        <span>{{'common.noResults' | translate}}</span>
+                      </div>
+                    </div>
+                  </div>
                   <div *ngFor="let product of suggestedProductsList"
                     class="list-group-item list-group-item-action"
                     (click)="confirmAddingOrderItem(product)">
                     <div class="row suggested-product">
                       <div class="col-9">
                         <span class="d-block">{{product.title}}</span>
-                        <span class="d-block small font-italic">{{product.optionsTitle}}</span>
+                        <span class="d-block small font-italic">
+                          {{product.optionsTitle}}
+                        </span>
+                        <span class="d-block small font-italic font-weight-bold">
+                          {{'common.article' | translate}}: {{product.article}}
+                        </span>
                       </div>
                       <div class="col-3 text-right">
                         <ng-container

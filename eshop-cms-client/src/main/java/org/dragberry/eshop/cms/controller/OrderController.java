@@ -11,6 +11,7 @@ import org.dragberry.eshop.common.PageableList;
 import org.dragberry.eshop.common.ResultTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -22,6 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class OrderController {
+	
+	@Autowired
+	private HttpServletRequest request;
 	
 	@Autowired
 	private OrderCmsService orderService;
@@ -61,6 +65,6 @@ public class OrderController {
             @RequestParam(required = true) int pageNumber,
             @RequestParam(required = true) int pageSize,
             @RequestParam(required = true) String query) {
-        return productService.searchProducts(PageRequest.of(pageNumber - 1, pageSize), query);
+        return productService.searchProducts(PageRequest.of(pageNumber - 1, pageSize, Sort.by("entityKey")), request.getParameterMap());
     }
 }

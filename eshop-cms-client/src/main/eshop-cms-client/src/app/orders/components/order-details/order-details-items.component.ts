@@ -159,6 +159,7 @@ export class OrderDetailsItemsComponent implements OnChanges {
     this.calculateTotalAmount();
     this.orderBeingEdited.emit(false);
     this.orderEdited.emit(this.order);
+    this.productSearchQuery = null;
   }
 
   cancelAddingOrderItem(): void {
@@ -167,6 +168,7 @@ export class OrderDetailsItemsComponent implements OnChanges {
   }
 
   loadSuggestedProductsList(): void {
+    this.addOrderItemOptions.hide();
     clearTimeout(this.searchProductsDelay);
     this.searchProductsDelay = setTimeout(() => {
       if (this.productSearchQuery && this.productSearchQuery.length > 1) {

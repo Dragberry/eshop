@@ -1,13 +1,14 @@
 package org.dragberry.eshop.cms.service.impl;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
 import org.dragberry.eshop.cms.model.OrderProductTO;
 import org.dragberry.eshop.cms.service.ProductCmsService;
 import org.dragberry.eshop.common.PageableList;
 import org.dragberry.eshop.dal.entity.Product;
 import org.dragberry.eshop.dal.repo.ProductRepository;
+import org.dragberry.eshop.dal.repo.ProductRepository.ProductOrderItemSpecification;
 import org.dragberry.eshop.service.ImageService;
 import org.dragberry.eshop.utils.ProductTitleBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,8 @@ public class ProductCmsServiceImpl implements ProductCmsService {
     private ImageService imageService;
     
     @Override
-    public PageableList<OrderProductTO> searchProducts(PageRequest pageRequest, String query) {
-        Page<Product> page = productRepo.findAll(pageRequest);
+    public PageableList<OrderProductTO> searchProducts(PageRequest pageRequest, Map<String, String[]> searchParams) {
+    	Page<Product> page = productRepo.findAll(new ProductOrderItemSpecification(searchParams), pageRequest);
         return PageableList.of(page.stream().map(dto -> {
             OrderProductTO to = new OrderProductTO();
             to.setProductId(dto.getEntityKey());
@@ -38,7 +39,6 @@ public class ProductCmsServiceImpl implements ProductCmsService {
             if (!Objects.equals(dto.getPrice(), dto.getActualPrice())) {
                 to.setActualPrice(dto.getActualPrice());
             }
-            to.setReference(dto.getProductArticle().getReference());
             to.setMainImage(imageService.findMainImage(dto.getProductArticle().getEntityKey(), dto.getProductArticle().getArticle()));
             return to;
         }).collect(Collectors.toList()), page.getNumber() + 1, page.getSize(), 10, page.getTotalElements());
