@@ -141,7 +141,6 @@ export class OrderDetailsItemsComponent implements OnChanges {
   }
 
   confirmAddingOrderItem(product: OrderProduct): void {
-    this.orderItemBeingAdded = false;
     const existingItem: OrderItem = this.order.items.find(item => item.product.productId === product.productId);
     if (existingItem) {
       existingItem.quantity += 1;
@@ -157,6 +156,7 @@ export class OrderDetailsItemsComponent implements OnChanges {
       });
     }
     this.calculateTotalAmount();
+    this.orderItemBeingAdded = false;
     this.orderBeingEdited.emit(false);
     this.orderEdited.emit(this.order);
     this.productSearchQuery = null;
