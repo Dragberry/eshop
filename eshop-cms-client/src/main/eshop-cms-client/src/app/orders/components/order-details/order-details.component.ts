@@ -123,4 +123,8 @@ export class OrderDetailsComponent implements OnInit {
       }
     });
   }
+
+  downloadReport(): void {
+    this.orderService.downloadReport(this.order.id);
+  }
 }

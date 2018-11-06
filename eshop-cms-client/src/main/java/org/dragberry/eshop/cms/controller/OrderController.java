@@ -1,9 +1,12 @@
 package org.dragberry.eshop.cms.controller;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.IOUtils;
 import org.dragberry.eshop.cms.model.OrderDetailsTO;
 import org.dragberry.eshop.cms.model.OrderProductTO;
 import org.dragberry.eshop.cms.model.OrderTO;
@@ -12,8 +15,11 @@ import org.dragberry.eshop.cms.service.ProductCmsService;
 import org.dragberry.eshop.common.PageableList;
 import org.dragberry.eshop.common.ResultTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -34,6 +40,9 @@ public class OrderController {
 	
 	@Autowired
     private ProductCmsService productService;
+	
+	@Autowired
+    private ResourceLoader resourceLoader;
 	
 	/**
 	 * Get the list of orders
@@ -80,5 +89,12 @@ public class OrderController {
     @GetMapping("${cms.context}/products/{productArticleId}/options")
     public List<OrderProductTO> searchProducts(@PathVariable(required = true) Long productArticleId) {
         return productService.getProductOptions(productArticleId).orElseThrow(RuntimeException::new);
+    }
+    
+    @GetMapping(
+            value = "${cms.context}/orders/{orderId}/download")
+    public @ResponseBody byte[] downloadReport(@PathVariable Long orderId) throws IOException {
+        InputStream in = resourceLoader.getResource("classpath:data/order.docx").getInputStream();
+        return IOUtils.toByteArray(in);
     }
 }

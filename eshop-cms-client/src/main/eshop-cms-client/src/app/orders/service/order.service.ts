@@ -41,7 +41,7 @@ export class OrderService {
   }
 
   getProductsForArticle(articleId: number): Observable<OrderProduct[]> {
-    return this.http.get<OrderProduct[]>(`/products/${articleId}/options`);
+    return this.http.get<OrderProduct[]>(`products/${articleId}/options`);
   }
 
   fetchOrderStatuses(): Observable<NameValue<string>[]> {
@@ -74,5 +74,21 @@ export class OrderService {
       observer.next(paidStatuses);
       observer.complete();
     });
+  }
+
+  downloadReport(orderId: number): void {
+    this.http.get(`orders/${orderId}/download`, {responseType: 'arraybuffer'})
+      .subscribe(response => this.downLoadFile(response, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'));
+  }
+
+  /**
+   * Method is use to download file.
+   * @param data - Array Buffer data
+   * @param type - type of the document.
+   */
+  downLoadFile(data: any, type: string) {
+    const blob = new Blob([data], { type: type});
+    const url = window.URL.createObjectURL(blob);
+    const pwa = window.open(url);
   }
 }
