@@ -1,8 +1,9 @@
+import { saveAs } from 'file-saver';
 import { OrderStatus } from './../model/order-status';
 import { NameValue } from './../../shared/components/table/common/name-value';
 import { Page } from './../../shared/model/page';
 import { Observable } from 'rxjs';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Order } from '../model/order';
 import { OrderDetails } from '../model/order-details';
@@ -77,18 +78,14 @@ export class OrderService {
   }
 
   downloadReport(orderId: number): void {
-    this.http.get(`orders/${orderId}/download`, {responseType: 'arraybuffer'})
-      .subscribe(response => this.downLoadFile(response, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'));
+    this.http.get(`orders/${orderId}/download`, {
+      observe: 'response',
+      responseType: 'blob'
+    }).subscribe(response => {
+      const regex = /filename="(.*?)"/;
+      const contentDisposition: string = response.headers.get('Content-Disposition');
+      saveAs(response.body, contentDisposition.match(regex)[1]);
+    });
   }
 
-  /**
-   * Method is use to download file.
-   * @param data - Array Buffer data
-   * @param type - type of the document.
-   */
-  downLoadFile(data: any, type: string) {
-    const blob = new Blob([data], { type: type});
-    const url = window.URL.createObjectURL(blob);
-    const pwa = window.open(url);
-  }
 }

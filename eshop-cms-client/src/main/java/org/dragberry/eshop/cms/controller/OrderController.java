@@ -1,10 +1,11 @@
 package org.dragberry.eshop.cms.controller;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.text.MessageFormat;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.dragberry.eshop.cms.model.OrderDetailsTO;
@@ -15,11 +16,9 @@ import org.dragberry.eshop.cms.service.ProductCmsService;
 import org.dragberry.eshop.common.PageableList;
 import org.dragberry.eshop.common.ResultTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -91,10 +90,10 @@ public class OrderController {
         return productService.getProductOptions(productArticleId).orElseThrow(RuntimeException::new);
     }
     
-    @GetMapping(
-            value = "${cms.context}/orders/{orderId}/download")
-    public @ResponseBody byte[] downloadReport(@PathVariable Long orderId) throws IOException {
-        InputStream in = resourceLoader.getResource("classpath:data/order.docx").getInputStream();
-        return IOUtils.toByteArray(in);
+    @GetMapping("${cms.context}/orders/{orderId}/download") 
+    public void downloadReport(@PathVariable Long orderId, HttpServletResponse resp) throws IOException {
+    	resp.setHeader("Content-Disposition", MessageFormat.format("attachment; filename=\"order_{0}.docx\"", orderId.toString()));
+    	resp.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+    	IOUtils.copy(resourceLoader.getResource("classpath:data/order.docx").getInputStream(), resp.getOutputStream());
     }
 }
