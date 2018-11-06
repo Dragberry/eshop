@@ -1,5 +1,7 @@
 package org.dragberry.eshop.cms.service.impl;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -25,13 +27,20 @@ import org.dragberry.eshop.dal.repo.ProductRepository;
 import org.dragberry.eshop.dal.repo.ShippingMethodRepository;
 import org.dragberry.eshop.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 @Service
 public class OrderCmsServiceImpl implements OrderCmsService {
 
+	@Autowired
+    private ResourceLoader resourceLoader;
+	
 	@Autowired
 	private OrderRepository orderRepo;
 	
@@ -176,4 +185,16 @@ public class OrderCmsServiceImpl implements OrderCmsService {
         }).collect(Collectors.toList())); 
         return order;
     }
+	
+	@Override
+	public Optional<InputStream> generateReport(Long orderId) {
+		return orderRepo.findById(orderId).map(order -> {
+			try {
+				return resourceLoader.getResource("classpath:data/order.docx").getInputStream();
+			} catch (IOException ioe) {
+				log.error("An error has occured while generating report for order=" + orderId);
+				throw new RuntimeException(ioe);
+			}
+		});
+	}
 }

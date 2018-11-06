@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.dragberry.eshop.cms.controller.exception.ResourceNotFoundException;
 import org.dragberry.eshop.cms.model.OrderDetailsTO;
 import org.dragberry.eshop.cms.model.OrderProductTO;
 import org.dragberry.eshop.cms.model.OrderTO;
@@ -16,7 +17,6 @@ import org.dragberry.eshop.cms.service.ProductCmsService;
 import org.dragberry.eshop.common.PageableList;
 import org.dragberry.eshop.common.ResultTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,9 +40,6 @@ public class OrderController {
 	@Autowired
     private ProductCmsService productService;
 	
-	@Autowired
-    private ResourceLoader resourceLoader;
-	
 	/**
 	 * Get the list of orders
 	 * @return
@@ -57,13 +54,13 @@ public class OrderController {
 	
 	@GetMapping("${cms.context}/orders/{id}")
 	public OrderDetailsTO getOrderDetails(@PathVariable Long id) {
-	    return orderService.getOrderDetails(id).orElseThrow(RuntimeException::new);
+	    return orderService.getOrderDetails(id).orElseThrow(ResourceNotFoundException::new);
 	}
 	
 	@PutMapping("${cms.context}/orders/{id}")
 	@ResponseBody
     public ResultTO<OrderDetailsTO> updateDetails(@PathVariable Long id, @RequestBody OrderDetailsTO order) {
-        return orderService.updateOrder(id, order).orElseThrow(RuntimeException::new);
+        return orderService.updateOrder(id, order).orElseThrow(ResourceNotFoundException::new);
     }
 
 	/**
@@ -87,13 +84,15 @@ public class OrderController {
      */
     @GetMapping("${cms.context}/products/{productArticleId}/options")
     public List<OrderProductTO> searchProducts(@PathVariable(required = true) Long productArticleId) {
-        return productService.getProductOptions(productArticleId).orElseThrow(RuntimeException::new);
+        return productService.getProductOptions(productArticleId).orElseThrow(ResourceNotFoundException::new);
     }
     
     @GetMapping("${cms.context}/orders/{orderId}/download") 
     public void downloadReport(@PathVariable Long orderId, HttpServletResponse resp) throws IOException {
     	resp.setHeader("Content-Disposition", MessageFormat.format("attachment; filename=\"order_{0}.docx\"", orderId.toString()));
     	resp.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-    	IOUtils.copy(resourceLoader.getResource("classpath:data/order.docx").getInputStream(), resp.getOutputStream());
+    	IOUtils.copy(
+    			orderService.generateReport(orderId).orElseThrow(ResourceNotFoundException::new),
+    			resp.getOutputStream());
     }
 }

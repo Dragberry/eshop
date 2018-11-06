@@ -1,5 +1,6 @@
 package org.dragberry.eshop.cms.service;
 
+import java.io.InputStream;
 import java.util.Map;
 import java.util.Optional;
 
@@ -16,5 +17,7 @@ public interface OrderCmsService {
 	Optional<OrderDetailsTO> getOrderDetails(Long id);
 
     Optional<ResultTO<OrderDetailsTO>> updateOrder(Long id, OrderDetailsTO order);
+
+	Optional<InputStream> generateReport(Long orderId);
 
 }
