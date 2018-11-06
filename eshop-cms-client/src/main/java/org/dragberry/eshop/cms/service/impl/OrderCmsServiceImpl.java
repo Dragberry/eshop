@@ -6,9 +6,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.dragberry.eshop.cms.mapper.OrderProductMapper;
 import org.dragberry.eshop.cms.model.OrderDetailsTO;
 import org.dragberry.eshop.cms.model.OrderItemTO;
-import org.dragberry.eshop.cms.model.OrderProductTO;
 import org.dragberry.eshop.cms.model.OrderTO;
 import org.dragberry.eshop.cms.service.OrderCmsService;
 import org.dragberry.eshop.common.IssueTO;
@@ -19,14 +19,11 @@ import org.dragberry.eshop.common.Results;
 import org.dragberry.eshop.dal.dto.OrderDTO;
 import org.dragberry.eshop.dal.entity.Order;
 import org.dragberry.eshop.dal.entity.OrderItem;
-import org.dragberry.eshop.dal.entity.Product;
-import org.dragberry.eshop.dal.entity.ProductArticle;
 import org.dragberry.eshop.dal.repo.OrderRepository;
 import org.dragberry.eshop.dal.repo.PaymentMethodRepository;
 import org.dragberry.eshop.dal.repo.ProductRepository;
 import org.dragberry.eshop.dal.repo.ShippingMethodRepository;
 import org.dragberry.eshop.service.ImageService;
-import org.dragberry.eshop.utils.ProductTitleBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -115,6 +112,11 @@ public class OrderCmsServiceImpl implements OrderCmsService {
         	                itemEntity.setQuantity(item.getQuantity());
         	                itemEntity.setTotalAmount(item.getTotalAmount());
         	                itemEntity.setVersion(item.getVersion());
+        	                if (!itemEntity.getProduct().getEntityKey().equals(item.getProduct().getProductId())) {
+            	                productRepo.findById(item.getProduct().getProductId())
+                                    .ifPresentOrElse(itemEntity::setProduct,
+                                        () -> issues.add(Issues.error("orders.product.invalid")));
+        	                }
         	                return itemEntity;
         	            })
         	            .orElseGet(() -> {
@@ -169,19 +171,7 @@ public class OrderCmsServiceImpl implements OrderCmsService {
             itemTO.setQuantity(item.getQuantity());
             itemTO.setTotalAmount(item.getTotalAmount());
             itemTO.setVersion(item.getVersion());
-            OrderProductTO productTO = new OrderProductTO();
-            Product product = item.getProduct();
-            productTO.setProductId(product.getEntityKey());
-            ProductArticle productArticle = product.getProductArticle();
-			productTO.setProductArticleId(productArticle.getEntityKey());
-            productTO.setArticle(productArticle.getArticle());
-            productTO.setMainImage(imageService.findMainImage(productArticle.getEntityKey(), productArticle.getArticle()));
-            productTO.setPrice(product.getPrice());
-            productTO.setActualPrice(product.getActualPrice());
-            productTO.setReference(productArticle.getReference());
-            productTO.setTitle(productArticle.getTitle());
-            productTO.setOptionsTitle(ProductTitleBuilder.buildOptionsTitle(product));
-            itemTO.setProduct(productTO);
+            itemTO.setProduct(OrderProductMapper.map(item.getProduct(), imageService::findMainImage));
             return itemTO;
         }).collect(Collectors.toList())); 
         return order;

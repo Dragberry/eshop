@@ -40,13 +40,8 @@ export class OrderService {
     });
   }
 
-  getProductsForArticle(articleId: number): Observable<Page<OrderProduct>> {
-    return this.http.get<Page<OrderProduct>>(`/product-article/${articleId}/products`, {
-      params: new HttpParams()
-        .append('articleId', articleId.toString())
-        .append('pageSize', '-1')
-        .append('pageNumber', '1')
-    });
+  getProductsForArticle(articleId: number): Observable<OrderProduct[]> {
+    return this.http.get<OrderProduct[]>(`/products/${articleId}/options`);
   }
 
   fetchOrderStatuses(): Observable<NameValue<string>[]> {

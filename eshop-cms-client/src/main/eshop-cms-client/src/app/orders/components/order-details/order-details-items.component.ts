@@ -2,7 +2,18 @@ import { ConfirmationModalComponent } from 'src/app/shared/components/confirmati
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { OrderItem } from './../../model/order-item';
 import { OrderDetails } from './../../model/order-details';
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, SimpleChange, ViewChild } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnChanges,
+  SimpleChanges,
+  SimpleChange,
+  ViewChild,
+  ViewChildren,
+  QueryList
+} from '@angular/core';
 import { ShippingMethod } from '../../model/shipping-method';
 import { BsDropdownDirective } from 'ngx-bootstrap/dropdown';
 import { OrderProduct } from '../../model/order-product';
@@ -17,6 +28,9 @@ export class OrderDetailsItemsComponent implements OnChanges {
 
   @ViewChild('addOrderItemOptions')
   addOrderItemOptions: BsDropdownDirective;
+
+  @ViewChildren('changeProductOption')
+  changeProductOption: QueryList<BsDropdownDirective>;
 
   confirmationModalRef: BsModalRef;
 
@@ -38,6 +52,7 @@ export class OrderDetailsItemsComponent implements OnChanges {
   searchProductsDelay: any;
   productSearchQuery: string;
   suggestedProductsList: OrderProduct[];
+  suggestedProductsOptions: OrderProduct[];
 
   @Output()
   orderEdited: EventEmitter<OrderDetails> = new EventEmitter();
@@ -149,9 +164,9 @@ export class OrderDetailsItemsComponent implements OnChanges {
       this.order.items.push({
         id: null,
         product: product,
-        price: product.price,
+        price: product.actualPrice || product.price,
         quantity: 1,
-        totalAmount: product.price,
+        totalAmount: product.actualPrice || product.price,
         version: 0
       });
     }
@@ -178,5 +193,22 @@ export class OrderDetailsItemsComponent implements OnChanges {
         });
       }
     }, 300);
+  }
+
+  loadProductOptions(product: OrderProduct): void {
+    this.suggestedProductsOptions = [];
+    this.orderService.getProductsForArticle(product.productArticleId).subscribe(result => {
+      this.suggestedProductsOptions = result.filter(option => {
+        return this.order.items.find(item => item.product.productId === option.productId) == null;
+      });
+    });
+  }
+
+  confirmChangingProduct(item: OrderItem, product: OrderProduct): void {
+    item.product = product;
+    item.price = product.actualPrice || product.price;
+    item.totalAmount = item.price * item.quantity;
+    this.calculateTotalAmount();
+    this.orderEdited.emit(this.order);
   }
 }

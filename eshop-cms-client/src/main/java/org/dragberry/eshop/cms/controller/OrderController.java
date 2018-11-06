@@ -1,5 +1,7 @@
 package org.dragberry.eshop.cms.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.dragberry.eshop.cms.model.OrderDetailsTO;
@@ -39,8 +41,8 @@ public class OrderController {
 	 */
 	@GetMapping("${cms.context}/orders")
 	public PageableList<OrderTO> getOrders(
-	        @RequestParam(required = true) int pageNumber,
-	        @RequestParam(required = true) int pageSize,
+	        @RequestParam(required = true) Integer pageNumber,
+	        @RequestParam(required = true) Integer pageSize,
 	        HttpServletRequest request) {
 		return orderService.getOrders(PageRequest.of(pageNumber - 1, pageSize), request.getParameterMap());
 	}
@@ -62,9 +64,21 @@ public class OrderController {
      */
     @GetMapping("${cms.context}/products/search")
     public PageableList<OrderProductTO> searchProducts(
-            @RequestParam(required = true) int pageNumber,
-            @RequestParam(required = true) int pageSize,
+            @RequestParam(required = true) Integer pageNumber,
+            @RequestParam(required = true) Integer pageSize,
             @RequestParam(required = true) String query) {
         return productService.searchProducts(PageRequest.of(pageNumber - 1, pageSize, Sort.by("entityKey")), request.getParameterMap());
+    }
+    
+    /**
+     * Get the available product options for the given article
+     * @param pageNumber
+     * @param pageSize
+     * @param query
+     * @return
+     */
+    @GetMapping("${cms.context}/products/{productArticleId}/options")
+    public List<OrderProductTO> searchProducts(@PathVariable(required = true) Long productArticleId) {
+        return productService.getProductOptions(productArticleId).orElseThrow(RuntimeException::new);
     }
 }

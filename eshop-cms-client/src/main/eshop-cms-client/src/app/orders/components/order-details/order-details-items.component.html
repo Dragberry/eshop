@@ -94,8 +94,55 @@
             src="{{'/images/' + item.product.productArticleId + '/' + item.product.article + '/' + item.product.mainImage}}">
         </td>
         <td class="align-middle">
-          <span class="d-block">{{item.product.title}}</span>
-          <span *ngIf="item.product.optionsTitle" class="d-block font-italic small">{{item.product.optionsTitle}}</span>
+          <div class="d-block">{{item.product.title}}</div>
+          <div *ngIf="item.product.optionsTitle" class="d-block font-italic small">
+            <div dropdown class="dropdown d-inline">
+              <button dropdownToggle
+                (click)='loadProductOptions(item.product)'
+                class="btn btn-link btn-sm p-0"
+                type="button"
+                aria-haspopup="true"
+                aria-expanded="false">
+                {{item.product.optionsTitle}}
+              </button>
+              <div *dropdownMenu
+                class="dropdown-menu dropdown-menu-right suggested-products" role="menu">
+                <div class="list-group">
+                  <div *ngIf="!suggestedProductsOptions || suggestedProductsOptions.length == 0"
+                    class="list-group-item list-group-item-action">
+                    <div class="row suggested-product">
+                      <div class="col-12 text-justify">
+                        <span>{{'common.noResults' | translate}}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div *ngFor="let product of suggestedProductsOptions"
+                    class="list-group-item list-group-item-action"
+                    (click)="confirmChangingProduct(item, product)">
+                    <div class="row small suggested-product">
+                      <div class="col-12">
+                        <span class="d-block font-italic font-weight-bold">
+                          {{product.optionsTitle}}
+                        </span>
+                      </div>
+                      <div class="col-12 text-right">
+                        <ng-container
+                          *ngIf="product.actualPrice; then actualPriceExists; else actualPriceDoesntExist">
+                        </ng-container>
+                        <ng-template #actualPriceExists>
+                          <span class="d-block">{{product.actualPrice}} Руб.</span>
+                          <span class="d-block small"><del>{{product.price}} Руб.</del></span>
+                        </ng-template>
+                        <ng-template #actualPriceDoesntExist>
+                          <span class="d-block">{{product.price}} Руб.</span>
+                        </ng-template>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           <span class="d-block font-weight-bold small">{{'common.article' | translate}}: {{item.product.article}}</span>
         </td>
         <td class="align-middle text-right text-nowrap">
