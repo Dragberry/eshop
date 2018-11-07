@@ -1,3 +1,4 @@
+import { OrderCreateComponent } from './components/order-details/order-create.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from '../core/auth/auth.guard';
@@ -10,6 +11,11 @@ import { OrderDetailsComponent } from './components/order-details/order-details.
             path: 'list',
             component: OrderListComponent,
             canActivate: [AuthGuard]
+        },
+        {
+          path: 'new',
+          component: OrderCreateComponent,
+          canActivate: [AuthGuard]
         },
         {
             path: 'details/:id',

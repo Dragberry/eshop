@@ -9,6 +9,7 @@ import { OrderStatusDirective } from './directives/order-status.directive';
 import { OrderService } from './service/order.service';
 import { ShippingService } from './service/shipping.service';
 import { PaymentService } from './service/payment.service';
+import { OrderCreateComponent } from './components/order-details/order-create.component';
 
 @NgModule({
   imports: [
@@ -17,6 +18,7 @@ import { PaymentService } from './service/payment.service';
     OrdersRoutingModule
   ],
   declarations: [
+    OrderCreateComponent,
     OrderListComponent,
     OrderDetailsComponent,
     OrderDetailsItemsComponent,

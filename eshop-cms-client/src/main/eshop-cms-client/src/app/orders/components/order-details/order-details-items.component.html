@@ -146,13 +146,13 @@
           <span class="d-block font-weight-bold small">{{'common.article' | translate}}: {{item.product.article}}</span>
         </td>
         <td class="align-middle text-right text-nowrap">
-          <span>{{item.price}}</span>
+          <span>{{item.price}} Руб.</span>
         </td>
         <td class="align-middle text-right text-nowrap">
           <span>{{item.quantity}}</span>
         </td>
         <td class="align-middle text-right text-nowrap">
-          <span>{{item.totalAmount}}</span>
+          <span>{{item.totalAmount}} Руб.</span>
         </td>
         <td class="align-middle text-center">
           <div class="btn-group btn-group-justified">
@@ -227,17 +227,19 @@
           [(ngModel)]="selectedShippingMethod"
           (change)="onShippingMethodChanged()">
           <option *ngFor="let sm of shippingMethods" [ngValue]="sm">
-            {{sm.name}} - {{sm.cost}}
+            {{sm.name}} - {{sm.cost}} Руб.
           </option>
         </select>
       </th>
       <th colspan="2"></th>
-      <th class="align-middle text-right text-nowrap">{{selectedShippingMethod.cost}}</th>
+      <th class="align-middle text-right text-nowrap">
+        <span *ngIf="selectedShippingMethod">{{selectedShippingMethod.cost}} Руб.</span>
+      </th>
       <th colspan="2"></th>
     </tr>
     <tr>
       <th colspan="5" class="align-middle text-right text-nowrap">{{'common.total' | translate}}: </th>
-      <th class="align-middle text-right text-nowrap">{{order.totalAmount}}</th>
+      <th class="align-middle text-right text-nowrap">{{order.totalAmount}} Руб.</th>
       <th colspan="2"></th>
     </tr>
   </tfoot>

@@ -1,6 +1,10 @@
-<h1>Orders</h1>
+<h1>{{'orders.titles.list' | translate}}</h1>
 <div class="row">
     <div class="col-12">
+      <a routerLink="/orders/new" class="btn btn-primary mr-2">
+        <span class="fa fa-plus mr-1"></span>
+        <span>{{'common.newOrder' | translate}}</span>
+      </a>
       <button type="button" class="btn btn-secondary" (click)=resetAll()>
         {{'common.resetAll' | translate}}
       </button>

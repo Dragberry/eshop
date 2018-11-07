@@ -1,27 +1,18 @@
-import { ShippingMethod } from './../../model/shipping-method';
-import { PaymentMethod } from './../../model/payment-method';
 import { PaymentService } from './../../service/payment.service';
-import { NameValue } from './../../../shared/components/table/common/name-value';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { switchMap, map } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 import { OrderService } from '../../service/order.service';
 import { OrderDetails } from '../../model/order-details';
 import { ShippingService } from '../../service/shipping.service';
-import { forkJoin } from 'rxjs';
+import { OrderDetailsEditableComponent } from './order-details-editable.component';
 
 @Component({
   selector: 'app-order-details',
   templateUrl: './order-details.component.html'
 })
-export class OrderDetailsComponent implements OnInit {
+export class OrderDetailsComponent extends OrderDetailsEditableComponent {
 
-  orderStatuses: NameValue<string>[];
-  paidStatuses: NameValue<boolean>[];
-  paymentMethods: PaymentMethod[];
-  shippingMethods: ShippingMethod[];
-
-  order: OrderDetails;
   editedOrder: OrderDetails;
   editedOrderFields: OrderDetails;
 
@@ -29,31 +20,18 @@ export class OrderDetailsComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private orderService: OrderService,
-    private paymentService: PaymentService,
-    private shippingService: ShippingService) {}
+    protected orderService: OrderService,
+    protected paymentService: PaymentService,
+    protected shippingService: ShippingService) {
+      super(orderService, paymentService, shippingService);
+    }
 
-  ngOnInit() {
-    forkJoin(
-      this.paymentService.getAllPaymentMethods(),
-      this.shippingService.getAllShippingMethods(),
-      this.orderService.fetchOrderStatuses(),
-      this.orderService.fetchPaidStatuses())
-      .pipe(map(([paymentMethods, shippingMethods, orderStatuses, paidStatuses]) => {
-        return {
-          paymentMethods, shippingMethods, orderStatuses, paidStatuses
-        };
-      })).subscribe(data => {
-        this.paymentMethods = data.paymentMethods;
-        this.shippingMethods = data.shippingMethods;
-        this.orderStatuses = data.orderStatuses;
-        this.paidStatuses = data.paidStatuses;
-        this.route.paramMap.pipe(switchMap((params: ParamMap) => {
-          return this.orderService.getOrderDetails(params.get('id'));
-        })).subscribe(order => {
-          this.order = order;
-        });
-      });
+  fetchOrder(): void {
+    this.route.paramMap.pipe(switchMap((params: ParamMap) => {
+      return this.orderService.getOrderDetails(params.get('id'));
+    })).subscribe(order => {
+      this.order = order;
+    });
   }
 
   lockOrder(orderLocked: boolean) {

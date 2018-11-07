@@ -20,7 +20,7 @@ export class OrderDetails {
     shippingCost: number;
     totalProductAmount: number;
     totalAmount: number;
-    paid: string;
+    paid: boolean;
     status: string;
 
     items: OrderItem[];

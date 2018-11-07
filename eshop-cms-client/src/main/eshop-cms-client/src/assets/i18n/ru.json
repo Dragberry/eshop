@@ -40,6 +40,7 @@
       "id": "ID",
       "image": "Изображение",
       "isPaid": "Оплата",
+      "newOrder": "Новый заказ",
       "noResults": "Ничего не найдено",
       "order": "Заказ",
       "orderFields": "Поля заказа",
@@ -85,6 +86,11 @@
     	}
     },
     "orders": {
+        "titles": {
+          "list": "Список заказов",
+          "new": "Новый заказ на {{date}}",
+          "details": "Заказ #{{id}} на {{date}}"
+        },
         "messages": {
             "confirmRemovingOrderItem": "Вы уверены, что хотите убрать эту позицию из заказа?"
         },

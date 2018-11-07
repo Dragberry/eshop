@@ -142,7 +142,7 @@ export class OrderDetailsItemsComponent implements OnChanges {
       totalAmount += item.totalAmount;
     });
     this.order.totalProductAmount = totalAmount;
-    this.order.shippingCost = this.selectedShippingMethod.cost;
+    this.order.shippingCost = this.selectedShippingMethod ? this.selectedShippingMethod.cost : 0;
     this.order.totalAmount = this.order.totalProductAmount + this.order.shippingCost;
   }
 
