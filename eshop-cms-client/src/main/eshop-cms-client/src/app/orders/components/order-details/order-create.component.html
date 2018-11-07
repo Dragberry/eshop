@@ -42,6 +42,30 @@
             </app-order-details-items>
           </div>
         </div>
+        <div class="row">
+            <div class="col-12">
+              <app-order-details-fields-editable
+                [order]="order">
+              </app-order-details-fields-editable>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <button class="btn btn-primary" (click)="saveOrder()">
+                {{'common.save' | translate}}
+              </button>
+            </div>
+          </div>
+      </div>
+      <div class="col-4">
+        <div class="card">
+          <div class="card-header bg-dark text-white">
+            <span>{{'common.deliveryInfo' | translate}}</span>
+          </div>
+          <app-order-details-info-editable
+            [order]="order">
+          </app-order-details-info-editable>
+        </div>
       </div>
     </div>
   </ng-container>

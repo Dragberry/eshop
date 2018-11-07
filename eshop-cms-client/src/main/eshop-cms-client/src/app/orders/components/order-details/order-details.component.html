@@ -93,26 +93,9 @@
                 <span class="fa fa-times"></span>
               </button>
             </div>
-            <div class="card-body">
-              <div class="row">
-                <div class="col-3">
-                  <span class="font-weight-bold">{{'common.comment' | translate}}:</span>
-                </div>
-                <div class="col-9">
-                  <div class="form-group">
-                    <textarea id="comment" class="form-control" [(ngModel)]="editedOrderFields.comment"></textarea>
-                  </div>
-                </div>
-                <div class="col-3">
-                  <span class="font-weight-bold">{{'common.shopComment' | translate}}:</span>
-                </div>
-                <div class="col-9">
-                  <div class="form-group">
-                    <textarea id="shopComment" class="form-control" [(ngModel)]="editedOrderFields.shopComment"></textarea>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <app-order-details-fields-editable
+              [order]="editedOrderFields">
+            </app-order-details-fields-editable>
           </div>
         </div>
       </div>
@@ -179,45 +162,9 @@
           </div>
         </div>
         <div class="card-body">
-          <div class="form-group">
-            <label for="fullName">{{'common.fullName' | translate}}</label>
-            <input id="fullName" type="text" class="form-control" [(ngModel)]="editedOrder.fullName">
-          </div>
-          <div class="form-group">
-            <label for="phone">{{'common.phone' | translate}}</label>
-            <input id="phone" type="text" class="form-control" [(ngModel)]="editedOrder.phone">
-          </div>
-          <div class="form-group">
-            <label for="address">{{'common.address' | translate}}</label>
-            <textarea id="address" class="form-control" [(ngModel)]="editedOrder.address"></textarea>
-          </div>
-          <div class="row align-middle ">
-            <div class="col-12">
-                <label for="deliveryDate">{{'common.deliveryDate' | translate}}: {{'common.fromToDate' | translate}}</label>
-            </div>
-            <div class="col-6">
-              <input type="text" class="form-control" readonly="true"
-                [(ngModel)]="editedOrder.deliveryDateFrom"
-                bsDatepicker
-                [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD hh:mm:ss', containerClass: 'theme-default' }">
-                <timepicker [showMeridian]="false" [(ngModel)]="editedOrder.deliveryDateFrom"></timepicker>
-            </div>
-            <div class="col-6">
-              <input type="text" class="form-control" readonly="true"
-                [(ngModel)]="editedOrder.deliveryDateTo"
-                bsDatepicker
-                [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD hh:mm:ss', containerClass: 'theme-default' }">
-                <timepicker [showMeridian]="false" [(ngModel)]="editedOrder.deliveryDateTo"></timepicker>
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="customerComment">{{'common.customerComment' | translate}}</label>
-            <textarea id="customerComment" class="form-control" [(ngModel)]="editedOrder.customerComment"></textarea>
-          </div>
-          <div class="form-group">
-            <label for="email">{{'common.email' | translate}}</label>
-            <input id="email" type="text" class="form-control" [(ngModel)]="editedOrder.email">
-          </div>
+          <app-order-details-info-editable
+            [order]="editedOrder">
+          </app-order-details-info-editable>
         </div>
       </div>
     </div>

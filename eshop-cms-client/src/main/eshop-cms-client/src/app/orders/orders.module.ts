@@ -1,3 +1,5 @@
+import { OrderDetailsFieldsEditableComponent } from './components/order-details/order-details-fields-editable.component';
+import { OrderDetailsInfoEditableComponent } from './components/order-details/order-details-info-editable.component';
 import { OrderDetailsItemsComponent } from './components/order-details/order-details-items.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -21,6 +23,8 @@ import { OrderCreateComponent } from './components/order-details/order-create.co
     OrderCreateComponent,
     OrderListComponent,
     OrderDetailsComponent,
+    OrderDetailsFieldsEditableComponent,
+    OrderDetailsInfoEditableComponent,
     OrderDetailsItemsComponent,
     OrderStatusDirective
   ],

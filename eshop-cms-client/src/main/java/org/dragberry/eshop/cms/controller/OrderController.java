@@ -62,6 +62,12 @@ public class OrderController {
     public ResultTO<OrderDetailsTO> updateDetails(@PathVariable Long id, @RequestBody OrderDetailsTO order) {
         return orderService.updateOrder(id, order).orElseThrow(ResourceNotFoundException::new);
     }
+	
+	@PutMapping("${cms.context}/orders/new")
+	@ResponseBody
+    public ResultTO<OrderDetailsTO> createDetails(@RequestBody OrderDetailsTO order) {
+        return orderService.createOrder(order);
+    }
 
 	/**
      * Get the list of product for the given query. It is used to quick product search to add new order item to existing order

@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { ShippingService } from './../../service/shipping.service';
 import { PaymentService } from './../../service/payment.service';
 import { OrderService } from './../../service/order.service';
@@ -13,6 +14,7 @@ import { OrderStatus } from '../../model/order-status';
 export class OrderCreateComponent extends OrderDetailsEditableComponent {
 
   constructor(
+    private router: Router,
     protected orderService: OrderService,
     protected paymentService: PaymentService,
     protected shippingService: ShippingService) {
@@ -29,5 +31,15 @@ export class OrderCreateComponent extends OrderDetailsEditableComponent {
 
   updateOrder(): void {
     console.log('Order has been updated');
+  }
+
+  saveOrder(): void {
+    this.orderService.createOrder(this.order).subscribe(result => {
+      if (result.issues && result.issues.length > 0) {
+        console.log(result.issues);
+      } else {
+        this.router.navigate(['/orders/list']);
+      }
+    });
   }
 }

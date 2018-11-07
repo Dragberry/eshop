@@ -1,0 +1,43 @@
+<div class="card-body">
+  <ng-container *ngIf="order">
+    <div class="form-group">
+      <label for="fullName">{{'common.fullName' | translate}}</label>
+      <input id="fullName" type="text" class="form-control" [(ngModel)]="order.fullName">
+    </div>
+    <div class="form-group">
+      <label for="phone">{{'common.phone' | translate}}</label>
+      <input id="phone" type="text" class="form-control" [(ngModel)]="order.phone">
+    </div>
+    <div class="form-group">
+      <label for="address">{{'common.address' | translate}}</label>
+      <textarea id="address" class="form-control" [(ngModel)]="order.address"></textarea>
+    </div>
+    <div class="row align-middle ">
+      <div class="col-12">
+          <label for="deliveryDate">{{'common.deliveryDate' | translate}}: {{'common.fromToDate' | translate}}</label>
+      </div>
+      <div class="col-6">
+        <input type="text" class="form-control" readonly="true"
+          [(ngModel)]="order.deliveryDateFrom"
+          bsDatepicker
+          [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD hh:mm:ss', containerClass: 'theme-default' }">
+          <timepicker [showMeridian]="false" [(ngModel)]="order.deliveryDateFrom"></timepicker>
+      </div>
+      <div class="col-6">
+        <input type="text" class="form-control" readonly="true"
+          [(ngModel)]="order.deliveryDateTo"
+          bsDatepicker
+          [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD hh:mm:ss', containerClass: 'theme-default' }">
+          <timepicker [showMeridian]="false" [(ngModel)]="order.deliveryDateTo"></timepicker>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="customerComment">{{'common.customerComment' | translate}}</label>
+      <textarea id="customerComment" class="form-control" [(ngModel)]="order.customerComment"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="email">{{'common.email' | translate}}</label>
+      <input id="email" type="text" class="form-control" [(ngModel)]="order.email">
+    </div>
+  </ng-container>
+</div>

@@ -32,6 +32,10 @@ export class OrderService {
     return this.http.put<Result<OrderDetails>>(`${ORDERS_URL}/${order.id}`, order);
   }
 
+  createOrder(order: OrderDetails): Observable<Result<OrderDetails>> {
+    return this.http.put<Result<OrderDetails>>(`${ORDERS_URL}/new`, order);
+  }
+
   searchProducts(query: string): Observable<Page<OrderProduct>> {
     return this.http.get<Page<OrderProduct>>(`products/search`, {
       params: new HttpParams()

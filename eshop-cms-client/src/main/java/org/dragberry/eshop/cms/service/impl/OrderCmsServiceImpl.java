@@ -2,6 +2,7 @@ package org.dragberry.eshop.cms.service.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -86,9 +87,9 @@ public class OrderCmsServiceImpl implements OrderCmsService {
 	}
 
 	@Override
-	public Optional<ResultTO<OrderDetailsTO>> updateOrder(Long id, OrderDetailsTO order) {
+	public Optional<ResultTO<OrderDetailsTO>> updateOrder(Long orderId, OrderDetailsTO order) {
 	    List<IssueTO> issues = new ArrayList<>();
-	    return orderRepo.findById(id).map(entity -> {
+	    return orderRepo.findById(orderId).map(entity -> {
 	        entity.setVersion(order.getVersion());
 	        entity.setPhone(order.getPhone());
 	        entity.setFullName(order.getFullName());
@@ -100,13 +101,18 @@ public class OrderCmsServiceImpl implements OrderCmsService {
 	        entity.setDeliveryDateFrom(order.getDeliveryDateFrom());
 	        entity.setDeliveryDateTo(order.getDeliveryDateTo());
 	        
-	        paymentMethodRepo.findById(order.getPaymentMethodId())
-	            .ifPresentOrElse(entity::setPaymentMethod,
-	                    () -> issues.add(Issues.error("paymentMethodInvalid")));
-	        shippingMethodRepo.findById(order.getShippingMethodId())
-	            .ifPresentOrElse(entity::setShippingMethod,
-	                    () -> issues.add(Issues.error("shippingMethodInvalid")));
+	        Optional.ofNullable(order.getPaymentMethodId())
+	        .flatMap(id -> {
+	        	return paymentMethodRepo.findById(order.getPaymentMethodId());
+	        }).ifPresentOrElse(entity::setPaymentMethod,
+	                () -> issues.add(Issues.error("paymentMethodInvalid")));
 
+	        Optional.ofNullable(order.getShippingMethodId())
+	        .flatMap(Id -> {
+	        	return shippingMethodRepo.findById(order.getShippingMethodId());
+	        }).ifPresentOrElse(entity::setShippingMethod,
+		                () -> issues.add(Issues.error("shippingMethodInvalid")));
+		
 	        entity.setShippingCost(order.getShippingCost());
 	        entity.setTotalProductAmount(order.getTotalProductAmount());
 	        entity.setTotalAmount(order.getTotalAmount());
@@ -149,6 +155,55 @@ public class OrderCmsServiceImpl implements OrderCmsService {
 	    });
 	}
 	
+	@Override
+	public ResultTO<OrderDetailsTO> createOrder(OrderDetailsTO order) {
+		List<IssueTO> issues = new ArrayList<>();
+		Order entity = new Order();
+		entity.setOrderDate(LocalDateTime.now());
+		
+		entity.setPhone(order.getPhone());
+        entity.setFullName(order.getFullName());
+        entity.setAddress(order.getAddress());
+        entity.setEmail(order.getEmail());
+        entity.setComment(order.getComment());
+        entity.setCustomerComment(order.getCustomerComment());
+        entity.setShopComment(order.getShopComment());
+        entity.setDeliveryDateFrom(order.getDeliveryDateFrom());
+        entity.setDeliveryDateTo(order.getDeliveryDateTo());
+        
+        Optional.ofNullable(order.getPaymentMethodId())
+        .flatMap(id -> {
+        	return paymentMethodRepo.findById(order.getPaymentMethodId());
+        }).ifPresentOrElse(entity::setPaymentMethod,
+                () -> issues.add(Issues.error("paymentMethodInvalid")));
+
+        Optional.ofNullable(order.getShippingMethodId())
+        .flatMap(Id -> {
+        	return shippingMethodRepo.findById(order.getShippingMethodId());
+        }).ifPresentOrElse(entity::setShippingMethod,
+	                () -> issues.add(Issues.error("shippingMethodInvalid")));
+	
+	    entity.setShippingCost(order.getShippingCost());
+	    entity.setTotalProductAmount(order.getTotalProductAmount());
+	    entity.setTotalAmount(order.getTotalAmount());
+	    entity.setPaid(order.getPaid());
+	    entity.setOrderStatus(order.getStatus());
+	    
+	    entity.setItems(order.getItems().stream().map(item -> {
+	    	OrderItem newItemEntity = new OrderItem();
+            newItemEntity.setOrder(entity);
+            newItemEntity.setPrice(item.getPrice());
+            newItemEntity.setQuantity(item.getQuantity());
+            newItemEntity.setTotalAmount(item.getTotalAmount());
+            productRepo.findById(item.getProduct().getProductId())
+                .ifPresentOrElse(newItemEntity::setProduct,
+                        () -> issues.add(Issues.error("orders.product.invalid")));
+            return newItemEntity;
+	    }).collect(Collectors.toList()));
+	    
+		return Results.create(mapDetails(issues.isEmpty() ? orderRepo.save(entity) : entity), issues);
+	}
+	
 	private OrderDetailsTO mapDetails(Order entity) {
         OrderDetailsTO order = new OrderDetailsTO();
         order.setId(entity.getEntityKey());
@@ -165,8 +220,8 @@ public class OrderCmsServiceImpl implements OrderCmsService {
         order.setDeliveryDateFrom(entity.getDeliveryDateFrom());
         order.setDeliveryDateTo(entity.getDeliveryDateTo());
         
-        order.setPaymentMethodId(entity.getPaymentMethod().getEntityKey());
-        order.setShippingMethodId(entity.getShippingMethod().getEntityKey());
+        order.setPaymentMethodId(entity.getPaymentMethod() != null ? entity.getPaymentMethod().getEntityKey() : null);
+        order.setShippingMethodId(entity.getShippingMethod() != null ? entity.getShippingMethod().getEntityKey() : null);
         order.setShippingCost(entity.getShippingCost());
         order.setTotalProductAmount(entity.getTotalProductAmount());
         order.setTotalAmount(entity.getTotalAmount());

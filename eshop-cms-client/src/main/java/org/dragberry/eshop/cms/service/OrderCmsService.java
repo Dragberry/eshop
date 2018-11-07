@@ -16,8 +16,10 @@ public interface OrderCmsService {
 	
 	Optional<OrderDetailsTO> getOrderDetails(Long id);
 
+	Optional<InputStream> generateReport(Long orderId);
+	
     Optional<ResultTO<OrderDetailsTO>> updateOrder(Long id, OrderDetailsTO order);
 
-	Optional<InputStream> generateReport(Long orderId);
-
+    ResultTO<OrderDetailsTO> createOrder(OrderDetailsTO order);
+    
 }

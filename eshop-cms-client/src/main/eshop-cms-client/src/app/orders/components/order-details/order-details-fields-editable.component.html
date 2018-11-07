@@ -1,0 +1,22 @@
+<div class="card-body">
+  <ng-container *ngIf="order">
+    <div class="row">
+      <div class="col-3">
+        <span class="font-weight-bold">{{'common.comment' | translate}}:</span>
+      </div>
+      <div class="col-9">
+        <div class="form-group">
+          <textarea id="comment" class="form-control" [(ngModel)]="order.comment"></textarea>
+        </div>
+      </div>
+      <div class="col-3">
+        <span class="font-weight-bold">{{'common.shopComment' | translate}}:</span>
+      </div>
+      <div class="col-9">
+        <div class="form-group">
+          <textarea id="shopComment" class="form-control" [(ngModel)]="order.shopComment"></textarea>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>
