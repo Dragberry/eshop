@@ -34,12 +34,8 @@ export class OrderCreateComponent extends OrderDetailsEditableComponent {
   }
 
   saveOrder(): void {
-    this.orderService.createOrder(this.order).subscribe(result => {
-      if (result.issues && result.issues.length > 0) {
-        console.log(result.issues);
-      } else {
-        this.router.navigate(['/orders/list']);
-      }
-    });
+    this.orderService.createOrder(this.order)
+    .then(() => this.router.navigate(['/orders/list']))
+    .catch(error => console.log('An error has occured', error));
   }
 }

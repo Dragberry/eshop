@@ -2,6 +2,7 @@ package org.dragberry.eshop.dal.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -95,7 +96,7 @@ public class Order extends AuditableEntity {
 	private OrderStatus orderStatus;
 	
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<OrderItem> items;
+	private List<OrderItem> items = new ArrayList<>();
 	
 	@Column(name = "PAID")
 	private Boolean paid;

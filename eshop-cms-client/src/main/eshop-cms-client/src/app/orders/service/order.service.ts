@@ -1,14 +1,13 @@
-import { saveAs } from 'file-saver';
+import { HttpDelegateService } from '../../core/http/http-delegate.service';
 import { OrderStatus } from './../model/order-status';
 import { NameValue } from './../../shared/components/table/common/name-value';
 import { Page } from './../../shared/model/page';
 import { Observable } from 'rxjs';
-import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Order } from '../model/order';
 import { OrderDetails } from '../model/order-details';
 import { TranslateService } from '@ngx-translate/core';
-import { Result } from 'src/app/shared/model/result';
 import { OrderProduct } from '../model/order-product';
 
 const ORDERS_URL = 'orders';
@@ -17,36 +16,36 @@ const ORDERS_URL = 'orders';
 export class OrderService {
 
   constructor(
-    private http: HttpClient,
+    private httpService: HttpDelegateService,
     private translateService: TranslateService) {}
 
   getOrders(params: HttpParams): Observable<Page<Order>> {
-    return this.http.get<Page<Order>>(ORDERS_URL, { params: params });
+    return this.httpService.get<Page<Order>>(ORDERS_URL, { params: params });
   }
 
   getOrderDetails(id: string): Observable<OrderDetails> {
-    return this.http.get<OrderDetails>(`${ORDERS_URL}/${id}`);
+    return this.httpService.get<OrderDetails>(`${ORDERS_URL}/${id}`);
   }
 
-  updateOrder(order: OrderDetails): Observable<Result<OrderDetails>> {
-    return this.http.put<Result<OrderDetails>>(`${ORDERS_URL}/${order.id}`, order);
+  updateOrder(order: OrderDetails): Promise<OrderDetails> {
+      return this.httpService.put<OrderDetails>(`${ORDERS_URL}/${order.id}`, order);
   }
 
-  createOrder(order: OrderDetails): Observable<Result<OrderDetails>> {
-    return this.http.put<Result<OrderDetails>>(`${ORDERS_URL}/new`, order);
+  createOrder(order: OrderDetails): Promise<OrderDetails> {
+    return this.httpService.put<OrderDetails>(`${ORDERS_URL}/new`, order);
   }
 
   searchProducts(query: string): Observable<Page<OrderProduct>> {
-    return this.http.get<Page<OrderProduct>>(`products/search`, {
-      params: new HttpParams()
-        .append('query', query)
-        .append('pageSize', '20')
-        .append('pageNumber', '1')
-    });
+      return this.httpService.get<Page<OrderProduct>>(`products/search`, {
+        params: new HttpParams()
+          .append('query', query)
+          .append('pageSize', '20')
+          .append('pageNumber', '1')
+      });
   }
 
   getProductsForArticle(articleId: number): Observable<OrderProduct[]> {
-    return this.http.get<OrderProduct[]>(`products/${articleId}/options`);
+      return this.httpService.get<OrderProduct[]>(`products/${articleId}/options`);
   }
 
   fetchOrderStatuses(): Observable<NameValue<string>[]> {
@@ -82,14 +81,7 @@ export class OrderService {
   }
 
   downloadReport(orderId: number): void {
-    this.http.get(`orders/${orderId}/download`, {
-      observe: 'response',
-      responseType: 'blob'
-    }).subscribe(response => {
-      const regex = /filename="(.*?)"/;
-      const contentDisposition: string = response.headers.get('Content-Disposition');
-      saveAs(response.body, contentDisposition.match(regex)[1]);
-    });
+    this.httpService.downloadFile(`orders/${orderId}/download`);
   }
 
 }

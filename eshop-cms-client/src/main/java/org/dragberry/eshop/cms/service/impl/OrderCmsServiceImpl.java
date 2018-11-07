@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.dragberry.eshop.cms.mapper.OrderProductMapper;
 import org.dragberry.eshop.cms.model.OrderDetailsTO;
 import org.dragberry.eshop.cms.model.OrderItemTO;
@@ -119,35 +120,39 @@ public class OrderCmsServiceImpl implements OrderCmsService {
 	        entity.setPaid(order.getPaid());
 	        entity.setOrderStatus(order.getStatus());
 	        
-	        List<OrderItem> items = order.getItems().stream().map(item -> {
-	            return entity.getItems().stream()
-	                    .filter(itemEntity -> itemEntity.getEntityKey().equals(item.getId())).findFirst()
-	                    .map(itemEntity -> {
-        	                itemEntity.setPrice(item.getPrice());
-        	                itemEntity.setQuantity(item.getQuantity());
-        	                itemEntity.setTotalAmount(item.getTotalAmount());
-        	                itemEntity.setVersion(item.getVersion());
-        	                if (!itemEntity.getProduct().getEntityKey().equals(item.getProduct().getProductId())) {
-            	                productRepo.findById(item.getProduct().getProductId())
-                                    .ifPresentOrElse(itemEntity::setProduct,
-                                        () -> issues.add(Issues.error("orders.product.invalid")));
-        	                }
-        	                return itemEntity;
-        	            })
-        	            .orElseGet(() -> {
-        	                OrderItem newItemEntity = new OrderItem();
-        	                newItemEntity.setOrder(entity);
-        	                newItemEntity.setPrice(item.getPrice());
-        	                newItemEntity.setQuantity(item.getQuantity());
-        	                newItemEntity.setTotalAmount(item.getTotalAmount());
-        	                productRepo.findById(item.getProduct().getProductId())
-        	                    .ifPresentOrElse(newItemEntity::setProduct,
-        	                            () -> issues.add(Issues.error("orders.product.invalid")));
-        	                return newItemEntity;
-    	                });
-	        }).collect(Collectors.toList());
-	        entity.getItems().clear();
-	        entity.getItems().addAll(items);
+	        if (CollectionUtils.isNotEmpty(order.getItems())) {
+		        List<OrderItem> items = order.getItems().stream().map(item -> {
+		            return entity.getItems().stream()
+		                    .filter(itemEntity -> itemEntity.getEntityKey().equals(item.getId())).findFirst()
+		                    .map(itemEntity -> {
+	        	                itemEntity.setPrice(item.getPrice());
+	        	                itemEntity.setQuantity(item.getQuantity());
+	        	                itemEntity.setTotalAmount(item.getTotalAmount());
+	        	                itemEntity.setVersion(item.getVersion());
+	        	                if (!itemEntity.getProduct().getEntityKey().equals(item.getProduct().getProductId())) {
+	            	                productRepo.findById(item.getProduct().getProductId())
+	                                    .ifPresentOrElse(itemEntity::setProduct,
+	                                        () -> issues.add(Issues.error("orders.product.invalid")));
+	        	                }
+	        	                return itemEntity;
+	        	            })
+	        	            .orElseGet(() -> {
+	        	                OrderItem newItemEntity = new OrderItem();
+	        	                newItemEntity.setOrder(entity);
+	        	                newItemEntity.setPrice(item.getPrice());
+	        	                newItemEntity.setQuantity(item.getQuantity());
+	        	                newItemEntity.setTotalAmount(item.getTotalAmount());
+	        	                productRepo.findById(item.getProduct().getProductId())
+	        	                    .ifPresentOrElse(newItemEntity::setProduct,
+	        	                            () -> issues.add(Issues.error("orders.product.invalid")));
+	        	                return newItemEntity;
+	    	                });
+		        }).collect(Collectors.toList());
+		        entity.getItems().clear();
+		        entity.getItems().addAll(items);
+	        } else {
+	        	issues.add(Issues.error("orders.noItems"));
+	        }
 	        
 	        return issues.isEmpty() ? orderRepo.save(entity) : entity;
 	    }).map(entity -> {
@@ -188,18 +193,23 @@ public class OrderCmsServiceImpl implements OrderCmsService {
 	    entity.setTotalAmount(order.getTotalAmount());
 	    entity.setPaid(order.getPaid());
 	    entity.setOrderStatus(order.getStatus());
+	  
+	    if (CollectionUtils.isNotEmpty(order.getItems())) {
+	    	entity.setItems(order.getItems().stream().map(item -> {
+		    	OrderItem newItemEntity = new OrderItem();
+	            newItemEntity.setOrder(entity);
+	            newItemEntity.setPrice(item.getPrice());
+	            newItemEntity.setQuantity(item.getQuantity());
+	            newItemEntity.setTotalAmount(item.getTotalAmount());
+	            productRepo.findById(item.getProduct().getProductId())
+	                .ifPresentOrElse(newItemEntity::setProduct,
+	                        () -> issues.add(Issues.error("orders.product.invalid")));
+	            return newItemEntity;
+		    }).collect(Collectors.toList()));
+	    } else {
+	    	issues.add(Issues.error("orders.noItems"));
+	    }
 	    
-	    entity.setItems(order.getItems().stream().map(item -> {
-	    	OrderItem newItemEntity = new OrderItem();
-            newItemEntity.setOrder(entity);
-            newItemEntity.setPrice(item.getPrice());
-            newItemEntity.setQuantity(item.getQuantity());
-            newItemEntity.setTotalAmount(item.getTotalAmount());
-            productRepo.findById(item.getProduct().getProductId())
-                .ifPresentOrElse(newItemEntity::setProduct,
-                        () -> issues.add(Issues.error("orders.product.invalid")));
-            return newItemEntity;
-	    }).collect(Collectors.toList()));
 	    
 		return Results.create(mapDetails(issues.isEmpty() ? orderRepo.save(entity) : entity), issues);
 	}

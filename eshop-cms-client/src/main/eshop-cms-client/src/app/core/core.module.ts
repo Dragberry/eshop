@@ -1,3 +1,4 @@
+import { HttpDelegateService } from './http/http-delegate.service';
 import { NgModule, Optional, SkipSelf } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -76,6 +77,7 @@ export class CoreModule {
       providers: [
         AuthenticationService,
         AuthGuard,
+        HttpDelegateService,
         httpInterceptorProviders,
         NavigationService,
         TitleService

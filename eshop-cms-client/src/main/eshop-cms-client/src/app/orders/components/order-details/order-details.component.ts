@@ -95,11 +95,9 @@ export class OrderDetailsComponent extends OrderDetailsEditableComponent {
   }
 
   updateOrder(): void {
-    this.orderService.updateOrder(this.order).subscribe(result => {
-      if (!result.issues) {
-        this.order = result.value;
-      }
-    });
+    this.orderService.updateOrder(this.order)
+    .then(order => this.order = order)
+    .catch(error => console.log('An error has occured', error));
   }
 
   downloadReport(): void {
