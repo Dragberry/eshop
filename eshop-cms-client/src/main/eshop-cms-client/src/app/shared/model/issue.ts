@@ -1,6 +1,11 @@
+export enum MessageType {
+  ERROR = 'ERROR',
+  WARNING = 'WARNING'
+}
+
 export class Issue {
   errorCode: string;
   params: any[];
-  type: string;
+  type: MessageType;
   fieldId?: string;
 }

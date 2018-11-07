@@ -1,3 +1,4 @@
+import { MessageService } from './service/message.service';
 import { HttpDelegateService } from './http/http-delegate.service';
 import { NgModule, Optional, SkipSelf } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -79,6 +80,7 @@ export class CoreModule {
         AuthGuard,
         HttpDelegateService,
         httpInterceptorProviders,
+        MessageService,
         NavigationService,
         TitleService
       ]

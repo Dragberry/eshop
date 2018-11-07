@@ -4,11 +4,14 @@ import { saveAs } from 'file-saver';
 import { Result } from '../../shared/model/result';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
+import { MessageService } from '../service/message.service';
 
 @Injectable()
 export class HttpDelegateService {
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private messageService: MessageService) {}
 
   get<T>(url: string, options?: {
     params: HttpParams
@@ -22,12 +25,12 @@ export class HttpDelegateService {
     return new Promise((resolve, reject) => {
       return this.http.put<Result<T>>(url, body, options).subscribe(result => {
         if (!result || result.issues && result.issues.length > 0) {
-          console.log(result.issues);
+          this.messageService.showIssues(result.issues);
           reject(result.issues);
         }
         resolve(result.value);
       }, error => {
-        console.log(error);
+        this.messageService.showError(error);
         reject(error);
       });
     });
