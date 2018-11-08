@@ -1,17 +1,29 @@
-import { Component, OnInit } from '@angular/core';
-import { MessageService } from '../../service/message.service';
+import { MessageType } from '../../../shared/model/message';
+import { Message } from 'src/app/shared/model/message';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+
+const TYPES = new Map<string, MessageType>();
+TYPES.set('danger', MessageType.ERROR);
+TYPES.set('warning', MessageType.WARNING);
+TYPES.set('success', MessageType.SUCCESS);
+TYPES.set('info', MessageType.INFO);
 
 @Component({
     selector: 'app-messages',
     templateUrl: './messages.component.html'
 })
-export class MessagesComponent implements OnInit {
+export class MessagesComponent {
 
-    constructor(private messageService: MessageService) {}
+  @Input()
+  type: MessageType;
 
-    ngOnInit() {
-        this.messageService.subscribe(messages => {
-            console.log('MessagesComponent', messages);
-        });
-    }
+  @Input()
+  messages: Message[];
+
+  @Output()
+  cleared: EventEmitter<MessageType> = new EventEmitter();
+
+  clear(): void {
+    this.cleared.emit(TYPES.get(this.type));
+  }
 }

@@ -1,9 +1,8 @@
-<alert type="danger"  [dismissible]="true">
-    <ul>
-        <li><strong>Oh snap!</strong> Change a few things up and try submitting again.</li>
-        <li><strong>Oh snap!</strong> Change a few things up and try submitting again.</li>
-    </ul>
-</alert>
-<alert type="warning"  [dismissible]="true">
-    <strong>Oh snap!</strong> Change a few things up and try submitting again.
+<alert *ngIf="messages" [type]="type" [dismissible]="true" (onClosed)="clear()">
+  <ul *ngIf="messages.length > 1">
+    <li *ngFor="let msg of messages">{{msg.text}}</li>
+  </ul>
+  <span *ngIf="messages.length == 1">
+    {{messages[0].text}}
+  </span>
 </alert>

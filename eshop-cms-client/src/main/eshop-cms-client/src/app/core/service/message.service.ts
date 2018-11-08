@@ -8,13 +8,12 @@ export class MessageService {
 
   messages = new Map<MessageType, Message[]>();
 
-  subscriber: Subscriber<Map<MessageType, Message[]>>;
+  observer: Subscriber<Map<MessageType, Message[]>>;
   source: Observable<Map<MessageType, Message[]>>;
 
   constructor() {
-    this.source = new Observable((subscriber: Subscriber<Map<MessageType, Message[]>>) => {
-      this.subscriber = subscriber;
-      this.subscriber.next(this.messages);
+    this.source = Observable.create((observer: Subscriber<Map<MessageType, Message[]>>) => {
+      this.observer = observer;
     });
   }
 
@@ -23,19 +22,27 @@ export class MessageService {
   }
 
   showIssues(issues: Issue[]) {
+    this.clearAll();
     issues.forEach(issue => {
-      let group = this.messages.get(issue.type);
-      if (!group) {
-        group = [];
-        this.messages.set(issue.type, group);
-      }
-      group.push({text: issue.errorCode, type: issue.type});
+      this.addMessage(issue.type, issue.errorCode);
     });
-    this.subscriber.next(this.messages);
+    if (this.observer) {
+      this.observer.next(this.messages);
+    }
+  }
+
+  addMessage(type: MessageType, msg: string) {
+    let group = this.messages.get(type);
+    if (!group) {
+      group = [];
+      this.messages.set(type, group);
+    }
+    group.push({text: msg, type: type});
   }
 
   showError(error: any) {
-    console.log(error);
+    this.clearAll();
+    this.addMessage(MessageType.ERROR, `error.http.${error.status}`);
   }
 
   clearAll(): void {

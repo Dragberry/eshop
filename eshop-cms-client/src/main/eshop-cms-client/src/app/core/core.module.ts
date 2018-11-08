@@ -1,3 +1,5 @@
+import { MessagesAllComponent } from './main/messages/messages-all.component';
+import { MessagesComponent } from './main/messages/messages.component';
 import { DateService } from './service/date.service';
 import { MessageService } from './service/message.service';
 import { HttpDelegateService } from './http/http-delegate.service';
@@ -26,7 +28,6 @@ import { SideMenuComponent } from './main/side-menu/side-menu.component';
 import { MenuItemComponent } from './main/side-menu/menu-item/menu-item.component';
 import { TitleService } from './service/title.service';
 import { ModalModule } from 'ngx-bootstrap/modal';
-import { MessagesComponent } from './main/messages/messages.component';
 import { AlertModule } from 'ngx-bootstrap/alert';
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -58,6 +59,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     LoginComponent,
     MainComponent,
     MessagesComponent,
+    MessagesAllComponent,
     BreadcrumbComponent,
     SideMenuComponent,
     MenuItemComponent

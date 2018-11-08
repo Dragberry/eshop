@@ -1,0 +1,16 @@
+<app-messages [messages]='errors'
+  type='danger'
+  (cleared)="clear($event)">
+</app-messages>
+<app-messages [messages]='warnings'
+  type='warning'
+  (cleared)="clear($event)">
+</app-messages>
+<app-messages [messages]='success'
+  type='success'
+  (cleared)="clear($event)">
+</app-messages>
+<app-messages [messages]='infos'
+  type='info'
+  (cleared)="clear($event)">
+</app-messages>
