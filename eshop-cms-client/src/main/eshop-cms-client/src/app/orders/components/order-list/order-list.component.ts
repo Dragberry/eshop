@@ -8,6 +8,7 @@ import { DataTableHolder } from '../../../shared/components/table/data-table-hol
 import { Observable } from 'rxjs';
 import { ShippingService } from '../../service/shipping.service';
 import { PaymentService } from '../../service/payment.service';
+import { TitleService } from 'src/app/core/service/title.service';
 
 @Component({
   selector: 'app-order-list',
@@ -23,11 +24,13 @@ export class OrderListComponent extends DataTableHolder<Order> implements OnInit
 
   constructor(private orderService: OrderService,
     private paymentService: PaymentService,
-    private shippingService: ShippingService) {
+    private shippingService: ShippingService,
+    private titleService: TitleService) {
     super();
   }
 
   ngOnInit() {
+    this.titleService.setTitleKey('orders.titles.list');
     this.fetchPaymentMethods();
     this.fetchShippingMethods();
     this.fetchOrderStatuses();

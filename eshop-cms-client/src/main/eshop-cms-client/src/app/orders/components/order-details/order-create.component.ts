@@ -1,3 +1,4 @@
+import { TitleService } from 'src/app/core/service/title.service';
 import { Router } from '@angular/router';
 import { ShippingService } from './../../service/shipping.service';
 import { PaymentService } from './../../service/payment.service';
@@ -6,6 +7,7 @@ import { Component } from '@angular/core';
 import { OrderDetailsEditableComponent } from './order-details-editable.component';
 import { OrderDetails } from '../../model/order-details';
 import { OrderStatus } from '../../model/order-status';
+import { DateService } from 'src/app/core/service/date.service';
 
 @Component({
   selector: 'app-order-create',
@@ -14,10 +16,12 @@ import { OrderStatus } from '../../model/order-status';
 export class OrderCreateComponent extends OrderDetailsEditableComponent {
 
   constructor(
+    private dateService: DateService,
     private router: Router,
     protected orderService: OrderService,
     protected paymentService: PaymentService,
-    protected shippingService: ShippingService) {
+    protected shippingService: ShippingService,
+    private titleService: TitleService) {
     super(orderService, paymentService, shippingService);
   }
 
@@ -27,6 +31,9 @@ export class OrderCreateComponent extends OrderDetailsEditableComponent {
     this.order.status = OrderStatus.NEW;
     this.order.paid = false;
     this.order.orderDate = new Date();
+    this.titleService.setTitleKey('orders.titles.new', {
+      date: this.dateService.formatDate(this.order.orderDate)
+    });
   }
 
   updateOrder(): void {

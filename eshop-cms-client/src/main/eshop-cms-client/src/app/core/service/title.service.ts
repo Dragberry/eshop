@@ -18,7 +18,7 @@ export class TitleService {
     this.subscriber.next(title);
   }
 
-  setTitleKey(titleKey: string): void {
-    this.translate.get(titleKey).subscribe(str => this.subscriber.next(str));
+  setTitleKey(titleKey: string, params?: Object): void {
+    this.translate.get(titleKey, params).subscribe(str => this.subscriber.next(str));
   }
 }

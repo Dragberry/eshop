@@ -1,3 +1,4 @@
+import { DateService } from './service/date.service';
 import { MessageService } from './service/message.service';
 import { HttpDelegateService } from './http/http-delegate.service';
 import { NgModule, Optional, SkipSelf } from '@angular/core';
@@ -82,6 +83,7 @@ export class CoreModule {
       providers: [
         AuthenticationService,
         AuthGuard,
+        DateService,
         HttpDelegateService,
         httpInterceptorProviders,
         MessageService,

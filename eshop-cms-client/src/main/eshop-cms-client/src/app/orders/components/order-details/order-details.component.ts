@@ -1,3 +1,5 @@
+import { DateService } from './../../../core/service/date.service';
+import { TitleService } from './../../../core/service/title.service';
 import { PaymentService } from './../../service/payment.service';
 import { Component } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
@@ -20,9 +22,11 @@ export class OrderDetailsComponent extends OrderDetailsEditableComponent {
 
   constructor(
     private route: ActivatedRoute,
+    private dateService: DateService,
     protected orderService: OrderService,
     protected paymentService: PaymentService,
-    protected shippingService: ShippingService) {
+    protected shippingService: ShippingService,
+    private titleService: TitleService) {
       super(orderService, paymentService, shippingService);
     }
 
@@ -31,6 +35,10 @@ export class OrderDetailsComponent extends OrderDetailsEditableComponent {
       return this.orderService.getOrderDetails(params.get('id'));
     })).subscribe(order => {
       this.order = order;
+      this.titleService.setTitleKey('orders.titles.details', {
+        id: order.id,
+        date: this.dateService.formatDate(order.orderDate)
+      });
     });
   }
 
