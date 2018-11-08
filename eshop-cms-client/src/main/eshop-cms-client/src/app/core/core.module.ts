@@ -25,6 +25,8 @@ import { SideMenuComponent } from './main/side-menu/side-menu.component';
 import { MenuItemComponent } from './main/side-menu/menu-item/menu-item.component';
 import { TitleService } from './service/title.service';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { MessagesComponent } from './main/messages/messages.component';
+import { AlertModule } from 'ngx-bootstrap/alert';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
@@ -43,6 +45,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         deps: [HttpClient]
       }
     }),
+    AlertModule.forRoot(),
     BsDropdownModule.forRoot(),
     BsDatepickerModule.forRoot(),
     CollapseModule.forRoot(),
@@ -53,6 +56,7 @@ export function HttpLoaderFactory(http: HttpClient) {
   declarations: [
     LoginComponent,
     MainComponent,
+    MessagesComponent,
     BreadcrumbComponent,
     SideMenuComponent,
     MenuItemComponent

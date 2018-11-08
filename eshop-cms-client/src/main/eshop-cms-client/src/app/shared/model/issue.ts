@@ -1,7 +1,4 @@
-export enum MessageType {
-  ERROR = 'ERROR',
-  WARNING = 'WARNING'
-}
+import { MessageType } from './message';
 
 export class Issue {
   errorCode: string;
