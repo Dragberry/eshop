@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ProductCmsServiceImpl implements ProductCmsService {
-
+    
     @Autowired
     private ProductArticleRepository productArticleRepo;
     

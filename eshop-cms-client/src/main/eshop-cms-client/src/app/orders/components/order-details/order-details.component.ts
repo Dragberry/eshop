@@ -8,6 +8,8 @@ import { OrderService } from '../../service/order.service';
 import { OrderDetails } from '../../model/order-details';
 import { ShippingService } from '../../service/shipping.service';
 import { OrderDetailsEditableComponent } from './order-details-editable.component';
+import { MessageService } from 'src/app/core/service/message.service';
+import { MessageType } from 'src/app/shared/model/message';
 
 @Component({
   selector: 'app-order-details',
@@ -23,6 +25,7 @@ export class OrderDetailsComponent extends OrderDetailsEditableComponent {
   constructor(
     private route: ActivatedRoute,
     private dateService: DateService,
+    private messageService: MessageService,
     protected orderService: OrderService,
     protected paymentService: PaymentService,
     protected shippingService: ShippingService,
@@ -104,7 +107,10 @@ export class OrderDetailsComponent extends OrderDetailsEditableComponent {
 
   updateOrder(): void {
     this.orderService.updateOrder(this.order)
-    .then(order => this.order = order)
+    .then(order => {
+      this.order = order;
+      this.messageService.showMessage(MessageType.SUCCESS, 'orders.messages.successUpdated', {order: order.id});
+    })
     .catch(error => console.log('An error has occured', error));
   }
 

@@ -40,6 +40,13 @@ import lombok.extern.log4j.Log4j2;
 @Service
 public class OrderCmsServiceImpl implements OrderCmsService {
 
+    private static final class ErrorCodes {
+        public static final String PAYMENT_METHOD_INVALID = "orders.validation.paymentMethodInvalid";
+        public static final String SHIPPING_METHOD_INVALID = "orders.validation.shippingMethodInvalid";
+        public static final String NO_ITEMS = "orders.validation.noItems";
+        public static final String PRODUCT_INVALID = "orders.validation.productInvalid";
+    }
+    
 	@Autowired
     private ResourceLoader resourceLoader;
 	
@@ -106,13 +113,13 @@ public class OrderCmsServiceImpl implements OrderCmsService {
 	        .flatMap(id -> {
 	        	return paymentMethodRepo.findById(order.getPaymentMethodId());
 	        }).ifPresentOrElse(entity::setPaymentMethod,
-	                () -> issues.add(Issues.error("paymentMethodInvalid")));
+	                () -> issues.add(Issues.error(ErrorCodes.PAYMENT_METHOD_INVALID)));
 
 	        Optional.ofNullable(order.getShippingMethodId())
 	        .flatMap(Id -> {
 	        	return shippingMethodRepo.findById(order.getShippingMethodId());
 	        }).ifPresentOrElse(entity::setShippingMethod,
-		                () -> issues.add(Issues.error("shippingMethodInvalid")));
+		                () -> issues.add(Issues.error(ErrorCodes.SHIPPING_METHOD_INVALID)));
 		
 	        entity.setShippingCost(order.getShippingCost());
 	        entity.setTotalProductAmount(order.getTotalProductAmount());
@@ -132,7 +139,7 @@ public class OrderCmsServiceImpl implements OrderCmsService {
 	        	                if (!itemEntity.getProduct().getEntityKey().equals(item.getProduct().getProductId())) {
 	            	                productRepo.findById(item.getProduct().getProductId())
 	                                    .ifPresentOrElse(itemEntity::setProduct,
-	                                        () -> issues.add(Issues.error("orders.product.invalid")));
+	                                        () -> issues.add(Issues.error(ErrorCodes.PRODUCT_INVALID)));
 	        	                }
 	        	                return itemEntity;
 	        	            })
@@ -144,14 +151,14 @@ public class OrderCmsServiceImpl implements OrderCmsService {
 	        	                newItemEntity.setTotalAmount(item.getTotalAmount());
 	        	                productRepo.findById(item.getProduct().getProductId())
 	        	                    .ifPresentOrElse(newItemEntity::setProduct,
-	        	                            () -> issues.add(Issues.error("orders.product.invalid")));
+	        	                            () -> issues.add(Issues.error(ErrorCodes.PRODUCT_INVALID)));
 	        	                return newItemEntity;
 	    	                });
 		        }).collect(Collectors.toList());
 		        entity.getItems().clear();
 		        entity.getItems().addAll(items);
 	        } else {
-	        	issues.add(Issues.error("orders.noItems"));
+	        	issues.add(Issues.error(ErrorCodes.NO_ITEMS));
 	        }
 	        
 	        return issues.isEmpty() ? orderRepo.save(entity) : entity;
@@ -180,13 +187,13 @@ public class OrderCmsServiceImpl implements OrderCmsService {
         .flatMap(id -> {
         	return paymentMethodRepo.findById(order.getPaymentMethodId());
         }).ifPresentOrElse(entity::setPaymentMethod,
-                () -> issues.add(Issues.error("paymentMethodInvalid")));
+                () -> issues.add(Issues.error(ErrorCodes.PAYMENT_METHOD_INVALID)));
 
         Optional.ofNullable(order.getShippingMethodId())
         .flatMap(Id -> {
         	return shippingMethodRepo.findById(order.getShippingMethodId());
         }).ifPresentOrElse(entity::setShippingMethod,
-	                () -> issues.add(Issues.error("shippingMethodInvalid")));
+	                () -> issues.add(Issues.error(ErrorCodes.SHIPPING_METHOD_INVALID)));
 	
 	    entity.setShippingCost(order.getShippingCost());
 	    entity.setTotalProductAmount(order.getTotalProductAmount());
@@ -203,11 +210,11 @@ public class OrderCmsServiceImpl implements OrderCmsService {
 	            newItemEntity.setTotalAmount(item.getTotalAmount());
 	            productRepo.findById(item.getProduct().getProductId())
 	                .ifPresentOrElse(newItemEntity::setProduct,
-	                        () -> issues.add(Issues.error("orders.product.invalid")));
+	                        () -> issues.add(Issues.error(ErrorCodes.PRODUCT_INVALID)));
 	            return newItemEntity;
 		    }).collect(Collectors.toList()));
 	    } else {
-	    	issues.add(Issues.error("orders.noItems"));
+	    	issues.add(Issues.error(ErrorCodes.NO_ITEMS));
 	    }
 	    
 	    

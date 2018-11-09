@@ -2,6 +2,7 @@ import { Issue } from './../../shared/model/issue';
 import { Injectable } from '@angular/core';
 import { MessageType, Message } from 'src/app/shared/model/message';
 import { Observable, Subscriber } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable()
 export class MessageService {
@@ -11,7 +12,7 @@ export class MessageService {
   observer: Subscriber<Map<MessageType, Message[]>>;
   source: Observable<Map<MessageType, Message[]>>;
 
-  constructor() {
+  constructor(private translate: TranslateService) {
     this.source = Observable.create((observer: Subscriber<Map<MessageType, Message[]>>) => {
       this.observer = observer;
     });
@@ -24,15 +25,19 @@ export class MessageService {
   showIssues(issues: Issue[]) {
     this.clearAll();
     issues.forEach(issue => {
-      this.addMessage(issue.type, issue.errorCode);
+      this.translate.get(issue.errorCode, issue.params).subscribe(translated => {
+        this.addMessage(issue.type, translated);
+      });
     });
     this.next();
   }
 
-  showMessage(type: MessageType, msg: string): void {
+  showMessage(type: MessageType, msg: string, params?: Object): void {
     this.clearAll();
-    this.addMessage(type, msg);
-    this.next();
+    this.translate.get(msg, params).subscribe(translated => {
+      this.addMessage(type, translated);
+      this.next();
+    });
   }
 
   addMessage(type: MessageType, msg: string) {
@@ -46,8 +51,10 @@ export class MessageService {
 
   showError(error: any) {
     this.clearAll();
-    this.addMessage(MessageType.ERROR, `error.http.${error.status}`);
-    this.next();
+    this.translate.get(`errors.http.${error.status}`).subscribe(msg => {
+      this.addMessage(MessageType.ERROR, msg);
+      this.next();
+    });
   }
 
   clearAll(): void {
