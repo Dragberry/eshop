@@ -86,7 +86,7 @@ public class OrderCmsServiceImpl implements OrderCmsService {
 			order.setStatus(entity.getStatus());
 			order.setVersion(entity.getVersion());
 			return order;
-		}).collect(Collectors.toList()), page.getNumber() + 1, page.getSize(), 10, page.getTotalElements());
+		}).collect(Collectors.toList()), page.getNumber() + 1, page.getSize(), page.getTotalPages(), page.getTotalElements());
 	}
 	
 	@Override

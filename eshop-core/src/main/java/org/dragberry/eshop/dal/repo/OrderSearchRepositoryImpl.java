@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -82,46 +84,50 @@ public class OrderSearchRepositoryImpl implements OrderSearchRepository {
 	
 	private class OrderSearchQuery extends AbstractSearchQuery<OrderDTO, OrderRoots> {
 		
-        private final Root<Order> root;
-		private final Join<Order, ShippingMethod> shippingJoin;
-		private final Join<Order, PaymentMethod> paymentJoin;
-		
 		public OrderSearchQuery() {
 			super(OrderDTO.class, em);
-			this.root = query.from(Order.class);
-			this.shippingJoin = root.join(Order_.shippingMethod);
-			this.paymentJoin = root.join(Order_.paymentMethod);
+		}
+		
+		@Override
+		protected OrderRoots getRoots(CriteriaQuery<?> query) {
+		    Root<Order> root = query.from(Order.class);
+            return OrderRoots.of(root, root.join(Order_.shippingMethod), root.join(Order_.paymentMethod));
 		}
 		
 		@Override
 		protected List<Selection<?>> getSelectionList() {
 			return Arrays.asList(
-					root.get(Order_.entityKey),
-					root.get(Order_.orderDate),
-					root.get(Order_.totalAmount),
-					root.get(Order_.fullName),
-					root.get(Order_.phone),
-					root.get(Order_.address),
-					root.get(Order_.comment),
-					root.get(Order_.email),
-					root.get(Order_.paid),
-					shippingJoin.get(ShippingMethod_.entityKey),
-					shippingJoin.get(ShippingMethod_.name),
-					paymentJoin.get(PaymentMethod_.entityKey),
-					paymentJoin.get(PaymentMethod_.name),
-					root.get(Order_.orderStatus),
-					root.get(Order_.version));
+			        roots.order.get(Order_.entityKey),
+					roots.order.get(Order_.orderDate),
+					roots.order.get(Order_.totalAmount),
+					roots.order.get(Order_.fullName),
+					roots.order.get(Order_.phone),
+					roots.order.get(Order_.address),
+					roots.order.get(Order_.comment),
+					roots.order.get(Order_.email),
+					roots.order.get(Order_.paid),
+					roots.shippingMethod.get(ShippingMethod_.entityKey),
+					roots.shippingMethod.get(ShippingMethod_.name),
+					roots.paymentMethod.get(PaymentMethod_.entityKey),
+					roots.paymentMethod.get(PaymentMethod_.name),
+					roots.order.get(Order_.orderStatus),
+					roots.order.get(Order_.version));
 		}
 		
 		@Override
-		protected Optional<Predicate> where(Map<String, String[]> searchParams) {
+		protected Expression<?> getCountExpression() {
+		    return countRoots.order.get(Order_.entityKey);
+		}
+		
+		@Override
+		protected Optional<Predicate> where(Map<String, String[]> searchParams, OrderRoots roots) {
 			List<Predicate> predicates = new ArrayList<>();
-			predicates.addAll(numericRange(TOTAL_AMOUNT, root.get(Order_.totalAmount), searchParams));
-			predicates.addAll(dateRange(DATE, root.get(Order_.createdDate), searchParams));
-			predicates.addAll(inLong(PAYMENT_METHOD, paymentJoin.get(PaymentMethod_.entityKey), searchParams));
-			predicates.addAll(inLong(SHIPPING_METHOD, shippingJoin.get(ShippingMethod_.entityKey), searchParams));
-			predicates.addAll(inEnum(STATUS, root.get(Order_.orderStatus), OrderStatus.class, searchParams));
-			predicates.addAll(inBoolean(IS_PAID, root.get(Order_.paid), searchParams));
+			predicates.addAll(numericRange(TOTAL_AMOUNT, roots.order.get(Order_.totalAmount), searchParams));
+			predicates.addAll(dateRange(DATE, roots.order.get(Order_.createdDate), searchParams));
+			predicates.addAll(inLong(PAYMENT_METHOD, roots.paymentMethod.get(PaymentMethod_.entityKey), searchParams));
+			predicates.addAll(inLong(SHIPPING_METHOD, roots.shippingMethod.get(ShippingMethod_.entityKey), searchParams));
+			predicates.addAll(inEnum(STATUS, roots.order.get(Order_.orderStatus), OrderStatus.class, searchParams));
+			predicates.addAll(inBoolean(IS_PAID, roots.order.get(Order_.paid), searchParams));
 			return predicates.isEmpty() ? Optional.empty() : Optional.of(cb.and(predicates.toArray(new Predicate[predicates.size()])));
 		}
 
@@ -132,7 +138,7 @@ public class OrderSearchRepositoryImpl implements OrderSearchRepository {
 	
 		@Override
 		protected SortContext<OrderRoots> getSortContext() {
-			return SortContext.of(cb, OrderRoots.of(root, shippingJoin, paymentJoin));
+			return SortContext.of(cb, roots);
 		}
 	}
 	

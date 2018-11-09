@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
@@ -51,26 +52,41 @@ public abstract class AbstractSearchQuery <T, R extends Roots> {
 	protected final EntityManager entityManager;
 	protected final CriteriaBuilder cb;
 	protected final CriteriaQuery<T> query;
+	protected final CriteriaQuery<Long> countQuery;
+	
+	protected R roots;
+    protected R countRoots;
 	
 	public AbstractSearchQuery(Class<T> resultClass, EntityManager entityManager) {
 		this.entityManager = entityManager;
 		this.cb = this.entityManager.getCriteriaBuilder();
 		this.query = this.cb.createQuery(resultClass);
+		this.countQuery = this.cb.createQuery(Long.class);
+		this.roots = getRoots(query);
+		this.countRoots = getRoots(countQuery);
 	}
 	
+	protected abstract R getRoots(CriteriaQuery<?> query);
+	
 	public Page<T> search(Pageable pageRequest, Map<String, String[]> searchParams) {
+		countQuery.select(cb.countDistinct(getCountExpression()));
+		where(searchParams, countRoots).ifPresent(countQuery::where);
+		Long total = entityManager.createQuery(countQuery).getSingleResult();
+		
 		query.distinct(true).multiselect(getSelectionList());
-		where(searchParams).ifPresent(query::where);
-		orderBy(searchParams).ifPresent(query::orderBy); 
+        where(searchParams, roots).ifPresent(query::where);
+        orderBy(searchParams).ifPresent(query::orderBy); 
 		return new PageImpl<>(entityManager.createQuery(query)
 				.setFirstResult(pageRequest.getPageNumber() * pageRequest.getPageSize())
 				.setMaxResults(pageRequest.getPageSize())
-				.getResultList(), pageRequest, 0);
+				.getResultList(), pageRequest, total);
 	}
 	
-	protected abstract List<Selection<?>> getSelectionList();
+    protected abstract List<Selection<?>> getSelectionList();
+    
+    protected abstract Expression<?> getCountExpression();
 	
-	protected abstract Optional<Predicate> where(Map<String, String[]> searchParams);
+	protected abstract Optional<Predicate> where(Map<String, String[]> searchParams, R roots);
 	
 	protected Optional<Order> orderBy(Map<String, String[]> searchParams) {
 		String[] values = searchParams.get(SORT_PARAM);
