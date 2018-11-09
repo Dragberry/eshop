@@ -1,6 +1,6 @@
 import { NavigationService } from './../../service/navigation.service';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, ActivatedRouteSnapshot, Router, RouterEvent, NavigationEnd } from '@angular/router';
+import { Router, RouterEvent, NavigationEnd } from '@angular/router';
 
 @Component({
   selector: 'app-breadcrumb',

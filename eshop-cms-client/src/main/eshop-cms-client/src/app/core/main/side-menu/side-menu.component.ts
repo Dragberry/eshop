@@ -14,7 +14,7 @@ export class SideMenuComponent implements OnInit {
   constructor(private navigationService: NavigationService) {}
 
   ngOnInit() {
-    this.navigationService.loadMainMenu().subscribe(mainMenu => {
+    this.navigationService.loadMainMenu().then(mainMenu => {
       this.mainMenu = mainMenu;
     });
 
