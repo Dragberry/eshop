@@ -19,11 +19,11 @@ export class OrderService {
     private httpService: HttpDelegateService,
     private translateService: TranslateService) {}
 
-  getOrders(params: HttpParams): Observable<Page<Order>> {
+  getOrders(params: HttpParams): Promise<Page<Order>> {
     return this.httpService.get<Page<Order>>(ORDERS_URL, { params: params });
   }
 
-  getOrderDetails(id: string): Observable<OrderDetails> {
+  getOrderDetails(id: string): Promise<OrderDetails> {
     return this.httpService.get<OrderDetails>(`${ORDERS_URL}/${id}`);
   }
 
@@ -35,7 +35,7 @@ export class OrderService {
     return this.httpService.put<OrderDetails>(`${ORDERS_URL}/new`, order);
   }
 
-  searchProducts(query: string): Observable<Page<OrderProduct>> {
+  searchProducts(query: string): Promise<Page<OrderProduct>> {
       return this.httpService.get<Page<OrderProduct>>(`products/search`, {
         params: new HttpParams()
           .append('query', query)
@@ -44,13 +44,13 @@ export class OrderService {
       });
   }
 
-  getProductsForArticle(articleId: number): Observable<OrderProduct[]> {
+  getProductsForArticle(articleId: number): Promise<OrderProduct[]> {
       return this.httpService.get<OrderProduct[]>(`products/${articleId}/options`);
   }
 
-  fetchOrderStatuses(): Observable<NameValue<string>[]> {
+  fetchOrderStatuses(): Promise<NameValue<string>[]> {
     const orderStatuses = [];
-    return new Observable(observer => {
+    return new Promise(resolve => {
       Object.entries(OrderStatus).forEach(status => {
         this.translateService.get(`orders.status.${status[1]}`).subscribe(translated => {
           orderStatuses.push({
@@ -59,14 +59,13 @@ export class OrderService {
           });
         });
       });
-      observer.next(orderStatuses);
-      observer.complete();
+      resolve(orderStatuses);
     });
   }
 
-  fetchPaidStatuses(): Observable<NameValue<boolean>[]> {
+  fetchPaidStatuses(): Promise<NameValue<boolean>[]> {
     const paidStatuses = [];
-    return new Observable(observer => {
+    return new Promise(resolve => {
       [true, false].forEach(value => {
         this.translateService.get(`orders.paid.${value}`).subscribe(translated => {
           paidStatuses.push({
@@ -75,8 +74,7 @@ export class OrderService {
           });
         });
       });
-      observer.next(paidStatuses);
-      observer.complete();
+      resolve(paidStatuses);
     });
   }
 

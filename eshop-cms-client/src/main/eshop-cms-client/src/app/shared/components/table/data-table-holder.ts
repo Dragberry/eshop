@@ -3,7 +3,6 @@ import { HttpParams } from '@angular/common/http';
 import { SortDirection } from './common/sort-direction';
 import { Page } from '../../model/page';
 import { PageableEvent } from './common/pageable-event';
-import { Observable } from 'rxjs';
 import { ViewChildren, QueryList } from '@angular/core';
 import { TableActionColumnComponent } from './table-action-column/table-action-column.component';
 
@@ -43,10 +42,10 @@ export abstract class DataTableHolder<T> {
         });
       }
     });
-    this.invokeService(params).subscribe(page => this.page = page);
+    this.invokeService(params).then(page => this.page = page);
   }
 
-  protected abstract invokeService(params: HttpParams): Observable<Page<T>>;
+  protected abstract invokeService(params: HttpParams): Promise<Page<T>>;
 
   onPageableEvent(event: PageableEvent): void {
     this.pageSize = event.pageSize;

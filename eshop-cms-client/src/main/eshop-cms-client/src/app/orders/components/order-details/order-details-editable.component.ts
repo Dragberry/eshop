@@ -1,5 +1,3 @@
-import { map } from 'rxjs/operators';
-import { forkJoin } from 'rxjs';
 import { OnInit } from '@angular/core';
 import { ShippingService } from './../../service/shipping.service';
 import { PaymentService } from './../../service/payment.service';
@@ -24,22 +22,18 @@ export abstract class OrderDetailsEditableComponent implements OnInit {
     protected shippingService: ShippingService) {}
 
     ngOnInit() {
-      forkJoin(
+      Promise.all([
         this.paymentService.getAllPaymentMethods(),
         this.shippingService.getAllShippingMethods(),
         this.orderService.fetchOrderStatuses(),
-        this.orderService.fetchPaidStatuses())
-        .pipe(map(([paymentMethods, shippingMethods, orderStatuses, paidStatuses]) => {
-          return {
-            paymentMethods, shippingMethods, orderStatuses, paidStatuses
-          };
-        })).subscribe(data => {
-          this.paymentMethods = data.paymentMethods;
-          this.shippingMethods = data.shippingMethods;
-          this.orderStatuses = data.orderStatuses;
-          this.paidStatuses = data.paidStatuses;
-          this.fetchOrder();
-        });
+        this.orderService.fetchPaidStatuses()
+      ]).then(result => {
+        this.paymentMethods = result[0];
+        this.shippingMethods = result[1];
+        this.orderStatuses = result[2];
+        this.paidStatuses = result[3];
+        this.fetchOrder();
+      });
     }
 
     abstract fetchOrder(): void;

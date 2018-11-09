@@ -187,7 +187,7 @@ export class OrderDetailsItemsComponent implements OnChanges {
     clearTimeout(this.searchProductsDelay);
     this.searchProductsDelay = setTimeout(() => {
       if (this.productSearchQuery && this.productSearchQuery.length > 1) {
-        this.orderService.searchProducts(this.productSearchQuery).subscribe(page => {
+        this.orderService.searchProducts(this.productSearchQuery).then(page => {
           this.suggestedProductsList = page.content;
           this.addOrderItemOptions.show();
         });
@@ -197,7 +197,7 @@ export class OrderDetailsItemsComponent implements OnChanges {
 
   loadProductOptions(product: OrderProduct): void {
     this.suggestedProductsOptions = [];
-    this.orderService.getProductsForArticle(product.productArticleId).subscribe(result => {
+    this.orderService.getProductsForArticle(product.productArticleId).then(result => {
       this.suggestedProductsOptions = result.filter(option => {
         return this.order.items.find(item => item.product.productId === option.productId) == null;
       });

@@ -1,8 +1,6 @@
-import { map } from 'rxjs/operators';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { saveAs } from 'file-saver';
 import { Result } from '../../shared/model/result';
-import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { MessageService } from '../service/message.service';
 
@@ -15,8 +13,15 @@ export class HttpDelegateService {
 
   get<T>(url: string, options?: {
     params: HttpParams
-  }): Observable<T> {
-    return this.http.get<T>(url, options);
+  }): Promise<T> {
+    return new Promise((resolve, reject) => {
+      return this.http.get<T>(url, options).subscribe(result => {
+        resolve(result);
+      }, error => {
+        this.messageService.showError(error);
+        reject(error);
+      });
+    });
   }
 
   put<T>(url: string, body: any,  options?: {

@@ -5,7 +5,6 @@ import { OrderService } from '../../service/order.service';
 import { Order } from '../../model/order';
 import { HttpParams } from '@angular/common/http';
 import { DataTableHolder } from '../../../shared/components/table/data-table-holder';
-import { Observable } from 'rxjs';
 import { ShippingService } from '../../service/shipping.service';
 import { PaymentService } from '../../service/payment.service';
 import { TitleService } from 'src/app/core/service/title.service';
@@ -38,37 +37,37 @@ export class OrderListComponent extends DataTableHolder<Order> implements OnInit
     this.fetchPage();
   }
 
-  invokeService(params: HttpParams): Observable<Page<Order>> {
+  invokeService(params: HttpParams): Promise<Page<Order>> {
     return this.orderService.getOrders(params);
   }
 
   fetchPaidStatuses(): void {
-    this.orderService.fetchPaidStatuses().subscribe(paidStatuses => {
+    this.orderService.fetchPaidStatuses().then(paidStatuses => {
       this.paidStatuses = paidStatuses;
     });
   }
 
   fetchOrderStatuses(): void {
-    this.orderService.fetchOrderStatuses().subscribe(orderStatuses => {
+    this.orderService.fetchOrderStatuses().then(orderStatuses => {
       this.orderStatuses = orderStatuses;
     });
   }
 
   fetchPaymentMethods(): void {
     this.paymentService.getActivePaymentMethods()
-      .subscribe(list => {
-        this.paymentMethods = list.map(sm => {
-          return {value: sm.id.toString(), name: sm.name};
-        });
+    .then(list => {
+      this.paymentMethods = list.map(sm => {
+        return {value: sm.id.toString(), name: sm.name};
       });
+    });
   }
 
   fetchShippingMethods(): void {
     this.shippingService.getActiveShippingMethods()
-      .subscribe(list => {
-        this.shippingMethods = list.map(sm => {
-          return {value: sm.id.toString(), name: sm.name};
-        });
+    .then(list => {
+      this.shippingMethods = list.map(sm => {
+        return {value: sm.id.toString(), name: sm.name};
       });
+    });
   }
 }
