@@ -8,13 +8,15 @@ import { DataTableHolder } from '../../../shared/components/table/data-table-hol
 import { ShippingService } from '../../service/shipping.service';
 import { PaymentService } from '../../service/payment.service';
 import { TitleService } from 'src/app/core/service/title.service';
+import { ScreenComponent } from 'src/app/core/main/screen.component';
+import { Observable, from } from 'rxjs';
 
 @Component({
   selector: 'app-order-list',
   templateUrl: './order-list.component.html',
   styleUrls: ['./order-list.component.css']
 })
-export class OrderListComponent extends DataTableHolder<Order> implements OnInit {
+export class OrderListComponent extends DataTableHolder<Order> implements OnInit, ScreenComponent {
 
   paymentMethods: NameValue<string>[];
   shippingMethods: NameValue<string>[];
@@ -35,6 +37,10 @@ export class OrderListComponent extends DataTableHolder<Order> implements OnInit
     this.fetchOrderStatuses();
     this.fetchPaidStatuses();
     this.fetchPage();
+  }
+
+  getTitle(): Observable<string> {
+    return from('orders.titles.list');
   }
 
   invokeService(params: HttpParams): Promise<Page<Order>> {

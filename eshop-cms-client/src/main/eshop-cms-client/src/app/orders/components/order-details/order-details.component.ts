@@ -10,6 +10,7 @@ import { ShippingService } from '../../service/shipping.service';
 import { OrderDetailsEditableComponent } from './order-details-editable.component';
 import { MessageService } from 'src/app/core/service/message.service';
 import { MessageType } from 'src/app/shared/model/message';
+import { Observable, from } from 'rxjs';
 
 @Component({
   selector: 'app-order-details',
@@ -31,7 +32,11 @@ export class OrderDetailsComponent extends OrderDetailsEditableComponent {
     protected shippingService: ShippingService,
     private titleService: TitleService) {
       super(orderService, paymentService, shippingService);
-    }
+  }
+
+  getTitle(): Observable<string> {
+    return from('List title');
+  }
 
   fetchOrder(): void {
     this.route.paramMap.pipe(switchMap((params: ParamMap) => {

@@ -1,8 +1,10 @@
-<nav class="col-md-2 d-none d-md-block bg-light sidebar">
+<nav class="col-md-2 d-none d-md-block bg-light sidebar navbar bg-dark navbar-dark">
   <div class="sidebar-sticky">
-    <ul *ngIf="mainMenu" class="nav flex-column">
+    <ul *ngIf="mainMenu" class="navbar-nav  flex-column">
       <li *ngFor="let menuItem of mainMenu" class="nav-item">
-          <a class="nav-link" [routerLink]="menuItem.action" [routerLinkActive]="'active'">{{ menuItem.title | translate}}</a>
+        <a class="nav-link pl-4" [routerLink]="menuItem.action" [routerLinkActive]="'active bg-dark text-white'">
+          {{ menuItem.title | translate}}
+        </a>
       </li>
     </ul>
   </div>

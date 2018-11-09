@@ -8,23 +8,19 @@ import { OrderDetailsComponent } from './components/order-details/order-details.
 @NgModule({
     imports: [RouterModule.forChild([
         {
-            path: 'list',
-            component: OrderListComponent,
-            canActivate: [AuthGuard]
-        },
-        {
           path: 'new',
           component: OrderCreateComponent,
           canActivate: [AuthGuard]
         },
         {
-            path: 'details/:id',
+            path: ':id',
             component: OrderDetailsComponent,
             canActivate: [AuthGuard]
         },
         {
             path: '',
-            redirectTo: 'list'
+            component: OrderListComponent,
+            canActivate: [AuthGuard]
         }
     ])],
     exports: [RouterModule]
