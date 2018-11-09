@@ -1,6 +1,6 @@
 import { MessageType } from '../../../shared/model/message';
 import { Message } from 'src/app/shared/model/message';
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 const TYPES = new Map<string, MessageType>();
 TYPES.set('danger', MessageType.ERROR);
@@ -24,6 +24,7 @@ export class MessagesComponent {
   cleared: EventEmitter<MessageType> = new EventEmitter();
 
   clear(): void {
+    this.messages = null;
     this.cleared.emit(TYPES.get(this.type));
   }
 }

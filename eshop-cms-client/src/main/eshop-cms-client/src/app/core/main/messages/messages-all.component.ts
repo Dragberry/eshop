@@ -3,6 +3,7 @@ import { Message } from 'src/app/shared/model/message';
 import { Component, OnInit, ViewChildren, QueryList } from '@angular/core';
 import { MessageService } from '../../service/message.service';
 import { MessagesComponent } from './messages.component';
+import { Router, NavigationEnd } from '@angular/router';
 
 @Component({
     selector: 'app-messages-all',
@@ -18,7 +19,13 @@ export class MessagesAllComponent implements OnInit {
   success: Message[];
   infos: Message[];
 
-  constructor(private messageService: MessageService) {}
+  constructor(private messageService: MessageService, private router: Router) {
+    this.router.events.subscribe((navigation: any) => {
+      if (navigation instanceof NavigationEnd) {
+        this.messageService.clearAll();
+      }
+    });
+  }
 
   ngOnInit() {
       this.messageService.subscribe(messages => {

@@ -26,9 +26,13 @@ export class MessageService {
     issues.forEach(issue => {
       this.addMessage(issue.type, issue.errorCode);
     });
-    if (this.observer) {
-      this.observer.next(this.messages);
-    }
+    this.next();
+  }
+
+  showMessage(type: MessageType, msg: string): void {
+    this.clearAll();
+    this.addMessage(type, msg);
+    this.next();
   }
 
   addMessage(type: MessageType, msg: string) {
@@ -43,11 +47,19 @@ export class MessageService {
   showError(error: any) {
     this.clearAll();
     this.addMessage(MessageType.ERROR, `error.http.${error.status}`);
+    this.next();
   }
 
   clearAll(): void {
     this.messages.forEach((group, type) => {
-      this.messages.set(type, []);
+      this.messages.set(type, null);
     });
+    this.next();
+  }
+
+  next(): void {
+    if (this.observer) {
+      this.observer.next(this.messages);
+    }
   }
 }
