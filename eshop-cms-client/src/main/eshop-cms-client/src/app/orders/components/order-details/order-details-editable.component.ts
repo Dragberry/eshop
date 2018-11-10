@@ -1,3 +1,4 @@
+import { ActivatedRoute } from '@angular/router';
 import { OnInit } from '@angular/core';
 import { ShippingService } from './../../service/shipping.service';
 import { PaymentService } from './../../service/payment.service';
@@ -16,27 +17,17 @@ export abstract class OrderDetailsEditableComponent implements OnInit {
 
   order: OrderDetails;
 
-  constructor(
-    protected orderService: OrderService,
-    protected paymentService: PaymentService,
-    protected shippingService: ShippingService) {}
+  constructor(protected route: ActivatedRoute) {}
 
     ngOnInit() {
-      Promise.all([
-        this.paymentService.getAllPaymentMethods(),
-        this.shippingService.getAllShippingMethods(),
-        this.orderService.fetchOrderStatuses(),
-        this.orderService.fetchPaidStatuses()
-      ]).then(result => {
-        this.paymentMethods = result[0];
-        this.shippingMethods = result[1];
-        this.orderStatuses = result[2];
-        this.paidStatuses = result[3];
-        this.fetchOrder();
+      this.route.data.subscribe(routeData => {
+        this.orderStatuses = routeData.data.orderStatuses;
+        this.paidStatuses = routeData.data.paidStatuses;
+        this.paymentMethods = routeData.data.paymentMethods;
+        this.shippingMethods = routeData.data.shippingMethods;
+        this.order = routeData.data.order;
       });
     }
-
-    abstract fetchOrder(): void;
 
     abstract updateOrder(): void;
 }

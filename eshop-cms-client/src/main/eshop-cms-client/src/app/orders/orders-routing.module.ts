@@ -1,3 +1,5 @@
+import { OrderCreateResolverService } from './components/order-details/order-create-resolver.service';
+import { OrderDetailsResolverService } from './components/order-details/order-details-resolver.service';
 import { OrderListResolverService } from './components/order-list/order-list-resolver.service';
 import { OrderCreateComponent } from './components/order-details/order-create.component';
 import { NgModule } from '@angular/core';
@@ -11,12 +13,18 @@ import { OrderDetailsComponent } from './components/order-details/order-details.
         {
           path: 'new',
           component: OrderCreateComponent,
-          canActivate: [AuthGuard]
+          canActivate: [AuthGuard],
+          resolve: {
+            data: OrderCreateResolverService
+          }
         },
         {
             path: ':id',
             component: OrderDetailsComponent,
-            canActivate: [AuthGuard]
+            canActivate: [AuthGuard],
+            resolve: {
+              data: OrderDetailsResolverService
+            }
         },
         {
             path: '',

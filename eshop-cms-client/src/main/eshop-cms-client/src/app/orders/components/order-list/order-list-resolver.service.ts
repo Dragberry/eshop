@@ -3,7 +3,6 @@ import { DataTableState } from './../../../shared/model/data-table-state';
 import { PaymentMethod } from '../../model/payment-method';
 import { ShippingMethod } from '../../model/shipping-method';
 import { NameValue } from '../../../shared/components/table/common/name-value';
-import { HttpParams } from '@angular/common/http';
 import { PaymentService } from '../../service/payment.service';
 import { ShippingService } from '../../service/shipping.service';
 import { map } from 'rxjs/operators';

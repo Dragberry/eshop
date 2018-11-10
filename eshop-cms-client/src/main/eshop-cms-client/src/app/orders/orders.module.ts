@@ -13,6 +13,8 @@ import { OrderService } from './service/order.service';
 import { ShippingService } from './service/shipping.service';
 import { PaymentService } from './service/payment.service';
 import { OrderCreateComponent } from './components/order-details/order-create.component';
+import { OrderDetailsResolverService } from './components/order-details/order-details-resolver.service';
+import { OrderCreateResolverService } from './components/order-details/order-create-resolver.service';
 
 @NgModule({
   imports: [
@@ -31,6 +33,8 @@ import { OrderCreateComponent } from './components/order-details/order-create.co
   ],
   providers: [
     OrderService,
+    OrderCreateResolverService,
+    OrderDetailsResolverService,
     OrderListResolverService,
     PaymentService,
     ShippingService
