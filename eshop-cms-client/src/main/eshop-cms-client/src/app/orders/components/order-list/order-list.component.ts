@@ -31,11 +31,11 @@ export class OrderListComponent extends DataTableHolder<Order> implements OnInit
   ngOnInit() {
     this.route.data.subscribe(routeData => {
       const data = <OrderListState> routeData.data;
-      this.setDataTableState(data.dataTableState);
       this.paidStatuses = data.paidStatuses;
       this.orderStatuses = data.orderStatuses;
       this.paymentMethods = data.paymentMethods;
       this.shippingMethods = data.shippingMethods;
+      this.setDataTableState(data.dataTableState);
     });
   }
 

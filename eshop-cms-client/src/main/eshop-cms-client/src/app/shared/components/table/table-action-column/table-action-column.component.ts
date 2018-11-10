@@ -3,6 +3,11 @@ import { SortDirection } from './../common/sort-direction';
 import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { TableFilter } from '../filter/table-filter';
 
+const SORT_CLASSES = new Map<SortDirection, string>();
+SORT_CLASSES.set(SortDirection.UNSORTED, 'fa-sort');
+SORT_CLASSES.set(SortDirection.ASC, 'fa-sort-down');
+SORT_CLASSES.set(SortDirection.DESC, 'fa-sort-up');
+
 @Component({
   selector: 'app-table-action-column',
   templateUrl: './table-action-column.component.html',
@@ -22,7 +27,6 @@ export class TableActionColumnComponent {
   @Input()
   sortBy: string;
   sortDirection = SortDirection.UNSORTED;
-  sortClass = 'fa-sort';
 
   @Input()
   filter: string;
@@ -34,6 +38,11 @@ export class TableActionColumnComponent {
   columnAction: EventEmitter<ColumnActionEvent> = new EventEmitter();
 
   constructor() { }
+
+  restore(sortDirection: SortDirection, filterValues: {name: string; values: string[]}[]): void {
+    this.sortDirection = sortDirection;
+    this.selectedFilterValues = filterValues;
+  }
 
   applyFilter(): void {
     this.selectedFilterValues = this.filterComponent.getSelectedValues();
@@ -60,26 +69,25 @@ export class TableActionColumnComponent {
 
   clearSorting(): void {
     this.sortDirection = SortDirection.UNSORTED;
-    this.sortClass = 'fa-sort';
+  }
+
+  getSortClass(): string {
+    return SORT_CLASSES.get(this.sortDirection || SortDirection.UNSORTED);
   }
 
   toggleSorting(): void {
     switch (this.sortDirection) {
       case SortDirection.UNSORTED:
         this.sortDirection = SortDirection.ASC;
-        this.sortClass = 'fa-sort-down';
         break;
       case SortDirection.ASC:
         this.sortDirection = SortDirection.DESC;
-        this.sortClass = 'fa-sort-up';
         break;
       case SortDirection.DESC:
         this.sortDirection = SortDirection.UNSORTED;
-        this.sortClass = 'fa-sort';
         break;
       default:
         this.sortDirection = SortDirection.UNSORTED;
-        this.sortClass = 'fa-sort';
         break;
     }
     this.emitActionEvent();

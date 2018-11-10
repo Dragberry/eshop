@@ -1,3 +1,4 @@
+import { Order } from './../../model/order';
 import { DataTableState } from './../../../shared/model/data-table-state';
 import { PaymentMethod } from '../../model/payment-method';
 import { ShippingMethod } from '../../model/shipping-method';
@@ -16,7 +17,9 @@ import { OrderListState } from './order-list-state';
 @Injectable()
 export class OrderListResolverService implements Resolve<OrderListState> {
 
-  state: OrderListState;
+  state: OrderListState = {
+    dataTableState: new DataTableState()
+  };
 
   constructor(
     private orderService: OrderService,
@@ -27,13 +30,10 @@ export class OrderListResolverService implements Resolve<OrderListState> {
   resolve(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<OrderListState> {
-    if (this.state != null) {
+    if (this.state.dataTableState.initialized) {
       return of(this.state);
     }
     return from(Promise.all([
-      this.orderService.getOrders(new HttpParams()
-        .set('pageNumber', '1')
-        .set('pageSize', '20')),
       this.orderService.fetchPaidStatuses(),
       this.orderService.fetchOrderStatuses(),
       this.paymentService.getActivePaymentMethods(),
@@ -41,13 +41,11 @@ export class OrderListResolverService implements Resolve<OrderListState> {
     ])).pipe(map(result => {
       this.titleService.setTitleKey('orders.titles.list');
       return {
-        dataTableState: {
-          page: result[0],
-        },
-        paidStatuses: result[1],
-        orderStatuses: result[2],
-        paymentMethods: this.mapPaymentMethods(result[3]),
-        shippingMethods: this.mapShippingMethods(result[4])
+        dataTableState: new DataTableState<Order>(),
+        paidStatuses: result[0],
+        orderStatuses: result[1],
+        paymentMethods: this.mapPaymentMethods(result[2]),
+        shippingMethods: this.mapShippingMethods(result[3])
       };
     }));
   }

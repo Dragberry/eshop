@@ -1,22 +1,19 @@
-import { DataTableState } from './../../model/data-table-state';
+import { DataTableState, DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from './../../model/data-table-state';
 import { ColumnActionEvent } from './common/column-action-event';
 import { HttpParams } from '@angular/common/http';
 import { SortDirection } from './common/sort-direction';
 import { Page } from '../../model/page';
 import { PageableEvent } from './common/pageable-event';
-import { ViewChildren, QueryList } from '@angular/core';
+import { ViewChildren, QueryList, AfterViewInit } from '@angular/core';
 import { TableActionColumnComponent } from './table-action-column/table-action-column.component';
 
-const DEFAULT_PAGE_NUMBER = 1;
-const DEFAULT_PAGE_SIZE = 20;
-
-export abstract class DataTableHolder<T> {
+export abstract class DataTableHolder<T> implements AfterViewInit {
 
   @ViewChildren(TableActionColumnComponent)
   columns!: QueryList<TableActionColumnComponent>;
 
-  private pageSize = DEFAULT_PAGE_SIZE;
-  private pageNumber = DEFAULT_PAGE_NUMBER;
+  private pageSize: number;
+  private pageNumber: number;
 
   private sortBy: string;
   private sortDirection: string;
@@ -25,8 +22,22 @@ export abstract class DataTableHolder<T> {
 
   page: Page<T>;
 
+  ngAfterViewInit(): void {
+    Promise.resolve().then(() => {
+      if (this.columns) {
+        this.columns.forEach(column => {
+          const sortDirection: SortDirection = this.sortBy != null && this.sortBy === column.sortBy
+            ? SortDirection[this.sortDirection.toUpperCase()]
+            : SortDirection.UNSORTED;
+          column.restore(sortDirection, this.filters.get(column.columnId));
+        });
+      }
+    });
+  }
+
   getDataTableState(): DataTableState<T> {
     return {
+      initialized: true,
       page: this.page,
       pageSize: this.pageSize,
       pageNumber: this.pageNumber,
@@ -37,12 +48,16 @@ export abstract class DataTableHolder<T> {
   }
 
   setDataTableState(state: DataTableState<T>): void {
-    this.page = state.page;
-    this.pageSize = state.pageSize || DEFAULT_PAGE_SIZE;
-    this.pageNumber = state.pageNumber || DEFAULT_PAGE_NUMBER;
+    this.pageSize = state.pageSize;
+    this.pageNumber = state.pageNumber;
     this.sortBy = state.sortBy;
     this.sortDirection = state.sortDirection;
-    this.filters = state.filters || new Map();
+    this.filters = state.filters;
+    if (state.initialized) {
+      this.page = state.page;
+    } else {
+      this.fetchPage();
+    }
   }
 
   public fetchPage(): void {

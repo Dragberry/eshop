@@ -33,4 +33,5 @@ export abstract class TableRangeFilter<T> extends TableFilter {
     this.from = null;
     this.to = null;
   }
+
 }

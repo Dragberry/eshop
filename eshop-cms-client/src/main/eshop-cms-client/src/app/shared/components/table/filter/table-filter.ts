@@ -12,4 +12,5 @@ export abstract class TableFilter {
   abstract reset(): void;
 
   abstract clearAll(): void;
+
 }

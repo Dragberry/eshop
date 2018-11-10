@@ -41,4 +41,5 @@ export class TableListFilterComponent extends TableFilter {
   clearAll(): void {
     this.selectedOptions.forEach(opt => opt.selected = false);
   }
+
 }
