@@ -1,3 +1,4 @@
+import { DataTableState } from './../../model/data-table-state';
 import { ColumnActionEvent } from './common/column-action-event';
 import { HttpParams } from '@angular/common/http';
 import { SortDirection } from './common/sort-direction';
@@ -23,6 +24,26 @@ export abstract class DataTableHolder<T> {
   private filters: Map<string, {name: string, values: string[]}[]> = new Map();
 
   page: Page<T>;
+
+  getDataTableState(): DataTableState<T> {
+    return {
+      page: this.page,
+      pageSize: this.pageSize,
+      pageNumber: this.pageNumber,
+      sortBy: this.sortBy,
+      sortDirection: this.sortDirection,
+      filters: this.filters
+    };
+  }
+
+  setDataTableState(state: DataTableState<T>): void {
+    this.page = state.page;
+    this.pageSize = state.pageSize || DEFAULT_PAGE_SIZE;
+    this.pageNumber = state.pageNumber || DEFAULT_PAGE_NUMBER;
+    this.sortBy = state.sortBy;
+    this.sortDirection = state.sortDirection;
+    this.filters = state.filters || new Map();
+  }
 
   public fetchPage(): void {
     let params = new HttpParams()

@@ -1,3 +1,4 @@
+import { OrderListResolverService } from './components/order-list/order-list-resolver.service';
 import { OrderCreateComponent } from './components/order-details/order-create.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
@@ -20,7 +21,10 @@ import { OrderDetailsComponent } from './components/order-details/order-details.
         {
             path: '',
             component: OrderListComponent,
-            canActivate: [AuthGuard]
+            canActivate: [AuthGuard],
+            resolve: {
+              data: OrderListResolverService
+            }
         }
     ])],
     exports: [RouterModule]

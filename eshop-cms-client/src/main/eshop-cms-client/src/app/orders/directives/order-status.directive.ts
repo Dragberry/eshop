@@ -29,16 +29,16 @@ export class OrderStatusDirective implements OnChanges {
           statusClass = 'badge-primary';
           break;
         case OrderStatus.SHIPPED:
-          statusClass = 'badge-light';
+          statusClass = 'badge-info';
           break;
         case OrderStatus.DELIVERED:
           statusClass = 'badge-success';
           break;
         case OrderStatus.CANCELLED:
-          statusClass = 'badge-dark';
+          statusClass = 'badge-light';
           break;
         default:
-          statusClass = 'badge-secondary';
+          statusClass = 'badge-dark';
       }
       this.clearClases([
         'badge-danger',

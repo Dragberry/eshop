@@ -46,7 +46,7 @@ export class OrderCreateComponent extends OrderDetailsEditableComponent {
   saveOrder(): void {
     this.orderService.createOrder(this.order)
     .then(order => {
-      this.router.navigate(['/orders/list'])
+      this.router.navigate(['/orders'])
       .then(() => this.messageService.showMessage(MessageType.SUCCESS, 'orders.messages.successCreated', {order: order.id}));
     })
     .catch(error => console.log('An error has occured', error));

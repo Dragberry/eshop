@@ -24,9 +24,6 @@ export class BreadcrumbComponent implements OnInit {
         if (activationEnd.snapshot.children.length === 0) {
           if (activationEnd.snapshot.component instanceof OrderListComponent) {
             const screen = <OrderListComponent> activationEnd.snapshot.component;
-            screen.getTitle().subscribe(title => {
-              console.log(title);
-            });
           }
         }
       }

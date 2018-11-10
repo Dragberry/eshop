@@ -1,3 +1,4 @@
+import { OrderListResolverService } from './components/order-list/order-list-resolver.service';
 import { OrderDetailsFieldsEditableComponent } from './components/order-details/order-details-fields-editable.component';
 import { OrderDetailsInfoEditableComponent } from './components/order-details/order-details-info-editable.component';
 import { OrderDetailsItemsComponent } from './components/order-details/order-details-items.component';
@@ -30,6 +31,7 @@ import { OrderCreateComponent } from './components/order-details/order-create.co
   ],
   providers: [
     OrderService,
+    OrderListResolverService,
     PaymentService,
     ShippingService
   ]
