@@ -1,8 +1,10 @@
+import { ProductsComponent } from './components/products.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ProductListComponent } from './product-list/product-list.component';
-import { ProductDetailsComponent } from './product-details/product-details.component';
+import { ProductListComponent } from './components/product-list/product-list.component';
+import { ProductDetailsComponent } from './components/product-details/product-details.component';
 import { ProductsRoutingModule } from './product-routing.module';
+import { ProductService } from './services/product.service';
 
 @NgModule({
   imports: [
@@ -10,8 +12,12 @@ import { ProductsRoutingModule } from './product-routing.module';
     ProductsRoutingModule
   ],
   declarations: [
+    ProductsComponent,
     ProductDetailsComponent,
     ProductListComponent
+  ],
+  providers: [
+    ProductService
   ]
 })
 export class ProductsModule { }

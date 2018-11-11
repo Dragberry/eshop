@@ -1,25 +1,32 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { ProductListComponent } from './product-list/product-list.component';
-import { ProductDetailsComponent } from './product-details/product-details.component';
+import { RouterModule } from '@angular/router';
 import { AuthGuard } from '../core/auth/auth.guard';
+import { ProductListComponent } from './components/product-list/product-list.component';
+import { ProductDetailsComponent } from './components/product-details/product-details.component';
+import { ProductsComponent } from './components/products.component';
 
 @NgModule({
     imports: [RouterModule.forChild([
-        {
-            path: 'list',
+      {
+        path: '',
+        component: ProductsComponent,
+        children: [
+          {
+            path: '',
             component: ProductListComponent,
             canActivate: [AuthGuard]
-        },
-        {
-            path: 'list/details/:id',
+          },
+          {
+            path: ':id',
             component: ProductDetailsComponent,
             canActivate: [AuthGuard]
-        },
-        {
+          },
+          {
             path: '',
             redirectTo: 'list'
-        }
+          }
+        ]
+      }
     ])],
     exports: [RouterModule]
 })

@@ -53,11 +53,7 @@ export abstract class DataTableHolder<T> implements AfterViewInit {
     this.sortBy = state.sortBy;
     this.sortDirection = state.sortDirection;
     this.filters = state.filters;
-    if (state.initialized) {
-      this.page = state.page;
-    } else {
-      this.fetchPage();
-    }
+    this.fetchPage();
   }
 
   public fetchPage(): void {
