@@ -1,3 +1,4 @@
+import { NavigationService } from './../../../core/service/navigation.service';
 import { Order } from './../../model/order';
 import { DataTableState } from './../../../shared/model/data-table-state';
 import { PaymentMethod } from '../../model/payment-method';
@@ -10,7 +11,6 @@ import { Observable, from, of } from 'rxjs';
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { OrderService } from '../../service/order.service';
-import { TitleService } from 'src/app/core/service/title.service';
 import { OrderListState } from './order-list-state';
 
 @Injectable()
@@ -24,11 +24,12 @@ export class OrderListResolverService implements Resolve<OrderListState> {
     private orderService: OrderService,
     private paymentService: PaymentService,
     private shippingService: ShippingService,
-    private titleService: TitleService) {}
+    private navigationService: NavigationService) {}
 
   resolve(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<OrderListState> {
+    this.navigationService.currentScreen(state.url, 'orders.titles.list');
     if (this.state.dataTableState.initialized) {
       return of(this.state);
     }
@@ -38,7 +39,6 @@ export class OrderListResolverService implements Resolve<OrderListState> {
       this.paymentService.getActivePaymentMethods(),
       this.shippingService.getActiveShippingMethods()
     ])).pipe(map(result => {
-      this.titleService.setTitleKey('orders.titles.list');
       return {
         dataTableState: new DataTableState<Order>(),
         paidStatuses: result[0],

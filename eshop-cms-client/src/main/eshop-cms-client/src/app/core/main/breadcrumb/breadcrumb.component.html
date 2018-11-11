@@ -1,8 +1,12 @@
-<nav aria-label="breadcrumb">
+<nav *ngIf="links && links.length > 1" faria-label="breadcrumb">
   <ol class="breadcrumb">
     <li *ngFor="let link of links; let isLast = last" class="breadcrumb-item" [ngClass]="{'active': isLast}" aria-current="page">
-      <a *ngIf="!isLast" routerLink="{{link.link}}">{{ link.title }}</a>
-      <ng-container *ngIf="isLast">{{ link.title }}</ng-container>
+      <button *ngIf="!isLast" class="btn btn-link p-0" (click)="navigate(link.id)">
+        {{ link.title }}
+      </button>
+      <ng-container *ngIf="isLast">
+        {{ link.title }}
+      </ng-container>
     </li>
   </ol>
 </nav>

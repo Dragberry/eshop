@@ -1,3 +1,4 @@
+import { DashboardComponent } from './main/dashboard/dashboard.component';
 import { MessagesAllComponent } from './main/messages/messages-all.component';
 import { MessagesComponent } from './main/messages/messages.component';
 import { DateService } from './service/date.service';
@@ -26,7 +27,6 @@ import { NavigationService } from './service/navigation.service';
 import { BreadcrumbComponent } from './main/breadcrumb/breadcrumb.component';
 import { SideMenuComponent } from './main/side-menu/side-menu.component';
 import { MenuItemComponent } from './main/side-menu/menu-item/menu-item.component';
-import { TitleService } from './service/title.service';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { AlertModule } from 'ngx-bootstrap/alert';
 
@@ -56,6 +56,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     TimepickerModule.forRoot()
   ],
   declarations: [
+    DashboardComponent,
     LoginComponent,
     MainComponent,
     MessagesComponent,
@@ -89,8 +90,7 @@ export class CoreModule {
         HttpDelegateService,
         httpInterceptorProviders,
         MessageService,
-        NavigationService,
-        TitleService
+        NavigationService
       ]
     };
   }

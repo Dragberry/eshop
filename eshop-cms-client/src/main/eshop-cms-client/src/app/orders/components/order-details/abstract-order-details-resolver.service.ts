@@ -1,9 +1,9 @@
+import { NavigationService } from './../../../core/service/navigation.service';
 import { DateService } from 'src/app/core/service/date.service';
 import { map } from 'rxjs/operators';
 import { OrderService } from '../../service/order.service';
 import { PaymentService } from '../../service/payment.service';
 import { ShippingService } from '../../service/shipping.service';
-import { TitleService } from 'src/app/core/service/title.service';
 import { Observable, from } from 'rxjs';
 import { Resolve, RouterStateSnapshot, ActivatedRouteSnapshot } from '@angular/router';
 import { OrderDetails } from '../../model/order-details';
@@ -15,7 +15,7 @@ export abstract class AbstractOrderDetailsResolverService implements Resolve<any
     protected paymentService: PaymentService,
     protected shippingService: ShippingService,
     protected dateService: DateService,
-    protected titleService: TitleService) {}
+    protected navigationService: NavigationService) {}
 
   resolve(
     route: ActivatedRouteSnapshot,
@@ -29,7 +29,7 @@ export abstract class AbstractOrderDetailsResolverService implements Resolve<any
       this.getOrderDetails(route)
     ])).pipe(map(result => {
       const order: OrderDetails = result[4];
-      this.setTitle(order);
+      this.setCurrentScreen(state.url, order);
       return {
         paymentMethods: result[0],
         shippingMethods: result[1],
@@ -40,7 +40,7 @@ export abstract class AbstractOrderDetailsResolverService implements Resolve<any
     }));
   }
 
-  abstract setTitle(order: OrderDetails): void;
+  abstract setCurrentScreen(url: string, order: OrderDetails): void;
 
   abstract getOrderDetails(route: ActivatedRouteSnapshot): Promise<OrderDetails>;
 

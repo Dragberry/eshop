@@ -15,6 +15,7 @@ import { PaymentService } from './service/payment.service';
 import { OrderCreateComponent } from './components/order-details/order-create.component';
 import { OrderDetailsResolverService } from './components/order-details/order-details-resolver.service';
 import { OrderCreateResolverService } from './components/order-details/order-create-resolver.service';
+import { OrdersComponent } from './components/orders.component';
 
 @NgModule({
   imports: [
@@ -23,6 +24,7 @@ import { OrderCreateResolverService } from './components/order-details/order-cre
     OrdersRoutingModule
   ],
   declarations: [
+    OrdersComponent,
     OrderCreateComponent,
     OrderListComponent,
     OrderDetailsComponent,

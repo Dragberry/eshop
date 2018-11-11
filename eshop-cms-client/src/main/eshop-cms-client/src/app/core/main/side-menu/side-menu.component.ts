@@ -17,7 +17,9 @@ export class SideMenuComponent implements OnInit {
     this.navigationService.loadMainMenu().then(mainMenu => {
       this.mainMenu = mainMenu;
     });
-
   }
 
+  navigate(url: string): void {
+    this.navigationService.navigate(url, true);
+  }
 }

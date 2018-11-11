@@ -1,3 +1,4 @@
+import { OrdersComponent } from './components/orders.component';
 import { OrderCreateResolverService } from './components/order-details/order-create-resolver.service';
 import { OrderDetailsResolverService } from './components/order-details/order-details-resolver.service';
 import { OrderListResolverService } from './components/order-list/order-list-resolver.service';
@@ -9,30 +10,36 @@ import { OrderListComponent } from './components/order-list/order-list.component
 import { OrderDetailsComponent } from './components/order-details/order-details.component';
 
 @NgModule({
-    imports: [RouterModule.forChild([
+      imports: [RouterModule.forChild([
         {
-          path: 'new',
-          component: OrderCreateComponent,
-          canActivate: [AuthGuard],
-          resolve: {
-            data: OrderCreateResolverService
-          }
-        },
-        {
-            path: ':id',
-            component: OrderDetailsComponent,
-            canActivate: [AuthGuard],
-            resolve: {
-              data: OrderDetailsResolverService
+          path: '',
+          component: OrdersComponent,
+          children: [
+            {
+              path: '',
+              component: OrderListComponent,
+              canActivate: [AuthGuard],
+              resolve: {
+                data: OrderListResolverService
+              }
+            },
+            {
+              path: 'new',
+              component: OrderCreateComponent,
+              canActivate: [AuthGuard],
+              resolve: {
+                data: OrderCreateResolverService
+              }
+            },
+            {
+              path: ':id',
+              component: OrderDetailsComponent,
+              canActivate: [AuthGuard],
+              resolve: {
+                data: OrderDetailsResolverService
+              }
             }
-        },
-        {
-            path: '',
-            component: OrderListComponent,
-            canActivate: [AuthGuard],
-            resolve: {
-              data: OrderListResolverService
-            }
+          ]
         }
     ])],
     exports: [RouterModule]

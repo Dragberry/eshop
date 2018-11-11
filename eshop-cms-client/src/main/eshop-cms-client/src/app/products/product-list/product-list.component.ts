@@ -1,6 +1,5 @@
-import { TitleService } from '../../core/service/title.service';
+import { NavigationService } from './../../core/service/navigation.service';
 import { Component, OnInit } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-product-list',
@@ -9,10 +8,10 @@ import { Title } from '@angular/platform-browser';
 })
 export class ProductListComponent implements OnInit {
 
-  constructor(private titleService: TitleService) { }
+  constructor(private navigationService: NavigationService) { }
 
   ngOnInit() {
-    this.titleService.setTitleKey('products.product-list.title');
+    this.navigationService.currentScreen('/products', 'products.product-list.title');
   }
 
 }

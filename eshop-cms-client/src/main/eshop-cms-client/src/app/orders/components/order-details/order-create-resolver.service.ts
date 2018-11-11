@@ -1,10 +1,10 @@
+import { NavigationService } from './../../../core/service/navigation.service';
 import { OrderStatus } from './../../model/order-status';
 import { ActivatedRouteSnapshot } from '@angular/router';
 import { DateService } from 'src/app/core/service/date.service';
 import { OrderService } from '../../service/order.service';
 import { PaymentService } from '../../service/payment.service';
 import { ShippingService } from '../../service/shipping.service';
-import { TitleService } from 'src/app/core/service/title.service';
 import { Injectable } from '@angular/core';
 import { OrderDetails } from '../../model/order-details';
 import { AbstractOrderDetailsResolverService } from './abstract-order-details-resolver.service';
@@ -17,12 +17,12 @@ export class OrderCreateResolverService extends AbstractOrderDetailsResolverServ
     protected paymentService: PaymentService,
     protected shippingService: ShippingService,
     protected dateService: DateService,
-    protected titleService: TitleService) {
-      super(orderService, paymentService, shippingService, dateService, titleService);
+    protected navigationService: NavigationService) {
+      super(orderService, paymentService, shippingService, dateService, navigationService);
   }
 
-  setTitle(order: OrderDetails): void {
-    this.titleService.setTitleKey('orders.titles.new', {
+  setCurrentScreen(url: string, order: OrderDetails): void {
+    this.navigationService.currentScreen(url, 'orders.titles.new', {
       date: this.dateService.formatDate(order.orderDate)
     });
   }

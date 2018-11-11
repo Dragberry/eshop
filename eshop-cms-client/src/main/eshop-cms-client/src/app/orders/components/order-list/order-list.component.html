@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-12">
-      <a routerLink="/orders/new" class="btn btn-primary mr-2">
+      <a routerLink="new" class="btn btn-primary mr-2">
         <span class="fa fa-plus mr-1"></span>
         <span>{{'common.newOrder' | translate}}</span>
       </a>
@@ -85,7 +85,7 @@
       <tbody class="small">
         <tr *ngFor="let order of page.content; let i = index;">
           <th class="text-right">
-            <a  routerLink="/orders/{{order.id}}">{{order.id}}</a>
+            <a routerLink="{{order.id}}">{{order.id}}</a>
           </th>
           <td class="text-center">{{order.date | formatDate}}</td>
           <td class="text-right">
