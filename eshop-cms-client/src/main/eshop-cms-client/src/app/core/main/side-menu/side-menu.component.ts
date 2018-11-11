@@ -20,6 +20,6 @@ export class SideMenuComponent implements OnInit {
   }
 
   navigate(url: string): void {
-    this.navigationService.navigate(url, true);
+    this.navigationService.navigate(url);
   }
 }

@@ -35,9 +35,14 @@ export class NavigationService {
     });
   }
 
-  navigate(url: string, isFirst: boolean): void {
+  navigate(url: string): Promise<boolean> {
     this.linksSubscribe.next();
-    this.router.navigate([url]);
+    return this.router.navigate([url]);
+  }
+
+  navigateBack(url: string): Promise<boolean> {
+    this.linksSubscribe.next();
+    return this.router.navigate([url]);
   }
 
   currentScreen(url: string, titleKey: string, titleParams?: Object): void {

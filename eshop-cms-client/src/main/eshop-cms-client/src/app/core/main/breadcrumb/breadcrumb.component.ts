@@ -33,8 +33,6 @@ export class BreadcrumbComponent implements OnInit {
 
   navigate(id: number): void {
     this.router.navigate([this.links[id].link]);
-    console.log(this.links[id]);
-    console.log(id);
     this.links = this.links.slice(0, id);
   }
 }

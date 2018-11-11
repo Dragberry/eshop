@@ -1,3 +1,4 @@
+import { NavigationService } from './../../../core/service/navigation.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { OrderService } from './../../service/order.service';
 import { Component } from '@angular/core';
@@ -13,20 +14,18 @@ export class OrderCreateComponent extends OrderDetailsEditableComponent {
 
   constructor(
     protected route: ActivatedRoute,
-    private router: Router,
+    private navigationService: NavigationService,
     private messageService: MessageService,
     protected orderService: OrderService) {
       super(route);
   }
 
-  updateOrder(): void {
-    console.log('Order has been updated');
-  }
+  updateOrder(): void { }
 
   saveOrder(): void {
     this.orderService.createOrder(this.order)
     .then(order => {
-      this.router.navigate(['/orders'])
+      this.navigationService.navigateBack('/orders')
       .then(() => this.messageService.showMessage(MessageType.SUCCESS, 'orders.messages.successCreated', {order: order.id}));
     })
     .catch(error => console.log('An error has occured', error));
