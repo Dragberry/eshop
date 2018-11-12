@@ -58,11 +58,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
 
-@Log4j
+@Log4j2
 @Service("InSalesDataImporter")
-@DependsOn("webAppInitializer")
+@DependsOn("appInitializer")
 public class InSalesDataImporter implements DataImporter {
 
 	private static final String PRODUCT_ARTICLE = "Артикул";

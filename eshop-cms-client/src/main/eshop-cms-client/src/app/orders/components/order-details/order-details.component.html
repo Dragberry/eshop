@@ -1,0 +1,171 @@
+<ng-container *ngIf="order">
+  <div class="row">
+    <div class="col-8">
+      <div class="form-row">
+        <div class="col-3">
+          <select *ngIf="orderStatuses" class="form-control"
+            appOrderStatus [orderStatus]="order.status"
+            [(ngModel)]="order.status"
+            (change)="updateOrder()">
+            <option *ngFor="let status of orderStatuses" [value]="status.value">
+              {{status.name}}
+            </option>
+          </select>
+        </div>
+        <div class="col-3">
+          <select *ngIf="paidStatuses" class="form-control"
+            appBooleanBadge [badgeValue]="order.paid"
+            [(ngModel)]="order.paid"
+            (change)="updateOrder()">
+            <option *ngFor="let status of paidStatuses" [value]="status.value">
+              {{status.name}}
+            </option>
+          </select>
+        </div>
+        <div class="col-3">
+          <select *ngIf="paymentMethods" class="form-control"
+            [(ngModel)]="order.paymentMethodId"
+            (change)="updateOrder()">
+            <option *ngFor="let pm of paymentMethods" [value]="pm.id">
+              {{pm.name}}
+            </option>
+          </select>
+        </div>
+        <div class="col-3">
+          <button type="button" class="btn btn-primary" (click)="downloadReport()">
+            <span class="fa fa-print"></span>
+            <span>{{'common.print' | translate}}</span>
+          </button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <app-order-details-items
+            [shippingMethods]="shippingMethods"
+            [order]="order"
+            [orderLocked]="editedOrder != null || editedOrderFields != null"
+            (orderEdited)="updateOrder()"
+            (orderBeingEdited)="lockOrder($event)">
+          </app-order-details-items>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+         <div class="card" *ngIf="!editedOrderFields">
+            <div class="card-header bg-dark text-white">
+              <span>{{'common.orderFields' | translate}}</span>
+              <button type="button" class="btn btn-dark text-warning"
+                [disabled]="!isOrderFieldsCanBeEdited()"
+                title="{{'common.edit' | translate}}"
+                (click)="editOrderFields()">
+                <span class="fa fa-pencil"></span>
+              </button>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-3">
+                  <span class="font-weight-bold">{{'common.comment' | translate}}:</span>
+                </div>
+                <div class="col-9">
+                  <p>{{order.comment || '--'}}</p>
+                </div>
+                <div class="col-3">
+                  <span class="font-weight-bold">{{'common.shopComment' | translate}}:</span>
+                </div>
+                <div class="col-9">
+                  <p>{{order.shopComment || '--'}}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card" *ngIf="editedOrderFields">
+            <div class="card-header bg-dark text-white">
+              <span>{{'common.orderFields' | translate}}</span>
+              <button type="button" class="btn btn-dark text-primary"
+                title="{{'common.save' | translate}}"
+                (click)="saveEditedOrderFields()">
+                <span class="fa fa-check"></span>
+              </button>
+              <button type="button" class="btn btn-dark text-danger"
+                title="{{'common.cancel' | translate}}"
+                (click)="cancelOrderFieldsEditing()">
+                <span class="fa fa-times"></span>
+              </button>
+            </div>
+            <app-order-details-fields-editable
+              [order]="editedOrderFields">
+            </app-order-details-fields-editable>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-4">
+      <div class="card" *ngIf="!editedOrder">
+        <div class="card-header bg-dark text-white">
+          <span>{{'common.deliveryInfo' | translate}}</span>
+          <button type="button" class="btn btn-dark text-warning"
+            [disabled]="!isOrderCanBeEdited()"
+            title="{{'common.edit' | translate}}"
+            (click)="editOrderDetails()">
+            <span class="fa fa-pencil"></span>
+          </button>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-12">
+              <h5 class="card-title">{{order.fullName || '--'}}</h5>
+              <p class="card-text">{{order.phone || '--'}}</p>
+              <address>
+                <span class="d-block font-weight-bold">{{'common.address' | translate}}</span>
+                <span class="d-block">{{order.address || '--'}}</span>
+              </address>
+            </div>
+            <div class="col-12">
+                <span class="d-block font-weight-bold">
+                  {{'common.deliveryDate' | translate}}: {{'common.fromToDate' | translate}}
+                </span>
+            </div>
+            <div class="col-6">
+              <p>{{order.deliveryDateFrom | formatDate}}</p>
+            </div>
+            <div class="col-6">
+              <p>{{order.deliveryDateTo | formatDate}}</p>
+            </div>
+            <div class="col-12">
+              <span class="d-block font-weight-bold">{{'common.customerComment' | translate}}</span>
+              <p class="d-block">{{order.customerComment}}</p>
+            </div>
+            <div class="col-12">
+              <span class="d-block font-weight-bold">{{'common.email' | translate}}</span>
+              <p class="d-block">{{order.email}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" *ngIf="editedOrder">
+        <div class="card-header bg-dark text-white">
+          <span>{{'common.deliveryInfo' | translate}}</span>
+          <div class="btn-group btn-group-justified">
+            <button type="button" class="btn btn-dark text-primary"
+              title="{{'common.save' | translate}}"
+              (click)="saveEditedOrderDetails()">
+              <span class="fa fa-check"></span>
+            </button>
+            <button type="button" class="btn btn-dark text-danger"
+              title="{{'common.cancel' | translate}}"
+              (click)="cancelOrderEditing()">
+              <span class="fa fa-times"></span>
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <app-order-details-info-editable
+            [order]="editedOrder">
+          </app-order-details-info-editable>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>

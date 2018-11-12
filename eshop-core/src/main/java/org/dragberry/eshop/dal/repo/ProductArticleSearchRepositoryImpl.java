@@ -5,10 +5,12 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,14 +18,17 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Selection;
 import javax.persistence.criteria.Subquery;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
+import org.dragberry.eshop.dal.dto.ProductArticleListItemDTO;
 import org.dragberry.eshop.dal.dto.ProductListItemDTO;
 import org.dragberry.eshop.dal.entity.Product;
 import org.dragberry.eshop.dal.entity.ProductArticle;
@@ -31,9 +36,19 @@ import org.dragberry.eshop.dal.entity.ProductAttributeBoolean;
 import org.dragberry.eshop.dal.entity.ProductAttributeList;
 import org.dragberry.eshop.dal.entity.ProductAttributeNumeric;
 import org.dragberry.eshop.dal.entity.ProductAttributeString;
+import org.dragberry.eshop.dal.entity.Product_;
 import org.dragberry.eshop.dal.entity.ProductArticle.SaleStatus;
+import org.dragberry.eshop.dal.entity.ProductArticle_;
+import org.dragberry.eshop.dal.sort.Roots;
+import org.dragberry.eshop.dal.sort.SortConfig;
+import org.dragberry.eshop.dal.sort.SortContext;
+import org.dragberry.eshop.dal.sort.SortFunction;
 import org.dragberry.eshop.service.filter.FilterTypes;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
+
+import lombok.AllArgsConstructor;
 
 public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchRepository {
 
@@ -416,6 +431,97 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
 	            }
 	        }
 	    }	
-		
+	}
+	
+	private static final String ID = "id";
+	private static final String ARTICLE = "article";
+	private static final String TITLE = "title";
+	private static final String PRICE = "price";
+	private static final String ACTUAL_PRICE = "actualPrice";
+	
+	@AllArgsConstructor(staticName = "of")
+    private static class ProductArticleRoots implements Roots {
+        final Root<ProductArticle> productArticle;
+        final Join<ProductArticle, Product> product;
+    }
+	
+	private static final SortConfig<ProductArticleRoots> SORT_CONFIG = new SortConfig<>() {
+        
+        private final Map<String, SortFunction<ProductArticleRoots>> config = new HashMap<>();
+        {
+            config.put(ID, SortFunction.of(ctx -> ctx.roots.productArticle.get(ProductArticle_.entityKey)));
+            config.put(ARTICLE, SortFunction.of(ctx -> ctx.roots.productArticle.get(ProductArticle_.article)));
+            config.put(TITLE, SortFunction.of(ctx -> ctx.roots.productArticle.get(ProductArticle_.title)));
+            config.put(PRICE, SortFunction.of(ctx -> ctx.cb.min(ctx.roots.product.get(Product_.price))));
+            config.put(ACTUAL_PRICE, SortFunction.of(ctx -> ctx.cb.min(ctx.roots.product.get(Product_.actualPrice))));
+        }
+        
+        @Override
+        public SortFunction<ProductArticleRoots> get(String param) {
+            return config.get(param);
+        }
+        
+        @Override
+        public SortFunction<ProductArticleRoots> getDefault() {
+            return SortFunction.of(ctx -> ctx.roots.productArticle.get(ProductArticle_.entityKey), Direction.DESC);
+        }
+    };
+	
+	/**
+	 * Search product articles for CMS product list page
+	 */
+	@Override
+	public Page<ProductArticleListItemDTO> search(PageRequest pageRequest, Map<String, String[]> searchParams) {
+	    return new ProductArticleSearchQuery().search(pageRequest, searchParams);
+	}
+	
+	private class ProductArticleSearchQuery extends AbstractSearchQuery<ProductArticleListItemDTO, ProductArticleRoots> {
+
+        public ProductArticleSearchQuery() {
+            super(ProductArticleListItemDTO.class, em);
+        }
+
+        @Override
+        protected ProductArticleRoots getRoots(CriteriaQuery<?> query) {
+            Root<ProductArticle> root = query.from(ProductArticle.class);
+            return ProductArticleRoots.of(root, root.join(ProductArticle_.products));
+        }
+
+        @Override
+        protected List<Selection<?>> getSelectionList() {
+            return List.of(
+                    roots.productArticle.get(ProductArticle_.entityKey),
+                    roots.productArticle.get(ProductArticle_.article),
+                    roots.productArticle.get(ProductArticle_.title),
+                    cb.min(roots.product.get(Product_.price)),
+                    cb.min(roots.product.get(Product_.actualPrice)),
+                    cb.count(roots.product.get(Product_.entityKey)));
+        }
+
+        @Override
+        protected Expression<?> getCountExpression() {
+            return countRoots.productArticle.get(ProductArticle_.entityKey);
+        }
+
+        @Override
+        protected void where(List<Predicate> predicates, Map<String, String[]> searchParams, ProductArticleRoots roots) {
+            
+        }
+        
+        @Override
+        protected Optional<List<Expression<?>>> groupBy(ProductArticleRoots roots) {
+            return Optional.of(List.of(roots.productArticle.get(ProductArticle_.entityKey)));
+        }
+
+        @Override
+        protected SortConfig<ProductArticleRoots> getSortConfig() {
+            return SORT_CONFIG;
+        }
+
+        @Override
+        protected SortContext<ProductArticleRoots> getSortContext() {
+            return SortContext.of(cb, roots);
+        }
+
 	}
 }

@@ -1,0 +1,47 @@
+<div *ngIf="pageExists" class="row">
+  <div class="col-12">
+    <nav aria-label="paginator">
+      <ul class="pagination">
+        <li class="page-item" [class.disabled]="!isFirstEnabled">
+          <button class="page-link" (click)="onPageSelect(1)" aria-label="Previous" [disabled]="!isFirstEnabled">
+            <span aria-hidden="true">&laquo;</span>
+            <span class="sr-only">First</span>
+          </button>
+        </li>
+        <li class="page-item" [class.disabled]="!isPreviousEnabled">
+          <button class="page-link" (click)="onPageSelect(currentPageNumber - 1)" aria-label="Previous" [disabled]="!isPreviousEnabled">
+            <span aria-hidden="true">&lsaquo;</span>
+            <span class="sr-only">Previous</span>
+          </button>
+        </li>
+        <li *ngFor="let pageNumber of pageNumbers" class="page-item" [class.active]="currentPageNumber == pageNumber">
+          <button class="page-link" [class.disabled]="currentPageNumber == pageNumber" (click)="onPageSelect(pageNumber)">{{pageNumber}}</button>
+        </li>
+        <li class="page-item" [class.disabled]="!isNextEnabled">
+          <button class="page-link" (click)="onPageSelect(currentPageNumber + 1)" aria-label="Next" [disabled]="!isNextEnabled">
+            <span aria-hidden="true">&rsaquo;</span>
+            <span class="sr-only">Next</span>
+          </button>
+        </li>
+        <li class="page-item" [class.disabled]="!isLastEnabled">
+          <button class="page-link" (click)="onPageSelect(totalPages)" aria-label="Next" [disabled]="!isLastEnabled">
+            <span aria-hidden="true">&raquo;</span>
+            <span class="sr-only">Last</span>
+          </button>
+        </li>
+        <li class="page-item">
+            <div class="form-inline">
+              <label class="pl-2 pr-1">{{'common.showElementsOnPage' | translate}}:</label>
+              <select class="form-control" (change)="onPageSizeChanged($event.target.value)">
+                  <option *ngFor="let pageSize of pageSizes"
+                    [selected]="pageSize == currentPageSize"
+                    [value]="pageSize">
+                    {{pageSize}}
+                  </option>
+              </select>
+            </div>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>

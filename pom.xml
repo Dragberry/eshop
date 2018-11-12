@@ -22,14 +22,15 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>8</java.version>
+		<java.version>9</java.version>
 		<spring-mobile.version>2.0.0.M3</spring-mobile.version>
 		<commons-collections4.version>4.0</commons-collections4.version>
 		<commons-io.version>2.6</commons-io.version>
 		<commons-validator.version>1.6</commons-validator.version>
-		<log4j.version>1.2.17</log4j.version>
 		<jsoup.version>1.11.3</jsoup.version>
 		<poi.version>3.17</poi.version>
+		
+		<com.fasterxml.jackson.version>2.9.1</com.fasterxml.jackson.version>
 	</properties>
 
 	<dependencyManagement>
@@ -80,9 +81,8 @@
 			<version>${commons-io.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.17</version>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
 		</dependency>
 	</dependencies>
 
@@ -99,9 +99,7 @@
 
 	<modules>
 		<module>eshop-core</module>
-		<!-- 
 		<module>eshop-cms-client</module>
-		 -->
 		<module>eshop-client</module>
 		<module>eshop-backend</module>
 	</modules>

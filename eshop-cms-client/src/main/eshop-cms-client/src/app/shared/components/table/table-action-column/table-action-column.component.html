@@ -1,0 +1,48 @@
+<div class="text-nowrap">
+  <button *ngIf="sortBy" class="btn btn-dark pr-1 pl-1 pt-0 pb-0" (click)="toggleSorting()">
+    <span class="fa" [ngClass]="getSortClass()"></span>
+  </button>
+  <span class="text-nowrap pl-2 pr-2">{{title}}</span>
+  <div *ngIf="filter" dropdown class="dropdown d-inline"
+      #dropdown="bs-dropdown"
+      [autoClose]="false">
+    <button dropdownToggle
+        [id]="columnId + 'Filter'"
+        class="btn  dropdown-toggle pr-1 pl-1 pt-0 pb-0"
+        [ngClass]="{'btn-dark': !hasFilter(), 'btn-primary': hasFilter()}"
+        type="button"
+        aria-haspopup="true"
+        aria-expanded="false">
+      <span class="fa fa-filter"></span>
+    </button>
+    <div *dropdownMenu
+        class="dropdown-menu dropdown-menu-right"
+        [attr.aria-labelledby]="columnId + 'Filter'">
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <app-table-list-filter #tableFilter *ngIf="filter == 'list'"
+              [columnId]="columnId"
+              [options]="filterOptions">
+            </app-table-list-filter>
+            <app-table-numeric-filter #tableFilter *ngIf="filter == 'numeric'"
+              [columnId]="columnId">
+            </app-table-numeric-filter>
+            <app-table-date-filter #tableFilter *ngIf="filter == 'date'"
+              [columnId]="columnId">
+            </app-table-date-filter>
+          </div>
+          <div class="col-6">
+            <button type="button" (click)="applyFilter();dropdown.hide();" class="btn btn-primary btn-block">
+                {{'common.apply' | translate}}
+            </button>
+          </div>
+          <div class="col-6">
+          <button type="button" (click)="resetFilter();dropdown.hide();" class="btn btn-secondary btn-block">
+            {{'common.cancel' | translate}}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

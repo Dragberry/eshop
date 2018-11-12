@@ -1,0 +1,246 @@
+<table class="table table-sm table-striped table-hover">
+  <thead class="bg-dark text-white">
+    <tr>
+      <th class="align-middle">#</th>
+      <th class="align-middle text-nowrap">{{'common.image' | translate}}</th>
+      <th class="align-middle text-nowrap">
+        <ng-container
+          *ngIf="isOrderItemBeingAdded(); then editableAddOrderItem; else readonlyAddOrderItem">
+        </ng-container>
+        <ng-template #editableAddOrderItem>
+          <div class="input-group">
+            <span class="input-group-btn">
+              <button type="button" class="btn btn-dark text-danger"
+                title="{{'common.cancel' | translate}}"
+                (click)="cancelAddingOrderItem()">
+                <span class="fa fa-times"></span>
+              </button>
+            </span>
+            <input type="text" [(ngModel)]="productSearchQuery" class="form-control" (keyup)="loadSuggestedProductsList()">
+            <div dropdown class="dropdown d-inline" #addOrderItemOptions="bs-dropdown">
+              <button dropdownToggle id="addOrderItemOptionsTrigger"
+                class="dropdown-toggle d-none"
+                type="button"
+                aria-haspopup="true"
+                aria-expanded="false">
+              </button>
+              <div *dropdownMenu class="dropdown-menu dropdown-menu-right suggested-products" role="menu" aria-labelledby="addOrderItemOptionsTrigger">
+                <div class="list-group">
+                  <div *ngIf="!suggestedProductsList || suggestedProductsList.length == 0"
+                    class="list-group-item list-group-item-action">
+                    <div class="row suggested-product">
+                      <div class="col-12 text-justify">
+                        <span>{{'common.noResults' | translate}}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div *ngFor="let product of suggestedProductsList"
+                    class="list-group-item list-group-item-action"
+                    (click)="confirmAddingOrderItem(product)">
+                    <div class="row suggested-product">
+                      <div class="col-9">
+                        <span class="d-block">{{product.title}}</span>
+                        <span class="d-block small font-italic">
+                          {{product.optionsTitle}}
+                        </span>
+                        <span class="d-block small font-italic font-weight-bold">
+                          {{'common.article' | translate}}: {{product.article}}
+                        </span>
+                      </div>
+                      <div class="col-3 text-right">
+                        <ng-container
+                          *ngIf="product.actualPrice; then actualPriceExists; else actualPriceDoesntExist">
+                        </ng-container>
+                        <ng-template #actualPriceExists>
+                          <span class="d-block">{{product.actualPrice}} Руб.</span>
+                          <span class="d-block small"><del>{{product.price}} Руб.</del></span>
+                        </ng-template>
+                        <ng-template #actualPriceDoesntExist>
+                          <span class="d-block">{{product.price}} Руб.</span>
+                        </ng-template>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+        <ng-template #readonlyAddOrderItem>
+          <span class="mr-2">{{'common.productItem' | translate}}</span>
+          <button type="button" class="btn btn-dark text-primary"
+            title="{{'common.addOrderItem' | translate}}"
+            (click)="requestAddingOrderItem()">
+            <span class="fa fa-plus"></span>
+          </button>
+        </ng-template>
+      </th>
+      <th class="align-middle text-nowrap">{{'common.price' | translate}}</th>
+      <th class="align-middle text-nowrap">{{'common.quantityShort' | translate}}</th>
+      <th class="align-middle text-nowrap">{{'common.sum' | translate}}</th>
+      <th class="align-middle text-nowrap">{{'common.action' | translate}}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of order.items; let i = index">
+      <ng-container
+        *ngIf="isItemEdited(item); then editableOrderItem; else readonlyOrderItem">
+      </ng-container>
+
+      <ng-template #readonlyOrderItem>
+        <th class="align-middle">{{i + 1}}</th>
+        <td>
+          <img class="product-image img-fluid img-thumbnail"
+            src="{{'/images/' + item.product.productArticleId + '/' + item.product.article + '/' + item.product.mainImage}}">
+        </td>
+        <td class="align-middle">
+          <div class="d-block">{{item.product.title}}</div>
+          <div *ngIf="item.product.optionsTitle" class="d-block font-italic small">
+            <div dropdown class="dropdown d-inline">
+              <button dropdownToggle
+                (click)='loadProductOptions(item.product)'
+                class="btn btn-link btn-sm p-0"
+                type="button"
+                aria-haspopup="true"
+                aria-expanded="false">
+                {{item.product.optionsTitle}}
+              </button>
+              <div *dropdownMenu
+                class="dropdown-menu dropdown-menu-right suggested-products" role="menu">
+                <div class="list-group">
+                  <div *ngIf="!suggestedProductsOptions || suggestedProductsOptions.length == 0"
+                    class="list-group-item list-group-item-action">
+                    <div class="row suggested-product">
+                      <div class="col-12 text-justify">
+                        <span>{{'common.noResults' | translate}}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div *ngFor="let product of suggestedProductsOptions"
+                    class="list-group-item list-group-item-action"
+                    (click)="confirmChangingProduct(item, product)">
+                    <div class="row small suggested-product">
+                      <div class="col-12">
+                        <span class="d-block font-italic font-weight-bold">
+                          {{product.optionsTitle}}
+                        </span>
+                      </div>
+                      <div class="col-12 text-right">
+                        <ng-container
+                          *ngIf="product.actualPrice; then actualPriceExists; else actualPriceDoesntExist">
+                        </ng-container>
+                        <ng-template #actualPriceExists>
+                          <span class="d-block">{{product.actualPrice}} Руб.</span>
+                          <span class="d-block small"><del>{{product.price}} Руб.</del></span>
+                        </ng-template>
+                        <ng-template #actualPriceDoesntExist>
+                          <span class="d-block">{{product.price}} Руб.</span>
+                        </ng-template>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <span class="d-block font-weight-bold small">{{'common.article' | translate}}: {{item.product.article}}</span>
+        </td>
+        <td class="align-middle text-right text-nowrap">
+          <span>{{item.price}} Руб.</span>
+        </td>
+        <td class="align-middle text-right text-nowrap">
+          <span>{{item.quantity}}</span>
+        </td>
+        <td class="align-middle text-right text-nowrap">
+          <span>{{item.totalAmount}} Руб.</span>
+        </td>
+        <td class="align-middle text-center">
+          <div class="btn-group btn-group-justified">
+            <button type="button" class="btn btn-danger"
+              [disabled]="!isOrderItemCanBeEdited(item)"
+              [class.disabled]="!isOrderItemCanBeEdited(item)"
+              title="{{'common.removeOrderItem' | translate}}"
+              (click)="showRemoveOrderItemConfirmation(item)">
+              <span class="fa fa-times"></span>
+            </button>
+            <button type="button" class="btn btn-warning"
+              [class.disabled]="!isOrderItemCanBeEdited(item)"
+              [disabled]="!isOrderItemCanBeEdited(item)"
+              title="{{'common.editOrderItem' | translate}}"
+              (click)="editItem(item)">
+              <span class="fa fa-pencil"></span>
+            </button>
+          </div>
+        </td>
+      </ng-template>
+
+      <ng-template #editableOrderItem>
+        <th class="align-middle">{{i + 1}}</th>
+        <td>
+          <img class="product-image img-fluid img-thumbnail"
+            src="{{'/images/' + item.product.productArticleId + '/' + item.product.article + '/' + item.product.mainImage}}">
+        </td>
+        <td class="align-middle">
+          <span class="d-block">{{item.product.title}}</span>
+          <span *ngIf="item.product.optionsTitle" class="d-block font-italic small">{{item.product.optionsTitle}}</span>
+          <span class="d-block font-weight-bold small">{{'common.article' | translate}}: {{item.product.article}}</span>
+        </td>
+        <td class="align-middle text-right text-nowrap">
+          <input type="text" class="form-control"
+            [(ngModel)]="editedOrderItem.price"
+            mask="0*.00" [dropSpecialCharacters]="false"
+            (keyup)="onItemEdit()">
+        </td>
+        <td class="align-middle text-right text-nowrap">
+          <input type="text" class="form-control"
+            [(ngModel)]="editedOrderItem.quantity"
+            mask="0*" [dropSpecialCharacters]="false"
+            (keyup)="onItemEdit()">
+        </td>
+        <td class="align-middle text-right text-nowrap">
+          <span>{{editedOrderItem.totalAmount}}</span>
+        </td>
+        <td class="align-middle text-center">
+          <div class="btn-group btn-group-justified">
+            <button type="button" class="btn btn-secondary"
+              title="{{'common.cancel' | translate}}"
+              (click)="cancelOrderItemEditing()">
+              <span class="fa fa-times"></span>
+            </button>
+            <button type="button" class="btn btn-primary"
+              title="{{'common.save' | translate}}"
+              (click)="saveEditedOrderItem(item)">
+              <span class="fa fa-check"></span>
+            </button>
+          </div>
+        </td>
+      </ng-template>
+    </tr>
+  </tbody>
+  <tfoot class="bg-dark text-white">
+    <tr>
+      <th colspan="2" class="align-middle text-nowrap">
+        {{'common.delivery' | translate}}
+      </th>
+      <th>
+        <select *ngIf="shippingMethods" class="form-control"
+          [(ngModel)]="selectedShippingMethod"
+          (change)="onShippingMethodChanged()">
+          <option *ngFor="let sm of shippingMethods" [ngValue]="sm">
+            {{sm.name}} - {{sm.cost}} Руб.
+          </option>
+        </select>
+      </th>
+      <th colspan="2"></th>
+      <th class="align-middle text-right text-nowrap">
+        <span *ngIf="selectedShippingMethod">{{selectedShippingMethod.cost}} Руб.</span>
+      </th>
+      <th colspan="2"></th>
+    </tr>
+    <tr>
+      <th colspan="5" class="align-middle text-right text-nowrap">{{'common.total' | translate}}: </th>
+      <th class="align-middle text-right text-nowrap">{{order.totalAmount}} Руб.</th>
+      <th colspan="2"></th>
+    </tr>
+  </tfoot>
+</table>

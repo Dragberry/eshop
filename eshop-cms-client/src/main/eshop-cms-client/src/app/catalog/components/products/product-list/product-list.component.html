@@ -1,0 +1,125 @@
+<div class="row">
+  <div class="col-12">
+    <a routerLink="new" class="btn btn-primary mr-2 disabled">
+      <span class="fa fa-plus mr-1"></span>
+      <span>{{'common.newProduct' | translate}}</span>
+    </a>
+    <button type="button" class="btn btn-secondary" (click)=resetAll()>
+      {{'common.resetAll' | translate}}
+    </button>
+  </div>
+  <div class="col-12">
+    <hr/>
+  </div>
+  <div class="col-12">
+    <app-paginator [page]="page" (paginatorEvent)="onPageableEvent($event)"></app-paginator>
+    <table *ngIf="page" class="table table-sm table-striped table-hover">
+      <thead class="thead-dark">
+        <tr>
+          <th class="text-right">
+            <app-table-action-column
+              [columnId]="'id'"
+              [title]="'common.id' | translate"
+              [sortBy]="'id'"
+              (columnAction)="onColumnActionEvent($event)">
+            </app-table-action-column>
+          </th>
+          <th class="text-center">
+            <span>{{'common.photo' | translate}}</span>
+          </th>
+          <th class="text-left">
+            <app-table-action-column
+              [columnId]="'title'"
+              [title]="'common.title' | translate"
+              [sortBy]="'title'"
+              (columnAction)="onColumnActionEvent($event)">
+            </app-table-action-column>
+          </th>
+          <th class="text-left">
+            <app-table-action-column
+              [columnId]="'article'"
+              [title]="'common.article' | translate"
+              [sortBy]="'article'"
+              (columnAction)="onColumnActionEvent($event)">
+            </app-table-action-column>
+          </th>
+          <th class="text-right">
+            <app-table-action-column
+              [columnId]="'price'"
+              [title]="'common.price' | translate"
+              [sortBy]="'price'"
+              [filter]="'numeric'"
+              (columnAction)="onColumnActionEvent($event)">
+            </app-table-action-column>
+          </th>
+          <th class="text-right">
+            <app-table-action-column
+              [columnId]="'actualPrice'"
+              [title]="'common.actualPrice' | translate"
+              [sortBy]="'actualPrice'"
+              [filter]="'numeric'"
+              (columnAction)="onColumnActionEvent($event)">
+            </app-table-action-column>
+          </th>
+        </tr>
+      </thead>
+      <tbody class="small">
+        <ng-container *ngFor="let productArticle of page.content; let i = index;">
+          <tr>
+            <th class="text-right">
+              <a class="disabled" routerLink="{{productArticle.id}}">{{productArticle.id}}</a>
+            </th>
+            <td class="text-center">
+              <img class="product-image img-fluid img-thumbnail"
+                src="{{'/images/' + productArticle.id + '/' + productArticle.article + '/' + productArticle.mainImage}}">
+            </td>
+            <td class="text-left">
+              {{productArticle.title}}
+            </td>
+            <td class="text-left">
+              <span *ngIf="productArticle.optionsCount <= 1">
+                {{productArticle.article}}
+              </span>
+              <span *ngIf="productArticle.optionsCount > 1">
+                <button class="btn btn-link p-0" (click)="loadOptions(productArticle)">
+                  {{productArticle.article}}
+                </button>
+              </span>
+            </td>
+            <td class="text-right">
+              <span class="font-weight-bold">
+                {{productArticle.price.toFixed(2)}} Руб.
+              </span>
+            </td>
+            <td class="text-right">
+              <span class="font-weight-bold">
+                {{productArticle.actualPrice.toFixed(2)}} Руб.
+              </span>
+            </td>
+          </tr>
+          <ng-container *ngIf="productArticle.isProductsShown">
+            <tr *ngFor="let productOption of productArticle.products; let i = index;">
+              <td></td>
+              <td></td>
+              <td class="text-left">
+                {{productOption.optionsTitle}}
+              </td>
+              <td>{{productArticle.article}}</td>
+              <td class="text-right">
+                <span class="font-weight-bold">
+                  {{productOption.price.toFixed(2)}} Руб.
+                </span>
+              </td>
+              <td class="text-right">
+                <span class="font-weight-bold">
+                  {{productOption.actualPrice.toFixed(2)}} Руб.
+                </span>
+              </td>
+            </tr>
+          </ng-container>
+        </ng-container>
+      </tbody>
+    </table>
+    <app-paginator [page]="page" (paginatorEvent)="onPageableEvent($event)"></app-paginator>
+  </div>
+</div>

@@ -1,3 +1,9 @@
+import { DashboardComponent } from './main/dashboard/dashboard.component';
+import { MessagesAllComponent } from './main/messages/messages-all.component';
+import { MessagesComponent } from './main/messages/messages.component';
+import { DateService } from './service/date.service';
+import { MessageService } from './service/message.service';
+import { HttpDelegateService } from './http/http-delegate.service';
 import { NgModule, Optional, SkipSelf } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -13,12 +19,16 @@ import { AuthenticationService } from './auth/authentication.service';
 import { httpInterceptorProviders } from './http';
 
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { CollapseModule } from 'ngx-bootstrap/collapse';
+import { NgxMaskModule } from 'ngx-mask';
+import { TimepickerModule } from 'ngx-bootstrap/timepicker';
 import { NavigationService } from './service/navigation.service';
 import { BreadcrumbComponent } from './main/breadcrumb/breadcrumb.component';
 import { SideMenuComponent } from './main/side-menu/side-menu.component';
 import { MenuItemComponent } from './main/side-menu/menu-item/menu-item.component';
-import { TitleService } from './service/title.service';
+import { ModalModule } from 'ngx-bootstrap/modal';
+import { AlertModule } from 'ngx-bootstrap/alert';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
@@ -37,17 +47,27 @@ export function HttpLoaderFactory(http: HttpClient) {
         deps: [HttpClient]
       }
     }),
+    AlertModule.forRoot(),
     BsDropdownModule.forRoot(),
-    CollapseModule.forRoot()
+    BsDatepickerModule.forRoot(),
+    CollapseModule.forRoot(),
+    ModalModule.forRoot(),
+    NgxMaskModule.forRoot(),
+    TimepickerModule.forRoot()
   ],
   declarations: [
+    DashboardComponent,
     LoginComponent,
     MainComponent,
+    MessagesComponent,
+    MessagesAllComponent,
     BreadcrumbComponent,
     SideMenuComponent,
     MenuItemComponent
   ],
-  exports: [CoreRoutingModule],
+  exports: [
+    CoreRoutingModule
+  ],
   providers: []
 })
 export class CoreModule {
@@ -66,9 +86,11 @@ export class CoreModule {
       providers: [
         AuthenticationService,
         AuthGuard,
+        DateService,
+        HttpDelegateService,
         httpInterceptorProviders,
-        NavigationService,
-        TitleService
+        MessageService,
+        NavigationService
       ]
     };
   }

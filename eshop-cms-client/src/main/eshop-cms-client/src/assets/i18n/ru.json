@@ -15,8 +15,65 @@
     },
     "common": {
       "account": "Аккаунт",
+      "action": "Действие",
+      "actualPrice": "Акт. цена",
+      "addOrderItem": "Добавить позицию",
+      "address": "Адрес",
+      "apply": "Применить",
+      "article": "Артикул",
+      "cancel": "Отмена",
+      "comment": "Комментарий",
+      "comments": "Комментарии",
+      "confirm": "Ок",
+      "customerComment": "Комментарий покупателя",
+      "dashboard": "Главная страница",
+      "date": "Дата",
+      "deliver": "Доставить",
+      "delivery": "Доставка",
+      "deliveryDate": "Дата доставки",
+      "deliveryInfo": "Детали доставки",
+      "deliveryTime": "Время доставки",
+      "edit": "Редактировать",
+      "editOrderItem": "Редактировать позицию",
+      "email": "E-Mail",
+      "from": "От",
+      "fromToDate": "с / по",
+      "fullName": "Ф.И.О.",
+      "id": "ID",
+      "image": "Изображение",
+      "isPaid": "Оплата",
+      "newOrder": "Новый заказ",
+      "newProduct": "Новый товар",
+      "noResults": "Ничего не найдено",
+      "order": "Заказ",
+      "orderFields": "Поля заказа",
+      "orderInfo": "Информация о заказе",
+      "quantity": "Количество",
+      "quantityShort": "Кол-во",
+      "paymentMethod": "Способ оплаты",
+      "phone": "Телефон",
+      "photo": "Фото",
+      "price": "Стоимость",
+      "print": "Печать",
+      "productItem": "Позиция",
+      "removeOrderItem": "Удалить позицию",
+      "resetAll": "Сбросить все",
+      "save": "Сохранить",
       "search": "Поиск",
-      "sign-out": "Выйти"
+      "selectAll": "Выбрать все",
+      "shippingMethod": "Способ доставки",
+      "showElementsOnPage": "Показывать на странице",
+      "shopComment": "Комментарий продавца",
+      "sign-out": "Выйти",
+      "status": "Статус",
+      "sum": "Сумма",
+      "title": "Название",
+      "to": "До",
+      "total": "Итого",
+      "messages": {
+        "confirmationDefaultMessage": "вы уверены, что хотите совершить это действие?",
+        "confirmationTitle": "Подтвердите действие"
+      }
     },
     "language": {
       "en": "English",
@@ -24,13 +81,60 @@
     },
     "main-menu": {
     	"dashboard": "Главная",
-    	"products": "Товары",
+        "catalog": "Каталог",
+        "categories": "Категории",
+        "products": "Товары",
     	"orders": "Заказы",
     	"customers": "Клиенты"
     },
     "products": {
-    	"product-list": {
-    		"title": "Список товаров"
+    	"titles": {
+    		"list": "Список товаров"
     	}
-    }
+    },
+    "orders": {
+        "titles": {
+          "list": "Список заказов",
+          "new": "Новый заказ на {{date}}",
+          "details": "Заказ #{{id}} на {{date}}"
+        },
+        "messages": {
+            "confirmRemovingOrderItem": "Вы уверены, что хотите убрать эту позицию из заказа?",
+            "successCreated": "Заказ #{{order}} успешно создан.",
+            "successUpdated": "Заказ #{{order}} успешно обновлен."
+        },
+        "paid": {
+            "true": "Оплачен",
+            "false": "Не оплачен"
+        },
+        "status": {
+            "NEW": "Новый",
+            "PROCESSING": "В обработке",
+            "AGREED": "Согласован",
+            "SHIPPED": "Отгружен",
+            "DELIVERED": "Доставлен",
+            "CANCELLED": "Отменен",
+            "RETURNED": "Возврат"
+        },
+        "validation" : {
+            "noItems": "Заказ не может быть пустым.",
+            "paymentMethodInvalid": "Неверный способ оплаты.",
+            "productInvalid": "Неверный ID товара",
+            "shippingMethodInvalid": "Неверный способ доставки"
+        }
+    },
+    "errors": {
+		"http": {
+			"undefined": "Сервер недоступен!",
+			"0": "Сервер недоступен!",
+			"400": "Некорректно составлен запрос к серверу!",
+			"401": "вы должны авторизоваться для совершения данного действия!",
+			"403": "У Вас нет прав на выполнение данного действия!",
+			"404": "Запрошенный ресурс не существует!",
+			"500": "Произошла ошибка на сервере!",
+			"503": "Сервер недоступен!",
+			"504": "Время ожидания сервера истекло!"
+		},
+		"no-permissions": "У Вас нет прав на выполнение данного действия!"
+	}
 }

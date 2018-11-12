@@ -15,14 +15,33 @@
 	</parent>
 	
 	<properties>
-		<jjwt.version>0.7.0</jjwt.version>
 		<json-path.version>2.4.0</json-path.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+			<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-log4j2</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -30,23 +49,16 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt</artifactId>
-			<version>${jjwt.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.dragberry.eshop</groupId>
 			<artifactId>eshop-client</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<!-- 
 		<dependency>
 			<groupId>org.dragberry.eshop</groupId>
 			<artifactId>eshop-cms-client</artifactId>
 			<version>${project.version}</version>
 			<scope>runtime</scope>
 		</dependency>
-		 -->
 	</dependencies>
 
 	<build>

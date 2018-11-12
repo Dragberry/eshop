@@ -1,6 +1,10 @@
 {
-	"/api": {
+  "/images": {
 		"target": "http://localhost:8090",
 		"secure": false
-	}
+	},
+	"/": {
+		"target": "http://localhost:8090/admin",
+		"secure": false
+  }
 }

@@ -1,0 +1,28 @@
+<div class="row">
+  <div class="col-6">
+    <button type="button" (click)="selectAll()" class="btn btn-link btn-block">
+      {{'common.selectAll' | translate}}
+    </button>
+  </div>
+  <div class="col-6">
+    <button type="button" (click)="clearAll()" class="btn btn-link btn-block">
+        {{'common.resetAll' | translate}}
+    </button>
+  </div>
+  <div class="col-12">
+    <div class="divider dropdown-divider"></div>
+  </div>
+  <div class="col-12">
+    <div *ngFor="let opt of selectedOptions" class="form-check">
+      <input type="checkbox" class="form-check-input"
+        [id]="opt.option.value + columnId + 'Filter'"
+        [(ngModel)]="opt.selected">
+      <label class="form-check-label" [for]="opt.option.value + columnId + 'Filter'">
+        {{opt.option.name}}
+      </label>
+    </div>
+  </div>
+  <div class="col-12">
+    <div class="divider dropdown-divider"></div>
+  </div>
+</div>

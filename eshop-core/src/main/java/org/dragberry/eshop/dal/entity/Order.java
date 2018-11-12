@@ -1,6 +1,8 @@
 package org.dragberry.eshop.dal.entity;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -42,11 +44,14 @@ public class Order extends AuditableEntity {
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "ORDER_GEN")
 	private Long entityKey;
 	
-	@Column(name = "FULL_NAME")
-    private String fullName;
+	@Column(name = "ORDER_DATE")
+    private LocalDateTime orderDate;
 	
 	@Column(name = "PHONE")
     private String phone;
+	
+	@Column(name = "FULL_NAME")
+    private String fullName;
 	
 	@Column(name = "ADDRESS")
     private String address;
@@ -57,11 +62,31 @@ public class Order extends AuditableEntity {
 	@Column(name = "COMMENT")
     private String comment;
 	
-	@Column(name = "TOTAL_PRODUCT_AMOUNT")
-    private BigDecimal totalProductAmount;
+	@Column(name = "CUSTOMER_COMMENT")
+    private String customerComment;
+	
+	@Column(name = "SHOP_COMMENT")
+    private String shopComment;
+	
+	@Column(name = "DELIVERY_DATE_FROM")
+    private LocalDateTime deliveryDateFrom;
+	
+	@Column(name = "DELIVERY_DATE_TO")
+    private LocalDateTime deliveryDateTo;
+	
+    @ManyToOne
+    @JoinColumn(name = "PAYMENT_METHOD_KEY", referencedColumnName = "PAYMENT_METHOD_KEY")
+    private PaymentMethod paymentMethod;
+    
+    @ManyToOne
+    @JoinColumn(name = "SHIPPING_METHOD_KEY", referencedColumnName = "SHIPPING_METHOD_KEY")
+    private ShippingMethod shippingMethod;
 	
 	@Column(name = "SHIPPING_COST")
     private BigDecimal shippingCost;
+	
+	@Column(name = "TOTAL_PRODUCT_AMOUNT")
+    private BigDecimal totalProductAmount;
 	
 	@Column(name = "TOTAL_AMOUNT")
     private BigDecimal totalAmount;
@@ -70,20 +95,21 @@ public class Order extends AuditableEntity {
 	@Convert(converter = OrderStatusConverter.class)
 	private OrderStatus orderStatus;
 	
-	@ManyToOne
-	@JoinColumn(name = "PAYMENT_METHOD_KEY", referencedColumnName = "PAYMENT_METHOD_KEY")
-	private PaymentMethod paymentMethod;
+	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<OrderItem> items = new ArrayList<>();
 	
-	@ManyToOne
-    @JoinColumn(name = "SHIPPING_METHOD_KEY", referencedColumnName = "SHIPPING_METHOD_KEY")
-	private ShippingMethod shippingMethod;
-	
-	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "order")
-	private List<OrderItem> items;
+	@Column(name = "PAID")
+	private Boolean paid;
 	
 	public static enum OrderStatus implements BaseEnum<Character> {
 
-		NEW('N'), QUICK('Q'), CONFIRMED('C'), DECLINED('D');
+		NEW('N'),
+		PROCESSING('P'),
+		AGREED('A'),
+		SHIPPED('S'),
+		DELIVERED('D'),
+		CANCELLED('C'),
+		RETURNED('R');
 	    
 	    public final Character value;
 	    

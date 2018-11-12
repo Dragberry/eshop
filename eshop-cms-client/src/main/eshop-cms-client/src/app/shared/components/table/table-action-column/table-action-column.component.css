@@ -1,0 +1,11 @@
+.dropdown-toggle::after {
+    display: none;
+}
+
+.dropdown-menu {
+    min-width: max-content;
+}
+
+.dropdown-menu .container {
+    width: 400px;
+}

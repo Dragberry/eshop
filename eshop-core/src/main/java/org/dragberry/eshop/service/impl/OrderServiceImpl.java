@@ -1,6 +1,7 @@
 package org.dragberry.eshop.service.impl;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,10 +26,9 @@ import org.dragberry.eshop.dal.repo.OrderRepository;
 import org.dragberry.eshop.dal.repo.PaymentMethodRepository;
 import org.dragberry.eshop.dal.repo.ProductRepository;
 import org.dragberry.eshop.model.cart.OrderDetails;
-import org.dragberry.eshop.model.cart.ProductFullTitleBuilder;
 import org.dragberry.eshop.model.cart.QuickOrderDetails;
-import org.dragberry.eshop.model.common.KeyValue;
 import org.dragberry.eshop.service.OrderService;
+import org.dragberry.eshop.utils.ProductTitleBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -86,15 +86,21 @@ public class OrderServiceImpl implements OrderService {
         
         if (issues.isEmpty()) {
     		Order order = new Order();
-    		order.setOrderStatus(OrderStatus.NEW);
-    		order.setTotalProductAmount(orderDetails.getTotalProductAmount());
-    		order.setShippingCost(orderDetails.getShippingCost());
-    		order.setTotalAmount(orderDetails.getTotalAmount());
+    		order.setOrderDate(LocalDateTime.now());
     		order.setPhone(orderDetails.getPhone());
-    		order.setFullName(orderDetails.getFullName());
-    		order.setAddress(orderDetails.getAddress());
-    		order.setEmail(orderDetails.getEmail());
-    		order.setComment(orderDetails.getComment());
+            order.setFullName(orderDetails.getFullName());
+            order.setAddress(orderDetails.getAddress());
+            order.setEmail(orderDetails.getEmail());
+            order.setComment(orderDetails.getComment());
+            
+            order.setPaymentMethod(paymentMethod);
+            order.setShippingMethod(shippingMethod);
+            order.setShippingCost(orderDetails.getShippingCost());
+            order.setTotalProductAmount(orderDetails.getTotalProductAmount());
+            order.setTotalAmount(orderDetails.getTotalAmount());
+            order.setPaid(Boolean.FALSE);
+    		order.setOrderStatus(OrderStatus.NEW);
+    		
     		order.setItems(orderDetails.getProducts().entrySet().stream().map(cp -> {
     		    OrderItem item = new OrderItem();
     			item.setOrder(order);
@@ -114,8 +120,6 @@ public class OrderServiceImpl implements OrderService {
     			}
     			return item;
     		}).collect(Collectors.toList()));
-    		order.setShippingMethod(shippingMethod);
-    		order.setPaymentMethod(paymentMethod);
     		Order newOrder = orderRepo.save(order);
     		orderDetails.setId(newOrder.getEntityKey());
         }
@@ -147,7 +151,8 @@ public class OrderServiceImpl implements OrderService {
         }
 	    if (issues.isEmpty() && product != null) {
 	        Order order = new Order();
-            order.setOrderStatus(OrderStatus.QUICK);
+            order.setOrderStatus(OrderStatus.NEW);
+            order.setPaid(Boolean.FALSE);
             order.setPhone(orderDetails.getPhone());
             order.setFullName(orderDetails.getFullName());
             order.setAddress(orderDetails.getAddress());
@@ -166,9 +171,7 @@ public class OrderServiceImpl implements OrderService {
             orderDetails.setId(order.getEntityKey());
             orderDetails.setProductArticle(prod.getProductArticle().getArticle());
             orderDetails.setProductPrice(prod.getActualPrice());
-            orderDetails.setProductFullTitle(ProductFullTitleBuilder.buildFullTitle(
-            		prod.getProductArticle().getTitle(), 
-            		prod.getOptions().stream().map(opt -> new KeyValue(opt.getName(), opt.getValue())).collect(Collectors.toSet())));
+            orderDetails.setProductFullTitle(ProductTitleBuilder.buildFullTitle(prod));
 	    }
 	    return Results.create(orderDetails, issues);
 	}

@@ -41,5 +41,5 @@ public interface ProductArticleRepository extends ProductArticleSearchRepository
      */
     @Query("select entry(l) from ProductArticle pa join pa.labels l where pa.entityKey = :productArticleId")
 	List<Object> findLabels(Long productArticleId);
-    
+
 }

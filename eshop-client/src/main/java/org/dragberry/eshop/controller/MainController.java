@@ -2,9 +2,6 @@ package org.dragberry.eshop.controller;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -89,7 +86,7 @@ public class MainController {
      * @throws IOException 
      * @throws FileNotFoundException 
      */
-    @GetMapping("import/test")
+    @GetMapping("/import/test")
     public String testImport() throws IOException {
         inSalesDataImporter.importData(resourceLoader.getResource("classpath:data/insales_export.csv").getInputStream());
         return "db/home";

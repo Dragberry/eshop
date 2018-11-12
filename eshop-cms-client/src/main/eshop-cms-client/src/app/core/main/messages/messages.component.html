@@ -1,0 +1,11 @@
+<div *ngIf="messages && messages.length > 0" class="alert alert-dismissible" [ngClass]="'alert-' + type">
+    <ul *ngIf="messages.length > 1">
+        <li *ngFor="let msg of messages">{{msg.text}}</li>
+    </ul>
+    <span *ngIf="messages.length == 1">
+        {{messages[0].text}}
+    </span>
+    <button type="button" class="close" (click)="clear()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>

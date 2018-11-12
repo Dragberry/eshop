@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+  <Appenders>
+    <!-- Console Appender -->
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{yyyy-MMM-dd HH:mm:ss a} [%t] %-5level %logger{36} - %msg%n" />
+    </Console>
+    <!-- File Appender -->
+    <File name="File" fileName="/var/eshop/logs/eshop.log">
+      <PatternLayout pattern="%d{yyyy-MMM-dd HH:mm:ss a} [%t] %-5level %logger{36} - %msg%n" />
+    </File>
+    
+  </Appenders>
+
+  <Loggers>
+    <!-- Log everything in custom package -->
+    <Logger name="org.dragberry.eshop" level="debug" additivity="false">
+      <AppenderRef ref="Console" />
+      <AppenderRef ref="File" />
+    </Logger>
+
+    <!-- Log everything in Spring Boot -->
+    <Logger name="org.springframework.boot" level="info" additivity="false">
+      <AppenderRef ref="Console" />
+      <AppenderRef ref="File" />
+    </Logger>
+
+    <!-- Log everything in Spring Core -->
+    <Logger name="org.springframework.core" level="info" additivity="false">
+      <AppenderRef ref="Console" />
+      <AppenderRef ref="File" />
+    </Logger>
+
+	<!-- Log everything in Spring Web -->
+    <Logger name="org.springframework.web" level="info" additivity="false">
+      <AppenderRef ref="Console" />
+      <AppenderRef ref="File" />
+    </Logger>
+    
+    <!-- Log everything in Thymeleaf -->
+    <Logger name="org.thymeleaf" level="info" additivity="false">
+      <AppenderRef ref="Console" />
+      <AppenderRef ref="File" />
+    </Logger>
+
+    <!-- Log everything in Hibernate -->
+    <Logger name="org.hibernate" level="info" additivity="false">
+      <AppenderRef ref="Console" />
+      <AppenderRef ref="File" />
+    </Logger>
+
+    <Root level="error">
+      <AppenderRef ref="Console" />
+      <AppenderRef ref="File" />
+    </Root>
+    
+  </Loggers>
+</Configuration>

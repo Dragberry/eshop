@@ -1,0 +1,41 @@
+<div class="row">
+  <div class="col-6">
+    <button type="button" (click)="clearAll()" class="btn btn-link btn-block">
+        {{'common.resetAll' | translate}}
+    </button>
+  </div>
+  <div class="col-12">
+    <div class="divider dropdown-divider"></div>
+  </div>
+  <div class="col-12 pb-4">
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text" [id]="columnId + 'FromFilter'">
+            {{'common.from' | translate}}
+          </span>
+        </div>
+        <input type="text" class="form-control"s
+          bsDatepicker
+          [(ngModel)]="from"
+          [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD hh:mm:ss', containerClass: 'theme-default' }"
+          [attr.aria-describedby]="columnId + 'FromFilter'">
+      </div>
+  </div>
+  <div class="col-12">
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text" [id]="columnId + 'ToFilter'">
+              {{'common.to' | translate}}
+          </span>
+        </div>
+        <input type="text" class="form-control"
+          bsDatepicker
+          [(ngModel)]="to"
+          [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD hh:mm:ss', containerClass: 'theme-default' }"
+          [attr.aria-describedby]="columnId + 'ToFilter'">
+      </div>
+  </div>
+  <div class="col-12">
+    <div class="divider dropdown-divider"></div>
+  </div>
+</div>
