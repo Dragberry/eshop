@@ -27,10 +27,11 @@ export class ProductListResolverService implements Resolve<ProductListState> {
       return of(this.state);
     }
     return from(Promise.all([
-
+      this.productService.getCategoryTree()
     ])).pipe(map(result => {
       return {
-        dataTableState: new DataTableState<ProductArticle>()
+        dataTableState: new DataTableState<ProductArticle>(),
+        categoryTree: result[0]
       };
     }));
   }

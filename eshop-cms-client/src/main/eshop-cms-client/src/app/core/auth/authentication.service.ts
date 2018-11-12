@@ -1,6 +1,7 @@
+import { Router } from '@angular/router';
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Observable, Subscription, of} from 'rxjs';
+import {Observable} from 'rxjs';
 
 export const LOGIN_URL = '/login';
 export const CURENT_USER_TOKEN = 'currentUserToken';
@@ -14,7 +15,9 @@ export class AuthenticationService {
 
   userDetails: any;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router) {}
 
   login(username: string, password: string): Observable<any> {
     return new Observable(observer => {
@@ -43,6 +46,7 @@ export class AuthenticationService {
     localStorage.removeItem(CURENT_USER_TOKEN);
     localStorage.removeItem(CURRENT_USER);
     this.userDetails = null;
+    this.router.navigate([LOGIN_URL]);
   }
 
   isLogged(): boolean {

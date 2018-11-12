@@ -74,19 +74,22 @@ export abstract class DataTableHolder<T> implements AfterViewInit {
         });
       }
     });
-    this.invokeService(params)
+    this.invokeService(this.enrichParams(params))
     .then(page => this.page = page)
     .catch(() => console.log('An error has occured!'));
   }
 
   protected abstract invokeService(params: HttpParams): Promise<Page<T>>;
 
+  protected enrichParams(params: HttpParams): HttpParams {
+    return params;
+   }
+
   onPageableEvent(event: PageableEvent): void {
     this.pageSize = event.pageSize;
     this.pageNumber = event.pageNumber;
     this.fetchPage();
   }
-
 
   onColumnActionEvent(event: ColumnActionEvent): void {
     this.pageNumber = DEFAULT_PAGE_NUMBER;

@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.dragberry.eshop.cms.model.ProductListItemTO;
 import org.dragberry.eshop.cms.model.ProductArticleListItemTO;
+import org.dragberry.eshop.cms.model.ProductCategoryTO;
 import org.dragberry.eshop.common.PageableList;
 import org.springframework.data.domain.PageRequest;
 
@@ -16,4 +17,6 @@ public interface ProductCmsService {
     Optional<List<ProductListItemTO>> getProductOptions(Long productArticleId);
 
     PageableList<ProductArticleListItemTO> getProducts(Integer pageNumber, Integer pageSize, Map<String, String[]> parameterMap);
+
+    List<ProductCategoryTO> getCategoryTree();
 }

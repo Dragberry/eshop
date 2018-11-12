@@ -1,3 +1,4 @@
+import { ProductCategory } from './../model/product-category';
 import { HttpParams } from '@angular/common/http';
 import { Page } from './../../shared/model/page';
 import { HttpDelegateService } from 'src/app/core/http/http-delegate.service';
@@ -7,6 +8,7 @@ import { ProductOption } from '../model/product-option';
 
 const CATALOG_URL = 'catalog';
 const PRODUCTS_URL = `${CATALOG_URL}/products`;
+const CATEGORIES_URL = `${CATALOG_URL}/categories`;
 
 @Injectable()
 export class ProductService {
@@ -21,4 +23,7 @@ export class ProductService {
     return this.httpService.get<ProductOption[]>(`${PRODUCTS_URL}/${articleId}/options`);
   }
 
+  getCategoryTree(): Promise<ProductCategory[]> {
+    return this.httpService.get<ProductCategory[]>(`${CATEGORIES_URL}/tree`);
+  }
 }

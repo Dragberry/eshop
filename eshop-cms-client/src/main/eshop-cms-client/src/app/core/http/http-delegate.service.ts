@@ -1,3 +1,4 @@
+import { AuthenticationService } from './../auth/authentication.service';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { saveAs } from 'file-saver';
 import { Result } from '../../shared/model/result';
@@ -8,6 +9,7 @@ import { MessageService } from '../service/message.service';
 export class HttpDelegateService {
 
   constructor(
+    private authService: AuthenticationService,
     private http: HttpClient,
     private messageService: MessageService) {}
 
@@ -18,8 +20,12 @@ export class HttpDelegateService {
       return this.http.get<T>(url, options).subscribe(result => {
         resolve(result);
       }, error => {
-        this.messageService.showError(error);
-        reject(error);
+        if (error.status === 401) {
+          this.authService.logout();
+        } else {
+          this.messageService.showError(error);
+          reject(error);
+        }
       });
     });
   }
@@ -35,8 +41,12 @@ export class HttpDelegateService {
         }
         resolve(result.value);
       }, error => {
-        this.messageService.showError(error);
-        reject(error);
+        if (error.status === 401) {
+          this.authService.logout();
+        } else {
+          this.messageService.showError(error);
+          reject(error);
+        }
       });
     });
   }

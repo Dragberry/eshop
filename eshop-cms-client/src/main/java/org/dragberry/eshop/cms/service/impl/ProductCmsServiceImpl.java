@@ -9,10 +9,12 @@ import java.util.stream.Collectors;
 import org.dragberry.eshop.cms.mapper.ProductMapper;
 import org.dragberry.eshop.cms.model.ProductListItemTO;
 import org.dragberry.eshop.cms.model.ProductArticleListItemTO;
+import org.dragberry.eshop.cms.model.ProductCategoryTO;
 import org.dragberry.eshop.cms.service.ProductCmsService;
 import org.dragberry.eshop.common.PageableList;
 import org.dragberry.eshop.dal.dto.ProductArticleListItemDTO;
 import org.dragberry.eshop.dal.entity.Product;
+import org.dragberry.eshop.dal.repo.CategoryRepository;
 import org.dragberry.eshop.dal.repo.ProductArticleRepository;
 import org.dragberry.eshop.dal.repo.ProductRepository;
 import org.dragberry.eshop.dal.repo.ProductRepository.ProductOrderItemSpecification;
@@ -26,6 +28,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class ProductCmsServiceImpl implements ProductCmsService {
     
+	@Autowired
+	private CategoryRepository categoryRepo;
+	
     @Autowired
     private ProductArticleRepository productArticleRepo;
     
@@ -77,5 +82,19 @@ public class ProductCmsServiceImpl implements ProductCmsService {
             item.setMainImage(imageService.findMainImage(entity.getId(), entity.getArticle()));
             return item;
         }).collect(Collectors.toList()), page.getNumber() + 1, page.getSize(), page.getTotalPages(), page.getTotalElements());
+    }
+    
+    @Override
+    public List<ProductCategoryTO> getCategoryTree() {
+    	ProductCategoryTO root = new ProductCategoryTO();
+    	root.setId(-1L);
+    	root.setName("common.catalog");
+    	root.setCategories(categoryRepo.findAll().stream().map(ctg -> {
+    		ProductCategoryTO ctgTO = new ProductCategoryTO();
+    		ctgTO.setId(ctg.getEntityKey());
+    		ctgTO.setName(ctg.getName());
+    		return ctgTO;
+    	}).collect(Collectors.toList()));
+    	return List.of(root);
     }
 }

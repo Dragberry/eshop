@@ -1,8 +1,7 @@
 import {TranslateService} from '@ngx-translate/core';
 import {Component, OnInit} from '@angular/core';
-import {AuthenticationService, LOGIN_URL} from '../auth/authentication.service';
+import {AuthenticationService} from '../auth/authentication.service';
 import { Title } from '@angular/platform-browser';
-import {Router} from '@angular/router';
 import { NavigationService } from '../service/navigation.service';
 
 const CURRENT_LANG = 'currentLang';
@@ -27,7 +26,6 @@ export class MainComponent implements OnInit {
   constructor(
     private authService: AuthenticationService,
     private navigationService: NavigationService,
-    private router: Router,
     private translate: TranslateService,
     private title: Title) {}
 
@@ -38,12 +36,10 @@ export class MainComponent implements OnInit {
       this.titleString = title;
       this.title.setTitle(title);
     });
-    console.log(this.loggedUser);
   }
 
   logout(): void {
     this.authService.logout();
-    this.router.navigate([LOGIN_URL]);
   }
 
   onLanguageChanged(lang: string): void {

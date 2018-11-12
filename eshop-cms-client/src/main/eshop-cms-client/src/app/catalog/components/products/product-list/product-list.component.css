@@ -1,3 +1,7 @@
 .product-image {
     max-height: 2.5rem;
 }
+
+.category-block {
+  padding: 1rem;
+}

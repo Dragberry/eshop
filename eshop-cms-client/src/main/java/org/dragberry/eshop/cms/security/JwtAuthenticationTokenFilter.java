@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -49,7 +50,11 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                 username = jwtTokenUtil.getUsernameFromToken(authToken);
             } catch (IllegalArgumentException e) {
                 log.error("an error occured during getting username from token", e);
-            }
+            } catch (ExpiredJwtException e) {
+				response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "JWT has been expired!");
+				chain.doFilter(request, response);
+				return;
+			}
         } else {
         	log.warn("couldn't find bearer string, will ignore the header");
         }

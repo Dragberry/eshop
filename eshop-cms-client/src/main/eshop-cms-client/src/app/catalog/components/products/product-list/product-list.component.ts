@@ -1,3 +1,4 @@
+import { ProductCategory } from 'src/app/catalog/model/product-category';
 import { HttpParams } from '@angular/common/http';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { DataTableHolder } from 'src/app/shared/components/table/data-table-holder';
@@ -15,6 +16,10 @@ import { ProductListResolverService } from './product-list-resolver.service';
 })
 export class ProductListComponent extends DataTableHolder<ProductArticle> implements OnInit, OnDestroy {
 
+  categoryTree: ProductCategory[];
+
+  selectedCategory: ProductCategory;
+
   constructor(
     private route: ActivatedRoute,
     private productService: ProductService,
@@ -25,18 +30,27 @@ export class ProductListComponent extends DataTableHolder<ProductArticle> implem
    ngOnInit() {
     this.route.data.subscribe(routeData => {
       const data = <ProductListState> routeData.data;
+      this.categoryTree = data.categoryTree;
       this.setDataTableState(data.dataTableState);
     });
   }
 
   ngOnDestroy() {
     this.productResolver.saveState({
-      dataTableState: this.getDataTableState()
+      dataTableState: this.getDataTableState(),
+      categoryTree: this.categoryTree
     });
   }
 
   invokeService(params: HttpParams): Promise<Page<ProductArticle>> {
     return this.productService.getProducts(params);
+  }
+
+  enrichParams(params: HttpParams): HttpParams {
+    if (this.selectedCategory && this.selectedCategory.id !== -1) {
+      params = params.append('categoryId', this.selectedCategory.id.toString());
+    }
+    return params;
   }
 
   loadOptions(productArticle: ProductArticle): void {
@@ -45,5 +59,19 @@ export class ProductListComponent extends DataTableHolder<ProductArticle> implem
       .then(result => productArticle.products = result);
     }
     productArticle.isProductsShown = !productArticle.isProductsShown;
+  }
+
+  selectCategory(category: ProductCategory): void {
+    if (this.selectedCategory == null || this.selectedCategory.id !== category.id) {
+      this.selectedCategory = category;
+    } else {
+      this.selectedCategory = null;
+    }
+    this.fetchPage();
+  }
+
+  resetAll(): void {
+    this.selectedCategory = null;
+    super.resetAll();
   }
 }
