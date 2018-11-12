@@ -29,7 +29,10 @@ export class NavigationService {
       resolve([
         {id: 'dashboard', title: 'main-menu.dashboard', action: '/dashboard', roles: [], subMenu: []},
         {id: 'orders', title: 'main-menu.orders', action: '/orders', roles: [], subMenu: []},
-        {id: 'products', title: 'main-menu.products', action: '/products', roles: [], subMenu: []},
+        {id: 'catalog', title: 'main-menu.catalog', roles: [], subMenu: [
+          {id: 'categories', title: 'main-menu.categories', action: '/catalog/categories', roles: [], subMenu: []},
+          {id: 'products', title: 'main-menu.products', action: '/catalog/products', roles: [], subMenu: []}
+        ]},
         {id: 'customers', title: 'main-menu.customers', action: '/customers', roles: [], subMenu: []}
       ]);
     });

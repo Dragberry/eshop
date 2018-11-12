@@ -21,8 +21,8 @@ import { DashboardComponent } from './main/dashboard/dashboard.component';
                   component: DashboardComponent
                 },
                 {
-                    path: 'products',
-                    loadChildren: '../products/products.module#ProductsModule',
+                    path: 'catalog',
+                    loadChildren: '../catalog/catalog.module#CatalogModule',
                     canActivate: [AuthGuard]
                 },
                 {

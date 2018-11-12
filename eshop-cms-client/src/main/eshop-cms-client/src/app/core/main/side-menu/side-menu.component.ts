@@ -10,6 +10,8 @@ import {MenuItem} from './menu-item';
 export class SideMenuComponent implements OnInit {
 
   mainMenu: MenuItem[];
+  activeMenu: MenuItem;
+  activeSubMenu: MenuItem;
 
   constructor(private navigationService: NavigationService) {}
 
@@ -19,7 +21,16 @@ export class SideMenuComponent implements OnInit {
     });
   }
 
-  navigate(url: string): void {
-    this.navigationService.navigate(url);
+  navigate(menuItem: MenuItem, subMenu = false): void {
+    if (subMenu) {
+      this.activeSubMenu = this.activeSubMenu === menuItem ? null : menuItem;
+    } else {
+      this.activeSubMenu = null;
+      this.activeMenu = this.activeMenu === menuItem ? null : menuItem;
+    }
+    if (!menuItem.subMenu || menuItem.subMenu.length === 0) {
+      this.navigationService.navigate(menuItem.action);
+    }
   }
+
 }

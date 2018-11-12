@@ -1,10 +1,10 @@
 import { HttpParams } from '@angular/common/http';
-import { Page } from './../../../shared/model/page';
-import { ProductArticle } from './../../model/product-article';
-import { NavigationService } from './../../../core/service/navigation.service';
 import { Component } from '@angular/core';
 import { DataTableHolder } from 'src/app/shared/components/table/data-table-holder';
-import { ProductService } from '../../services/product.service';
+import { ProductArticle } from 'src/app/catalog/model/product-article';
+import { NavigationService } from 'src/app/core/service/navigation.service';
+import { ProductService } from 'src/app/catalog/services/product.service';
+import { Page } from 'src/app/shared/model/page';
 
 @Component({
   selector: 'app-product-list',

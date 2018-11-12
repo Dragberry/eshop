@@ -1,11 +1,30 @@
 <nav class="col-md-2 d-none d-md-block bg-light sidebar navbar bg-dark navbar-dark">
   <div class="sidebar-sticky">
     <ul *ngIf="mainMenu" class="navbar-nav  flex-column">
-      <li *ngFor="let menuItem of mainMenu" class="nav-item">
-        <button class="btn btn-link nav-link pl-4"
-          (click)="navigate(menuItem.action)">
-          {{ menuItem.title | translate}}
-        </button>
+      <li *ngFor="let menuItem of mainMenu" class="nav-item" [class.active]="menuItem == activeMenu">
+        <ng-container
+          *ngIf="menuItem.subMenu; then subMenuExists; else subMenuDoesntExist">
+        </ng-container>
+        <ng-template #subMenuExists>
+          <button class="btn btn-link nav-link pl-4"
+            (click)="navigate(menuItem)">
+            {{ menuItem.title | translate}}
+          </button>
+          <ul *ngIf="activeMenu?.id == menuItem.id" class="navbar-nav flex-column pl-4">
+            <li *ngFor="let subMenuItem of menuItem.subMenu" class="nav-item" [class.active]="subMenuItem == activeSubMenu">
+              <button class="btn btn-link nav-link pl-4"
+                (click)="navigate(subMenuItem, true)">
+                {{ subMenuItem.title | translate}}
+              </button>
+            </li>
+          </ul>
+        </ng-template>
+        <ng-template #subMenuDoesntExist>
+          <button class="btn btn-link nav-link pl-4"
+            (click)="navigate(menuItem)">
+            {{ menuItem.title | translate}}
+          </button>
+        </ng-template>
       </li>
     </ul>
   </div>
