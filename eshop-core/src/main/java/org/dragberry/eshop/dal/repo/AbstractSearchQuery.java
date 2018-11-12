@@ -76,6 +76,7 @@ public abstract class AbstractSearchQuery <T, R extends Roots> {
 		query.distinct(true).multiselect(getSelectionList());
         where(searchParams, roots).ifPresent(query::where);
         orderBy(searchParams).ifPresent(query::orderBy); 
+        groupBy(roots).ifPresent(query::groupBy);
 		return new PageImpl<>(entityManager.createQuery(query)
 				.setFirstResult(pageRequest.getPageNumber() * pageRequest.getPageSize())
 				.setMaxResults(pageRequest.getPageSize())
@@ -86,7 +87,13 @@ public abstract class AbstractSearchQuery <T, R extends Roots> {
     
     protected abstract Expression<?> getCountExpression();
 	
-	protected abstract Optional<Predicate> where(Map<String, String[]> searchParams, R roots);
+    protected Optional<Predicate> where(Map<String, String[]> searchParams, R roots) {
+        List<Predicate> predicates = new ArrayList<>();
+        where(predicates, searchParams, roots);
+        return predicates.isEmpty() ? Optional.empty() : Optional.of(cb.and(predicates.toArray(new Predicate[predicates.size()])));
+    }
+    
+	protected abstract void where(List<Predicate> predicates, Map<String, String[]> searchParams, R roots);
 	
 	protected Optional<Order> orderBy(Map<String, String[]> searchParams) {
 		String[] values = searchParams.get(SORT_PARAM);
@@ -99,9 +106,15 @@ public abstract class AbstractSearchQuery <T, R extends Roots> {
 		return getSortConfig().getDefault().getOrder(getSortContext());
 	}
 	
+	protected Optional<List<Expression<?>>> groupBy(R roots) {
+        return Optional.empty();
+	}
+	
 	protected abstract SortConfig<R> getSortConfig();
 	
-	protected abstract SortContext<R> getSortContext();
+	protected SortContext<R> getSortContext() {
+        return SortContext.of(cb, roots);
+    }
 	
 	protected List<Predicate> numericRange(String param, Path<BigDecimal> path, Map<String, String[]> searchParams) {
 		List<Predicate> predicates = new ArrayList<>(2);

@@ -8,8 +8,10 @@ import java.util.stream.Collectors;
 
 import org.dragberry.eshop.cms.mapper.OrderProductMapper;
 import org.dragberry.eshop.cms.model.OrderProductTO;
+import org.dragberry.eshop.cms.model.ProductArticleListItemTO;
 import org.dragberry.eshop.cms.service.ProductCmsService;
 import org.dragberry.eshop.common.PageableList;
+import org.dragberry.eshop.dal.dto.ProductArticleListItemDTO;
 import org.dragberry.eshop.dal.entity.Product;
 import org.dragberry.eshop.dal.repo.ProductArticleRepository;
 import org.dragberry.eshop.dal.repo.ProductRepository;
@@ -59,5 +61,19 @@ public class ProductCmsServiceImpl implements ProductCmsService {
                return OrderProductMapper.map(product, imageService::findMainImage);
            }).collect(Collectors.toList());
         });
+    }
+    
+    @Override
+    public PageableList<ProductArticleListItemTO> getProducts(Integer pageNumber, Integer pageSize,
+            Map<String, String[]> parameterMap) {
+        Page<ProductArticleListItemDTO> page = productArticleRepo.search(PageRequest.of(pageNumber, pageSize), parameterMap);
+        return PageableList.of(page.stream().map(entity -> {
+            ProductArticleListItemTO item = new ProductArticleListItemTO();
+            item.setId(entity.getId());
+            item.setArticle(entity.getArticle());
+            item.setTitle(entity.getTitle());
+            item.setMainImage(imageService.findMainImage(entity.getId(), entity.getArticle()));
+            return item;
+        }).collect(Collectors.toList()), page.getNumber() + 1, page.getSize(), page.getTotalPages(), page.getTotalElements());
     }
 }

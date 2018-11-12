@@ -1,11 +1,9 @@
 package org.dragberry.eshop.dal.repo;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaQuery;
@@ -25,7 +23,6 @@ import org.dragberry.eshop.dal.entity.ShippingMethod;
 import org.dragberry.eshop.dal.entity.ShippingMethod_;
 import org.dragberry.eshop.dal.sort.Roots;
 import org.dragberry.eshop.dal.sort.SortConfig;
-import org.dragberry.eshop.dal.sort.SortContext;
 import org.dragberry.eshop.dal.sort.SortFunction;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -120,15 +117,13 @@ public class OrderSearchRepositoryImpl implements OrderSearchRepository {
 		}
 		
 		@Override
-		protected Optional<Predicate> where(Map<String, String[]> searchParams, OrderRoots roots) {
-			List<Predicate> predicates = new ArrayList<>();
+		protected void where(List<Predicate> predicates, Map<String, String[]> searchParams, OrderRoots roots) {
 			predicates.addAll(numericRange(TOTAL_AMOUNT, roots.order.get(Order_.totalAmount), searchParams));
 			predicates.addAll(dateRange(DATE, roots.order.get(Order_.createdDate), searchParams));
 			predicates.addAll(inLong(PAYMENT_METHOD, roots.paymentMethod.get(PaymentMethod_.entityKey), searchParams));
 			predicates.addAll(inLong(SHIPPING_METHOD, roots.shippingMethod.get(ShippingMethod_.entityKey), searchParams));
 			predicates.addAll(inEnum(STATUS, roots.order.get(Order_.orderStatus), OrderStatus.class, searchParams));
 			predicates.addAll(inBoolean(IS_PAID, roots.order.get(Order_.paid), searchParams));
-			return predicates.isEmpty() ? Optional.empty() : Optional.of(cb.and(predicates.toArray(new Predicate[predicates.size()])));
 		}
 
 		@Override
@@ -136,10 +131,6 @@ public class OrderSearchRepositoryImpl implements OrderSearchRepository {
 			return SORT_CONFIG;
 		}
 	
-		@Override
-		protected SortContext<OrderRoots> getSortContext() {
-			return SortContext.of(cb, roots);
-		}
 	}
 	
 }
