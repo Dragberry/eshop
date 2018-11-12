@@ -1,3 +1,52 @@
-<p>
-  product-list works!
-</p>
+<div class="row">
+  <div class="col-12">
+    <app-paginator [page]="page" (paginatorEvent)="onPageableEvent($event)"></app-paginator>
+    <table *ngIf="page" class="table table-sm table-striped table-hover">
+      <thead class="thead-dark">
+        <tr>
+          <th class="text-center">
+            <app-table-action-column
+              [columnId]="'id'"
+              [title]="'common.id' | translate"
+              [sortBy]="'id'"
+              (columnAction)="onColumnActionEvent($event)">
+            </app-table-action-column>
+          </th>
+          <th class="text-center">
+            <span>{{'common.photo' | translate}}</span>
+          </th>
+          <th class="text-center">
+            <app-table-action-column
+              [columnId]="'title'"
+              [title]="'common.title' | translate"
+              [sortBy]="'title'"
+              (columnAction)="onColumnActionEvent($event)">
+            </app-table-action-column>
+          </th>
+          <th class="text-center">
+            <app-table-action-column
+              [columnId]="'article'"
+              [title]="'common.article' | translate"
+              [sortBy]="'article'"
+              (columnAction)="onColumnActionEvent($event)">
+            </app-table-action-column>
+          </th>
+        </tr>
+      </thead>
+      <tbody class="small">
+        <tr *ngFor="let productArticle of page.content; let i = index;">
+          <th class="text-right">
+            <a routerLink="{{productArticle.id}}">{{productArticle.id}}</a>
+          </th>
+          <td class="text-center">
+            <img class="product-image img-fluid img-thumbnail"
+              src="{{'/images/' + productArticle.id + '/' + productArticle.article + '/' + productArticle.mainImage}}">
+          </td>
+          <td>{{productArticle.title}}</td>
+          <td>{{productArticle.article}}</td>
+        </tr>
+      </tbody>
+    </table>
+    <app-paginator [page]="page" (paginatorEvent)="onPageableEvent($event)"></app-paginator>
+  </div>
+</div>

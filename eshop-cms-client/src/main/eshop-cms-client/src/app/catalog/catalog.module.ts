@@ -7,10 +7,12 @@ import { ProductDetailsComponent } from './components/products/product-details/p
 import { ProductListComponent } from './components/products/product-list/product-list.component';
 import { ProductsComponent } from './components/products/products.component';
 import { ProductListResolverService } from './components/products/product-list/product-list-resolver.service';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   imports: [
     CommonModule,
+    SharedModule,
     CatalogRoutingModule
   ],
   declarations: [

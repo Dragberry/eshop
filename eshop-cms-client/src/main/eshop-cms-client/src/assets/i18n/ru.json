@@ -50,6 +50,7 @@
       "quantityShort": "Кол-во",
       "paymentMethod": "Способ оплаты",
       "phone": "Телефон",
+      "photo": "Фото",
       "price": "Стоимость",
       "print": "Печать",
       "productItem": "Позиция",
@@ -64,6 +65,7 @@
       "sign-out": "Выйти",
       "status": "Статус",
       "sum": "Сумма",
+      "title": "Название",
       "to": "До",
       "total": "Итого",
       "messages": {
