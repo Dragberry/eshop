@@ -4,7 +4,8 @@ import { HttpDelegateService } from 'src/app/core/http/http-delegate.service';
 import { Injectable } from '@angular/core';
 import { ProductArticle } from '../model/product-article';
 
-const PRODUCTS_URL = 'products';
+const CATALOG_URL = 'catalog';
+const PRODUCTS_URL = `${CATALOG_URL}/products`;
 
 @Injectable()
 export class ProductService {

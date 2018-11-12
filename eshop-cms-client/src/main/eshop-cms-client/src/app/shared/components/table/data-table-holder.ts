@@ -74,7 +74,9 @@ export abstract class DataTableHolder<T> implements AfterViewInit {
         });
       }
     });
-    this.invokeService(params).then(page => this.page = page);
+    this.invokeService(params)
+    .then(page => this.page = page)
+    .catch(() => console.log('An error has occured!'));
   }
 
   protected abstract invokeService(params: HttpParams): Promise<Page<T>>;

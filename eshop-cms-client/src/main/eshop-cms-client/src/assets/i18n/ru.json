@@ -84,8 +84,8 @@
     	"customers": "Клиенты"
     },
     "products": {
-    	"product-list": {
-    		"title": "Список товаров"
+    	"titles": {
+    		"list": "Список товаров"
     	}
     },
     "orders": {
