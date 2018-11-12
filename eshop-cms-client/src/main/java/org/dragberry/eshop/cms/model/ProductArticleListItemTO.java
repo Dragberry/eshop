@@ -1,5 +1,7 @@
 package org.dragberry.eshop.cms.model;
 
+import java.math.BigDecimal;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +14,12 @@ public class ProductArticleListItemTO {
     private String article;
     
     private String title;
+    
+    private BigDecimal price;
+    
+    private BigDecimal actualPrice;
+    
+    private Long optionsCount;
     
     private String mainImage;
     

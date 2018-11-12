@@ -16,6 +16,7 @@
     "common": {
       "account": "Аккаунт",
       "action": "Действие",
+      "actualPrice": "Акт. цена",
       "addOrderItem": "Добавить позицию",
       "address": "Адрес",
       "apply": "Применить",
@@ -42,6 +43,7 @@
       "image": "Изображение",
       "isPaid": "Оплата",
       "newOrder": "Новый заказ",
+      "newProduct": "Новый товар",
       "noResults": "Ничего не найдено",
       "order": "Заказ",
       "orderFields": "Поля заказа",

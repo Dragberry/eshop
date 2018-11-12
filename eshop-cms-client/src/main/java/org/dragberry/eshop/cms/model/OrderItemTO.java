@@ -17,7 +17,7 @@ public class OrderItemTO {
 	
 	private BigDecimal totalAmount;
 	
-	private OrderProductTO product;
+	private ProductListItemTO product;
 	
 	private Long version;
 }

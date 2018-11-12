@@ -51,13 +51,13 @@ public class OrderSearchRepositoryImpl implements OrderSearchRepository {
 		
 		private final Map<String, SortFunction<OrderRoots>> config = new HashMap<>();
 		{
-			config.put(ID, SortFunction.of(roots -> roots.order.get(Order_.entityKey)));
-			config.put(DATE, SortFunction.of(roots -> roots.order.get(Order_.orderDate)));
-			config.put(TOTAL_AMOUNT, SortFunction.of(roots -> roots.order.get(Order_.totalAmount)));
-			config.put(STATUS, SortFunction.of(roots -> roots.order.get(Order_.orderStatus)));
-			config.put(IS_PAID, SortFunction.of(roots -> roots.order.get(Order_.paid)));
-			config.put(PAYMENT_METHOD, SortFunction.of(roots -> roots.paymentMethod.get(PaymentMethod_.name)));
-			config.put(SHIPPING_METHOD, SortFunction.of(roots -> roots.shippingMethod.get(ShippingMethod_.name)));
+			config.put(ID, SortFunction.of(ctx -> ctx.roots.order.get(Order_.entityKey)));
+			config.put(DATE, SortFunction.of(ctx -> ctx.roots.order.get(Order_.orderDate)));
+			config.put(TOTAL_AMOUNT, SortFunction.of(ctx -> ctx.roots.order.get(Order_.totalAmount)));
+			config.put(STATUS, SortFunction.of(ctx -> ctx.roots.order.get(Order_.orderStatus)));
+			config.put(IS_PAID, SortFunction.of(ctx -> ctx.roots.order.get(Order_.paid)));
+			config.put(PAYMENT_METHOD, SortFunction.of(ctx -> ctx.roots.paymentMethod.get(PaymentMethod_.name)));
+			config.put(SHIPPING_METHOD, SortFunction.of(ctx -> ctx.roots.shippingMethod.get(ShippingMethod_.name)));
 		}
 		
 		@Override
@@ -67,7 +67,7 @@ public class OrderSearchRepositoryImpl implements OrderSearchRepository {
 		
 		@Override
 		public SortFunction<OrderRoots> getDefault() {
-			return SortFunction.of(roots -> roots.order.get(Order_.orderDate), Direction.DESC);
+			return SortFunction.of(ctx -> ctx.roots.order.get(Order_.orderDate), Direction.DESC);
 		}
 	};
 	

@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.dragberry.eshop.cms.controller.exception.ResourceNotFoundException;
 import org.dragberry.eshop.cms.model.OrderDetailsTO;
-import org.dragberry.eshop.cms.model.OrderProductTO;
+import org.dragberry.eshop.cms.model.ProductListItemTO;
 import org.dragberry.eshop.cms.model.OrderTO;
 import org.dragberry.eshop.cms.service.OrderCmsService;
 import org.dragberry.eshop.cms.service.ProductCmsService;
@@ -74,7 +74,7 @@ public class OrderController {
      * @return
      */
     @GetMapping("${cms.context}/products/search")
-    public PageableList<OrderProductTO> searchProducts(
+    public PageableList<ProductListItemTO> searchProducts(
             @RequestParam(required = true) Integer pageNumber,
             @RequestParam(required = true) Integer pageSize,
             @RequestParam(required = true) String query) {
@@ -89,7 +89,7 @@ public class OrderController {
      * @return
      */
     @GetMapping("${cms.context}/products/{productArticleId}/options")
-    public List<OrderProductTO> searchProducts(@PathVariable(required = true) Long productArticleId) {
+    public List<ProductListItemTO> searchProducts(@PathVariable(required = true) Long productArticleId) {
         return productService.getProductOptions(productArticleId).orElseThrow(ResourceNotFoundException::new);
     }
     

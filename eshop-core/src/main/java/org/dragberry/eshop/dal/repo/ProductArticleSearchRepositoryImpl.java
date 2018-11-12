@@ -36,6 +36,7 @@ import org.dragberry.eshop.dal.entity.ProductAttributeBoolean;
 import org.dragberry.eshop.dal.entity.ProductAttributeList;
 import org.dragberry.eshop.dal.entity.ProductAttributeNumeric;
 import org.dragberry.eshop.dal.entity.ProductAttributeString;
+import org.dragberry.eshop.dal.entity.Product_;
 import org.dragberry.eshop.dal.entity.ProductArticle.SaleStatus;
 import org.dragberry.eshop.dal.entity.ProductArticle_;
 import org.dragberry.eshop.dal.sort.Roots;
@@ -433,6 +434,10 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
 	}
 	
 	private static final String ID = "id";
+	private static final String ARTICLE = "article";
+	private static final String TITLE = "title";
+	private static final String PRICE = "price";
+	private static final String ACTUAL_PRICE = "actualPrice";
 	
 	@AllArgsConstructor(staticName = "of")
     private static class ProductArticleRoots implements Roots {
@@ -444,7 +449,11 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
         
         private final Map<String, SortFunction<ProductArticleRoots>> config = new HashMap<>();
         {
-            config.put(ID, SortFunction.of(roots -> roots.productArticle.get(ProductArticle_.entityKey)));
+            config.put(ID, SortFunction.of(ctx -> ctx.roots.productArticle.get(ProductArticle_.entityKey)));
+            config.put(ARTICLE, SortFunction.of(ctx -> ctx.roots.productArticle.get(ProductArticle_.article)));
+            config.put(TITLE, SortFunction.of(ctx -> ctx.roots.productArticle.get(ProductArticle_.title)));
+            config.put(PRICE, SortFunction.of(ctx -> ctx.cb.min(ctx.roots.product.get(Product_.price))));
+            config.put(ACTUAL_PRICE, SortFunction.of(ctx -> ctx.cb.min(ctx.roots.product.get(Product_.actualPrice))));
         }
         
         @Override
@@ -454,7 +463,7 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
         
         @Override
         public SortFunction<ProductArticleRoots> getDefault() {
-            return SortFunction.of(roots -> roots.productArticle.get(ProductArticle_.entityKey), Direction.DESC);
+            return SortFunction.of(ctx -> ctx.roots.productArticle.get(ProductArticle_.entityKey), Direction.DESC);
         }
     };
 	
@@ -483,7 +492,10 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
             return List.of(
                     roots.productArticle.get(ProductArticle_.entityKey),
                     roots.productArticle.get(ProductArticle_.article),
-                    roots.productArticle.get(ProductArticle_.title));
+                    roots.productArticle.get(ProductArticle_.title),
+                    cb.min(roots.product.get(Product_.price)),
+                    cb.min(roots.product.get(Product_.actualPrice)),
+                    cb.count(roots.product.get(Product_.entityKey)));
         }
 
         @Override

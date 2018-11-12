@@ -38,4 +38,8 @@ export class ProductListComponent extends DataTableHolder<ProductArticle> implem
   invokeService(params: HttpParams): Promise<Page<ProductArticle>> {
     return this.productService.getProducts(params);
   }
+
+  loadOptions(productArticle: ProductArticle): void {
+    console.log('loadOptions', productArticle);
+  }
 }

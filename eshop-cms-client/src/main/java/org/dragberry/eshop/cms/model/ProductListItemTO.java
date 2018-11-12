@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class OrderProductTO {
+public class ProductListItemTO {
 
 	private Long productArticleId;
 
@@ -17,8 +17,6 @@ public class OrderProductTO {
 	private String optionsTitle;
 
 	private String article;
-
-	private String reference;
 
 	private String mainImage;
 

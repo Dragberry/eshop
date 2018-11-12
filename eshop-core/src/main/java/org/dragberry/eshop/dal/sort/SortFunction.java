@@ -13,15 +13,15 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class SortFunction<R extends Roots> {
 	
-	public final Function<R, Expression<?>> function;
+	public final Function<SortContext<R>, Expression<?>> function;
 	
 	public final Optional<Direction> defaultDirection; 
 	
-	public static <R extends Roots> SortFunction<R> of(Function<R, Expression<?>> function) {
+	public static <R extends Roots> SortFunction<R> of(Function<SortContext<R>, Expression<?>> function) {
 		return new SortFunction<R>(function, Optional.empty());
 	}
 
-	public static <R extends Roots> SortFunction<R> of(Function<R, Expression<?>> function, Direction direction) {
+	public static <R extends Roots> SortFunction<R> of(Function<SortContext<R>, Expression<?>> function, Direction direction) {
 		return new SortFunction<R>(function, Optional.ofNullable(direction));
 	}
 	
@@ -29,9 +29,9 @@ public class SortFunction<R extends Roots> {
 		return direction.map(dir -> {
 			switch (dir) {
 			case ASC:
-				return context.cb.asc(function.apply(context.roots));
+				return context.cb.asc(function.apply(context));
 			case DESC:
-				return context.cb.desc(function.apply(context.roots));
+				return context.cb.desc(function.apply(context));
 			default:
 				return null;
 			}

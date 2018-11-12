@@ -6,8 +6,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.dragberry.eshop.cms.mapper.OrderProductMapper;
-import org.dragberry.eshop.cms.model.OrderProductTO;
+import org.dragberry.eshop.cms.mapper.ProductMapper;
+import org.dragberry.eshop.cms.model.ProductListItemTO;
 import org.dragberry.eshop.cms.model.ProductArticleListItemTO;
 import org.dragberry.eshop.cms.service.ProductCmsService;
 import org.dragberry.eshop.common.PageableList;
@@ -36,10 +36,10 @@ public class ProductCmsServiceImpl implements ProductCmsService {
     private ImageService imageService;
     
     @Override
-    public PageableList<OrderProductTO> searchProducts(PageRequest pageRequest, Map<String, String[]> searchParams) {
+    public PageableList<ProductListItemTO> searchProducts(PageRequest pageRequest, Map<String, String[]> searchParams) {
     	Page<Product> page = productRepo.findAll(new ProductOrderItemSpecification(searchParams), pageRequest);
         return PageableList.of(page.stream().map(dto -> {
-            OrderProductTO to = new OrderProductTO();
+            ProductListItemTO to = new ProductListItemTO();
             to.setProductId(dto.getEntityKey());
             to.setProductArticleId(dto.getProductArticle().getEntityKey());
             to.setArticle(dto.getProductArticle().getArticle());
@@ -49,16 +49,15 @@ public class ProductCmsServiceImpl implements ProductCmsService {
             if (!Objects.equals(dto.getPrice(), dto.getActualPrice())) {
                 to.setActualPrice(dto.getActualPrice());
             }
-            to.setMainImage(imageService.findMainImage(dto.getProductArticle().getEntityKey(), dto.getProductArticle().getArticle()));
             return to;
         }).collect(Collectors.toList()), page.getNumber() + 1, page.getSize(), 10, page.getTotalElements());
     }
 
     @Override
-    public Optional<List<OrderProductTO>> getProductOptions(Long productArticleId) {
+    public Optional<List<ProductListItemTO>> getProductOptions(Long productArticleId) {
         return productArticleRepo.findById(productArticleId).map(pa -> {
            return pa.getProducts().stream().map(product -> {
-               return OrderProductMapper.map(product, imageService::findMainImage);
+               return ProductMapper.map(product, imageService::findMainImage);
            }).collect(Collectors.toList());
         });
     }
@@ -72,6 +71,9 @@ public class ProductCmsServiceImpl implements ProductCmsService {
             item.setId(entity.getId());
             item.setArticle(entity.getArticle());
             item.setTitle(entity.getTitle());
+            item.setPrice(entity.getPrice());
+            item.setActualPrice(entity.getActualPrice());
+            item.setOptionsCount(entity.getOptionsCount());
             item.setMainImage(imageService.findMainImage(entity.getId(), entity.getArticle()));
             return item;
         }).collect(Collectors.toList()), page.getNumber() + 1, page.getSize(), page.getTotalPages(), page.getTotalElements());

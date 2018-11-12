@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.dragberry.eshop.cms.mapper.OrderProductMapper;
+import org.dragberry.eshop.cms.mapper.ProductMapper;
 import org.dragberry.eshop.cms.model.OrderDetailsTO;
 import org.dragberry.eshop.cms.model.OrderItemTO;
 import org.dragberry.eshop.cms.model.OrderTO;
@@ -252,7 +252,7 @@ public class OrderCmsServiceImpl implements OrderCmsService {
             itemTO.setQuantity(item.getQuantity());
             itemTO.setTotalAmount(item.getTotalAmount());
             itemTO.setVersion(item.getVersion());
-            itemTO.setProduct(OrderProductMapper.map(item.getProduct(), imageService::findMainImage));
+            itemTO.setProduct(ProductMapper.map(item.getProduct(), imageService::findMainImage));
             return itemTO;
         }).collect(Collectors.toList())); 
         return order;

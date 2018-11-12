@@ -1,5 +1,7 @@
 package org.dragberry.eshop.dal.dto;
 
+import java.math.BigDecimal;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,5 +16,11 @@ public class ProductArticleListItemDTO {
     private String article;
     
     private String title;
+    
+    private BigDecimal price;
+    
+    private BigDecimal actualPrice;
+    
+    private Long optionsCount;
     
 }
