@@ -64,38 +64,60 @@
         </tr>
       </thead>
       <tbody class="small">
-        <tr *ngFor="let productArticle of page.content; let i = index;">
-          <th class="text-right">
-            <a class="disabled" routerLink="{{productArticle.id}}">{{productArticle.id}}</a>
-          </th>
-          <td class="text-center">
-            <img class="product-image img-fluid img-thumbnail"
-              src="{{'/images/' + productArticle.id + '/' + productArticle.article + '/' + productArticle.mainImage}}">
-          </td>
-          <td class="text-left">
-            {{productArticle.title}}
-          </td>
-          <td class="text-left">
-            <span *ngIf="productArticle.optionsCount <= 1">
-              {{productArticle.article}}
-            </span>
-            <span *ngIf="productArticle.optionsCount > 1">
-              <button class="btn btn-link p-0" (click)="loadOptions(productArticle)">
+        <ng-container *ngFor="let productArticle of page.content; let i = index;">
+          <tr>
+            <th class="text-right">
+              <a class="disabled" routerLink="{{productArticle.id}}">{{productArticle.id}}</a>
+            </th>
+            <td class="text-center">
+              <img class="product-image img-fluid img-thumbnail"
+                src="{{'/images/' + productArticle.id + '/' + productArticle.article + '/' + productArticle.mainImage}}">
+            </td>
+            <td class="text-left">
+              {{productArticle.title}}
+            </td>
+            <td class="text-left">
+              <span *ngIf="productArticle.optionsCount <= 1">
                 {{productArticle.article}}
-              </button>
-            </span>
-          </td>
-          <td class="text-right">
-            <span class="font-weight-bold">
-              {{productArticle.price.toFixed(2)}} Руб.
-            </span>
-          </td>
-          <td class="text-right">
-            <span class="font-weight-bold">
-              {{productArticle.actualPrice.toFixed(2)}} Руб.
-            </span>
-          </td>
-        </tr>
+              </span>
+              <span *ngIf="productArticle.optionsCount > 1">
+                <button class="btn btn-link p-0" (click)="loadOptions(productArticle)">
+                  {{productArticle.article}}
+                </button>
+              </span>
+            </td>
+            <td class="text-right">
+              <span class="font-weight-bold">
+                {{productArticle.price.toFixed(2)}} Руб.
+              </span>
+            </td>
+            <td class="text-right">
+              <span class="font-weight-bold">
+                {{productArticle.actualPrice.toFixed(2)}} Руб.
+              </span>
+            </td>
+          </tr>
+          <ng-container *ngIf="productArticle.isProductsShown">
+            <tr *ngFor="let productOption of productArticle.products; let i = index;">
+              <td></td>
+              <td></td>
+              <td class="text-left">
+                {{productOption.optionsTitle}}
+              </td>
+              <td>{{productArticle.article}}</td>
+              <td class="text-right">
+                <span class="font-weight-bold">
+                  {{productOption.price.toFixed(2)}} Руб.
+                </span>
+              </td>
+              <td class="text-right">
+                <span class="font-weight-bold">
+                  {{productOption.actualPrice.toFixed(2)}} Руб.
+                </span>
+              </td>
+            </tr>
+          </ng-container>
+        </ng-container>
       </tbody>
     </table>
     <app-paginator [page]="page" (paginatorEvent)="onPageableEvent($event)"></app-paginator>

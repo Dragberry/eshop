@@ -1,3 +1,5 @@
+import { ProductOption } from './product-option';
+
 export class ProductArticle {
   id: number;
   article: string;
@@ -6,4 +8,6 @@ export class ProductArticle {
   actualPrice: number;
   optionsCount: number;
   mainImage: string;
+  products: ProductOption[];
+  isProductsShown = false;
 }

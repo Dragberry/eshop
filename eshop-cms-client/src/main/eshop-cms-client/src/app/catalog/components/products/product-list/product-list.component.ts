@@ -40,6 +40,10 @@ export class ProductListComponent extends DataTableHolder<ProductArticle> implem
   }
 
   loadOptions(productArticle: ProductArticle): void {
-    console.log('loadOptions', productArticle);
+    if (productArticle.optionsCount > 1 && productArticle.products == null) {
+      this.productService.getProductsForArticle(productArticle.id)
+      .then(result => productArticle.products = result);
+    }
+    productArticle.isProductsShown = !productArticle.isProductsShown;
   }
 }
