@@ -14,7 +14,6 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -28,7 +27,6 @@ import javax.persistence.criteria.Selection;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.dragberry.eshop.dal.entity.ProductArticle_;
 import org.dragberry.eshop.dal.sort.Roots;
 import org.dragberry.eshop.dal.sort.SortConfig;
 import org.dragberry.eshop.dal.sort.SortContext;
