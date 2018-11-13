@@ -14,6 +14,7 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -27,6 +28,7 @@ import javax.persistence.criteria.Selection;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.dragberry.eshop.dal.entity.ProductArticle_;
 import org.dragberry.eshop.dal.sort.Roots;
 import org.dragberry.eshop.dal.sort.SortConfig;
 import org.dragberry.eshop.dal.sort.SortContext;
@@ -172,4 +174,15 @@ public abstract class AbstractSearchQuery <T, R extends Roots> {
 	protected List<Predicate> inBoolean(String param, Path<Boolean> path, Map<String, String[]> searchParams) {
         return in(param, path, searchParams,  val -> true, Boolean::parseBoolean);
     }
+	
+	protected List<Predicate> likeFromString(String paramName, Map<String, String[]> searchParams, List<Path<String>> paths) {
+	    String[] queryStr = searchParams.get(paramName);
+        if (ArrayUtils.isNotEmpty(queryStr) && !queryStr[0].isEmpty()) {
+    	    return Arrays.stream(queryStr[0].toUpperCase().split("\\s+"))
+                    .map(str -> "%" + str +  "%")
+                    .flatMap(param -> paths.stream().map(path -> cb.like(cb.upper(path), param)))
+                    .collect(Collectors.toList());
+        }
+        return List.of();
+	}
 }

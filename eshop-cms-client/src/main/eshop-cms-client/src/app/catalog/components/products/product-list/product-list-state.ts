@@ -6,4 +6,5 @@ export class ProductListState {
   dataTableState?: DataTableState<ProductArticle>;
   categoryTree?: ProductCategory[];
   selectedCategory?: ProductCategory;
+  searchQuery?: string;
 }

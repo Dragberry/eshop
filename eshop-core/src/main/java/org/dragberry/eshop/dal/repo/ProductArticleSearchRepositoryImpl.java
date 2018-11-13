@@ -13,7 +13,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -442,6 +441,7 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
 	private static final String PRICE = "price";
 	private static final String ACTUAL_PRICE = "actualPrice";
 	private static final String CATEGORY_ID = "categoryId";
+	private static final String SEARCH_QUERY = "searchQuery";
 	
 	@AllArgsConstructor(staticName = "of")
     private static class ProductArticleRoots implements Roots {
@@ -523,6 +523,10 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
             }
             predicates.addAll(numericRange(PRICE, roots.product.get(Product_.price), searchParams));
             predicates.addAll(numericRange(ACTUAL_PRICE, roots.product.get(Product_.actualPrice), searchParams));
+            predicates.addAll(likeFromString(SEARCH_QUERY, searchParams, List.of(
+                    roots.productArticle.get(ProductArticle_.article),
+                    roots.productArticle.get(ProductArticle_.title),
+                    roots.productArticle.get(ProductArticle_.description))));
         }
         
         @Override

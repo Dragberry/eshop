@@ -20,6 +20,9 @@ export class ProductListComponent extends DataTableHolder<ProductArticle> implem
 
   selectedCategory: ProductCategory;
 
+  searchQueryDelay: any;
+  searchQuery: string;
+
   constructor(
     private route: ActivatedRoute,
     private productService: ProductService,
@@ -32,6 +35,7 @@ export class ProductListComponent extends DataTableHolder<ProductArticle> implem
       const data = <ProductListState> routeData.data;
       this.categoryTree = data.categoryTree;
       this.selectedCategory = data.selectedCategory;
+      this.searchQuery = data.searchQuery;
       this.setDataTableState(data.dataTableState);
     });
   }
@@ -40,7 +44,8 @@ export class ProductListComponent extends DataTableHolder<ProductArticle> implem
     this.productResolver.saveState({
       dataTableState: this.getDataTableState(),
       categoryTree: this.categoryTree,
-      selectedCategory: this.selectedCategory
+      selectedCategory: this.selectedCategory,
+      searchQuery: this.searchQuery
     });
   }
 
@@ -51,6 +56,9 @@ export class ProductListComponent extends DataTableHolder<ProductArticle> implem
   enrichParams(params: HttpParams): HttpParams {
     if (this.selectedCategory && this.selectedCategory.id !== -1) {
       params = params.append('categoryId', this.selectedCategory.id.toString());
+    }
+    if (this.searchQuery) {
+      params = params.append('searchQuery', this.searchQuery);
     }
     return params;
   }
@@ -72,8 +80,16 @@ export class ProductListComponent extends DataTableHolder<ProductArticle> implem
     this.fetchPage();
   }
 
+  searchQueryChanged(): void {
+    clearTimeout(this.searchQueryDelay);
+    this.searchQueryDelay = setTimeout(() => {
+      this.fetchPage();
+    }, 250);
+  }
+
   resetAll(): void {
     this.selectedCategory = null;
+    this.searchQuery = null;
     super.resetAll();
   }
 }

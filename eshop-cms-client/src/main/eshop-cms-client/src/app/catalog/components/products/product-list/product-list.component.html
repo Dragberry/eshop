@@ -22,7 +22,16 @@
         </app-category-tree-element>
       </div>
       <div class="col-10">
-        <app-paginator [page]="page" (paginatorEvent)="onPageableEvent($event)"></app-paginator>
+        <div class="row">
+          <div class="col-8">
+              <app-paginator [page]="page" (paginatorEvent)="onPageableEvent($event)"></app-paginator>
+          </div>
+          <div class="col-4">
+            <input class="form-control" type="text" [placeholder]="'common.searchByArticleOrTitle' | translate"
+              [(ngModel)]="searchQuery"
+              (keyup)="searchQueryChanged()">
+          </div>
+        </div>
         <table *ngIf="page" class="table table-sm table-striped table-hover">
           <thead class="thead-dark">
             <tr>
