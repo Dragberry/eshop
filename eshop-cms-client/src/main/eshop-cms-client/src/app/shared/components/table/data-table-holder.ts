@@ -23,15 +23,15 @@ export abstract class DataTableHolder<T> implements AfterViewInit {
   page: Page<T>;
 
   ngAfterViewInit(): void {
-    Promise.resolve().then(() => {
-      if (this.columns) {
-        this.columns.forEach(column => {
+    this.columns.changes.subscribe(columns => {
+      columns.forEach(column => {
+        Promise.resolve().then(() => {
           const sortDirection: SortDirection = this.sortBy != null && this.sortBy === column.sortBy
-            ? SortDirection[this.sortDirection.toUpperCase()]
-            : SortDirection.UNSORTED;
-          column.restore(sortDirection, this.filters.get(column.columnId));
+              ? SortDirection[this.sortDirection.toUpperCase()]
+              : SortDirection.UNSORTED;
+            column.restore(sortDirection, this.filters.get(column.columnId));
         });
-      }
+      });
     });
   }
 

@@ -25,6 +25,7 @@ public class CatalogController {
     public PageableList<?> getProdcutList(
             @RequestParam(required = true) Integer pageNumber,
             @RequestParam(required = true) Integer pageSize,
+            @RequestParam(required = false) Long categoryId,
             HttpServletRequest request) {
         return productService.getProducts(pageNumber - 1, pageSize, request.getParameterMap());
     }

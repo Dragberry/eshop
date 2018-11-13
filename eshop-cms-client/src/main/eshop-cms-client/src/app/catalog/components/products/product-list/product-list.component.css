@@ -3,5 +3,11 @@
 }
 
 .category-block {
-  padding: 1rem;
+  padding-left: 1rem;
+}
+
+.category-block button {
+  white-space: normal;
+  text-align: left;
+  font-size: 80%;
 }

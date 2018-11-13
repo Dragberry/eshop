@@ -8,6 +8,7 @@ import { ProductListComponent } from './components/products/product-list/product
 import { ProductsComponent } from './components/products/products.component';
 import { ProductListResolverService } from './components/products/product-list/product-list-resolver.service';
 import { SharedModule } from '../shared/shared.module';
+import { CategoryTreeElementComponent } from './components/products/product-list/category-tree-element.component';
 
 @NgModule({
   imports: [
@@ -17,6 +18,7 @@ import { SharedModule } from '../shared/shared.module';
   ],
   declarations: [
     CatalogComponent,
+    CategoryTreeElementComponent,
     ProductsComponent,
     ProductDetailsComponent,
     ProductListComponent

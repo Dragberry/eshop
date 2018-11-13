@@ -26,10 +26,13 @@ import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Selection;
 import javax.persistence.criteria.Subquery;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.dragberry.eshop.dal.dto.ProductArticleListItemDTO;
 import org.dragberry.eshop.dal.dto.ProductListItemDTO;
+import org.dragberry.eshop.dal.entity.Category;
+import org.dragberry.eshop.dal.entity.Category_;
 import org.dragberry.eshop.dal.entity.Product;
 import org.dragberry.eshop.dal.entity.ProductArticle;
 import org.dragberry.eshop.dal.entity.ProductAttributeBoolean;
@@ -438,11 +441,14 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
 	private static final String TITLE = "title";
 	private static final String PRICE = "price";
 	private static final String ACTUAL_PRICE = "actualPrice";
+	private static final String CATEGORY_ID = "categoryId";
 	
 	@AllArgsConstructor(staticName = "of")
     private static class ProductArticleRoots implements Roots {
         final Root<ProductArticle> productArticle;
         final Join<ProductArticle, Product> product;
+        final Join<ProductArticle, Category> mainCategory;
+        final Join<ProductArticle, Category> categories;
     }
 	
 	private static final SortConfig<ProductArticleRoots> SORT_CONFIG = new SortConfig<>() {
@@ -484,7 +490,10 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
         @Override
         protected ProductArticleRoots getRoots(CriteriaQuery<?> query) {
             Root<ProductArticle> root = query.from(ProductArticle.class);
-            return ProductArticleRoots.of(root, root.join(ProductArticle_.products));
+            return ProductArticleRoots.of(root,
+                    root.join(ProductArticle_.products),
+                    root.join(ProductArticle_.category, JoinType.LEFT),
+                    root.join(ProductArticle_.categories, JoinType.LEFT));
         }
 
         @Override
@@ -505,7 +514,15 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
 
         @Override
         protected void where(List<Predicate> predicates, Map<String, String[]> searchParams, ProductArticleRoots roots) {
-            
+            String[] categoryIds = searchParams.get(CATEGORY_ID);
+            if (ArrayUtils.isNotEmpty(categoryIds)) {
+                Long categoryId = Long.valueOf(categoryIds[0]);
+                predicates.add(cb.or(
+                        cb.equal(roots.mainCategory.get(Category_.entityKey), categoryId),
+                        cb.equal(roots.categories.get(Category_.entityKey), categoryId)));
+            }
+            predicates.addAll(numericRange(PRICE, roots.product.get(Product_.price), searchParams));
+            predicates.addAll(numericRange(ACTUAL_PRICE, roots.product.get(Product_.actualPrice), searchParams));
         }
         
         @Override

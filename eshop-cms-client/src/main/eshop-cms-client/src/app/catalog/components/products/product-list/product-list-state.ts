@@ -5,4 +5,5 @@ import { ProductCategory } from 'src/app/catalog/model/product-category';
 export class ProductListState {
   dataTableState?: DataTableState<ProductArticle>;
   categoryTree?: ProductCategory[];
+  selectedCategory?: ProductCategory;
 }

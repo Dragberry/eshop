@@ -14,26 +14,12 @@
         <hr/>
       </div>
       <div class="col-2">
-        <ul *ngIf="categoryTree" class="category-block">
-          <li *ngFor="let ctg of categoryTree">
-            <button class="btn btn-link p-0"
-              (click)="selectCategory(ctg)"
-              [class.btn-link]="selectedCategory?.id !== ctg.id"
-              [class.btn-primary]="selectedCategory?.id === ctg.id">
-              {{ctg.name | translate}}
-            </button>
-            <ul *ngIf="ctg.categories" class="category-block">
-              <li *ngFor="let childCtg of ctg.categories">
-                <button class="btn btn-link p-0"
-                  [class.btn-link]="selectedCategory?.id !== childCtg.id"
-                  [class.btn-primary]="selectedCategory?.id === childCtg.id"
-                  (click)="selectCategory(childCtg)">
-                  {{childCtg.name | translate}}
-                </button>
-              </li>
-            </ul>
-          </li>
-        </ul>
+        <app-category-tree-element
+          *ngIf="categoryTree"
+          [categoryTree]="categoryTree"
+          [selectedCategory]="selectedCategory"
+          (categorySelected)="selectCategory($event)">
+        </app-category-tree-element>
       </div>
       <div class="col-10">
         <app-paginator [page]="page" (paginatorEvent)="onPageableEvent($event)"></app-paginator>

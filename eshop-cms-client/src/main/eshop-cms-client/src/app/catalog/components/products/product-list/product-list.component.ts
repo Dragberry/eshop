@@ -31,6 +31,7 @@ export class ProductListComponent extends DataTableHolder<ProductArticle> implem
     this.route.data.subscribe(routeData => {
       const data = <ProductListState> routeData.data;
       this.categoryTree = data.categoryTree;
+      this.selectedCategory = data.selectedCategory;
       this.setDataTableState(data.dataTableState);
     });
   }
@@ -38,7 +39,8 @@ export class ProductListComponent extends DataTableHolder<ProductArticle> implem
   ngOnDestroy() {
     this.productResolver.saveState({
       dataTableState: this.getDataTableState(),
-      categoryTree: this.categoryTree
+      categoryTree: this.categoryTree,
+      selectedCategory: this.selectedCategory
     });
   }
 
