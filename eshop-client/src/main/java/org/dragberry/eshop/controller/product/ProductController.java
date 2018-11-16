@@ -1,7 +1,5 @@
 package org.dragberry.eshop.controller.product;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -18,9 +16,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dragberry.eshop.common.ResultTO;
 import org.dragberry.eshop.common.Results;
@@ -36,7 +31,6 @@ import org.dragberry.eshop.model.product.ProductsDetails;
 import org.dragberry.eshop.navigation.Breadcrumb;
 import org.dragberry.eshop.service.AppInfoService;
 import org.dragberry.eshop.service.CommentService;
-import org.dragberry.eshop.service.ImageService;
 import org.dragberry.eshop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -141,9 +135,6 @@ public class ProductController {
 	private CommentService commentService;
 	
 	@Autowired
-	private ImageService imageService;
-	
-	@Autowired
 	private ProductService productService;
 	
 	private LinkedHashMap<String, ProductCategory> categories;
@@ -240,34 +231,6 @@ public class ProductController {
         return mv;
     }
 	
-	/**
-     * Get an image
-     * @return
-     * @throws IOException 
-     */
-    @GetMapping({"${url.images}/{folder}/{imageName:.+}"})
-    public void getImage(HttpServletResponse response,
-            @PathVariable String folder,
-            @PathVariable String imageName) throws IOException {
-        try (InputStream is = imageService.getImage(folder, imageName)) {
-            IOUtils.copy(is, response.getOutputStream());
-        }
-    }
-	
-	/**
-     * Get an product image
-     * @return
-	 * @throws IOException 
-     */
-    @GetMapping({"${url.images}/{productKey}/{productArticle}/{imageName:.+}"})
-    public void getProductImage(HttpServletResponse response,
-            @PathVariable Long productKey,
-            @PathVariable String productArticle,
-            @PathVariable String imageName) throws IOException {
-        try (InputStream is = imageService.getProductImage(productKey, productArticle, imageName)) {
-            IOUtils.copy(is, response.getOutputStream());
-        }
-    }
 	
     /**
      * Get category by reference

@@ -99,6 +99,7 @@
 
 	<modules>
 		<module>eshop-core</module>
+		<module>eshop-files</module>
 		<module>eshop-cms-client</module>
 		<module>eshop-client</module>
 		<module>eshop-backend</module>

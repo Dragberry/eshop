@@ -10,6 +10,7 @@ import java.util.Set;
 import org.dragberry.eshop.model.comment.CommentDetails;
 import org.dragberry.eshop.model.common.KeyValue;
 import org.dragberry.eshop.model.common.Modifier;
+import org.dragberry.eshop.model.product.CategoryItem;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

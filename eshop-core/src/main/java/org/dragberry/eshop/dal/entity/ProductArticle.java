@@ -23,6 +23,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -110,6 +111,17 @@ public class ProductArticle extends AuditableEntity {
 	@Column(name = "TYPE")
 	@Enumerated(EnumType.STRING)
 	private Map<String, ProductLabelType> labels = new HashMap<>();
+	
+	@OneToOne(fetch = FetchType.LAZY, orphanRemoval = true)
+	@JoinColumn(name = "MAIN_IMAGE_KEY", referencedColumnName = "FILE_KEY")
+	private File mainImage;
+
+	@ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "PRODUCT_ARTICLE_IMAGE", 
+        joinColumns = @JoinColumn(name = "PRODUCT_ARTICLE_KEY", referencedColumnName = "PRODUCT_ARTICLE_KEY"), 
+        inverseJoinColumns = @JoinColumn(name = "IMAGE_KEY", referencedColumnName = "FILE_KEY"))
+	private List<File> images = new ArrayList<>();
+	
 
 	public void addComment(Comment comment, Integer mark) {
 		ProductComment pComment = new ProductComment();

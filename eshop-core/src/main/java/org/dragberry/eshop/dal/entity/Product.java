@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,6 +15,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
@@ -62,5 +64,10 @@ public class Product extends AuditableEntity {
 	
 	@OneToMany(mappedBy = "product")
 	private List<OrderItem> orderItems;
+	
+	@OneToOne(fetch = FetchType.LAZY, orphanRemoval = true)
+	@JoinColumn(name = "MAIN_IMAGE_KEY", referencedColumnName = "FILE_KEY")
+	private File mainImage;
+
 	
 }

@@ -1,4 +1,4 @@
-package org.dragberry.eshop.service.impl;
+package org.dragberry.eshop.files.service.impl;
 
 import java.io.IOException;
 import java.io.InputStream;

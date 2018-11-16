@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 import org.dragberry.eshop.model.common.Modifier;
+import org.dragberry.eshop.model.product.CategoryItem;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -50,6 +50,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.dragberry.eshop</groupId>
+			<artifactId>eshop-files</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.dragberry.eshop</groupId>
 			<artifactId>eshop-client</artifactId>
 			<version>${project.version}</version>
 		</dependency>

@@ -1,5 +1,6 @@
 package org.dragberry.eshop.cms.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,7 +10,10 @@ import org.dragberry.eshop.cms.model.ProductCategoryTO;
 import org.dragberry.eshop.cms.model.ProductListItemTO;
 import org.dragberry.eshop.cms.service.ProductCmsService;
 import org.dragberry.eshop.common.PageableList;
+import org.dragberry.eshop.service.DataImporter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,8 +22,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class CatalogController {
 
+	 @Autowired
+    private ResourceLoader resourceLoader;
+	
     @Autowired
     private ProductCmsService productService;
+    
+    @Autowired
+    @Qualifier("InSalesDataImporter")
+    private DataImporter inSalesDataImporter;
+    
+    @GetMapping("${cms.context}/catalog/products/import")
+    public Boolean doImport() throws IOException {
+    	inSalesDataImporter.importData(resourceLoader.getResource("classpath:data/insales_export.csv").getInputStream());
+    	return true;
+    }
     
     @GetMapping("${cms.context}/catalog/products")
     public PageableList<?> getProdcutList(
