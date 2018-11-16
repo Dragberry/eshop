@@ -26,4 +26,8 @@ export class ProductService {
   getCategoryTree(): Promise<ProductCategory[]> {
     return this.httpService.get<ProductCategory[]>(`${CATEGORIES_URL}/tree`);
   }
+
+  doImport(): Promise<boolean> {
+    return this.httpService.get<boolean>(`${PRODUCTS_URL}/import`);
+  }
 }

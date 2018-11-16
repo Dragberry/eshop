@@ -42,6 +42,7 @@
       "fullName": "Ф.И.О.",
       "id": "ID",
       "image": "Изображение",
+      "import": "Импорт",
       "isPaid": "Оплата",
       "newOrder": "Новый заказ",
       "newProduct": "Новый товар",

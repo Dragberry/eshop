@@ -8,6 +8,8 @@ import { Page } from 'src/app/shared/model/page';
 import { ActivatedRoute } from '@angular/router';
 import { ProductListState } from './product-list-state';
 import { ProductListResolverService } from './product-list-resolver.service';
+import { MessageService } from 'src/app/core/service/message.service';
+import { MessageType } from 'src/app/shared/model/message';
 
 @Component({
   selector: 'app-product-list',
@@ -25,6 +27,7 @@ export class ProductListComponent extends DataTableHolder<ProductArticle> implem
 
   constructor(
     private route: ActivatedRoute,
+    private messageService: MessageService,
     private productService: ProductService,
     private productResolver: ProductListResolverService ) {
     super();
@@ -91,5 +94,11 @@ export class ProductListComponent extends DataTableHolder<ProductArticle> implem
     this.selectedCategory = null;
     this.searchQuery = null;
     super.resetAll();
+  }
+
+  import(): void {
+    this.productService.doImport()
+    .then(() => this.messageService.showMessage(MessageType.SUCCESS, 'Import successed'))
+    .catch(() => this.messageService.showMessage(MessageType.ERROR, 'Import failed'));
   }
 }
