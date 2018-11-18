@@ -29,6 +29,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dragberry.eshop.dal.entity.Category;
 import org.dragberry.eshop.dal.entity.Comment;
+import org.dragberry.eshop.dal.entity.File;
 import org.dragberry.eshop.dal.entity.Product;
 import org.dragberry.eshop.dal.entity.ProductArticle;
 import org.dragberry.eshop.dal.entity.ProductArticle.SaleStatus;
@@ -326,7 +327,7 @@ public class InSalesDataImporter implements DataImporter {
 		                String realURL = imgURL.substring(0, lastIndexOfSlash + 1) + URLEncoder.encode(imgURL.substring(lastIndexOfSlash + 1), StandardCharsets.UTF_8.name());
 		                try (InputStream imgIS = new URL(realURL).openConnection().getInputStream()) {
 		                    String imageName = imgURL.substring(imgURL.lastIndexOf("/") + 1);
-		                    link.attr("src", imageService.createImage(imageName, imgIS));
+		                    link.attr("src", imageService.createImage(imageName, imgIS).getPath());
 		                }
 		            }
 		        }
@@ -345,7 +346,7 @@ public class InSalesDataImporter implements DataImporter {
 	                String realURL = imgURL.substring(0, lastIndexOfSlash + 1) + URLEncoder.encode(imgURL.substring(lastIndexOfSlash + 1), StandardCharsets.UTF_8.name());
 	                try (InputStream imgIS = new URL(realURL).openConnection().getInputStream()) {
 	                    String imageName = imgURL.substring(imgURL.lastIndexOf("/") + 1);
-	                    link.attr("src", imageService.createImage(imageName, imgIS));
+	                    link.attr("src", imageService.createImage(imageName, imgIS).getPath());
 	                    link.attr("class", "img-external");
 	                }
 	            }
@@ -357,7 +358,8 @@ public class InSalesDataImporter implements DataImporter {
 	private void processImages(String[] columns, ProductArticle pa, List<Product> products) throws IOException {
 		String[] imgs = columns[columnsMap.get(IMAGES)].split(" ");
 		imageService.deleteProductImages(pa.getEntityKey(), pa.getArticle());
-        for (int imgIndex = 0; imgIndex < imgs.length; imgIndex++) {
+		pa.getImages().clear();
+		for (int imgIndex = 0; imgIndex < imgs.length; imgIndex++) {
             String imgURL = imgs[imgIndex];
             if (StringUtils.isBlank(imgURL)) {
             	continue;
@@ -367,9 +369,15 @@ public class InSalesDataImporter implements DataImporter {
             String realURL = imgURL.substring(0, lastIndexOfSlash + 1) + URLEncoder.encode(imgURL.substring(lastIndexOfSlash + 1), StandardCharsets.UTF_8.name());
             String imageName = getImageName(pa, products, imgURL, imgIndex == 0);
             try (InputStream imgIS = new URL(realURL).openConnection().getInputStream()) {
-                imageService.createProductImage(pa.getEntityKey(), pa.getArticle(), imageName, imgIS);
+                File image = imageService.createProductImage(pa.getEntityKey(), pa.getArticle(), imageName, imgIS);
+                if (imgIndex != 0) {
+                	pa.getImages().add(image);
+                } else {
+                	pa.setMainImage(image);
+                }
             }
         }
+		
 	}
 
     private String getImageName(ProductArticle pa, List<Product> products, String imgURL, boolean first) {

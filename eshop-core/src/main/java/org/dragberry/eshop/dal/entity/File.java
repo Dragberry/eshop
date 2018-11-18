@@ -32,6 +32,9 @@ public class File extends AuditableEntity {
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "FILE_GEN")
 	private Long entityKey;
 	
+	@Column(name = "name")
+    private String name;
+	
 	@Column(name = "PATH")
     private String path;
 	

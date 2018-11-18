@@ -11,13 +11,19 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.IOUtils;
+import org.dragberry.eshop.dal.entity.File;
+import org.dragberry.eshop.dal.repo.FileRepository;
 import org.dragberry.eshop.service.ImageService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -27,6 +33,14 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @Service
 public class ImageServiceImpl implements ImageService {
+	
+	private static final Map<String, String> CONTENT_TYPES = new HashMap<>();
+	static {
+		CONTENT_TYPES.put("gif", "image/gif");
+		CONTENT_TYPES.put("jpeg", "image/jpeg");
+		CONTENT_TYPES.put("jpg", "image/jpeg");
+		CONTENT_TYPES.put("png", "image/png");
+	}
     
     private static final String NO_IMAGE = "/static/images/no-image.png";
 
@@ -43,8 +57,71 @@ public class ImageServiceImpl implements ImageService {
     @Value("${db.images}")
     private String dbImages;
     
-    @Value("${url.images}")
+    @Value("${url.files.images}")
     private String urlImages;
+    
+    @Autowired
+    private FileRepository fileRepo;
+    
+    
+    @Override
+    public File createImage(String imageName, InputStream imgIS) throws IOException {
+        Path folder = Paths.get(dbImages, OTHERS_DIR, String.valueOf(Math.abs(imageName.hashCode() % 64) + 1));
+        if (!Files.exists(folder)) {
+            Files.createDirectories(folder);
+        }
+        Path imgPath = folder.resolve(imageName);
+        if (!Files.exists(imgPath)) {
+            try (OutputStream imgOS = Files.newOutputStream(Files.createFile(imgPath))) {
+                IOUtils.copy(imgIS, imgOS);
+            }
+        }
+        String path = Stream.of(urlImages, folder.getFileName().toString(), imageName)
+        		.collect(Collectors.joining("/"));
+        return fileRepo.findByPath(path).orElseGet(() -> createImage(imageName, path));
+    }
+    
+    @Override
+    public File createProductImage(Long prodiuctArticleId, String productArticle, String imageName, InputStream imgIs) throws IOException {
+        Path productDir = Paths.get(dbImages, PRODUCTS_DIR, getImageName(prodiuctArticleId, productArticle));
+        if (!Files.exists(productDir)) {
+            Files.createDirectories(productDir);
+        }
+        Path imgPath = productDir.resolve(imageName);
+        if (!Files.exists(imgPath)) {
+            try (OutputStream imgOS = Files.newOutputStream(Files.createFile(imgPath))) {
+                IOUtils.copy(imgIs, imgOS);
+            }
+        }
+        String path = imgPath.toString();
+        return fileRepo.findByPath(path).orElseGet(() -> createImage(imageName, path));
+    }
+
+	private File createImage(String imageName, String imgPath) {
+		File image = new File();
+        image.setPath(imgPath);
+        image.setName(imageName);
+        image.setContentType(CONTENT_TYPES.get(imageName.substring(imageName.lastIndexOf('.') + 1).trim().toLowerCase()));
+        if (image.getContentType() == null) {
+        	System.out.println();
+        }
+        image = fileRepo.save(image);
+		return image;
+	}
+    
+	@Override
+    public InputStream getImage(String path) throws IOException {
+        Path img = Paths.get(dbImages, path);
+        if (Files.exists(img)) {
+            return Files.newInputStream(img);
+        }
+        return new ClassPathResource(NO_IMAGE).getInputStream();
+    }
+	
+	@Override
+	public Optional<File> findImage(String path) {
+		return fileRepo.findByPath(path);
+	}
 
     @Override
     public String findMainImage(Long prodiuctArticleId, String productArticle) {
@@ -88,19 +165,6 @@ public class ImageServiceImpl implements ImageService {
         }
         return new ClassPathResource(NO_IMAGE).getInputStream();
     }
-    @Override
-    public void createProductImage(Long prodiuctArticleId, String productArticle, String imageName, InputStream imgIs) throws IOException {
-        Path productDir = Paths.get(dbImages, PRODUCTS_DIR, getImageName(prodiuctArticleId, productArticle));
-        if (!Files.exists(productDir)) {
-            Files.createDirectories(productDir);
-        }
-        Path imgPath = productDir.resolve(imageName);
-        if (!Files.exists(imgPath)) {
-            try (OutputStream imgOS = Files.newOutputStream(Files.createFile(imgPath))) {
-                IOUtils.copy(imgIs, imgOS);
-            }
-        }
-    }
     
     @Override
     public void deleteProductImages(Long prodiuctArticleId, String productArticle) throws IOException {
@@ -119,33 +183,6 @@ public class ImageServiceImpl implements ImageService {
         }
     }
 
-    @Override
-    public String createImage(String imageName, InputStream imgIS) throws IOException {
-        Path folder = Paths.get(dbImages, OTHERS_DIR, String.valueOf(Math.abs(imageName.hashCode() % 64) + 1));
-        if (!Files.exists(folder)) {
-            Files.createDirectories(folder);
-        }
-        Path imgPath = folder.resolve(imageName);
-        if (!Files.exists(imgPath)) {
-            try (OutputStream imgOS = Files.newOutputStream(Files.createFile(imgPath))) {
-                IOUtils.copy(imgIS, imgOS);
-            }
-        }
-        return Stream.of(
-                urlImages,
-                folder.getFileName().toString(),
-                imageName).collect(Collectors.joining("/"));
-    }
-    
-@Override
-    public InputStream getImage(String folder, String imageName) throws IOException {
-        Path img = Paths.get(dbImages, OTHERS_DIR, folder, imageName);
-        if (Files.exists(img)) {
-            return Files.newInputStream(img);
-        }
-        return new ClassPathResource(NO_IMAGE).getInputStream();
-    }
-    
     private static String getImageName(Long prodiuctArticleId, String productArticle) {
         return MessageFormat.format(PRODUCT_IMG_TEMPLATE, productArticle, prodiuctArticleId.toString());
     }

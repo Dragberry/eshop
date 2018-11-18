@@ -3,6 +3,9 @@ package org.dragberry.eshop.service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Optional;
+
+import org.dragberry.eshop.dal.entity.File;
 
 public interface ImageService {
 
@@ -36,9 +39,10 @@ public interface ImageService {
      * Creates an product image
      * @param prodiuctArticleId
      * @param productArticle
+     * @return 
      * @throws IOException
      */
-    void createProductImage(Long prodiuctArticleId, String productArticle, String imageName, InputStream imgIs) throws IOException;
+    File createProductImage(Long prodiuctArticleId, String productArticle, String imageName, InputStream imgIs) throws IOException;
 
     /**
      * Deletes all product images
@@ -56,7 +60,7 @@ public interface ImageService {
      * @return an image link
      * @throws IOException 
      */
-    String createImage(String imageName, InputStream imgIS) throws IOException;
+    File createImage(String imageName, InputStream imgIS) throws IOException;
 
     /**
      * Get an image
@@ -65,6 +69,9 @@ public interface ImageService {
      * @return
      * @throws IOException 
      */
-    InputStream getImage(String folder, String imageName) throws IOException;
+    InputStream getImage(String path) throws IOException;
+
+
+	Optional<File> findImage(String path);
 
 }

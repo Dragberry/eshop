@@ -218,7 +218,7 @@ public class AppInitializer {
             String realURL = imgURL.substring(0, lastIndexOfSlash + 1) + URLEncoder.encode(imgURL.substring(lastIndexOfSlash + 1), StandardCharsets.UTF_8.name());
             try (InputStream imgIS = new URL(realURL).openConnection().getInputStream()) {
                 String imageName = imgURL.substring(imgURL.lastIndexOf("/") + 1);
-                link.attr(attr, imageService.createImage(imageName, imgIS));
+                link.attr(attr, imageService.createImage(imageName, imgIS).getPath());
             }
         }
     }
