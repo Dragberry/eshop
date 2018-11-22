@@ -12,7 +12,7 @@
 			</div>
 			<a th:href="@{|${@environment.getProperty('url.catalog')}/${product.category.reference}/${product.reference}|}">
 				<img class="img-fluid" th:title="${product.title}" th:alt="${product.title}"
-					th:src="${product.mainImage} ? @{|${@environment.getProperty('url.images')}/${product.id}/${product.article}/${product.mainImage}|} : ${@environment.getProperty('url.no-image')}">
+					th:src="${product.mainImage}">
 			</a>
 			<div class="container">
 				<div class="row">

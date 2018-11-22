@@ -99,7 +99,7 @@
 										<img class="w-100"
 											th:title="${product.key.title}"
 											th:alt="${product.key.title}"
-								 			th:src="${product.key.mainImage} ? @{|${@environment.getProperty('url.images')}/${product.key.productArticleId}/${product.key.article}/${product.key.mainImage}|} : ${@environment.getProperty('url.no-image')}">
+								 			th:src="${product.key.mainImage}">
 									</div>
 									<div class="col-9">
 										<div class="row">

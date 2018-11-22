@@ -16,6 +16,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
+
 import org.apache.commons.io.IOUtils;
 import org.dragberry.eshop.dal.entity.File;
 import org.dragberry.eshop.dal.repo.FileRepository;
@@ -51,48 +53,47 @@ public class ImageServiceImpl implements ImageService {
     
     private static final String OTHERS_DIR = "others";
     
-    @Value("${db.files}")
-    private String dbFiles;
+    @Value("${fs.root}")
+    private String fsRoot;
     
-    @Value("${url.files.images}")
-    private String urlImages;
+    @Value("${fs.files}")
+    private String fsFiles;
+    
+    @Value("${fs.images}")
+    private String fsImages;
     
     @Autowired
     private FileRepository fileRepo;
     
-    //var/eshop  /files/images  /34/img.jpg
+    //var/eshop  /files/images  /others/34/img.jpg
     //var/eshop  /files/images  /products/DZ09_1000/DZ09_main.jpg
     @Override
-    public File createImage(String imageName, InputStream imgIS) throws IOException {
-        Path folder = Paths.get(OTHERS_DIR, String.valueOf(Math.abs(imageName.hashCode() % 64) + 1));
-    	Path dbFolder = Paths.get(dbFiles).resolve(folder);
-        if (!Files.exists(dbFolder)) {
-            Files.createDirectories(dbFolder);
+    public File createImage(String imageName, InputStream imgIs) throws IOException {
+        return createImage(imageName, imgIs, () -> {
+            return  Paths.get(fsFiles, fsImages, OTHERS_DIR, String.valueOf(Math.abs(imageName.hashCode() % 64) + 1));
+         });
+    }
+    
+    @Override
+    public File createProductImage(Long prodiuctArticleId, String productArticle, String imageName, InputStream imgIs) throws IOException {
+        return createImage(imageName, imgIs, () -> {
+           return Paths.get(fsFiles, fsImages, PRODUCTS_DIR, getImageName(prodiuctArticleId, productArticle));
+        });
+    }
+    
+    private File createImage(String imageName, InputStream imgIS, Supplier<Path> folderResolver) throws IOException {
+        Path folder = folderResolver.get();
+        Path fsFolder = Paths.get(fsRoot).resolve(folder);
+        if (!Files.exists(fsFolder)) {
+            Files.createDirectories(fsFolder);
         }
-        Path imgPath = dbFolder.resolve(imageName);
+        Path imgPath = fsFolder.resolve(imageName);
         if (!Files.exists(imgPath)) {
             try (OutputStream imgOS = Files.newOutputStream(Files.createFile(imgPath))) {
                 IOUtils.copy(imgIS, imgOS);
             }
         }
-        String path = Paths.get(urlImages).resolve(folder).resolve(imageName).toString();
-        return fileRepo.findByPath(path).orElseGet(() -> createImage(imageName, path));
-    }
-    
-    @Override
-    public File createProductImage(Long prodiuctArticleId, String productArticle, String imageName, InputStream imgIs) throws IOException {
-        Path folder = Paths.get(PRODUCTS_DIR, getImageName(prodiuctArticleId, productArticle));
-        Path productDir = Paths.get(dbFiles).resolve(folder);
-        if (!Files.exists(productDir)) {
-            Files.createDirectories(productDir);
-        }
-        Path imgPath = productDir.resolve(imageName);
-        if (!Files.exists(imgPath)) {
-            try (OutputStream imgOS = Files.newOutputStream(Files.createFile(imgPath))) {
-                IOUtils.copy(imgIs, imgOS);
-            }
-        }
-        String path = Paths.get(urlImages).resolve(folder).resolve(imageName).toString();
+        String path = folder.resolve(imageName).toString().replace('\\', '/');
         return fileRepo.findByPath(path).orElseGet(() -> createImage(imageName, path));
     }
 
@@ -110,7 +111,7 @@ public class ImageServiceImpl implements ImageService {
     
 	@Override
     public InputStream getImage(String path) throws IOException {
-        Path img = Paths.get(dbFiles, path);
+        Path img = Paths.get(fsRoot, path);
         if (Files.exists(img)) {
             return Files.newInputStream(img);
         }
@@ -124,7 +125,7 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public String findMainImage(Long prodiuctArticleId, String productArticle) {
-        Path imgDir = Paths.get(dbFiles, PRODUCTS_DIR, getImageName(prodiuctArticleId, productArticle));
+        Path imgDir = Paths.get(fsRoot, PRODUCTS_DIR, getImageName(prodiuctArticleId, productArticle));
         if (Files.exists(imgDir) && Files.isDirectory(imgDir)) {
             try (DirectoryStream<Path> imgStream = Files.newDirectoryStream(imgDir, IMAGES_GLOB_MAIN)) {
                 Iterator<Path> iter;
@@ -140,7 +141,7 @@ public class ImageServiceImpl implements ImageService {
     
     @Override
     public List<String> findProductImages(Long prodiuctArticleId, String productArticle) {
-        Path imgDir = Paths.get(dbFiles, PRODUCTS_DIR, getImageName(prodiuctArticleId, productArticle));
+        Path imgDir = Paths.get(fsRoot, PRODUCTS_DIR, getImageName(prodiuctArticleId, productArticle));
         if (Files.exists(imgDir) && Files.isDirectory(imgDir)) {
             try (DirectoryStream<Path> imgStream = Files.newDirectoryStream(imgDir, path -> !path.getFileName().toString().contains(MAIN_SUFFIX))) {
                 List<String> imgs = new ArrayList<>();
@@ -158,7 +159,7 @@ public class ImageServiceImpl implements ImageService {
     
     @Override
     public InputStream getProductImage(Long prodiuctArticleId, String productArticle, String imageName) throws IOException {
-        Path img = Paths.get(dbFiles, PRODUCTS_DIR, getImageName(prodiuctArticleId, productArticle), imageName);
+        Path img = Paths.get(fsRoot, PRODUCTS_DIR, getImageName(prodiuctArticleId, productArticle), imageName);
         if (Files.exists(img)) {
             return Files.newInputStream(img);
         }
@@ -167,7 +168,7 @@ public class ImageServiceImpl implements ImageService {
     
     @Override
     public void deleteProductImages(Long prodiuctArticleId, String productArticle) throws IOException {
-        Path productDir = Paths.get(dbFiles, PRODUCTS_DIR, getImageName(prodiuctArticleId, productArticle));
+        Path productDir = Paths.get(fsRoot, PRODUCTS_DIR, getImageName(prodiuctArticleId, productArticle));
         if (Files.exists(productDir)) {
             Files.walk(productDir)
                 .sorted(Comparator.reverseOrder())

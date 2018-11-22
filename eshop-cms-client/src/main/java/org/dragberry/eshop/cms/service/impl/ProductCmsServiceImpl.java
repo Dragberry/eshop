@@ -18,7 +18,6 @@ import org.dragberry.eshop.dal.repo.CategoryRepository;
 import org.dragberry.eshop.dal.repo.ProductArticleRepository;
 import org.dragberry.eshop.dal.repo.ProductRepository;
 import org.dragberry.eshop.dal.repo.ProductRepository.ProductOrderItemSpecification;
-import org.dragberry.eshop.service.ImageService;
 import org.dragberry.eshop.utils.ProductTitleBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -36,9 +35,6 @@ public class ProductCmsServiceImpl implements ProductCmsService {
     
     @Autowired
     private ProductRepository productRepo;
-    
-    @Autowired
-    private ImageService imageService;
     
     @Override
     public PageableList<ProductListItemTO> searchProducts(PageRequest pageRequest, Map<String, String[]> searchParams) {
@@ -61,9 +57,7 @@ public class ProductCmsServiceImpl implements ProductCmsService {
     @Override
     public Optional<List<ProductListItemTO>> getProductOptions(Long productArticleId) {
         return productArticleRepo.findById(productArticleId).map(pa -> {
-           return pa.getProducts().stream().map(product -> {
-               return ProductMapper.map(product, imageService::findMainImage);
-           }).collect(Collectors.toList());
+           return pa.getProducts().stream().map(ProductMapper::map).collect(Collectors.toList());
         });
     }
     
@@ -79,7 +73,7 @@ public class ProductCmsServiceImpl implements ProductCmsService {
             item.setPrice(entity.getPrice());
             item.setActualPrice(entity.getActualPrice());
             item.setOptionsCount(entity.getOptionsCount());
-            item.setMainImage(imageService.findMainImage(entity.getId(), entity.getArticle()));
+            item.setMainImage(entity.getMainImage());
             return item;
         }).collect(Collectors.toList()), page.getNumber() + 1, page.getSize(), page.getTotalPages(), page.getTotalElements());
     }

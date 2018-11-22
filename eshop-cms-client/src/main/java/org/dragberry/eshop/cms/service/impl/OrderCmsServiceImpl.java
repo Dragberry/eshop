@@ -27,7 +27,6 @@ import org.dragberry.eshop.dal.repo.OrderRepository;
 import org.dragberry.eshop.dal.repo.PaymentMethodRepository;
 import org.dragberry.eshop.dal.repo.ProductRepository;
 import org.dragberry.eshop.dal.repo.ShippingMethodRepository;
-import org.dragberry.eshop.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.domain.Page;
@@ -61,9 +60,6 @@ public class OrderCmsServiceImpl implements OrderCmsService {
 	
 	@Autowired
     private ShippingMethodRepository shippingMethodRepo;
-	
-	@Autowired
-	private ImageService imageService;
 	
 	@Override
 	public PageableList<OrderTO> getOrders(PageRequest pageRequest, Map<String, String[]> params) {
@@ -252,7 +248,7 @@ public class OrderCmsServiceImpl implements OrderCmsService {
             itemTO.setQuantity(item.getQuantity());
             itemTO.setTotalAmount(item.getTotalAmount());
             itemTO.setVersion(item.getVersion());
-            itemTO.setProduct(ProductMapper.map(item.getProduct(), imageService::findMainImage));
+            itemTO.setProduct(ProductMapper.map(item.getProduct()));
             return itemTO;
         }).collect(Collectors.toList())); 
         return order;

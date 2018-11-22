@@ -32,7 +32,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
  */
 public class RequestLogFilter extends OncePerRequestFilter {
 
-	private static final List<String> EXCLUDE_STATIC = Arrays.asList("/images", "/js", "/css", "/webfonts", "/favicon.ico");
+	private static final List<String> EXCLUDE_STATIC = Arrays.asList("/files", "/images", "/js", "/css", "/webfonts", "/favicon.ico");
 
 	private RequestLogRepository requestLogRepo;
 

@@ -29,7 +29,7 @@
 		<commons-validator.version>1.6</commons-validator.version>
 		<jsoup.version>1.11.3</jsoup.version>
 		<poi.version>3.17</poi.version>
-		
+
 		<com.fasterxml.jackson.version>2.9.1</com.fasterxml.jackson.version>
 	</properties>
 
@@ -88,12 +88,9 @@
 
 	<repositories>
 		<repository>
-			<id>spring-milestones</id>
-			<name>Spring Milestones</name>
-			<url>https://repo.spring.io/libs-milestone</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
+			<id>spring-milestone</id>
+			<name>Spring Milestone Repository</name>
+			<url>http://repo.spring.io/milestone</url>
 		</repository>
 	</repositories>
 

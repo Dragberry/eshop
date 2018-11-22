@@ -23,4 +23,6 @@ public class ProductArticleListItemDTO {
     
     private Long optionsCount;
     
+    private String mainImage;
+    
 }

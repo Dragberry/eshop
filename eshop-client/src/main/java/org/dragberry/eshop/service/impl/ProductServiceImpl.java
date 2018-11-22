@@ -25,6 +25,7 @@ import java.util.stream.StreamSupport;
 
 import org.dragberry.eshop.dal.entity.Category;
 import org.dragberry.eshop.dal.entity.Comment.Status;
+import org.dragberry.eshop.dal.entity.File;
 import org.dragberry.eshop.dal.entity.Product;
 import org.dragberry.eshop.dal.entity.ProductArticle;
 import org.dragberry.eshop.dal.entity.ProductAttribute;
@@ -46,7 +47,6 @@ import org.dragberry.eshop.model.product.ProductListItem;
 import org.dragberry.eshop.model.product.ProductOptionDetails;
 import org.dragberry.eshop.model.product.ProductSearchQuery;
 import org.dragberry.eshop.model.product.RangeFilter;
-import org.dragberry.eshop.service.ImageService;
 import org.dragberry.eshop.service.ProductService;
 import org.dragberry.eshop.service.SystemService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,9 +69,6 @@ public class ProductServiceImpl implements ProductService {
     
     @Autowired
     private ProductRepository productRepo;
-    
-    @Autowired
-    private ImageService imageService;
     
     @Autowired
     private SystemService systemService;
@@ -121,7 +118,7 @@ public class ProductServiceImpl implements ProductService {
 					product.setLabels(productArticleRepo.findLabels(dto.getId()).stream()
 							.map(entry -> (Entry<String, ProductLabelType>) entry).collect(labelCollector()));
 					setDiscountLabel(product.getLabels(), product.getPrice(), product.getActualPrice());
-					product.setMainImage(imageService.findMainImage(dto.getId(), dto.getArticle()));
+					product.setMainImage(dto.getMainImage());
 					product.setDescription(systemService.processTemplate(dto.getDescription()));
 					return product;
 			    }).collect(toList());
@@ -157,7 +154,7 @@ public class ProductServiceImpl implements ProductService {
 					product.setLabels(productArticleRepo.findLabels(dto.getId()).stream()
 							.map(entry -> (Entry<String, ProductLabelType>) entry).collect(labelCollector()));
 					setDiscountLabel(product.getLabels(), product.getPrice(), product.getActualPrice());
-					product.setMainImage(imageService.findMainImage(dto.getId(), dto.getArticle()));
+					product.setMainImage(dto.getMainImage());
 					product.setDescription(systemService.processTemplate(dto.getDescription()));
 					return product;
 			    }).collect(toList());
@@ -198,8 +195,8 @@ public class ProductServiceImpl implements ProductService {
         product.setDescriptionFull(systemService.processTemplate(article.getDescriptionFull()));
         Category ctg = article.getCategory();
         product.setCategory(new CategoryItem(ctg.getEntityKey(), ctg.getName(), ctg.getReference()));
-        product.setMainImage(imageService.findMainImage(article.getEntityKey(), article.getArticle()));
-        product.setImages(imageService.findProductImages(article.getEntityKey(), article.getArticle()));
+        product.setMainImage(article.getMainImage().getPath());
+        product.setImages(article.getImages().stream().map(File::getPath).collect(toList()));
         
         Map<String, Set<KeyValue>> optionValues = new HashMap<>();
         Map<Long, Set<KeyValue>> productOptions = new HashMap<>();
@@ -315,7 +312,7 @@ public class ProductServiceImpl implements ProductService {
         capturedProduct.setReference(product.getProductArticle().getReference());
         capturedProduct.setPrice(product.getActualPrice() != null ? product.getActualPrice() : product.getPrice());
         capturedProduct.setOptions(product.getOptions().stream().map(o -> new KeyValue(o.getName(), o.getValue())).collect(toSet()));
-        capturedProduct.setMainImage(imageService.findMainImage(capturedProduct.getProductArticleId(), capturedProduct.getArticle()));
+        capturedProduct.setMainImage(product.getProductArticle().getMainImage().getPath());
         Category ctg = product.getProductArticle().getCategories().get(0);
         capturedProduct.setCategory(new CategoryItem(ctg.getEntityKey(), ctg.getName(), ctg.getReference()));
         capturedProduct.updateFullTitle();

@@ -24,12 +24,12 @@
 				<div id="productCarouselIndicators" class="carousel slide" data-ride="carousel">
 				  	<div class="carousel-inner">
 					    <div class="carousel-item active">
-					    	<img class="d-block w-100" th:title="${product.title}" th:alt="${product.title}"
-					    		th:src="${product.mainImage} ? @{|${@environment.getProperty('url.images')}/${product.id}/${product.article}/${product.mainImage}|} : ${@environment.getProperty('url.no-image')}">
+					    	<img class="d-block w-100" th:title="${product.title}"
+					    		th:alt="${product.title}"
+					    		th:src="${product.mainImage}">
 					    </div>
 					    <div th:each="img,iter : ${product.images}" class="carousel-item">
-					    	<img class="d-block w-100" th:title="${product.title}" th:alt="${product.title}"
-					    		th:src="@{|${@environment.getProperty('url.images')}/${product.id}/${product.article}/${img}|}">
+					    	<img class="d-block w-100" th:title="${product.title}" th:alt="${product.title}" th:src="${img}">
 					    </div>
 					</div>
 					<a class="carousel-control-prev" href="#productCarouselIndicators" role="button" data-slide="prev">

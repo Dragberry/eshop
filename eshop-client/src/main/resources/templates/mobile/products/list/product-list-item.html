@@ -17,7 +17,7 @@
 				<img class="d-block mx-auto w-100 "
 					th:title="${product.title}"
 					th:alt="${product.title}"
-					th:src="${product.mainImage} ? @{|${@environment.getProperty('url.images')}/${product.id}/${product.article}/${product.mainImage}|} : ${@environment.getProperty('url.no-image')}">
+					th:src="${product.mainImage}">
 			</a>
 		</div>
 		<div class="col-6">

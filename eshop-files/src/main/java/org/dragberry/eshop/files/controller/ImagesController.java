@@ -33,7 +33,7 @@ public class ImagesController {
      * @return
      * @throws IOException 
      */
-    @GetMapping({"${url.files.images}/**"})
+    @GetMapping({"${fs.files}${fs.images}/**"})
     public void getImage(HttpServletRequest request, HttpServletResponse response) throws IOException {
         imageService.findImage(URLDecoder.decode(request.getRequestURI(), StandardCharsets.UTF_8)).ifPresent(img -> {
         	response.setContentType(img.getContentType());

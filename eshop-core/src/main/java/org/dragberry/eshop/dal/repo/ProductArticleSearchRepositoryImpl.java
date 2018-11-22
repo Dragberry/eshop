@@ -32,6 +32,8 @@ import org.dragberry.eshop.dal.dto.ProductArticleListItemDTO;
 import org.dragberry.eshop.dal.dto.ProductListItemDTO;
 import org.dragberry.eshop.dal.entity.Category;
 import org.dragberry.eshop.dal.entity.Category_;
+import org.dragberry.eshop.dal.entity.File;
+import org.dragberry.eshop.dal.entity.File_;
 import org.dragberry.eshop.dal.entity.Product;
 import org.dragberry.eshop.dal.entity.ProductArticle;
 import org.dragberry.eshop.dal.entity.ProductAttributeBoolean;
@@ -141,6 +143,7 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
 		CriteriaBuilder cb;
 		CriteriaQuery<ProductListItemDTO> query;
 		Root<ProductArticle> root;
+		Join<ProductArticle, File> mainImageRoot;
 		Join<?, ?> mainCategoryRoot;
 		Join<?, ?> categoryRoot;
 		Join<?, ?>  productRoot;
@@ -155,6 +158,7 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
 			categoryRoot = root.join("categories");
 			productRoot = root.join("products");
 			productCommentRoot = root.join("comments", JoinType.LEFT);
+			mainImageRoot = root.join(ProductArticle_.mainImage, JoinType.LEFT);
 			where = new ArrayList<>();
 		}
 
@@ -188,7 +192,8 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
 					cb.avg(productCommentRoot.get("mark")),
 					mainCategoryRoot.get("entityKey"),
 					mainCategoryRoot.get("name"),
-					mainCategoryRoot.get("reference"))
+					mainCategoryRoot.get("reference"),
+					mainImageRoot.get(File_.path))
 			.groupBy(
 					root.get("entityKey"))
 			.where(getPredicate());
@@ -447,6 +452,7 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
     private static class ProductArticleRoots implements Roots {
         final Root<ProductArticle> productArticle;
         final Join<ProductArticle, Product> product;
+        final Join<ProductArticle, File> mainImage;
         final Join<ProductArticle, Category> mainCategory;
         final Join<ProductArticle, Category> categories;
     }
@@ -492,6 +498,7 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
             Root<ProductArticle> root = query.from(ProductArticle.class);
             return ProductArticleRoots.of(root,
                     root.join(ProductArticle_.products),
+                    root.join(ProductArticle_.mainImage),
                     root.join(ProductArticle_.category, JoinType.LEFT),
                     root.join(ProductArticle_.categories, JoinType.LEFT));
         }
@@ -504,7 +511,8 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
                     roots.productArticle.get(ProductArticle_.title),
                     cb.min(roots.product.get(Product_.price)),
                     cb.min(roots.product.get(Product_.actualPrice)),
-                    cb.count(roots.product.get(Product_.entityKey)));
+                    cb.count(roots.product.get(Product_.entityKey)),
+                    roots.mainImage.get(File_.path));
         }
 
         @Override

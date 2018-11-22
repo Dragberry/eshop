@@ -35,5 +35,6 @@ public class ProductListItemDTO {
 	
 	private String categoryReference;
 	
+	private String mainImage;
 	
 }

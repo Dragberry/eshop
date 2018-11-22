@@ -33,7 +33,7 @@
 					<td class="align-middle">
 						<a th:href="@{|${@environment.getProperty('url.catalog')}/${product.key.category.reference}/${product.key.reference}|}">
 							<img class="cart-image img-fluid img-thumbnail float-left" th:title="${product.key.title}" th:alt="${product.key.title}"
-							 	th:src="${product.key.mainImage} ? @{|${@environment.getProperty('url.images')}/${product.key.productArticleId}/${product.key.article}/${product.key.mainImage}|} : ${@environment.getProperty('url.no-image')}">
+							 	th:src="${product.key.mainImage}">
 						</a>
 						<a th:href="@{|${@environment.getProperty('url.catalog')}/${product.key.category.reference}/${product.key.reference}|}">
 							<span class="d-block" th:text="${product.key.fullTitle}">Title</span>
