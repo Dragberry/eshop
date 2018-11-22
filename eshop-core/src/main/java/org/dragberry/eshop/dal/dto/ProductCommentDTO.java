@@ -30,4 +30,6 @@ public class ProductCommentDTO {
 	private String productReference;
 	
 	private String categoryReference;
+	
+	private String mainImage;
 }

@@ -32,7 +32,7 @@
 			 						<img class="d-block mx-auto w-75 p-2"
 			 							th:title="${comment.productTitle}"
 			 							th:alt="|Отзыв на ${comment.productTitle}|"
-										th:src="${comment.productImage} ? @{|${@environment.getProperty('url.images')}/${comment.productId}/${comment.productArticle}/${comment.productImage}|} : ${@environment.getProperty('url.no-image')}">
+										th:src="${comment.productImage}">
 		
 			 					</a>
 			 				</div>

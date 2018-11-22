@@ -168,7 +168,7 @@ public class AppInitializer {
             page.setViewName(viewName);
             page.setTitle(title);
             page.setBreadcrumbTitle(breadcrumbTitle);
-            try (InputStream is = resourceLoader.getResource("classpath:templates/normal" + ("/".equals(reference) ? "/home" : reference) + ".html").getInputStream()) {
+            try (InputStream is = resourceLoader.getResource("classpath:templates/normal/" + viewName + ".html").getInputStream()) {
             	Document description = Jsoup.parse(is, StandardCharsets.UTF_8.name(), StringUtils.EMPTY);
 		    	for (Element img : description.select("img[src]"))  {
 		            createImageAndReplaceLink(img, "src");
@@ -178,7 +178,7 @@ public class AppInitializer {
                 }
             	page.setContent(description.html());
             } catch (Exception e) {
-                log.warn("Unable to open " + reference + " page");
+                log.warn("Unable to open " + reference + " page", e);
             }
             page.setContent(getContent("normal", viewName));
             page.setContentMobile(getContent("mobile", viewName));

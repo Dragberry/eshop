@@ -93,7 +93,7 @@ public class ImageServiceImpl implements ImageService {
                 IOUtils.copy(imgIS, imgOS);
             }
         }
-        String path = folder.resolve(imageName).toString().replace('\\', '/');
+        String path = "/" + folder.resolve(imageName).toString().replace('\\', '/');
         return fileRepo.findByPath(path).orElseGet(() -> createImage(imageName, path));
     }
 

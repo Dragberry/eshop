@@ -23,7 +23,6 @@ import org.dragberry.eshop.model.comment.ProductCommentDetails;
 import org.dragberry.eshop.model.comment.ProductCommentRequest;
 import org.dragberry.eshop.model.comment.ProductCommentResponse;
 import org.dragberry.eshop.service.CommentService;
-import org.dragberry.eshop.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -37,9 +36,6 @@ public class CommentServiceImpl implements CommentService {
 	
 	@Autowired
 	private CommentRepository commentRepo;
-	
-	@Autowired
-	private ImageService imageService;
 	
 	@Override
 	@Transactional
@@ -118,7 +114,7 @@ public class CommentServiceImpl implements CommentService {
 			cd.setProductId(dto.getProductId());
 	        cd.setProductTitle(dto.getProductTitle());
 	        cd.setProductArticle(dto.getProductArticle());
-	        cd.setProductImage(imageService.findMainImage(dto.getProductId(), dto.getProductArticle()));
+	        cd.setProductImage(dto.getMainImage());
 	        cd.setProductReference(dto.getProductReference());
 	        cd.setProductCategoryReference(dto.getCategoryReference());
 	        return cd;
