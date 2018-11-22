@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.dragberry.eshop.cms.mapper.ProductMapper;
 import org.dragberry.eshop.cms.model.ProductListItemTO;
+import org.dragberry.eshop.cms.model.ProductArticleDetailsTO;
 import org.dragberry.eshop.cms.model.ProductArticleListItemTO;
 import org.dragberry.eshop.cms.model.ProductCategoryTO;
 import org.dragberry.eshop.cms.service.ProductCmsService;
@@ -90,5 +91,23 @@ public class ProductCmsServiceImpl implements ProductCmsService {
     		return ctgTO;
     	}).collect(Collectors.toList()));
     	return List.of(root);
+    }
+    
+    @Override
+    public Optional<ProductArticleDetailsTO> getProductArticleDetails(Long productArticleId) {
+    	return productArticleRepo.findById(productArticleId).map(entity -> {
+    		ProductArticleDetailsTO to = new ProductArticleDetailsTO();
+    		to.setId(entity.getEntityKey());
+    		to.setTitle(entity.getTitle());
+    		to.setArticle(entity.getArticle());
+    		to.setReference(entity.getReference());
+    		to.setDescription(entity.getDescription());
+    		to.setDescriptionFull(entity.getDescriptionFull());
+    		to.setTagTitle(entity.getTagTitle());
+    		to.setTagKeywords(entity.getTagKeywords());
+    		to.setTagDescription(entity.getDescription());
+    		to.setStatus(entity.getSaleStatus());
+    		return to;
+    	});
     }
 }

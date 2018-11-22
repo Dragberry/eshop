@@ -6,6 +6,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.dragberry.eshop.cms.controller.exception.ResourceNotFoundException;
+import org.dragberry.eshop.cms.model.ProductArticleDetailsTO;
 import org.dragberry.eshop.cms.model.ProductCategoryTO;
 import org.dragberry.eshop.cms.model.ProductListItemTO;
 import org.dragberry.eshop.cms.service.ProductCmsService;
@@ -62,5 +63,10 @@ public class CatalogController {
     @GetMapping("${cms.context}/catalog/categories/tree")
     public List<ProductCategoryTO> categoryTree() {
     	return productService.getCategoryTree();
+    }
+    
+    @GetMapping("${cms.context}/catalog/products/{productArticleId}")
+    public ProductArticleDetailsTO productArticleDetails(@PathVariable(required = true) Long productArticleId) {
+    	return productService.getProductArticleDetails(productArticleId).orElseThrow(ResourceNotFoundException::new);
     }
 }

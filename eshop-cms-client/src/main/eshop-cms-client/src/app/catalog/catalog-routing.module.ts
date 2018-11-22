@@ -1,8 +1,9 @@
+import { ProductDetailsResolverService } from './components/products/product/product-details/product-details-resolver.service';
+import { ProductDetailsComponent } from './components/products/product/product-details/product-details.component';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { AuthGuard } from '../core/auth/auth.guard';
 import { ProductListComponent } from './components/products/product-list/product-list.component';
-import { ProductDetailsComponent } from './components/products/product-details/product-details.component';
 import { CatalogComponent } from './components/catalog.component';
 import { ProductsComponent } from './components/products/products.component';
 import { ProductListResolverService } from './components/products/product-list/product-list-resolver.service';
@@ -29,7 +30,10 @@ import { ProductListResolverService } from './components/products/product-list/p
               {
                 path: ':id',
                 component: ProductDetailsComponent,
-                canActivate: [AuthGuard]
+                canActivate: [AuthGuard],
+                resolve: {
+                  data: ProductDetailsResolverService
+                }
               }
             ]
           }

@@ -92,7 +92,8 @@
     },
     "products": {
     	"titles": {
-    		"list": "Список товаров"
+        "list": "Список товаров",
+        "details": "Товар #{{id}}: {{title}}"
     	}
     },
     "orders": {
