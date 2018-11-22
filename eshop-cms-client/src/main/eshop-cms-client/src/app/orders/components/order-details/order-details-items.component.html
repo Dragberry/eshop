@@ -90,8 +90,7 @@
       <ng-template #readonlyOrderItem>
         <th class="align-middle">{{i + 1}}</th>
         <td>
-          <img class="product-image img-fluid img-thumbnail"
-            src="{{'/images/' + item.product.productArticleId + '/' + item.product.article + '/' + item.product.mainImage}}">
+          <img class="product-image img-fluid img-thumbnail" src="{{item.product.mainImage}}">
         </td>
         <td class="align-middle">
           <div class="d-block">{{item.product.title}}</div>
@@ -177,8 +176,7 @@
       <ng-template #editableOrderItem>
         <th class="align-middle">{{i + 1}}</th>
         <td>
-          <img class="product-image img-fluid img-thumbnail"
-            src="{{'/images/' + item.product.productArticleId + '/' + item.product.article + '/' + item.product.mainImage}}">
+          <img class="product-image img-fluid img-thumbnail" src="{{item.product.mainImage}}">
         </td>
         <td class="align-middle">
           <span class="d-block">{{item.product.title}}</span>

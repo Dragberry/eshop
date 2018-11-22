@@ -92,8 +92,7 @@
                   <a class="disabled" routerLink="{{productArticle.id}}">{{productArticle.id}}</a>
                 </th>
                 <td class="text-center">
-                  <img class="product-image img-fluid img-thumbnail"
-                    src="{{'/images/' + productArticle.id + '/' + productArticle.article + '/' + productArticle.mainImage}}">
+                  <img class="product-image img-fluid img-thumbnail" src="{{productArticle.mainImage}}">
                 </td>
                 <td class="text-left">
                   {{productArticle.title}}
