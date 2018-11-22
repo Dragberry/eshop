@@ -1,3 +1,4 @@
+import { ProductArticleDetails } from 'src/app/catalog/model/product-article-details';
 import { ProductCategory } from './../model/product-category';
 import { HttpParams } from '@angular/common/http';
 import { Page } from './../../shared/model/page';
@@ -29,5 +30,9 @@ export class ProductService {
 
   doImport(): Promise<boolean> {
     return this.httpService.get<boolean>(`${PRODUCTS_URL}/import`);
+  }
+
+  getProductArticleDetails(articleId: string): Promise<ProductArticleDetails> {
+    return this.httpService.get<ProductArticleDetails>(`${PRODUCTS_URL}/${articleId}`);
   }
 }
