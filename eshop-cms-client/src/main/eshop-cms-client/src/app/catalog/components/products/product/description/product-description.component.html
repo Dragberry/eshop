@@ -1,87 +1,78 @@
 <div class="card">
-    <div class="card-header bg-dark text-white">
-        <span>{{'common.description' | translate}}</span>
-        <button type="button" class="btn btn-dark text-warning pl-2 pt-0 pr-2 pb-0" title="{{'common.edit' | translate}}">
-            <span class="fa fa-pencil"></span>
-        </button>
-    </div>
-    <div class="card-body">
-        <div class="container small">
-            <div class="row">
-                <fieldset class="col-12">
-                    <legend class="h6">{{'common.seoParams' | translate}}</legend>
-                    <div class="row mb-1">
-                        <div class="col-3">
-                            <span class="font-weight-bold">
-                                {{'common.cannonicalUrl' | translate}}
-                            </span>
-                        </div>
-                        <div class="col-9">
-                            <span class="font-italic">
-                                {{productArticle.reference}}
-                            </span>
-                        </div>
-                    </div>
-                    <div class="row mb-1">
-                        <div class="col-3">
-                            <span class="font-weight-bold">
-                                {{'common.tagTitle' | translate}}
-                            </span>
-                        </div>
-                        <div class="col-9">
-                            <span>
-                                {{productArticle.tagTitle}}
-                            </span>
-                        </div>
-                    </div>
-                    <div class="row mb-1">
-                        <div class="col-3">
-                            <span class="font-weight-bold">
-                                {{'common.tagKeywords' | translate}}
-                            </span>
-                        </div>
-                        <div class="col-9">
-                            <span>
-                                {{productArticle.tagKeywords}}
-                            </span>
-                        </div>
-                    </div>
-                    <div class="row mb-1">
-                        <div class="col-3">
-                            <span class="font-weight-bold">
-                                {{'common.tagDescription' | translate}}
-                            </span>
-                        </div>
-                        <div class="col-9">
-                            <span>
-                                {{productArticle.tagDescription}}
-                            </span>
-                        </div>
-                    </div>
-                </fieldset>
-                <div class="col-12">
-                    <hr/>
-                </div>
-                <fieldset class="col-12">
-                    <legend class="h6">{{'common.productDescription' | translate}}</legend>
-                    <div class="row mb-1">
-                        <div class="col-12">
-                            {{productArticle.description}}
-                        </div>
-                    </div>
-                </fieldset>
-                <div class="col-12">
-                    <hr/>
-                </div>
-                <fieldset class="col-12">
-                    <legend class="h6">{{'common.productDescriptionFull' | translate}}</legend>
-                    <div class="row mb-1">
-                        <div class="col-12"
-                            [innerHTML]="productArticle.descriptionFull">
-                        </div>
-                    </div>
-                </fieldset>
+  <div class="card-header bg-dark text-white">
+    <span>{{ "common.description" | translate }}</span>
+    <button type="button" class="btn btn-dark text-warning pl-2 pt-0 pr-2 pb-0"
+      title="{{'common.edit' | translate}}">
+      <span class="fa fa-pencil"></span>
+    </button>
+  </div>
+  <div class="card-body">
+    <div class="container small">
+      <div class="row">
+        <fieldset class="col-12">
+          <legend class="h6">{{ "common.seoParams" | translate }}</legend>
+          <div class="row mb-1">
+            <div class="col-3">
+              <span class="font-weight-bold">
+                {{ "common.cannonicalUrl" | translate }}
+              </span>
             </div>
-        </div>
+            <div class="col-9">
+              <span class="font-italic"> {{ productArticle.reference }} </span>
+            </div>
+          </div>
+          <div class="row mb-1">
+            <div class="col-3">
+              <span class="font-weight-bold">
+                {{ "common.tagTitle" | translate }}
+              </span>
+            </div>
+            <div class="col-9">
+              <span> {{ productArticle.tagTitle }} </span>
+            </div>
+          </div>
+          <div class="row mb-1">
+            <div class="col-3">
+              <span class="font-weight-bold">
+                {{ "common.tagKeywords" | translate }}
+              </span>
+            </div>
+            <div class="col-9">
+              <span> {{ productArticle.tagKeywords }} </span>
+            </div>
+          </div>
+          <div class="row mb-1">
+            <div class="col-3">
+              <span class="font-weight-bold">
+                {{ "common.tagDescription" | translate }}
+              </span>
+            </div>
+            <div class="col-9">
+              <span> {{ productArticle.tagDescription }} </span>
+            </div>
+          </div>
+        </fieldset>
+        <div class="col-12"><hr /></div>
+        <fieldset class="col-12">
+          <legend class="h6">
+            {{ "common.productDescription" | translate }}
+          </legend>
+          <div class="row mb-1">
+            <div class="col-12">{{ productArticle.description }}</div>
+          </div>
+        </fieldset>
+        <div class="col-12"><hr /></div>
+        <fieldset class="col-12">
+          <legend class="h6">
+            {{ "common.productDescriptionFull" | translate }}
+          </legend>
+          <div class="row mb-1">
+            <div class="col-12 product-description-full"
+              [innerHTML]="productArticle.descriptionFull">
+            </div>
+          </div>
+        </fieldset>
+      </div>
     </div>
+  </div>
 </div>
