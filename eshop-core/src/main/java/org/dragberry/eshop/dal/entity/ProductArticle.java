@@ -134,7 +134,7 @@ public class ProductArticle extends AuditableEntity {
 	
 	public static enum SaleStatus implements BaseEnum<Character> {
 
-	    EXPOSED ('E'), IN_STOCK('S'), OUT_OF_STOCK('O');
+	    EXPOSED('E'), HIDDEN('H');
 	    
 	    public final Character value;
 	    

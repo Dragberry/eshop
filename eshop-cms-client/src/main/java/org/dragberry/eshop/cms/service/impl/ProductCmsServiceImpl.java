@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.dragberry.eshop.cms.mapper.ProductMapper;
 import org.dragberry.eshop.cms.model.ProductListItemTO;
@@ -14,13 +15,17 @@ import org.dragberry.eshop.cms.model.ProductCategoryTO;
 import org.dragberry.eshop.cms.service.ProductCmsService;
 import org.dragberry.eshop.common.PageableList;
 import org.dragberry.eshop.dal.dto.ProductArticleListItemDTO;
+import org.dragberry.eshop.dal.entity.Category;
+import org.dragberry.eshop.dal.entity.File;
 import org.dragberry.eshop.dal.entity.Product;
 import org.dragberry.eshop.dal.repo.CategoryRepository;
 import org.dragberry.eshop.dal.repo.ProductArticleRepository;
 import org.dragberry.eshop.dal.repo.ProductRepository;
 import org.dragberry.eshop.dal.repo.ProductRepository.ProductOrderItemSpecification;
+import org.dragberry.eshop.model.common.FileTO;
 import org.dragberry.eshop.utils.ProductTitleBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -36,6 +41,9 @@ public class ProductCmsServiceImpl implements ProductCmsService {
     
     @Autowired
     private ProductRepository productRepo;
+    
+    @Value("${url.catalog}")
+    private String urlCatalog;
     
     @Override
     public PageableList<ProductListItemTO> searchProducts(PageRequest pageRequest, Map<String, String[]> searchParams) {
@@ -100,14 +108,45 @@ public class ProductCmsServiceImpl implements ProductCmsService {
     		to.setId(entity.getEntityKey());
     		to.setTitle(entity.getTitle());
     		to.setArticle(entity.getArticle());
-    		to.setReference(entity.getReference());
     		to.setDescription(entity.getDescription());
     		to.setDescriptionFull(entity.getDescriptionFull());
     		to.setTagTitle(entity.getTagTitle());
     		to.setTagKeywords(entity.getTagKeywords());
-    		to.setTagDescription(entity.getDescription());
+    		to.setTagDescription(entity.getTagDescription());
     		to.setStatus(entity.getSaleStatus());
+    		FileTO mainImage = mapFile(entity.getMainImage());
+            to.setMainImageId(mainImage.getId());
+            to.getImages().add(mainImage);
+            to.getImages().addAll(entity.getImages().stream().map(ProductCmsServiceImpl::mapFile).collect(Collectors.toList()));
+    		
+    		ProductCategoryTO root = new ProductCategoryTO();
+            root.setId(-1L);
+            root.setName("common.catalog");
+            root.getCategories().addAll(entity.getCategories().stream()
+                    .map(ProductCmsServiceImpl::mapCategory).collect(Collectors.toList()));
+            to.setMainCategoryId(entity.getCategory().getEntityKey());
+            to.getCategoryTree().add(root);
+            to.setReference(Stream.of(
+    		        urlCatalog,
+    		        entity.getCategory().getReference(),
+    		        entity.getReference()).collect(Collectors.joining("/")));
     		return to;
     	});
+    }
+    
+    private static ProductCategoryTO mapCategory(Category ctg) {
+        ProductCategoryTO to = new ProductCategoryTO();
+        to.setId(ctg.getEntityKey());
+        to.setName(ctg.getName());
+        to.setReferecence(ctg.getReference());
+        return to;
+    }
+    
+    private static FileTO mapFile(File file) {
+        FileTO to = new FileTO();
+        to.setId(file.getEntityKey());
+        to.setPath(file.getPath());
+        to.setName(file.getName());
+        return to;
     }
 }

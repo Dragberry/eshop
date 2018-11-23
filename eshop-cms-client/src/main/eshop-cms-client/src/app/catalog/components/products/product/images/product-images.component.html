@@ -1,0 +1,14 @@
+<div *ngIf="productArticle" class="card">
+  <div class="card-header bg-dark text-white">
+      <span>{{'common.images' | translate}}</span>
+  </div>
+  <div class="card-body">
+    <div class="container small">
+      <div class="row">
+        <div *ngFor="let img of productArticle.images" class="col-6 p-1">
+          <img [src]="img.path" class="img-fluid img-thumbnail">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

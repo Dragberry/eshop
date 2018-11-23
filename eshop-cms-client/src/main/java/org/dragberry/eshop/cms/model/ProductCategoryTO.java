@@ -1,5 +1,6 @@
 package org.dragberry.eshop.cms.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Getter;
@@ -13,5 +14,7 @@ public class ProductCategoryTO {
 	
 	private String name;
 	
-	private List<ProductCategoryTO> categories;
+	private String referecence;
+	
+	private List<ProductCategoryTO> categories = new ArrayList<>();
 }

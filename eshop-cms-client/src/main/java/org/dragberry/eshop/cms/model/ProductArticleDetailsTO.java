@@ -1,6 +1,10 @@
 package org.dragberry.eshop.cms.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.dragberry.eshop.dal.entity.ProductArticle.SaleStatus;
+import org.dragberry.eshop.model.common.FileTO;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -28,4 +32,12 @@ public class ProductArticleDetailsTO {
 	private String tagDescription;
 	
 	private SaleStatus status;
+	
+	private Long mainImageId;
+	
+	private List<FileTO> images = new ArrayList<>();
+	
+	private Long mainCategoryId;
+	
+	private List<ProductCategoryTO> categoryTree = new ArrayList<>();
 }

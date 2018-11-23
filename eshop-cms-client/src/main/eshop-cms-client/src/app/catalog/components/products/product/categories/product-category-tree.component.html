@@ -1,0 +1,30 @@
+<div class="card">
+  <div class="card-header bg-dark text-white">
+      <span>{{'common.productAllocation' | translate}}</span>
+      <button type="button" class="btn btn-dark text-warning pl-2 pt-0 pr-2 pb-0" title="{{'common.edit' | translate}}">
+          <span class="fa fa-pencil"></span>
+      </button>
+  </div>
+  <div class="card-body">
+    <div class="container small">
+      <div class="row">
+        <div class="col-12">
+          <app-product-category-tree-element
+            [categoryTree]="productArticle.categoryTree">
+          </app-product-category-tree-element>
+        </div>
+        <div class="col-12 text-center">
+          <div class="btn-group btn-group-justified">
+            <button type="button" class="btn btn-secondary"
+              [title]="'common.hidden' | translate">
+              <span class="fa fa-eye-slash"></span>
+            </button>
+            <button type="button" class="btn btn-success"
+              [title]="'common.exposed' | translate">
+              <span class="fa fa-eye"></span>
+            </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

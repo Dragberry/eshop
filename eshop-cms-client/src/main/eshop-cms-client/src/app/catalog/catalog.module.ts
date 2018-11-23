@@ -10,6 +10,10 @@ import { ProductsComponent } from './components/products/products.component';
 import { ProductListResolverService } from './components/products/product-list/product-list-resolver.service';
 import { SharedModule } from '../shared/shared.module';
 import { CategoryTreeElementComponent } from './components/products/product-list/category-tree-element.component';
+import { ProductImagesComponent } from './components/products/product/images/product-images.component';
+import { ProductCategoryTreeComponent } from './components/products/product/categories/product-category-tree.component';
+import { ProductCategoryTreeElementComponent } from './components/products/product/categories/product-category-tree-element.component';
+import { ProductDescriptionComponent } from './components/products/product/description/product-description.component';
 
 @NgModule({
   imports: [
@@ -20,9 +24,13 @@ import { CategoryTreeElementComponent } from './components/products/product-list
   declarations: [
     CatalogComponent,
     CategoryTreeElementComponent,
-    ProductsComponent,
+    ProductCategoryTreeComponent,
+    ProductCategoryTreeElementComponent,
+    ProductDescriptionComponent,
     ProductDetailsComponent,
-    ProductListComponent
+    ProductImagesComponent,
+    ProductListComponent,
+    ProductsComponent
   ],
   providers: [
     ProductService,
