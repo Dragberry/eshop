@@ -35,4 +35,8 @@ export class ProductService {
   getProductArticleDetails(articleId: string): Promise<ProductArticleDetails> {
     return this.httpService.get<ProductArticleDetails>(`${PRODUCTS_URL}/${articleId}`);
   }
+
+  updateProductArticleDetails(product: ProductArticleDetails): Promise<ProductArticleDetails> {
+    return this.httpService.put<ProductArticleDetails>(`${PRODUCTS_URL}/${product.id}`, product);
+}
 }

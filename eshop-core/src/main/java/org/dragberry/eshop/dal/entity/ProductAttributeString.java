@@ -4,6 +4,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import org.dragberry.eshop.model.product.StringAttributeTO;
+
 @Entity
 @Table(name = "PRODUCT_ATTRIBUTE_STRING")
 public class ProductAttributeString  extends ProductAttribute<String> {
@@ -35,4 +37,10 @@ public class ProductAttributeString  extends ProductAttribute<String> {
     public String getStringValue() {
     	return value;
     }
+
+    @Override
+    protected StringAttributeTO createTO() {
+    	return new StringAttributeTO();
+    }
+    
 }

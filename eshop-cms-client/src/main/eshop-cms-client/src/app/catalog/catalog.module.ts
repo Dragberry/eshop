@@ -1,3 +1,4 @@
+import { ProductAttributeComponent } from './components/products/product/attributes/product-attribute.component';
 import { ProductDetailsResolverService } from './components/products/product/product-details/product-details-resolver.service';
 import { ProductDetailsComponent } from './components/products/product/product-details/product-details.component';
 import { NgModule } from '@angular/core';
@@ -14,6 +15,7 @@ import { ProductImagesComponent } from './components/products/product/images/pro
 import { ProductCategoryTreeComponent } from './components/products/product/categories/product-category-tree.component';
 import { ProductCategoryTreeElementComponent } from './components/products/product/categories/product-category-tree-element.component';
 import { ProductDescriptionComponent } from './components/products/product/description/product-description.component';
+import { ProductAttributesComponent } from './components/products/product/attributes/product-attributes.component';
 
 @NgModule({
   imports: [
@@ -24,6 +26,8 @@ import { ProductDescriptionComponent } from './components/products/product/descr
   declarations: [
     CatalogComponent,
     CategoryTreeElementComponent,
+    ProductAttributeComponent,
+    ProductAttributesComponent,
     ProductCategoryTreeComponent,
     ProductCategoryTreeElementComponent,
     ProductDescriptionComponent,

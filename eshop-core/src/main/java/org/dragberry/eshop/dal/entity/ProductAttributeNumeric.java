@@ -6,6 +6,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import org.dragberry.eshop.model.product.NumericAttributeTO;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -46,4 +48,16 @@ public class ProductAttributeNumeric  extends ProductAttribute<BigDecimal> {
     public String getStringValue() {
     	return value.stripTrailingZeros().toPlainString() + " " + unit;
     }
-}
+
+    @Override
+    protected NumericAttributeTO createTO() {
+    	return new NumericAttributeTO();
+    }
+
+    @Override
+    public NumericAttributeTO buildTO() {
+    	NumericAttributeTO  to = (NumericAttributeTO) super.buildTO();
+    	to.setUnit(unit);
+    	return to;
+    }
+ }

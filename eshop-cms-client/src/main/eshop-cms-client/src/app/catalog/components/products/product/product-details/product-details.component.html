@@ -1,4 +1,8 @@
 <ng-container *ngIf="productArticle">
+  <button type="button" class="btn btn-primary"
+    (click)="updateProductArticle()">
+    Update
+  </button>
   <div class="row">
     <div class="col-7">
       <div class="row">
@@ -6,6 +10,11 @@
           <app-product-description
             [productArticle]="productArticle">
           </app-product-description>
+        </div>
+        <div class="col-12">
+          <app-product-attributes
+            [productArticle]="productArticle">
+          </app-product-attributes>
         </div>
       </div>
     </div>

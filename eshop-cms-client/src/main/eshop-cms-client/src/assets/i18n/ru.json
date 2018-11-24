@@ -49,6 +49,8 @@
       "images": "Изображения",
       "import": "Импорт",
       "isPaid": "Оплата",
+      "moveDown": "Двигать вниз",
+      "moveUp": "Двигать вверх",
       "newOrder": "Новый заказ",
       "newProduct": "Новый товар",
       "noResults": "Ничего не найдено",
@@ -63,9 +65,11 @@
       "price": "Стоимость",
       "print": "Печать",
       "productAllocation": "Размещение",
+      "productAttributes": "Характеристики товара",
       "productDescription": "Описание товара",
       "productDescriptionFull": "Полное описание товара",
       "productItem": "Позиция",
+      "remove": "Удалить",
       "removeOrderItem": "Удалить позицию",
       "resetAll": "Сбросить все",
       "save": "Сохранить",
@@ -106,6 +110,10 @@
     	"titles": {
         "list": "Список товаров",
         "details": "Товар #{{id}}: {{title}}"
+        },
+        "messages": {
+          "successCreated": "Продукт '{{product}}' успешно создан.",
+          "successUpdated": "Продукт '{{product}}' успешно обновлен."
         },
         "saleStatus": {
             "EXPOSED": "Выставлен",

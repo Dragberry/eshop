@@ -12,6 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.TableGenerator;
 
+import org.dragberry.eshop.model.product.AttributeTO;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -53,4 +55,20 @@ public abstract class ProductAttribute<T> {
     
     public abstract String getStringValue();
     
+    protected abstract AttributeTO<T> createTO();
+    
+    public AttributeTO<T> buildTO() {
+    	AttributeTO<T> to = createTO();
+    	to.setId(getEntityKey());
+		to.setName(getName());
+		to.setValue(getValue());
+		to.setGroup(getGroup());
+		to.setOrder(getOrder());
+    	return to;
+    }
+    
+    @Override
+    public String toString() {
+    	return "Group: " + group + "; name: " + name + "; value: " + getStringValue();
+    }
 }

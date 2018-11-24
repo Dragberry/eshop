@@ -4,6 +4,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import org.dragberry.eshop.model.product.BooleanAttributeTO;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -48,4 +50,17 @@ public class ProductAttributeBoolean  extends ProductAttribute<Boolean> {
     public String getStringValue() {
     	return description != null ? description : value ? "msg.common.true" : "msg.common.false";
     }
+    
+    @Override
+    public BooleanAttributeTO createTO() {
+    	return new BooleanAttributeTO();
+    }
+    
+    @Override
+    public BooleanAttributeTO buildTO() {
+    	BooleanAttributeTO to = (BooleanAttributeTO) super.buildTO();
+    	to.setDescription(description);
+    	return to;
+    }
+    
 }

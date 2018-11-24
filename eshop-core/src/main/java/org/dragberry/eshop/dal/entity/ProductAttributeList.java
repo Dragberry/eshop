@@ -10,6 +10,8 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
+import org.dragberry.eshop.model.product.ListAttributeTO;
+
 @Entity
 @Table(name = "PRODUCT_ATTRIBUTE_LIST")
 public class ProductAttributeList  extends ProductAttribute<List<String>> {
@@ -42,4 +44,10 @@ public class ProductAttributeList  extends ProductAttribute<List<String>> {
     public String getStringValue() {
     	return value.stream().collect(Collectors.joining(", "));
     }
+
+    @Override
+    protected ListAttributeTO createTO() {
+    	return new ListAttributeTO();
+    }
+    
 }

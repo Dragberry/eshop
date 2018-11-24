@@ -11,15 +11,23 @@ import org.dragberry.eshop.cms.model.ProductCategoryTO;
 import org.dragberry.eshop.cms.model.ProductListItemTO;
 import org.dragberry.eshop.cms.service.ProductCmsService;
 import org.dragberry.eshop.common.PageableList;
+import org.dragberry.eshop.common.ResultTO;
+import org.dragberry.eshop.common.Results;
 import org.dragberry.eshop.service.DataImporter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 @RestController
 public class CatalogController {
 
@@ -69,4 +77,12 @@ public class CatalogController {
     public ProductArticleDetailsTO productArticleDetails(@PathVariable(required = true) Long productArticleId) {
     	return productService.getProductArticleDetails(productArticleId).orElseThrow(ResourceNotFoundException::new);
     }
+    
+    @PutMapping("${cms.context}/catalog/products/{productArticleId}")
+    @ResponseBody
+    public ResultTO<ProductArticleDetailsTO> updateProductArticleDetails(@PathVariable(required = true) Long productArticleId, @RequestBody ProductArticleDetailsTO product) {
+    	log.info(product);
+    	return Results.create(product);
+    }
+    
 }
