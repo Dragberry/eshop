@@ -4,9 +4,12 @@ import { Component, Input } from '@angular/core';
 @Component({
     selector: 'app-product-attribute',
     template: `
-      <div class="row"
+      <div class="row pt-2 pb-2 border-bottom"
         [attr.data-id]="attribute.id"
-        [attr.data-order]="attribute.order">
+        [attr.data-order]="attribute.order"
+        [class.bg-light]="attribute.id === hoveredAttribudeId"
+        (mouseover)="hover(attribute.id)"
+        (mouseleave)="unhover(attribute.id)">
         <div class="col-4">
           {{attribute.name}}
         </div>
@@ -33,9 +36,6 @@ import { Component, Input } from '@angular/core';
             </button>
           </div>
         </div>
-        <div *ngIf="!isLast" class="col-12">
-          <hr/>
-        </div>
       </div>
     `
 })
@@ -44,6 +44,13 @@ export class ProductAttributeComponent {
     @Input()
     attribute: Attribute<any>;
 
-    @Input()
-    isLast: boolean;
+    hoveredAttribudeId: number;
+
+    hover(id: number): void {
+      this.hoveredAttribudeId = id;
+    }
+
+    unhover(): void {
+      this.hoveredAttribudeId = null;
+    }
 }

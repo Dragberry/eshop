@@ -1,15 +1,48 @@
 import { Attribute } from './../../../../model/attributes';
 
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { ProductArticleDetails } from 'src/app/catalog/model/product-article-details';
+import { DragulaService } from 'ng2-dragula';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-product-attributes',
     templateUrl: './product-attributes.component.html'
 })
-export class ProductAttributesComponent {
+export class ProductAttributesComponent implements OnDestroy {
+
+  readonly GROUPS: string = 'GROUPS';
+  readonly ATTRIBUTES: string = 'ATTRIBUTES';
+
+  dragulaSubscription: Subscription;
 
   attributes: {group: string, attrs: Attribute<any>[]}[] = [];
+
+  constructor(private dragulaService: DragulaService) {
+    this.dragulaService.createGroup(this.GROUPS, {
+      invalid: function (el, handle) {
+        return el.tagName.toLocaleLowerCase() === 'app-product-attribute';
+      }
+    });
+    this.dragulaSubscription = this.dragulaService.drop()
+      .subscribe(() => {
+        let groupIndex = 0;
+        this.attributes.forEach(attrGroup => {
+          let attrIndex = groupIndex;
+          attrGroup.attrs.forEach(attr => {
+            attr.group = attrGroup.group;
+            attr.order = attrIndex++;
+          });
+          groupIndex += 1000;
+        });
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.dragulaService.destroy(this.ATTRIBUTES);
+    this.dragulaService.destroy(this.GROUPS);
+    this.dragulaSubscription.unsubscribe();
+  }
 
   @Input()
   set productArticle(productArticle: ProductArticleDetails) {

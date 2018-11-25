@@ -7,19 +7,15 @@
     </button>
   </div>
   <div class="card-body">
-    <div class="container">
-      <div class="row" *ngFor="let group of attributes">
+    <div class="container" [dragula]="GROUPS" [(dragulaModel)]="attributes">
+      <div class="row border-bottom" *ngFor="let group of attributes">
         <div class="col-3">
           {{group.group}}
         </div>
-        <div class="col-9">
-          <app-product-attribute *ngFor="let attr of group.attrs; let isLast = last"
-            [attribute]="attr"
-            [isLast]="isLast">
+        <div class="col-9" [dragula]="ATTRIBUTES" [(dragulaModel)]="group.attrs">
+          <app-product-attribute *ngFor="let attr of group.attrs"
+            [attribute]="attr">
           </app-product-attribute>
-        </div>
-        <div class="col-12">
-          <hr/>
         </div>
       </div>
     </div>

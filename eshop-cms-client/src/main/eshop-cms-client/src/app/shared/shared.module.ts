@@ -1,3 +1,4 @@
+import { DragulaModule, DragulaDirective } from 'ng2-dragula';
 import { NgxMaskModule } from 'ngx-mask';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -22,10 +23,11 @@ import { TimepickerModule } from 'ngx-bootstrap/timepicker';
     FormsModule,
     BsDropdownModule,
     BsDatepickerModule,
+    DragulaModule,
     ModalModule,
     NgxMaskModule.forChild(),
     TranslateModule,
-    TimepickerModule
+    TimepickerModule,
   ],
   declarations: [
     BooleanBadgeDirective,
@@ -41,6 +43,7 @@ import { TimepickerModule } from 'ngx-bootstrap/timepicker';
     FormsModule,
     BsDropdownModule,
     BsDatepickerModule,
+    DragulaDirective,
     ModalModule,
     NgxMaskModule,
     TranslatePipe,
