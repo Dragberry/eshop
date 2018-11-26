@@ -16,6 +16,11 @@ import { ProductCategoryTreeComponent } from './components/products/product/cate
 import { ProductCategoryTreeElementComponent } from './components/products/product/categories/product-category-tree-element.component';
 import { ProductDescriptionComponent } from './components/products/product/description/product-description.component';
 import { ProductAttributesComponent } from './components/products/product/attributes/product-attributes.component';
+import { ProductAttributeDirective } from './components/products/product/attributes/product-attribute.directive';
+import { ProductAttributeBooleanComponent } from './components/products/product/attributes/product-attribute-boolean.component';
+import { ProductAttributeListComponent } from './components/products/product/attributes/product-attribute-list.component';
+import { ProductAttributeNumericComponent } from './components/products/product/attributes/product-attribute-numeric.component';
+import { ProductAttributeStringComponent } from './components/products/product/attributes/product-attribute-string.component';
 
 @NgModule({
   imports: [
@@ -27,6 +32,11 @@ import { ProductAttributesComponent } from './components/products/product/attrib
     CatalogComponent,
     CategoryTreeElementComponent,
     ProductAttributeComponent,
+    ProductAttributeBooleanComponent,
+    ProductAttributeDirective,
+    ProductAttributeListComponent,
+    ProductAttributeNumericComponent,
+    ProductAttributeStringComponent,
     ProductAttributesComponent,
     ProductCategoryTreeComponent,
     ProductCategoryTreeElementComponent,
@@ -40,6 +50,12 @@ import { ProductAttributesComponent } from './components/products/product/attrib
     ProductService,
     ProductDetailsResolverService,
     ProductListResolverService
+  ],
+  entryComponents: [
+    ProductAttributeBooleanComponent,
+    ProductAttributeListComponent,
+    ProductAttributeNumericComponent,
+    ProductAttributeStringComponent
   ]
 })
 export class CatalogModule { }

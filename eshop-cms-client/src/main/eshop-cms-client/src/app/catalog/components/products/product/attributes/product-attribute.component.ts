@@ -1,22 +1,22 @@
 import { Attribute } from './../../../../model/attributes';
-import { Component, Input } from '@angular/core';
+import { Component, Input, ViewChild, ComponentFactoryResolver, OnInit } from '@angular/core';
+import { ProductAttributeDirective } from './product-attribute.directive';
+import { AbstractProductAttribute } from './abstract-product-attribute';
 
 @Component({
-    selector: 'app-product-attribute',
-    template: `
+  selector: 'app-product-attribute',
+  template: `
       <div class="row pt-2 pb-2 border-bottom"
         [attr.data-id]="attribute.id"
         [attr.data-order]="attribute.order"
         [class.bg-light]="attribute.id === hoveredAttribudeId"
         (mouseover)="hover(attribute.id)"
-        (mouseleave)="unhover(attribute.id)">
-        <div class="col-4">
-          {{attribute.name}}
+        (mouseleave)="unhover()">
+        <div class="col-9">
+          <ng-template app-product-attribute>
+          </ng-template>
         </div>
-        <div class="col-4">
-          {{attribute.value}}
-        </div>
-        <div class="col-4">
+        <div class="col-3">
           <div class="btn-group btn-group-justified">
             <button type="button" class="btn btn-secondary btn-sm"
               [title]="'common.moveUp' | translate">
@@ -39,18 +39,31 @@ import { Component, Input } from '@angular/core';
       </div>
     `
 })
-export class ProductAttributeComponent {
+export class ProductAttributeComponent implements OnInit {
 
-    @Input()
-    attribute: Attribute<any>;
+  @ViewChild(ProductAttributeDirective)
+  attributeHost: ProductAttributeDirective;
 
-    hoveredAttribudeId: number;
+  @Input()
+  attribute: Attribute<any>;
 
-    hover(id: number): void {
-      this.hoveredAttribudeId = id;
-    }
+  hoveredAttribudeId: number;
 
-    unhover(): void {
-      this.hoveredAttribudeId = null;
-    }
+  constructor(private componentFactoryResolver: ComponentFactoryResolver) { }
+
+  ngOnInit(): void {
+    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(this.attribute.component);
+    const viewContainerRef = this.attributeHost.viewContainerRef;
+    viewContainerRef.clear();
+    const componentRef = viewContainerRef.createComponent(componentFactory);
+    (<AbstractProductAttribute<any, Attribute<any>>>componentRef.instance).attribute = this.attribute;
+  }
+
+  hover(id: number): void {
+    this.hoveredAttribudeId = id;
+  }
+
+  unhover(): void {
+    this.hoveredAttribudeId = null;
+  }
 }

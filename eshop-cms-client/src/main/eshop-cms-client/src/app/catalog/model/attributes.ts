@@ -1,4 +1,8 @@
+import { Type } from '@angular/core';
+import { AbstractProductAttribute } from '../components/products/product/attributes/abstract-product-attribute';
+
 export class Attribute<T> {
+  component: Type<AbstractProductAttribute<T, Attribute<T>>>;
   id: number;
   group: string;
   name: string;
