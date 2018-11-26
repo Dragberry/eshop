@@ -12,81 +12,9 @@ import { ProductAttributeListComponent } from './product-attribute-list.componen
 
 @Component({
     selector: 'app-product-attributes',
-    template: `
-    <ng-container
-      *ngIf="isBeingEdited; then editableAttributes; else readonlyAttributes">
-    </ng-container>
-
-    <ng-template #readonlyAttributes>
-      <div class="card">
-        <div class="card-header bg-dark text-white">
-          <span>{{ "common.productAttributes" | translate }}</span>
-          <button type="button" class="btn btn-dark text-warning pl-2 pt-0 pr-2 pb-0"
-            title="{{'common.edit' | translate}}"
-            (click)="edit()">
-            <span class="fa fa-pencil"></span>
-          </button>
-        </div>
-        <div class="card-body">
-          <div class="container">
-            <div class="row border-bottom" *ngFor="let group of attributes">
-              <div class="col-3">
-                {{group.group}}
-              </div>
-              <div class="col-9">
-                <app-product-attribute *ngFor="let attr of group.attrs"
-                  [attribute]="attr"
-                  [isBeingEdited]="false">
-                </app-product-attribute>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </ng-template>
-
-    <ng-template #editableAttributes>
-      <div class="card">
-        <div class="card-header bg-dark text-white">
-          <span>{{ "common.productAttributes" | translate }}</span>
-          <div class="btn-group btn-group-justified">
-            <button type="button" class="btn btn-dark text-primary pl-2 pt-0 pr-2 pb-0"
-              title="{{'common.save' | translate}}"
-              (click)="save()">
-              <span class="fa fa-check"></span>
-            </button>
-            <button type="button" class="btn btn-dark text-danger pl-2 pt-0 pr-2 pb-0"
-              title="{{'common.cancel' | translate}}"
-              (click)="cancelEditing()">
-              <span class="fa fa-times"></span>
-            </button>
-          </div>
-        </div>
-        <div class="card-body">
-          <div class="container" [dragula]="GROUPS" [(dragulaModel)]="attributes">
-            <div class="row border-bottom" *ngFor="let group of attributes">
-              <div class="col-3">
-                {{group.group}}
-              </div>
-              <div class="col-9" [dragula]="ATTRIBUTES" [(dragulaModel)]="group.attrs">
-                <app-product-attribute *ngFor="let attr of group.attrs"
-                  [attribute]="attr"
-                  [isBeingEdited]="true"
-                  (attributeRemoved)="removeAttribute($event)"
-                  (movedUp)="moveAttributeUp($event)"
-                  (movedDown)="moveAttributeDown($event)">
-                </app-product-attribute>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </ng-template>
-    `
+    templateUrl: './product-attributes.component.html'
 })
 export class ProductAttributesComponent implements OnDestroy {
-
-  isBeingEdited: boolean;
 
   readonly GROUPS: string = 'GROUPS';
   readonly ATTRIBUTES: string = 'ATTRIBUTES';
@@ -95,6 +23,9 @@ export class ProductAttributesComponent implements OnDestroy {
 
   attributes: {group: string, attrs: Attribute<any>[]}[] = [];
   oldAttributes: {group: string, attrs: Attribute<any>[]}[] = [];
+
+  isBeingEdited: boolean;
+  editedAttribute: Attribute<any>;
 
   constructor(private dragulaService: DragulaService) {
     this.dragulaService.createGroup(this.GROUPS, {
@@ -199,6 +130,18 @@ export class ProductAttributesComponent implements OnDestroy {
         this.attributes.splice(groupIndex, 1);
       }
     });
+  }
+
+  startAttributeEditing(attribute: Attribute<any>): void {
+    this.editedAttribute = attribute;
+  }
+
+  finishAttributeEditing(attribute: Attribute<any>): void {
+    this.editedAttribute = null;
+  }
+
+  cancelAttributeEditing(attribute: Attribute<any>): void {
+    this.editedAttribute = null;
   }
 
   moveAttributeUp(attribute: Attribute<any>): void {

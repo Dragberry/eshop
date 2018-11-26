@@ -1,0 +1,58 @@
+<div class="row pt-2 pb-2 border-bottom"
+  [attr.data-id]="attribute.id"
+  [attr.data-order]="attribute.order"
+  [class.bg-light]="attribute.id === hoveredAttribudeId"
+  (mouseover)="hover(attribute.id)"
+  (mouseleave)="unhover()">
+  <div class="col-9">
+    <ng-template app-product-attribute>
+    </ng-template>
+  </div>
+  <div class="col-3">
+    <ng-container *ngIf="isEditable">
+      <ng-container
+        *ngIf="isBeingEdited; then attributeIsBeingEdited; else attributeIsNotBeingEdited">
+      </ng-container>
+
+      <ng-template #attributeIsNotBeingEdited>
+        <div class="btn-group btn-group-justified">
+          <button type="button" class="btn btn-secondary btn-sm"
+            [title]="'common.moveUp' | translate"
+            (click)="moveUp(attribute)">
+            <span class="fa fa-arrow-up fa-sm"></span>
+          </button>
+          <button type="button" class="btn btn-secondary btn-sm"
+            [title]="'common.moveDown' | translate"
+            (click)="moveDown(attribute)">
+            <span class="fa fa-arrow-down fa-sm"></span>
+          </button>
+          <button type="button" class="btn btn-warning btn-sm"
+            [title]="'common.edit' | translate"
+            (click)="startEditing(attribute)">
+            <span class="fa fa-pencil fa-sm"></span>
+          </button>
+          <button type="button" class="btn btn-danger btn-sm"
+            [title]="'common.delete' | translate"
+            (click)="remove(attribute)">
+            <span class="fa fa-times fa-sm"></span>
+          </button>
+        </div>
+      </ng-template>
+
+      <ng-template #attributeIsBeingEdited>
+        <div class="btn-group btn-group-justified">
+          <button type="button" class="btn btn-primary btn-sm"
+            [title]="'common.save' | translate"
+            (click)="finishEditing()">
+            <span class="fa fa-check fa-sm"></span>
+          </button>
+          <button type="button" class="btn btn-danger btn-sm"
+            [title]="'common.cancel' | translate"
+            (click)="cancelEditing()">
+            <span class="fa fa-times fa-sm"></span>
+          </button>
+        </div>
+      </ng-template>
+    </ng-container>
+  </div>
+</div>

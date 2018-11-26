@@ -1,0 +1,96 @@
+<ng-container
+  *ngIf="isBeingEdited; then editableAttributesPanel; else readonlyAttributesPanel">
+</ng-container>
+
+<ng-template #readonlyAttributesPanel>
+  <div class="card">
+    <div class="card-header bg-dark text-white">
+      <span>{{ "common.productAttributes" | translate }}</span>
+      <button type="button" class="btn btn-dark text-warning pl-2 pt-0 pr-2 pb-0"
+        title="{{'common.edit' | translate}}"
+        (click)="edit()">
+        <span class="fa fa-pencil"></span>
+      </button>
+    </div>
+    <div class="card-body">
+      <div class="container">
+        <div class="row border-bottom" *ngFor="let group of attributes">
+          <div class="col-3">
+            {{group.group}}
+          </div>
+          <div class="col-9">
+            <app-product-attribute *ngFor="let attr of group.attrs"
+              [attribute]="attr"
+              [isBeingEdited]="false">
+            </app-product-attribute>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #editableAttributesPanel>
+  <div class="card">
+    <div class="card-header bg-dark text-white">
+      <span>{{ "common.productAttributes" | translate }}</span>
+      <div class="btn-group btn-group-justified">
+        <button type="button" class="btn btn-dark text-primary pl-2 pt-0 pr-2 pb-0"
+          title="{{'common.save' | translate}}"
+          (click)="save()">
+          <span class="fa fa-check"></span>
+        </button>
+        <button type="button" class="btn btn-dark text-danger pl-2 pt-0 pr-2 pb-0"
+          title="{{'common.cancel' | translate}}"
+          (click)="cancelEditing()">
+          <span class="fa fa-times"></span>
+        </button>
+      </div>
+    </div>
+    <div class="card-body">
+      <ng-container
+        *ngIf="editedAttribute; then editedAttributeExists; else noEditedAttributes">
+      </ng-container>
+
+      <ng-template #editedAttributeExists>
+        <div class="container">
+          <div class="row border-bottom" *ngFor="let group of attributes">
+            <div class="col-3">
+              {{group.group}}
+            </div>
+            <div class="col-9">
+              <app-product-attribute *ngFor="let attr of group.attrs"
+                [attribute]="attr"
+                [isEditable]="editedAttribute === attr"
+                [isBeingEdited]="editedAttribute === attr"
+                (attributeEditingCancelled)="cancelAttributeEditing()"
+                (attributeEditingFinished)="finishAttributeEditing()">
+              </app-product-attribute>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+
+      <ng-template #noEditedAttributes>
+        <div class="container" [dragula]="GROUPS" [(dragulaModel)]="attributes">
+          <div class="row border-bottom" *ngFor="let group of attributes">
+            <div class="col-3">
+              {{group.group}}
+            </div>
+            <div class="col-9" [dragula]="ATTRIBUTES" [(dragulaModel)]="group.attrs">
+              <app-product-attribute *ngFor="let attr of group.attrs"
+                [attribute]="attr"
+                [isEditable]="true"
+                [isBeingEdited]="false"
+                (attributeRemoved)="removeAttribute($event)"
+                (attributeEditingStarted)="startAttributeEditing($event)"
+                (movedUp)="moveAttributeUp($event)"
+                (movedDown)="moveAttributeDown($event)">
+              </app-product-attribute>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</ng-template>
