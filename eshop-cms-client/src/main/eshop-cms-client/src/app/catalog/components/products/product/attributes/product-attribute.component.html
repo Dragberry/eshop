@@ -1,10 +1,18 @@
 <div class="row pt-2 pb-2 border-bottom"
   [attr.data-id]="attribute.id"
   [attr.data-order]="attribute.order"
-  [class.bg-light]="attribute.id === hoveredAttribudeId || isBeingEdited"
+  [ngClass]="{'bg-dark text-white': isBeingEdited, 'bg-light': attribute.id === hoveredAttribudeId && !isBeingEdited}"
   (mouseover)="hover(attribute.id)"
   (mouseleave)="unhover()">
   <div class="col-9">
+    <ng-container *ngIf="isBeingEdited">
+      <div class="row mb-3">
+        <div class="col-6">
+          <label [for]="'group' + attribute.id" class="font-weight-bold">{{'common.attributeGroup' | translate}}</label>
+          <input [id]="'group' + attribute.id" class="form-control form-control-sm" type="text" [(ngModel)]="attribute.group"/>
+        </div>
+      </div>
+    </ng-container>
     <ng-template app-product-attribute>
     </ng-template>
   </div>

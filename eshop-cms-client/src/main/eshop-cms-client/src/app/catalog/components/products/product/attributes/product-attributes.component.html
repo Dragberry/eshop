@@ -48,6 +48,27 @@
       </div>
     </div>
     <div class="card-body">
+        <div class="container" [dragula]="GROUPS" [(dragulaModel)]="attributes">
+            <div class="row border-bottom" *ngFor="let group of attributes">
+              <div class="col-3">
+                {{group.group}}
+              </div>
+              <div class="col-9" [dragula]="ATTRIBUTES" [(dragulaModel)]="group.attrs">
+                <app-product-attribute *ngFor="let attr of group.attrs"
+                  [attribute]="attr"
+                  [isEditable]="!editedAttribute || editedAttribute === attr"
+                  [isBeingEdited]="editedAttribute && editedAttribute === attr"
+                  (attributeRemoved)="removeAttribute($event)"
+                  (attributeEditingStarted)="startAttributeEditing($event)"
+                  (attributeEditingCancelled)="cancelAttributeEditing()"
+                  (attributeEditingFinished)="finishAttributeEditing($event)"
+                  (movedUp)="moveAttributeUp($event)"
+                  (movedDown)="moveAttributeDown($event)">
+                </app-product-attribute>
+              </div>
+            </div>
+          </div>
+<!--
       <ng-container
         *ngIf="editedAttribute; then editedAttributeExists; else noEditedAttributes">
       </ng-container>
@@ -91,6 +112,7 @@
           </div>
         </div>
       </ng-template>
+      -->
     </div>
   </div>
 </ng-template>

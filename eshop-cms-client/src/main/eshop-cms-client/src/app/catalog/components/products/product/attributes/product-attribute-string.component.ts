@@ -23,12 +23,6 @@ import { StringAttribute } from 'src/app/catalog/model/attributes';
       <ng-template #attributeIsBeingEdited>
         <div class="row">
           <div class="col-6">
-            <label [for]="'group' + attribute.id" class="font-weight-bold">{{'common.attributeGroup' | translate}}</label>
-            <input [id]="'group' + attribute.id" class="form-control form-control-sm" type="text" [(ngModel)]="attribute.group"/>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-6">
             <label [for]="'name' + attribute.id" class="font-weight-bold">{{'common.attributeName' | translate}}</label>
             <input [id]="'name' + attribute.id" class="form-control form-control-sm" type="text" [(ngModel)]="attribute.name"/>
           </div>
@@ -42,4 +36,7 @@ import { StringAttribute } from 'src/app/catalog/model/attributes';
 })
 export class ProductAttributeStringComponent extends AbstractProductAttribute<string, StringAttribute> {
 
+  copyAttribute(src: StringAttribute): StringAttribute {
+    return {...src};
+  }
 }

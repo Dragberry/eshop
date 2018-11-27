@@ -29,17 +29,23 @@ import { BooleanAttribute } from 'src/app/catalog/model/attributes';
 
       <ng-template #attributeIsBeingEdited>
         <div class="col-6">
-          {{attribute.name}}
+          <label [for]="'name' + attribute.id" class="font-weight-bold">{{'common.attributeName' | translate}}</label>
+          <input [id]="'name' + attribute.id" class="form-control form-control-sm" type="text" [(ngModel)]="attribute.name"/>
         </div>
         <div class="col-6">
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox"
-              [id]="attribute.id"
-              [checked]="attribute.value">
-            <label *ngIf="attribute.description" class="form-check-label"
-              [for]="attribute.id">
-              {{attribute.description}}
-            </label>
+          <label [for]="'description' + attribute.id" class="font-weight-bold">
+            {{'common.attributeValue' | translate}}/{{'common.attributeDescription' | translate}}
+          </label>
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <div class="input-group-text">
+                <input type="checkbox"
+                  [id]="'name' + attribute.id"
+                  [checked]="attribute.value"
+                  [(ngModel)]="attribute.value">
+              </div>
+            </div>
+            <input type="text" class="form-control" [(ngModel)]="attribute.description">
           </div>
         </div>
       </ng-template>
@@ -48,4 +54,7 @@ import { BooleanAttribute } from 'src/app/catalog/model/attributes';
 })
 export class ProductAttributeBooleanComponent extends AbstractProductAttribute<boolean, BooleanAttribute> {
 
+  copyAttribute(src: BooleanAttribute): BooleanAttribute {
+    return {...src};
+  }
 }

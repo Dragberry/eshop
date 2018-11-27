@@ -137,6 +137,21 @@ export class ProductAttributesComponent implements OnDestroy {
   }
 
   finishAttributeEditing(attribute: Attribute<any>): void {
+    this.attributes.forEach(group => {
+      if (group.group === attribute.group) {
+        group.attrs.forEach((attr, index) => {
+          if (attr.id === attribute.id) {
+            group.attrs.splice(index, 1, attribute);
+          }
+        });
+      } else {
+        group.attrs.forEach((attr, index) => {
+          if (attr.id === attribute.id) {
+            group.attrs.splice(index, 1);
+          }
+        });
+      }
+    });
     this.editedAttribute = null;
   }
 

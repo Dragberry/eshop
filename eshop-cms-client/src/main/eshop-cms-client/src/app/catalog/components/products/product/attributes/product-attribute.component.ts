@@ -31,6 +31,7 @@ export class ProductAttributeComponent implements OnInit {
 
   @Input()
   attribute: Attribute<any>;
+  editedAttribute: Attribute<any>;
 
   @Output()
   attributeRemoved: EventEmitter<Attribute<any>> = new EventEmitter();
@@ -55,11 +56,15 @@ export class ProductAttributeComponent implements OnInit {
   constructor(private componentFactoryResolver: ComponentFactoryResolver) { }
 
   ngOnInit(): void {
+    this.createComponent(this.attribute);
+  }
+
+  private createComponent(attribute: Attribute<any>) {
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(this.attribute.component);
     const viewContainerRef = this.attributeHost.viewContainerRef;
     viewContainerRef.clear();
     this.componentRef = viewContainerRef.createComponent(componentFactory);
-    this.componentRef.instance.attribute = this.attribute;
+    this.componentRef.instance.attribute = attribute;
   }
 
   remove(attribute: Attribute<any>): void {
@@ -67,18 +72,23 @@ export class ProductAttributeComponent implements OnInit {
   }
 
   startEditing(attribute: Attribute<any>): void {
+    this.editedAttribute = {...attribute};
+    this.editedAttribute.isBeingEdited = true;
+    this.createComponent(this.editedAttribute);
     this.attributeEditingStarted.emit(attribute);
-    this.componentRef.instance.startEditing();
   }
 
   finishEditing(): void {
+    this.attribute = {...this.editedAttribute};
+    this.attribute.isBeingEdited = false;
+    this.createComponent(this.attribute);
     this.attributeEditingFinished.emit(this.attribute);
-    this.componentRef.instance.finishEditing();
   }
 
   cancelEditing(): void {
+    this.editedAttribute = null;
+    this.createComponent(this.attribute);
     this.attributeEditingCancelled.emit(this.attribute);
-    this.componentRef.instance.finishEditing();
   }
 
   moveUp(attribute: Attribute<any>): void {
