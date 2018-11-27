@@ -1,13 +1,15 @@
 import { Type } from '@angular/core';
 import { AbstractProductAttribute } from '../components/products/product/attributes/abstract-product-attribute';
 
-export class Attribute<T> {
+export abstract class Attribute<T> {
   component: Type<AbstractProductAttribute<T, Attribute<T>>>;
   id: number;
   group: string;
   name: string;
   value: T;
   order: number;
+
+  isBeingEdited: boolean;
 }
 
 export class BooleanAttribute extends Attribute<boolean> {

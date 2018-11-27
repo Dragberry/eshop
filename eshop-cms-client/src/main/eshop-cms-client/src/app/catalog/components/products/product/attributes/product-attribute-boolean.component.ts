@@ -7,7 +7,7 @@ import { BooleanAttribute } from 'src/app/catalog/model/attributes';
   template: `
     <div class="row">
       <ng-container
-        *ngIf="isBeingEdited; then attributeIsBeingEdited; else attributeIsReadonly">
+        *ngIf="attribute.isBeingEdited; then attributeIsBeingEdited; else attributeIsReadonly">
       </ng-container>
 
       <ng-template #attributeIsReadonly>

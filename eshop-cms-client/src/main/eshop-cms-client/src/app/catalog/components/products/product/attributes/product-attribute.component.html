@@ -1,14 +1,14 @@
 <div class="row pt-2 pb-2 border-bottom"
   [attr.data-id]="attribute.id"
   [attr.data-order]="attribute.order"
-  [class.bg-light]="attribute.id === hoveredAttribudeId"
+  [class.bg-light]="attribute.id === hoveredAttribudeId || isBeingEdited"
   (mouseover)="hover(attribute.id)"
   (mouseleave)="unhover()">
   <div class="col-9">
     <ng-template app-product-attribute>
     </ng-template>
   </div>
-  <div class="col-3">
+  <div class="col-3 text-right">
     <ng-container *ngIf="isEditable">
       <ng-container
         *ngIf="isBeingEdited; then attributeIsBeingEdited; else attributeIsNotBeingEdited">

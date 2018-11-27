@@ -5,28 +5,39 @@ import { StringAttribute } from 'src/app/catalog/model/attributes';
 @Component({
   selector: 'app-product-attribute-string',
   template: `
-    <div class="row">
-      <ng-container *ngIf="!isBeingEdited">
-        <div class="col-6">
-          {{attribute.name}}
-        </div>
-        <div class="col-6">
-          {{attribute.value}}
-        </div>
+      <ng-container
+        *ngIf="attribute.isBeingEdited; then attributeIsBeingEdited; else attributeIsReadonly">
       </ng-container>
 
-      <ng-container *ngIf="isBeingEdited">
-        <div class="col-4">
-          <input class="form-control" type="text" placeholder="Group" [(ngModel)]="attribute.group">
+      <ng-template #attributeIsReadonly>
+        <div class="row">
+          <div class="col-6">
+            {{attribute.name}}
+          </div>
+          <div class="col-6">
+            {{attribute.value}}
+          </div>
         </div>
-        <div class="col-4">
-          <input class="form-control" type="text" placeholder="Name" [(ngModel)]="attribute.name">
+      </ng-template>
+
+      <ng-template #attributeIsBeingEdited>
+        <div class="row">
+          <div class="col-6">
+            <label [for]="'group' + attribute.id" class="font-weight-bold">{{'common.attributeGroup' | translate}}</label>
+            <input [id]="'group' + attribute.id" class="form-control form-control-sm" type="text" [(ngModel)]="attribute.group"/>
+          </div>
         </div>
-        <div class="col-4">
-          <input class="form-control" type="text" placeholder="Value" [(ngModel)]="attribute.value">
+        <div class="row">
+          <div class="col-6">
+            <label [for]="'name' + attribute.id" class="font-weight-bold">{{'common.attributeName' | translate}}</label>
+            <input [id]="'name' + attribute.id" class="form-control form-control-sm" type="text" [(ngModel)]="attribute.name"/>
+          </div>
+          <div class="col-6">
+            <label [for]="'value' + attribute.id" class="font-weight-bold">{{'common.attributeValue' | translate}}</label>
+            <input [id]="'value' + attribute.id" class="form-control form-control-sm" type="text" [(ngModel)]="attribute.value"/>
+          </div>
         </div>
-      </ng-container>
-    </div>
+      </ng-template>
     `
 })
 export class ProductAttributeStringComponent extends AbstractProductAttribute<string, StringAttribute> {
