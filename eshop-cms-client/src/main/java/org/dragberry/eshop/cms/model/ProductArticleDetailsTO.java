@@ -5,7 +5,11 @@ import java.util.List;
 
 import org.dragberry.eshop.dal.entity.ProductArticle.SaleStatus;
 import org.dragberry.eshop.model.common.FileTO;
-import org.dragberry.eshop.model.product.AttributeTO;
+import org.dragberry.eshop.model.product.BooleanAttributeTO;
+import org.dragberry.eshop.model.product.ListAttributeTO;
+import org.dragberry.eshop.model.product.NumericAttributeTO;
+import org.dragberry.eshop.model.product.StringAttributeTO;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -41,6 +45,11 @@ public class ProductArticleDetailsTO {
 	
 	private List<ProductCategoryTO> categoryTree = new ArrayList<>();
 	
-	private List<? extends AttributeTO<?>> attributes = new ArrayList<>();
+	private List<StringAttributeTO> stringAttributes = new ArrayList<>();
 	
+	private List<ListAttributeTO> listAttributes = new ArrayList<>();
+	
+	private List<NumericAttributeTO> numericAttributes = new ArrayList<>();
+	
+	private List<BooleanAttributeTO> booleanAttributes = new ArrayList<>();
 }

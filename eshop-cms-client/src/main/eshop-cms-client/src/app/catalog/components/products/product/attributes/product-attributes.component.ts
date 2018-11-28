@@ -1,4 +1,4 @@
-import { Attribute, AttributeType } from './../../../../model/attributes';
+import { Attribute, AttributeType, BooleanAttribute, ListAttribute, NumericAttribute, StringAttribute } from './../../../../model/attributes';
 import { Component, Input, OnDestroy, Type, OnChanges, SimpleChanges, SimpleChange } from '@angular/core';
 import { ProductArticleDetails } from 'src/app/catalog/model/product-article-details';
 import { DragulaService } from 'ng2-dragula';
@@ -63,7 +63,7 @@ export class ProductAttributesComponent implements OnDestroy, OnChanges {
 
   setProductArticle(productArticle: ProductArticleDetails): void {
     this.productArticle = productArticle;
-    this.groupAttributes(productArticle.attributes).forEach((attrs, group) => {
+    this.groupAttributes(this.productArticle).forEach((attrs, group) => {
       this.attributes.push({group: group, attrs: attrs});
     });
 
@@ -75,6 +75,25 @@ export class ProductAttributesComponent implements OnDestroy, OnChanges {
     });
 
     this.oldAttributes = this.copyAttributes(this.attributes);
+  }
+
+  groupAttributes<T>(all: {
+    booleanAttributes: BooleanAttribute[],
+    listAttributes: ListAttribute[],
+    numericAttributes: NumericAttribute[],
+    stringAttributes: StringAttribute[]
+  }): Map<string, Attribute<any>[]> {
+    const attributeGroups: Map<string, Attribute<any>[]> = new Map();
+    all.booleanAttributes.forEach(attr => {
+      let group = attributeGroups.get(attr.group);
+      if (!group) {
+        group = [];
+        attributeGroups.set(attr.group, group);
+      }
+      attr.component = ATTRIBUTE_COMPONENTS.get(attr.type);
+      group.push(attr);
+    });
+    return attributeGroups;
   }
 
   calculateOrders(): void {
@@ -100,20 +119,6 @@ export class ProductAttributesComponent implements OnDestroy, OnChanges {
       });
     });
     return dst;
-  }
-
-  groupAttributes<T>(attributeList: Attribute<T>[]): Map<string, Attribute<any>[]> {
-    const attributeGroups: Map<string, Attribute<any>[]> = new Map();
-    attributeList.forEach(attr => {
-      let group = attributeGroups.get(attr.group);
-      if (!group) {
-        group = [];
-        attributeGroups.set(attr.group, group);
-      }
-      attr.component = ATTRIBUTE_COMPONENTS.get(attr.type);
-      group.push(attr);
-    });
-    return attributeGroups;
   }
 
   edit(): void {

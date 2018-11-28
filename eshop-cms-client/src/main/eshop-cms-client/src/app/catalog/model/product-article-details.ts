@@ -19,5 +19,8 @@ export class ProductArticleDetails {
   mainCategoryId: number;
   categoryTree: ProductCategory[];
 
-  attributes: BooleanAttribute[];
+  booleanAttributes: BooleanAttribute[];
+  listAttributes: ListAttribute[];
+  numericAttributes: NumericAttribute[];
+  stringAttributes: StringAttribute[];
 }
