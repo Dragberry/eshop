@@ -59,12 +59,21 @@ export class ProductAttributeComponent implements OnInit {
     this.createComponent(this.attribute);
   }
 
-  private createComponent(attribute: Attribute<any>) {
+  /**
+   * Created a dynamic component
+   * @param attribute - attribute is being passed to component
+   * @param isBeingEdited - indicates whether this component is being edited or not
+   * @returns a copy of the passed attribute the after the component is created
+   */
+  private createComponent(attribute: Attribute<any>, isBeingEdited = false): Attribute<any> {
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(this.attribute.component);
     const viewContainerRef = this.attributeHost.viewContainerRef;
     viewContainerRef.clear();
     this.componentRef = viewContainerRef.createComponent(componentFactory);
-    this.componentRef.instance.attribute = attribute;
+    const copy: Attribute<any> = this.componentRef.instance.copy(attribute);
+    this.componentRef.instance.attribute = copy;
+    this.componentRef.instance.isBeingEdited = isBeingEdited;
+    return copy;
   }
 
   remove(attribute: Attribute<any>): void {
@@ -72,22 +81,18 @@ export class ProductAttributeComponent implements OnInit {
   }
 
   startEditing(attribute: Attribute<any>): void {
-    this.editedAttribute = {...attribute};
-    this.editedAttribute.isBeingEdited = true;
-    this.createComponent(this.editedAttribute);
+    this.editedAttribute = this.createComponent(this.attribute, true);
     this.attributeEditingStarted.emit(attribute);
   }
 
   finishEditing(): void {
-    this.attribute = {...this.editedAttribute};
-    this.attribute.isBeingEdited = false;
-    this.createComponent(this.attribute);
+    this.attribute = this.createComponent(this.editedAttribute, false);
     this.attributeEditingFinished.emit(this.attribute);
   }
 
   cancelEditing(): void {
     this.editedAttribute = null;
-    this.createComponent(this.attribute);
+    this.createComponent(this.attribute, false);
     this.attributeEditingCancelled.emit(this.attribute);
   }
 

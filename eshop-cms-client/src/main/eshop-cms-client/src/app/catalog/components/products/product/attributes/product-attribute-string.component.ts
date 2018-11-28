@@ -6,7 +6,7 @@ import { StringAttribute } from 'src/app/catalog/model/attributes';
   selector: 'app-product-attribute-string',
   template: `
       <ng-container
-        *ngIf="attribute.isBeingEdited; then attributeIsBeingEdited; else attributeIsReadonly">
+        *ngIf="isBeingEdited; then attributeIsBeingEdited; else attributeIsReadonly">
       </ng-container>
 
       <ng-template #attributeIsReadonly>
@@ -36,7 +36,8 @@ import { StringAttribute } from 'src/app/catalog/model/attributes';
 })
 export class ProductAttributeStringComponent extends AbstractProductAttribute<string, StringAttribute> {
 
-  copyAttribute(src: StringAttribute): StringAttribute {
-    return {...src};
+  createAttribute(): StringAttribute {
+    return new StringAttribute();
   }
+
 }

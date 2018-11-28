@@ -7,7 +7,7 @@ import { ListAttribute } from 'src/app/catalog/model/attributes';
   template: `
     <div class="row">
       <ng-container
-      *ngIf="attribute.isBeingEdited; then attributeIsBeingEdited; else attributeIsReadonly">
+      *ngIf="isBeingEdited; then attributeIsBeingEdited; else attributeIsReadonly">
       </ng-container>
 
       <ng-template #attributeIsReadonly>
@@ -77,9 +77,12 @@ export class ProductAttributeListComponent extends AbstractProductAttribute<stri
     });
   }
 
-  copyAttribute(src: ListAttribute): ListAttribute {
-    const dst =  {...src};
+  createAttribute(): ListAttribute {
+    return new ListAttribute();
+  }
+
+  enrich(src: ListAttribute, dst: ListAttribute): void {
     dst.value = src.value.map(val => val);
-    return dst;
   }
 }
+

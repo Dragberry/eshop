@@ -7,7 +7,7 @@ import { BooleanAttribute } from 'src/app/catalog/model/attributes';
   template: `
     <div class="row">
       <ng-container
-        *ngIf="attribute.isBeingEdited; then attributeIsBeingEdited; else attributeIsReadonly">
+        *ngIf="isBeingEdited; then attributeIsBeingEdited; else attributeIsReadonly">
       </ng-container>
 
       <ng-template #attributeIsReadonly>
@@ -54,7 +54,11 @@ import { BooleanAttribute } from 'src/app/catalog/model/attributes';
 })
 export class ProductAttributeBooleanComponent extends AbstractProductAttribute<boolean, BooleanAttribute> {
 
-  copyAttribute(src: BooleanAttribute): BooleanAttribute {
-    return {...src};
+  createAttribute(): BooleanAttribute {
+    return new BooleanAttribute();
+  }
+
+  enrich(src: BooleanAttribute, dst: BooleanAttribute): void {
+    dst.description = src.description;
   }
 }

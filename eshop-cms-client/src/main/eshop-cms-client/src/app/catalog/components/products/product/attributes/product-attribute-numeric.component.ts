@@ -7,7 +7,7 @@ import { NumericAttribute } from 'src/app/catalog/model/attributes';
   template: `
     <div class="row">
       <ng-container
-        *ngIf="attribute.isBeingEdited; then attributeIsBeingEdited; else attributeIsReadonly">
+        *ngIf="isBeingEdited; then attributeIsBeingEdited; else attributeIsReadonly">
       </ng-container>
 
       <ng-template #attributeIsReadonly>
@@ -44,7 +44,11 @@ import { NumericAttribute } from 'src/app/catalog/model/attributes';
 })
 export class ProductAttributeNumericComponent extends AbstractProductAttribute<number, NumericAttribute> {
 
-  copyAttribute(src: NumericAttribute): NumericAttribute {
-    return {...src};
+  createAttribute(): NumericAttribute {
+    return new NumericAttribute();
+  }
+
+  enrich(src: NumericAttribute, dst: NumericAttribute): void {
+    dst.unit = src.unit;
   }
 }

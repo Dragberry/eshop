@@ -8,8 +8,6 @@ export abstract class Attribute<T> {
   name: string;
   value: T;
   order: number;
-
-  isBeingEdited: boolean;
 }
 
 export class BooleanAttribute extends Attribute<boolean> {
