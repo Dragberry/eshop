@@ -34,7 +34,9 @@ export class ProductAttributesComponent implements OnDestroy {
       }
     });
     this.dragulaSubscription = this.dragulaService.drop()
-      .subscribe(() => this.calculateOrders());
+      .subscribe(() => {
+        this.calculateOrders();
+      });
   }
 
   ngOnDestroy(): void {
@@ -119,17 +121,24 @@ export class ProductAttributesComponent implements OnDestroy {
     this.isBeingEdited = false;
   }
 
+  removeGroup(group: any): void {
+    this.attributes.forEach((grp, index) => {
+      if (grp === group) {
+        this.attributes.splice(index, 1);
+      }
+    });
+    this.calculateOrders();
+  }
+
   removeAttribute(attribute: Attribute<any>): void {
-    this.attributes.forEach((group, groupIndex) => {
-      group.attrs.forEach((item, index) => {
-        if (attribute === item) {
+    this.attributes.forEach(group => {
+      group.attrs.forEach((attr, index) => {
+        if (attribute === attr) {
           group.attrs.splice(index, 1);
         }
       });
-      if (group.attrs.length === 0) {
-        this.attributes.splice(groupIndex, 1);
-      }
     });
+    this.calculateOrders();
   }
 
   startAttributeEditing(attribute: Attribute<any>): void {
@@ -137,21 +146,33 @@ export class ProductAttributesComponent implements OnDestroy {
   }
 
   finishAttributeEditing(attribute: Attribute<any>): void {
-    this.attributes.forEach(group => {
-      if (group.group === attribute.group) {
-        group.attrs.forEach((attr, index) => {
-          if (attr.id === attribute.id) {
-            group.attrs.splice(index, 1, attribute);
-          }
-        });
+    const existingGroup = this.attributes.find(grp => grp.group === attribute.group);
+    if (!existingGroup) {
+      // add a new group if doesnt exist
+      this.attributes.push({group: attribute.group, attrs: [attribute]});
+    } else {
+      const existingAttribute = existingGroup.attrs.find(attr => attr.id === attribute.id);
+      if (!existingAttribute) {
+        // push a new attribute to the existing group, if such such attribute doesn't exist here
+        existingGroup.attrs.push(attribute);
       } else {
-        group.attrs.forEach((attr, index) => {
+        // replace an existing attribute in the existing group
+        existingGroup.attrs.forEach((attr, index) => {
           if (attr.id === attribute.id) {
-            group.attrs.splice(index, 1);
+            existingGroup.attrs.splice(index, 1, attribute);
           }
         });
       }
+    }
+    // deletes atributes whose group doesn't match to the group where they are situated
+    this.attributes.forEach((group) => {
+      group.attrs.forEach((attr, index) => {
+        if (attr.id === attribute.id && attr.group !== attribute.group) {
+          group.attrs.splice(index, 1);
+        }
+      });
     });
+    this.calculateOrders();
     this.editedAttribute = null;
   }
 
