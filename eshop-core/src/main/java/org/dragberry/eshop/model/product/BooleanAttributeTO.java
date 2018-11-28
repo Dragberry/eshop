@@ -8,4 +8,8 @@ import lombok.Setter;
 public class BooleanAttributeTO extends AttributeTO<Boolean> {
 
 	private String description;
+	
+	public BooleanAttributeTO() {
+       super("BooleanAttribute");
+    }
 }

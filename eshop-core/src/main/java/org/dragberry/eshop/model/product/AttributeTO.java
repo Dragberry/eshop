@@ -6,6 +6,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public abstract class AttributeTO<T> {
+    
+    private final String type;
 	
 	private Long id;
 	
@@ -17,5 +19,7 @@ public abstract class AttributeTO<T> {
 	
 	private Integer order;
 
-	
+	protected AttributeTO(String type) {
+	    this.type = type;
+	}
 }

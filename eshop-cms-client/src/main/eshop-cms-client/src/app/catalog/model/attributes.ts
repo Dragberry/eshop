@@ -1,8 +1,16 @@
 import { Type } from '@angular/core';
 import { AbstractProductAttribute } from '../components/products/product/attributes/abstract-product-attribute';
 
+export enum AttributeType {
+  BOOLEAN = 'BooleanAttribute',
+  LIST = 'ListAttribute',
+  NUMERIC = 'NumericAttribute',
+  STRING = 'StringAttribute',
+}
+
 export abstract class Attribute<T> {
   component: Type<AbstractProductAttribute<T, Attribute<T>>>;
+  type: AttributeType;
   id: number;
   group: string;
   name: string;

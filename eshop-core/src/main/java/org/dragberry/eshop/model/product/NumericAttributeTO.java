@@ -10,4 +10,8 @@ import lombok.Setter;
 public class NumericAttributeTO extends AttributeTO<BigDecimal> {
 
 	private String unit;
+	
+	public NumericAttributeTO() {
+        super("NumericAttribute");
+    }
 }

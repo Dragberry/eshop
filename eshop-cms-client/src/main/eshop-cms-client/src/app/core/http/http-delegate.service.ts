@@ -30,6 +30,27 @@ export class HttpDelegateService {
     });
   }
 
+  post<T>(url: string, body: any,  options?: {
+    params?: HttpParams,
+  }): Promise<T> {
+    return new Promise((resolve, reject) => {
+      return this.http.post<Result<T>>(url, body, options).subscribe(result => {
+        if (!result || result.issues && result.issues.length > 0) {
+          this.messageService.showIssues(result.issues);
+          reject(result.issues);
+        }
+        resolve(result.value);
+      }, error => {
+        if (error.status === 401) {
+          this.authService.logout();
+        } else {
+          this.messageService.showError(error);
+          reject(error);
+        }
+      });
+    });
+  }
+
   put<T>(url: string, body: any,  options?: {
     params?: HttpParams,
   }): Promise<T> {

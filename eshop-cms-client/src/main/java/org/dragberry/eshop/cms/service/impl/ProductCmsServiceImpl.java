@@ -18,16 +18,12 @@ import org.dragberry.eshop.dal.dto.ProductArticleListItemDTO;
 import org.dragberry.eshop.dal.entity.Category;
 import org.dragberry.eshop.dal.entity.File;
 import org.dragberry.eshop.dal.entity.Product;
+import org.dragberry.eshop.dal.entity.ProductAttribute;
 import org.dragberry.eshop.dal.repo.CategoryRepository;
 import org.dragberry.eshop.dal.repo.ProductArticleRepository;
 import org.dragberry.eshop.dal.repo.ProductRepository;
 import org.dragberry.eshop.dal.repo.ProductRepository.ProductOrderItemSpecification;
 import org.dragberry.eshop.model.common.FileTO;
-import org.dragberry.eshop.model.product.AttributeTO;
-import org.dragberry.eshop.model.product.BooleanAttributeTO;
-import org.dragberry.eshop.model.product.ListAttributeTO;
-import org.dragberry.eshop.model.product.NumericAttributeTO;
-import org.dragberry.eshop.model.product.StringAttributeTO;
 import org.dragberry.eshop.utils.ProductTitleBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,9 +31,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import lombok.extern.log4j.Log4j2;
-
-@Log4j2
 @Service
 public class ProductCmsServiceImpl implements ProductCmsService {
     
@@ -139,18 +132,9 @@ public class ProductCmsServiceImpl implements ProductCmsService {
     		        entity.getCategory().getReference(),
     		        entity.getReference()).collect(Collectors.joining("/")));
             
-            entity.getAttributes().forEach(attr -> {
-            	AttributeTO<?> attrTO = attr.buildTO();
-            	if (attrTO instanceof StringAttributeTO) {
-            		to.getStringAttributes().add((StringAttributeTO) attrTO);
-            	} else if (attrTO instanceof BooleanAttributeTO) {
-            		to.getBooleanAttributes().add((BooleanAttributeTO) attrTO);
-            	} else if (attrTO instanceof ListAttributeTO) {
-            		to.getListAttributes().add((ListAttributeTO) attrTO);
-            	} else if (attrTO instanceof NumericAttributeTO) {
-            		to.getNumericAttributes().add((NumericAttributeTO) attrTO);
-            	}
-            });
+            to.setAttributes(entity.getAttributes().stream()
+                    .map(ProductAttribute<?>::buildTO)
+                    .collect(Collectors.toList()));
     		return to;
     	});
     }

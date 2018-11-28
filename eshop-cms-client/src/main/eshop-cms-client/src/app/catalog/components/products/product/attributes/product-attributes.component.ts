@@ -1,6 +1,5 @@
-import { Attribute } from './../../../../model/attributes';
-
-import { Component, Input, OnDestroy, Type } from '@angular/core';
+import { Attribute, AttributeType } from './../../../../model/attributes';
+import { Component, Input, OnDestroy, Type, OnChanges, SimpleChanges, SimpleChange } from '@angular/core';
 import { ProductArticleDetails } from 'src/app/catalog/model/product-article-details';
 import { DragulaService } from 'ng2-dragula';
 import { Subscription } from 'rxjs';
@@ -9,17 +8,27 @@ import { ProductAttributeStringComponent } from './product-attribute-string.comp
 import { ProductAttributeBooleanComponent } from './product-attribute-boolean.component';
 import { ProductAttributeNumericComponent } from './product-attribute-numeric.component';
 import { ProductAttributeListComponent } from './product-attribute-list.component';
+import { ProductService } from 'src/app/catalog/services/product.service';
+
+const ATTRIBUTE_COMPONENTS: Map<AttributeType, Type<AbstractProductAttribute<any, Attribute<any>>>> = new Map();
+ATTRIBUTE_COMPONENTS.set(AttributeType.BOOLEAN, ProductAttributeBooleanComponent);
+ATTRIBUTE_COMPONENTS.set(AttributeType.LIST, ProductAttributeListComponent);
+ATTRIBUTE_COMPONENTS.set(AttributeType.NUMERIC, ProductAttributeNumericComponent);
+ATTRIBUTE_COMPONENTS.set(AttributeType.STRING, ProductAttributeStringComponent);
 
 @Component({
     selector: 'app-product-attributes',
     templateUrl: './product-attributes.component.html'
 })
-export class ProductAttributesComponent implements OnDestroy {
+export class ProductAttributesComponent implements OnDestroy, OnChanges {
 
   readonly GROUPS: string = 'GROUPS';
   readonly ATTRIBUTES: string = 'ATTRIBUTES';
 
   dragulaSubscription: Subscription;
+
+  @Input()
+  productArticle: ProductArticleDetails;
 
   attributes: {group: string, attrs: Attribute<any>[]}[] = [];
   oldAttributes: {group: string, attrs: Attribute<any>[]}[] = [];
@@ -27,7 +36,7 @@ export class ProductAttributesComponent implements OnDestroy {
   isBeingEdited: boolean;
   editedAttribute: Attribute<any>;
 
-  constructor(private dragulaService: DragulaService) {
+  constructor(private dragulaService: DragulaService, private productService: ProductService) {
     this.dragulaService.createGroup(this.GROUPS, {
       invalid: function (el, handle) {
         return el.tagName.toLocaleLowerCase() === 'app-product-attribute';
@@ -45,15 +54,16 @@ export class ProductAttributesComponent implements OnDestroy {
     this.dragulaSubscription.unsubscribe();
   }
 
-  @Input()
-  set productArticle(productArticle: ProductArticleDetails) {
-    const attributeGroups: Map<string, Attribute<any>[]> = new Map();
-    this.processAttributes(productArticle.stringAttributes, attributeGroups, ProductAttributeStringComponent);
-    this.processAttributes(productArticle.booleanAttributes, attributeGroups, ProductAttributeBooleanComponent);
-    this.processAttributes(productArticle.numericAttributes, attributeGroups, ProductAttributeNumericComponent);
-    this.processAttributes(productArticle.listAttributes, attributeGroups, ProductAttributeListComponent);
+  ngOnChanges(changes: SimpleChanges): void {
+    const productChange: SimpleChange = changes['productArticle'];
+    if (productChange && productChange.currentValue) {
+      this.setProductArticle(productChange.currentValue);
+    }
+  }
 
-    attributeGroups.forEach((attrs, group) => {
+  setProductArticle(productArticle: ProductArticleDetails): void {
+    this.productArticle = productArticle;
+    this.groupAttributes(productArticle.attributes).forEach((attrs, group) => {
       this.attributes.push({group: group, attrs: attrs});
     });
 
@@ -92,19 +102,18 @@ export class ProductAttributesComponent implements OnDestroy {
     return dst;
   }
 
-  processAttributes<T>(
-    attributeList: Attribute<T>[],
-    attributeGroups: Map<string, Attribute<any>[]>,
-    component: Type<AbstractProductAttribute<T, Attribute<T>>>): void {
+  groupAttributes<T>(attributeList: Attribute<T>[]): Map<string, Attribute<any>[]> {
+    const attributeGroups: Map<string, Attribute<any>[]> = new Map();
     attributeList.forEach(attr => {
       let group = attributeGroups.get(attr.group);
       if (!group) {
         group = [];
         attributeGroups.set(attr.group, group);
       }
-      attr.component = component;
+      attr.component = ATTRIBUTE_COMPONENTS.get(attr.type);
       group.push(attr);
     });
+    return attributeGroups;
   }
 
   edit(): void {
@@ -112,8 +121,16 @@ export class ProductAttributesComponent implements OnDestroy {
   }
 
   save(): void {
-    this.oldAttributes = this.copyAttributes(this.attributes);
-    this.isBeingEdited = false;
+    const productAttributes: ProductArticleDetails = new ProductArticleDetails();
+    productAttributes.id = this.productArticle.id;
+    this.productService.updateProductAttributes(productAttributes)
+    .then(result => {
+      this.setProductArticle(result);
+      this.isBeingEdited = false;
+    })
+    .catch(() => {
+      this.isBeingEdited = true;
+    });
   }
 
   cancelEditing(): void {
