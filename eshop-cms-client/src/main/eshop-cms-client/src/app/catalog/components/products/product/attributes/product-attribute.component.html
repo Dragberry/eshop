@@ -1,4 +1,4 @@
-<div class="row pt-2 pb-2 border-bottom"
+<div class="row pt-2 pb-4 border-bottom"
   [attr.data-id]="attribute.id"
   [attr.data-order]="attribute.order"
   [ngClass]="{'bg-dark text-white': isBeingEdited, 'bg-light': attribute.id === hoveredAttribudeId && !isBeingEdited}"
@@ -11,9 +11,22 @@
           <label [for]="'group' + attribute.id" class="font-weight-bold">
             {{'common.attributeGroup' | translate}}
           </label>
-          <input type="text" class="form-control form-control-sm" 
-            [id]="'group' + attribute.id"  
+          <input type="text" class="form-control form-control-sm"
+            [id]="'group' + attribute.id"
             [(ngModel)]="editedAttribute.group"/>
+        </div>
+        <div class="col-6">
+          <label [for]="'type' + attribute.id" class="font-weight-bold">
+            {{'common.attributeType' | translate}}
+          </label>
+          <select class="form-control form-control-sm"
+            [id]="'group' + attribute.id"
+            [(ngModel)]="editedAttribute.type"
+            (change)="changeAttributeType()">
+            <option *ngFor="let type of attriubteTypes" [ngValue]="type">
+              {{'products.attribute.' + type | translate}}
+            </option>
+          </select>
         </div>
       </div>
     </ng-container>

@@ -25,6 +25,7 @@
       "attributeDescription": "Описание",
       "attributeGroup": "Группа",
       "attributeName": "Название",
+      "attributeType": "Тип",
       "attributeValue": "Значение",
       "attributeValues": "Значения",
       "attributeUnit": "Ед.изм.",
@@ -58,6 +59,7 @@
       "isPaid": "Оплата",
       "moveDown": "Двигать вниз",
       "moveUp": "Двигать вверх",
+      "newAttribute": "Новая характеристика",
       "newOrder": "Новый заказ",
       "newProduct": "Новый товар",
       "noResults": "Ничего не найдено",
@@ -125,6 +127,12 @@
         "saleStatus": {
             "EXPOSED": "Выставлен",
             "HIDDEN": "Скрыт"
+        },
+        "attribute": {
+          "org.dragberry.eshop.dal.entity.ProductAttributeBoolean": "Есть/Нет",
+          "org.dragberry.eshop.dal.entity.ProductAttributeList": "Список",
+          "org.dragberry.eshop.dal.entity.ProductAttributeNumeric": "Числовой",
+          "org.dragberry.eshop.dal.entity.ProductAttributeString": "Строка"
         }
     },
     "orders": {

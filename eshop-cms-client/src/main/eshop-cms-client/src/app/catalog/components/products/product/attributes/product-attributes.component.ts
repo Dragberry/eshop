@@ -5,7 +5,7 @@ import {
   ListAttribute,
   StringAttribute,
   NumericAttribute
-} from './../../../../model/attributes';
+} from 'src/app/catalog/model/attributes';
 import { Component, Input, OnDestroy, Type, OnChanges, SimpleChanges, SimpleChange } from '@angular/core';
 import { ProductArticleDetails } from 'src/app/catalog/model/product-article-details';
 import { DragulaService } from 'ng2-dragula';
@@ -16,12 +16,6 @@ import { ProductAttributeBooleanComponent } from './product-attribute-boolean.co
 import { ProductAttributeNumericComponent } from './product-attribute-numeric.component';
 import { ProductAttributeListComponent } from './product-attribute-list.component';
 import { ProductService } from 'src/app/catalog/services/product.service';
-
-const ATTRIBUTE_COMPONENTS: Map<AttributeType, Type<AbstractProductAttribute<any, Attribute<any>>>> = new Map();
-ATTRIBUTE_COMPONENTS.set(AttributeType.BOOLEAN, ProductAttributeBooleanComponent);
-ATTRIBUTE_COMPONENTS.set(AttributeType.LIST, ProductAttributeListComponent);
-ATTRIBUTE_COMPONENTS.set(AttributeType.NUMERIC, ProductAttributeNumericComponent);
-ATTRIBUTE_COMPONENTS.set(AttributeType.STRING, ProductAttributeStringComponent);
 
 @Component({
     selector: 'app-product-attributes',
@@ -98,7 +92,6 @@ export class ProductAttributesComponent implements OnDestroy, OnChanges {
           group = [];
           attributeGroups.set(attr.group, group);
         }
-        attr.component = ATTRIBUTE_COMPONENTS.get(attr.type);
         group.push(attr);
       });
     });
@@ -167,6 +160,7 @@ export class ProductAttributesComponent implements OnDestroy, OnChanges {
 
   cancelEditing(): void {
     this.attributes = this.copyAttributes(this.oldAttributes);
+    this.editedAttribute = null;
     this.isBeingEdited = false;
   }
 
@@ -188,6 +182,10 @@ export class ProductAttributesComponent implements OnDestroy, OnChanges {
       });
     });
     this.calculateOrders();
+  }
+
+  addAttribute(): void {
+    this.editedAttribute = new BooleanAttribute();
   }
 
   startAttributeEditing(attribute: Attribute<any>): void {

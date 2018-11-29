@@ -11,7 +11,6 @@ export abstract class AbstractProductAttribute<V, A extends Attribute<V>> {
 
   copy(src: A): A {
     const dst = this.createAttribute();
-    dst.component = src.component;
     dst.type = src.type;
     dst.id = src.id;
     dst.group = src.group;

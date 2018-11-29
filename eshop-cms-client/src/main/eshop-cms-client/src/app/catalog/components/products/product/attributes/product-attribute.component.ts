@@ -1,4 +1,13 @@
-import { Attribute } from './../../../../model/attributes';
+import { ATTRIBUTE_COMPONENTS } from './attribute-components';
+import {
+  Attribute,
+  AttributeType,
+  ATTRIBUTE_TYPES,
+  BooleanAttribute,
+  ListAttribute,
+  NumericAttribute,
+  StringAttribute
+} from 'src/app/catalog/model/attributes';
 import {
   Component,
   ComponentRef,
@@ -53,10 +62,16 @@ export class ProductAttributeComponent implements OnInit {
 
   hoveredAttribudeId: number;
 
+  attriubteTypes: AttributeType[] = ATTRIBUTE_TYPES;
+
   constructor(private componentFactoryResolver: ComponentFactoryResolver) { }
 
   ngOnInit(): void {
-    this.createComponent(this.attribute);
+    if (this.isBeingEdited) {
+      this.editedAttribute = this.createComponent(this.attribute, true);
+    } else {
+      this.createComponent(this.attribute);
+    }
   }
 
   /**
@@ -66,7 +81,7 @@ export class ProductAttributeComponent implements OnInit {
    * @returns a copy of the passed attribute the after the component is created
    */
   private createComponent(attribute: Attribute<any>, isBeingEdited = false): Attribute<any> {
-    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(this.attribute.component);
+    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(ATTRIBUTE_COMPONENTS.get(this.attribute.type));
     const viewContainerRef = this.attributeHost.viewContainerRef;
     viewContainerRef.clear();
     this.componentRef = viewContainerRef.createComponent(componentFactory);
@@ -78,6 +93,30 @@ export class ProductAttributeComponent implements OnInit {
 
   remove(attribute: Attribute<any>): void {
     this.attributeRemoved.emit(attribute);
+  }
+
+  changeAttributeType(): void {
+    const temp: Attribute<any> = this.editedAttribute;
+    switch (this.editedAttribute.type) {
+      case AttributeType.BOOLEAN:
+        this.editedAttribute = new BooleanAttribute();
+        break;
+      case AttributeType.LIST:
+        this.editedAttribute = new ListAttribute();
+        break;
+      case AttributeType.NUMERIC:
+        this.editedAttribute = new NumericAttribute();
+        break;
+      case AttributeType.STRING:
+        this.editedAttribute = new StringAttribute();
+        break;
+    }
+    this.editedAttribute.id = temp.id;
+    this.editedAttribute.group = temp.group;
+    this.editedAttribute.name = temp.name;
+    this.editedAttribute.order = temp.order;
+    this.editedAttribute.type = temp.type;
+    this.editedAttribute = this.createComponent(this.editedAttribute, true);
   }
 
   startEditing(attribute: Attribute<any>): void {

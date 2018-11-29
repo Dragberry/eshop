@@ -37,7 +37,8 @@
       <div class="btn-group btn-group-justified">
         <button type="button" class="btn btn-dark text-primary pl-2 pt-0 pr-2 pb-0"
           title="{{'common.save' | translate}}"
-          (click)="save()">
+          (click)="save()"
+          [disabled]="editedAttribute">
           <span class="fa fa-check"></span>
         </button>
         <button type="button" class="btn btn-dark text-danger pl-2 pt-0 pr-2 pb-0"
@@ -47,13 +48,28 @@
         </button>
         <button type="button" class="btn btn-dark text-success pl-2 pt-0 pr-2 pb-0"
           title="{{'common.add' | translate}}"
-          (click)="addAttribute()">
+          (click)="addAttribute()"
+          [disabled]="editedAttribute">
           <span class="fa fa-plus"></span>
         </button>
       </div>
     </div>
     <div class="card-body">
         <div class="container" [dragula]="GROUPS" [(dragulaModel)]="attributes">
+            <div *ngIf="editedAttribute" class="row border-bottom">
+              <div class="col-3">
+                <span class="mr-auto">{{'common.newAttribute' | translate}}</span>
+              </div>
+              <div class="col-9">
+                <app-product-attribute
+                  [attribute]="editedAttribute"
+                  [isEditable]="true"
+                  [isBeingEdited]="true"
+                  (attributeEditingCancelled)="cancelAttributeEditing()"
+                  (attributeEditingFinished)="finishAttributeEditing($event)">
+                </app-product-attribute>
+              </div>
+            </div>
             <div class="row border-bottom" *ngFor="let group of attributes">
               <div class="col-3">
                 <span class="d-flex">
