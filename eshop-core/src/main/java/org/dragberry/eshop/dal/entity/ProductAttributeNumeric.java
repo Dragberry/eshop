@@ -27,6 +27,10 @@ public class ProductAttributeNumeric  extends ProductAttribute<BigDecimal> {
     public BigDecimal getValue() {
         return value;
     }
+    
+    public ProductAttributeNumeric() {
+        super(NumericAttributeTO.class);
+    }
 
     @Override
     public void setValue(BigDecimal value) {
@@ -47,11 +51,6 @@ public class ProductAttributeNumeric  extends ProductAttribute<BigDecimal> {
     @Override
     public String getStringValue() {
     	return value.stripTrailingZeros().toPlainString() + " " + unit;
-    }
-
-    @Override
-    protected NumericAttributeTO createTO() {
-    	return new NumericAttributeTO();
     }
 
     @Override

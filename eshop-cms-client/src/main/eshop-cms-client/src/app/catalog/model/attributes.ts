@@ -2,10 +2,10 @@ import { Type } from '@angular/core';
 import { AbstractProductAttribute } from '../components/products/product/attributes/abstract-product-attribute';
 
 export enum AttributeType {
-  BOOLEAN = 'BooleanAttribute',
-  LIST = 'ListAttribute',
-  NUMERIC = 'NumericAttribute',
-  STRING = 'StringAttribute',
+  BOOLEAN = 'org.dragberry.eshop.dal.entity.ProductAttributeBoolean',
+  LIST = 'org.dragberry.eshop.dal.entity.ProductAttributeList',
+  NUMERIC = 'org.dragberry.eshop.dal.entity.ProductAttributeNumeric',
+  STRING = 'org.dragberry.eshop.dal.entity.ProductAttributeString',
 }
 
 export abstract class Attribute<T> {

@@ -9,6 +9,7 @@ import org.dragberry.eshop.cms.model.ProductArticleDetailsTO;
 import org.dragberry.eshop.cms.model.ProductArticleListItemTO;
 import org.dragberry.eshop.cms.model.ProductCategoryTO;
 import org.dragberry.eshop.common.PageableList;
+import org.dragberry.eshop.common.ResultTO;
 import org.springframework.data.domain.PageRequest;
 
 public interface ProductCmsService {
@@ -22,4 +23,6 @@ public interface ProductCmsService {
     List<ProductCategoryTO> getCategoryTree();
 
 	Optional<ProductArticleDetailsTO> getProductArticleDetails(Long productArticleId);
+
+    Optional<ResultTO<ProductArticleDetailsTO>> updateAttributes(Long productArticleId, ProductArticleDetailsTO product);
 }

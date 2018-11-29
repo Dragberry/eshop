@@ -1,5 +1,6 @@
 package org.dragberry.eshop.cms.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -13,11 +14,15 @@ import org.dragberry.eshop.cms.model.ProductArticleDetailsTO;
 import org.dragberry.eshop.cms.model.ProductArticleListItemTO;
 import org.dragberry.eshop.cms.model.ProductCategoryTO;
 import org.dragberry.eshop.cms.service.ProductCmsService;
+import org.dragberry.eshop.common.IssueTO;
 import org.dragberry.eshop.common.PageableList;
+import org.dragberry.eshop.common.ResultTO;
+import org.dragberry.eshop.common.Results;
 import org.dragberry.eshop.dal.dto.ProductArticleListItemDTO;
 import org.dragberry.eshop.dal.entity.Category;
 import org.dragberry.eshop.dal.entity.File;
 import org.dragberry.eshop.dal.entity.Product;
+import org.dragberry.eshop.dal.entity.ProductArticle;
 import org.dragberry.eshop.dal.repo.CategoryRepository;
 import org.dragberry.eshop.dal.repo.ProductArticleRepository;
 import org.dragberry.eshop.dal.repo.ProductRepository;
@@ -136,20 +141,41 @@ public class ProductCmsServiceImpl implements ProductCmsService {
     		        entity.getCategory().getReference(),
     		        entity.getReference()).collect(Collectors.joining("/")));
             
-            entity.getAttributes().forEach(attr -> {
-            	AttributeTO<?> attrTO = attr.buildTO();
-            	if (attrTO instanceof StringAttributeTO) {
-            		to.getStringAttributes().add((StringAttributeTO) attrTO);
-            	} else if (attrTO instanceof BooleanAttributeTO) {
-            		to.getBooleanAttributes().add((BooleanAttributeTO) attrTO);
-            	} else if (attrTO instanceof ListAttributeTO) {
-            		to.getListAttributes().add((ListAttributeTO) attrTO);
-            	} else if (attrTO instanceof NumericAttributeTO) {
-            		to.getNumericAttributes().add((NumericAttributeTO) attrTO);
-            	}
-            });
+            mapAttributes(entity, to);
     		return to;
     	});
+    }
+    
+    @Override
+    public Optional<ResultTO<ProductArticleDetailsTO>> updateAttributes(Long productArticleId, ProductArticleDetailsTO product) {
+        List<IssueTO> issues = new ArrayList<>();
+        return productArticleRepo.findById(productArticleId).map(entity -> {
+            entity.getAttributes().clear();
+            ProductArticle pa = entity;
+            entity.getAttributes().addAll(product.streamAttributes()
+                    .map(attr -> attr.buildEntity(pa))
+                    .collect(Collectors.toList())
+            );
+            entity = productArticleRepo.save(entity);
+            ProductArticleDetailsTO to = new ProductArticleDetailsTO();
+            mapAttributes(entity, to);
+            return Results.create(to, issues);
+        });
+    }
+
+    private void mapAttributes(ProductArticle entity, ProductArticleDetailsTO to) {
+        entity.getAttributes().forEach(attr -> {
+            AttributeTO<?> attrTO = attr.buildTO();
+            if (attrTO instanceof StringAttributeTO) {
+                to.getStringAttributes().add((StringAttributeTO) attrTO);
+            } else if (attrTO instanceof BooleanAttributeTO) {
+                to.getBooleanAttributes().add((BooleanAttributeTO) attrTO);
+            } else if (attrTO instanceof ListAttributeTO) {
+                to.getListAttributes().add((ListAttributeTO) attrTO);
+            } else if (attrTO instanceof NumericAttributeTO) {
+                to.getNumericAttributes().add((NumericAttributeTO) attrTO);
+            }
+        });
     }
     
     private static ProductCategoryTO mapCategory(Category ctg) {

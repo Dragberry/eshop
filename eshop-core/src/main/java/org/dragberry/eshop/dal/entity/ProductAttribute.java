@@ -31,6 +31,8 @@ import lombok.Setter;
 @Setter
 public abstract class ProductAttribute<T> {
     
+    private final transient Class<? extends AttributeTO<T>> toType;
+    
     @Id
     @Column(name = "PRODUCT_ATTRIBUTE_KEY")
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "PRODUCT_ATTRIBUTE_GEN")
@@ -49,16 +51,23 @@ public abstract class ProductAttribute<T> {
     @Column(name = "`ORDER`")
     private Integer order;
     
+    protected ProductAttribute(Class<? extends AttributeTO<T>> toType) {
+        this.toType = toType;
+    }
+    
     public abstract T getValue();
     
     public abstract void setValue(T value);
     
     public abstract String getStringValue();
     
-    protected abstract AttributeTO<T> createTO();
-    
     public AttributeTO<T> buildTO() {
-    	AttributeTO<T> to = createTO();
+    	AttributeTO<T> to;
+        try {
+            to = toType.getConstructor().newInstance();
+        } catch (Exception exc) {
+            throw new RuntimeException("An error has occurred while instantiation of " + toType);
+        }
     	to.setId(getEntityKey());
 		to.setName(getName());
 		to.setValue(getValue());

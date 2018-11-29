@@ -13,13 +13,18 @@ import lombok.Setter;
 @Table(name = "PRODUCT_ATTRIBUTE_BOOLEAN")
 @Getter
 @Setter
-public class ProductAttributeBoolean  extends ProductAttribute<Boolean> {
+public class ProductAttributeBoolean extends ProductAttribute<Boolean> {
+
+    public ProductAttributeBoolean() {
+        super(BooleanAttributeTO.class);
+    }
 
     @Column(name = "VALUE_BOOLEAN")
     private Boolean value;
     
     @Column(name = "DESCRIPTION")
     private String description;
+    
     
     @Override
     public Boolean getValue() {
@@ -49,11 +54,6 @@ public class ProductAttributeBoolean  extends ProductAttribute<Boolean> {
     @Override
     public String getStringValue() {
     	return description != null ? description : value ? "msg.common.true" : "msg.common.false";
-    }
-    
-    @Override
-    public BooleanAttributeTO createTO() {
-    	return new BooleanAttributeTO();
     }
     
     @Override

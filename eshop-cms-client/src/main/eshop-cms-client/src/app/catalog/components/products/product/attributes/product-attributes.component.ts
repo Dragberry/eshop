@@ -1,4 +1,11 @@
-import { Attribute, AttributeType, BooleanAttribute, ListAttribute, NumericAttribute, StringAttribute } from './../../../../model/attributes';
+import {
+  Attribute,
+  AttributeType,
+  BooleanAttribute,
+  ListAttribute,
+  StringAttribute,
+  NumericAttribute
+} from './../../../../model/attributes';
 import { Component, Input, OnDestroy, Type, OnChanges, SimpleChanges, SimpleChange } from '@angular/core';
 import { ProductArticleDetails } from 'src/app/catalog/model/product-article-details';
 import { DragulaService } from 'ng2-dragula';
@@ -63,7 +70,12 @@ export class ProductAttributesComponent implements OnDestroy, OnChanges {
 
   setProductArticle(productArticle: ProductArticleDetails): void {
     this.productArticle = productArticle;
-    this.groupAttributes(this.productArticle).forEach((attrs, group) => {
+    this.groupAttributes(
+      this.productArticle.booleanAttributes,
+      this.productArticle.listAttributes,
+      this.productArticle.numericAttributes,
+      this.productArticle.stringAttributes,
+    ).forEach((attrs, group) => {
       this.attributes.push({group: group, attrs: attrs});
     });
 
@@ -77,21 +89,18 @@ export class ProductAttributesComponent implements OnDestroy, OnChanges {
     this.oldAttributes = this.copyAttributes(this.attributes);
   }
 
-  groupAttributes<T>(all: {
-    booleanAttributes: BooleanAttribute[],
-    listAttributes: ListAttribute[],
-    numericAttributes: NumericAttribute[],
-    stringAttributes: StringAttribute[]
-  }): Map<string, Attribute<any>[]> {
+  private groupAttributes<T>(...all: Attribute<any>[][]): Map<string, Attribute<any>[]> {
     const attributeGroups: Map<string, Attribute<any>[]> = new Map();
-    all.booleanAttributes.forEach(attr => {
-      let group = attributeGroups.get(attr.group);
-      if (!group) {
-        group = [];
-        attributeGroups.set(attr.group, group);
-      }
-      attr.component = ATTRIBUTE_COMPONENTS.get(attr.type);
-      group.push(attr);
+    all.forEach(attrList => {
+      attrList.forEach(attr => {
+        let group = attributeGroups.get(attr.group);
+        if (!group) {
+          group = [];
+          attributeGroups.set(attr.group, group);
+        }
+        attr.component = ATTRIBUTE_COMPONENTS.get(attr.type);
+        group.push(attr);
+      });
     });
     return attributeGroups;
   }
@@ -128,6 +137,24 @@ export class ProductAttributesComponent implements OnDestroy, OnChanges {
   save(): void {
     const productAttributes: ProductArticleDetails = new ProductArticleDetails();
     productAttributes.id = this.productArticle.id;
+    this.attributes.forEach(group => {
+      group.attrs.forEach(attr => {
+        switch (attr.type) {
+          case AttributeType.BOOLEAN:
+            productAttributes.booleanAttributes.push(<BooleanAttribute>attr);
+            break;
+          case AttributeType.LIST:
+            productAttributes.listAttributes.push(<ListAttribute>attr);
+            break;
+          case AttributeType.NUMERIC:
+            productAttributes.numericAttributes.push(<NumericAttribute>attr);
+            break;
+          case AttributeType.STRING:
+            productAttributes.stringAttributes.push(<StringAttribute>attr);
+            break;
+        }
+      });
+    });
     this.productService.updateProductAttributes(productAttributes)
     .then(result => {
       this.setProductArticle(result);

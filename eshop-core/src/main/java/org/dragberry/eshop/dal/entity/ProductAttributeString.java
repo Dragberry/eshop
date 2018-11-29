@@ -13,6 +13,10 @@ public class ProductAttributeString  extends ProductAttribute<String> {
     @Column(name = "VALUE_STRING")
     private String value;
     
+    public ProductAttributeString() {
+       super(StringAttributeTO.class);
+    }
+    
     @Override
     public String getValue() {
         return value;
@@ -38,9 +42,4 @@ public class ProductAttributeString  extends ProductAttribute<String> {
     	return value;
     }
 
-    @Override
-    protected StringAttributeTO createTO() {
-    	return new StringAttributeTO();
-    }
-    
 }

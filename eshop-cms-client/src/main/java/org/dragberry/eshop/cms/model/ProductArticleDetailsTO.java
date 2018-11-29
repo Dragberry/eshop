@@ -2,19 +2,25 @@ package org.dragberry.eshop.cms.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.dragberry.eshop.dal.entity.ProductArticle.SaleStatus;
 import org.dragberry.eshop.model.common.FileTO;
+import org.dragberry.eshop.model.product.AttributeTO;
 import org.dragberry.eshop.model.product.BooleanAttributeTO;
 import org.dragberry.eshop.model.product.ListAttributeTO;
 import org.dragberry.eshop.model.product.NumericAttributeTO;
 import org.dragberry.eshop.model.product.StringAttributeTO;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 public class ProductArticleDetailsTO {
 
 	private Long id;
@@ -52,4 +58,14 @@ public class ProductArticleDetailsTO {
 	private List<NumericAttributeTO> numericAttributes = new ArrayList<>();
 	
 	private List<BooleanAttributeTO> booleanAttributes = new ArrayList<>();
+	
+	@JsonIgnore
+	public Stream<AttributeTO<?>> streamAttributes() {
+	    return Stream.of(
+	            booleanAttributes,
+	            listAttributes,
+	            numericAttributes,
+	            stringAttributes)
+	            .flatMap(List::stream);
+	}
 }

@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -80,9 +81,19 @@ public class CatalogController {
     
     @PutMapping("${cms.context}/catalog/products/{productArticleId}")
     @ResponseBody
-    public ResultTO<ProductArticleDetailsTO> updateProductArticleDetails(@PathVariable(required = true) Long productArticleId, @RequestBody ProductArticleDetailsTO product) {
+    public ResultTO<ProductArticleDetailsTO> updateProductArticleDetails(
+            @PathVariable(required = true) Long productArticleId,
+            @RequestBody ProductArticleDetailsTO product) {
     	log.info(product);
     	return Results.create(product);
+    }
+    
+    @PostMapping("${cms.context}/catalog/products/{productArticleId}/attributes")
+    @ResponseBody
+    public ResultTO<ProductArticleDetailsTO> updateProductAttributes(
+            @PathVariable(required = true) Long productArticleId,
+            @RequestBody ProductArticleDetailsTO product) {
+        return productService.updateAttributes(productArticleId, product).orElseThrow(ResourceNotFoundException::new);
     }
     
 }

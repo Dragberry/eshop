@@ -20,6 +20,10 @@ public class ProductAttributeList  extends ProductAttribute<List<String>> {
 	@CollectionTable(name = "PRODUCT_ATTRIBUTE_LIST_VALUES", joinColumns = @JoinColumn(name = "PRODUCT_ATTRIBUTE_KEY"))
 	private List<String> value;
     
+	public ProductAttributeList() {
+        super(ListAttributeTO.class);
+    }
+	
     @Override
     public List<String> getValue() {
         return value;
@@ -43,11 +47,6 @@ public class ProductAttributeList  extends ProductAttribute<List<String>> {
     @Override
     public String getStringValue() {
     	return value.stream().collect(Collectors.joining(", "));
-    }
-
-    @Override
-    protected ListAttributeTO createTO() {
-    	return new ListAttributeTO();
     }
     
 }
