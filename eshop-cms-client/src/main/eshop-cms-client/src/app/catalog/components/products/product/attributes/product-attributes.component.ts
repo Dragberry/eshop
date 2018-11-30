@@ -31,6 +31,14 @@ export class ProductAttributesComponent implements OnDestroy, OnChanges {
 
   isBeingEdited: boolean;
   editedAttribute: Attribute<any>;
+  isEditedAttributeNew: boolean;
+
+  idGenerator = function* idGenerator() {
+    let i = -1;
+    while (true) {
+      yield i--;
+    }
+  }();
 
   constructor(private dragulaService: DragulaService, private productService: ProductService) {
     this.dragulaService.createGroup(this.GROUPS, {
@@ -59,6 +67,7 @@ export class ProductAttributesComponent implements OnDestroy, OnChanges {
 
   setProductArticle(productArticle: ProductArticleDetails): void {
     this.productArticle = productArticle;
+    this.attributes = [];
     this.groupAttributes(
       this.productArticle.booleanAttributes,
       this.productArticle.listAttributes,
@@ -157,6 +166,7 @@ export class ProductAttributesComponent implements OnDestroy, OnChanges {
     this.attributes = this.copyAttributes(this.oldAttributes);
     this.editedAttribute = null;
     this.isBeingEdited = false;
+    this.isEditedAttributeNew = false;
   }
 
   removeGroup(group: any): void {
@@ -180,14 +190,19 @@ export class ProductAttributesComponent implements OnDestroy, OnChanges {
   }
 
   addAttribute(): void {
+    this.isEditedAttributeNew = true;
     this.editedAttribute = new BooleanAttribute();
   }
 
   startAttributeEditing(attribute: Attribute<any>): void {
+    this.isEditedAttributeNew = false;
     this.editedAttribute = attribute;
   }
 
   finishAttributeEditing(attribute: Attribute<any>): void {
+    if (this.isEditedAttributeNew) {
+      attribute.id = this.idGenerator.next().value;
+    }
     const existingGroup = this.attributes.find(grp => grp.group === attribute.group);
     if (!existingGroup) {
       // add a new group if doesnt exist
@@ -215,10 +230,12 @@ export class ProductAttributesComponent implements OnDestroy, OnChanges {
       });
     });
     this.calculateOrders();
+    this.isEditedAttributeNew = false;
     this.editedAttribute = null;
   }
 
   cancelAttributeEditing(attribute: Attribute<any>): void {
+    this.isEditedAttributeNew = false;
     this.editedAttribute = null;
   }
 

@@ -33,14 +33,17 @@ export class ProductAttributeComponent implements OnInit {
   componentRef: ComponentRef<AbstractProductAttribute<any, Attribute<any>>>;
 
   @Input()
+  attribute: Attribute<any>;
+  editedAttribute: Attribute<any>;
+
+  @Input()
+  isNew: boolean;
+
+  @Input()
   isEditable: boolean;
 
   @Input()
   isBeingEdited: boolean;
-
-  @Input()
-  attribute: Attribute<any>;
-  editedAttribute: Attribute<any>;
 
   @Output()
   attributeRemoved: EventEmitter<Attribute<any>> = new EventEmitter();
@@ -81,7 +84,7 @@ export class ProductAttributeComponent implements OnInit {
    * @returns a copy of the passed attribute the after the component is created
    */
   private createComponent(attribute: Attribute<any>, isBeingEdited = false): Attribute<any> {
-    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(ATTRIBUTE_COMPONENTS.get(this.attribute.type));
+    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(ATTRIBUTE_COMPONENTS.get(attribute.type));
     const viewContainerRef = this.attributeHost.viewContainerRef;
     viewContainerRef.clear();
     this.componentRef = viewContainerRef.createComponent(componentFactory);

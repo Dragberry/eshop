@@ -1,4 +1,3 @@
-import {  } from './../../model/data-table-state';
 import { ColumnActionEvent } from './common/column-action-event';
 import { HttpParams } from '@angular/common/http';
 import { SortDirection } from './common/sort-direction';

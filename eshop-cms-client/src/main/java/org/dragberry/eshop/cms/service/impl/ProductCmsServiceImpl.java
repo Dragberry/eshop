@@ -158,6 +158,7 @@ public class ProductCmsServiceImpl implements ProductCmsService {
             );
             entity = productArticleRepo.save(entity);
             ProductArticleDetailsTO to = new ProductArticleDetailsTO();
+            to.setId(entity.getEntityKey());
             mapAttributes(entity, to);
             return Results.create(to, issues);
         });

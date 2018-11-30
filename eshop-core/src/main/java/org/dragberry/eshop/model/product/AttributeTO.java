@@ -35,7 +35,7 @@ public abstract class AttributeTO<T> {
         } catch (Exception exc) {
             throw new RuntimeException("An error has occurred while instantiation of " + type);
         }
-        entity.setEntityKey(id);
+        entity.setEntityKey(id > 0 ? id : null);
         entity.setProductArticle(pa);
         entity.setName(name);
         entity.setGroup(group);

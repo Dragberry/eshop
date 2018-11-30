@@ -1,7 +1,7 @@
-<div class="row pt-2 pb-4 border-bottom"
+<div class="row pt-1 border-bottom"
   [attr.data-id]="attribute.id"
   [attr.data-order]="attribute.order"
-  [ngClass]="{'bg-dark text-white': isBeingEdited, 'bg-light': attribute.id === hoveredAttribudeId && !isBeingEdited}"
+  [ngClass]="{'pt-1 pb-1': !isBeingEdited, 'bg-dark text-white pt-2 pb-4': isBeingEdited, 'bg-light': attribute.id === hoveredAttribudeId && !isBeingEdited}"
   (mouseover)="hover(attribute.id)"
   (mouseleave)="unhover()">
   <div class="col-9">

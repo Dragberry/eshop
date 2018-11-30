@@ -63,7 +63,7 @@ export class ProductAttributeListComponent extends AbstractProductAttribute<stri
   valueToAdd: string;
 
   addAttributeValue(): void {
-    if (this.attribute.value.find(val => val === this.valueToAdd) == null) {
+    if (this.valueToAdd && this.attribute.value.find(val => val === this.valueToAdd) == null) {
       this.attribute.value.push(this.valueToAdd);
       this.valueToAdd = null;
     }
