@@ -1,10 +1,10 @@
 import { NavigationService } from './../../../core/service/navigation.service';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { OrderService } from './../../service/order.service';
 import { Component } from '@angular/core';
 import { OrderDetailsEditableComponent } from './order-details-editable.component';
 import { MessageService } from 'src/app/core/service/message.service';
-import { MessageType } from 'src/app/shared/model/message';
+import { MessageType } from 'src/app/shared/model';
 
 @Component({
   selector: 'app-order-create',

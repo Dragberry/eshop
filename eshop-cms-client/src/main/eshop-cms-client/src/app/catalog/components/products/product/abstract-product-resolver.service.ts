@@ -1,9 +1,9 @@
-import { ProductArticleDetails } from './../../../model/product-article-details';
 import { map } from 'rxjs/operators';
 import { Observable, from } from 'rxjs';
 import { Resolve, RouterStateSnapshot, ActivatedRouteSnapshot } from '@angular/router';
 import { NavigationService } from 'src/app/core/service/navigation.service';
 import { ProductService } from 'src/app/catalog/services/product.service';
+import { ProductArticleDetails } from 'src/app/catalog/model';
 
 export abstract class AbstractProductResolverService implements Resolve<ProductArticleDetails> {
 

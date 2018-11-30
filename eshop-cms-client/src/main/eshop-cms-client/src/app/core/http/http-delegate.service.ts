@@ -1,7 +1,7 @@
 import { AuthenticationService } from './../auth/authentication.service';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { saveAs } from 'file-saver';
-import { Result } from '../../shared/model/result';
+import { Result } from 'src/app/shared/model';
 import { Injectable } from '@angular/core';
 import { MessageService } from '../service/message.service';
 

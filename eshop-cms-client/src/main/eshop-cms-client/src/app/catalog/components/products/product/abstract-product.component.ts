@@ -1,6 +1,6 @@
-import { ProductArticleDetails } from './../../../model/product-article-details';
 import { ActivatedRoute } from '@angular/router';
 import { OnInit } from '@angular/core';
+import { ProductArticleDetails } from 'src/app/catalog/model';
 
 export abstract class AbstractProductComponent implements OnInit {
 

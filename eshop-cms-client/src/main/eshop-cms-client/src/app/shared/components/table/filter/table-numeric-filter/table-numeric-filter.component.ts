@@ -1,10 +1,9 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { TableRangeFilter } from '../table-range-filter';
 
 @Component({
   selector: 'app-table-numeric-filter',
-  templateUrl: './table-numeric-filter.component.html',
-  styleUrls: ['./table-numeric-filter.component.css']
+  templateUrl: './table-numeric-filter.component.html'
 })
 export class TableNumericFilterComponent extends TableRangeFilter<number> {
 

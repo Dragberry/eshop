@@ -1,11 +1,11 @@
-import { DataTableState, DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from './../../model/data-table-state';
+import {  } from './../../model/data-table-state';
 import { ColumnActionEvent } from './common/column-action-event';
 import { HttpParams } from '@angular/common/http';
 import { SortDirection } from './common/sort-direction';
-import { Page } from '../../model/page';
 import { PageableEvent } from './common/pageable-event';
 import { ViewChildren, QueryList, AfterViewInit } from '@angular/core';
 import { TableActionColumnComponent } from './table-action-column/table-action-column.component';
+import { Page, DataTableState, DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from 'src/app/shared/model';
 
 export abstract class DataTableHolder<T> implements AfterViewInit {
 

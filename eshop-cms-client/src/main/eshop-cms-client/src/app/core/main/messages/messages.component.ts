@@ -1,5 +1,4 @@
-import { MessageType } from '../../../shared/model/message';
-import { Message } from 'src/app/shared/model/message';
+import { Message, MessageType } from 'src/app/shared/model';
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 const TYPES = new Map<string, MessageType>();

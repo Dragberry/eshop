@@ -1,4 +1,3 @@
-import { Component, Input } from '@angular/core';
 import { TableFilter } from './table-filter';
 
 export abstract class TableRangeFilter<T> extends TableFilter {

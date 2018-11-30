@@ -6,7 +6,7 @@ import { ProductListState } from './product-list-state';
 import { ProductService } from 'src/app/catalog/services/product.service';
 import { NavigationService } from 'src/app/core/service/navigation.service';
 import { map } from 'rxjs/operators';
-import { ProductArticle } from 'src/app/catalog/model/product-article';
+import { ProductArticle } from 'src/app/catalog/model';
 
 @Injectable()
 export class ProductListResolverService implements Resolve<ProductListState> {

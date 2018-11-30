@@ -1,6 +1,5 @@
-import { Issue } from './../../shared/model/issue';
 import { Injectable } from '@angular/core';
-import { MessageType, Message } from 'src/app/shared/model/message';
+import { Issue, Message, MessageType } from 'src/app/shared/model';
 import { Observable, Subscriber } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 

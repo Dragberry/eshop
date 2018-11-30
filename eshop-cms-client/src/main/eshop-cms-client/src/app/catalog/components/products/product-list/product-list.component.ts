@@ -1,15 +1,13 @@
-import { ProductCategory } from 'src/app/catalog/model/product-category';
 import { HttpParams } from '@angular/common/http';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { DataTableHolder } from 'src/app/shared/components/table/data-table-holder';
-import { ProductArticle } from 'src/app/catalog/model/product-article';
+import { ProductArticle, ProductCategory } from 'src/app/catalog/model';
 import { ProductService } from 'src/app/catalog/services/product.service';
-import { Page } from 'src/app/shared/model/page';
+import { MessageType, Page } from 'src/app/shared/model';
 import { ActivatedRoute } from '@angular/router';
 import { ProductListState } from './product-list-state';
 import { ProductListResolverService } from './product-list-resolver.service';
 import { MessageService } from 'src/app/core/service/message.service';
-import { MessageType } from 'src/app/shared/model/message';
 
 @Component({
   selector: 'app-product-list',

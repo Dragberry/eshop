@@ -6,15 +6,10 @@ import {
   StringAttribute,
   NumericAttribute
 } from 'src/app/catalog/model/attributes';
-import { Component, Input, OnDestroy, Type, OnChanges, SimpleChanges, SimpleChange } from '@angular/core';
-import { ProductArticleDetails } from 'src/app/catalog/model/product-article-details';
+import { Component, Input, OnDestroy, OnChanges, SimpleChanges, SimpleChange } from '@angular/core';
+import { ProductArticleDetails } from 'src/app/catalog/model';
 import { DragulaService } from 'ng2-dragula';
 import { Subscription } from 'rxjs';
-import { AbstractProductAttribute } from './abstract-product-attribute';
-import { ProductAttributeStringComponent } from './product-attribute-string.component';
-import { ProductAttributeBooleanComponent } from './product-attribute-boolean.component';
-import { ProductAttributeNumericComponent } from './product-attribute-numeric.component';
-import { ProductAttributeListComponent } from './product-attribute-list.component';
 import { ProductService } from 'src/app/catalog/services/product.service';
 
 @Component({

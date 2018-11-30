@@ -1,4 +1,4 @@
-import { MessageType } from 'src/app/shared/model/message';
+import { MessageType } from 'src/app/shared/model';
 import { MessageService } from './../../../../../core/service/message.service';
 import { ProductService } from './../../../../services/product.service';
 import { ActivatedRoute } from '@angular/router';

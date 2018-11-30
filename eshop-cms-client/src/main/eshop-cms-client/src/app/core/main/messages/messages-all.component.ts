@@ -1,5 +1,4 @@
-import { MessageType } from '../../../shared/model/message';
-import { Message } from 'src/app/shared/model/message';
+import { Message, MessageType } from 'src/app/shared/model';
 import { Component, OnInit, ViewChildren, QueryList } from '@angular/core';
 import { MessageService } from '../../service/message.service';
 import { MessagesComponent } from './messages.component';

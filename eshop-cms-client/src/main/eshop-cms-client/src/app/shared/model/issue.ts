@@ -1,4 +1,4 @@
-import { MessageType } from './message';
+import { MessageType } from './message-type';
 
 export class Issue {
   errorCode: string;

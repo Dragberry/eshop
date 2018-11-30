@@ -3,8 +3,7 @@ import { TableRangeFilter } from '../table-range-filter';
 
 @Component({
   selector: 'app-table-date-filter',
-  templateUrl: './table-date-filter.component.html',
-  styleUrls: ['./table-date-filter.component.css']
+  templateUrl: './table-date-filter.component.html'
 })
 export class TableDateFilterComponent extends TableRangeFilter<Date> {
 

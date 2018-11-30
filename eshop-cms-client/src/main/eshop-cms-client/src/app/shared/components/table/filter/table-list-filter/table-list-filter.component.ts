@@ -3,8 +3,7 @@ import { TableFilter } from '../table-filter';
 
 @Component({
   selector: 'app-table-list-filter',
-  templateUrl: './table-list-filter.component.html',
-  styleUrls: ['./table-list-filter.component.css']
+  templateUrl: './table-list-filter.component.html'
 })
 export class TableListFilterComponent extends TableFilter {
 

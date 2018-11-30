@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { ProductCategory } from 'src/app/catalog/model/product-category';
+import { Component, Input } from '@angular/core';
+import { ProductCategory } from 'src/app/catalog/model';
 
 @Component({
     selector: 'app-product-category-tree-element',

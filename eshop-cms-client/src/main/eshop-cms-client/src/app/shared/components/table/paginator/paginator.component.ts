@@ -1,13 +1,12 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { Page } from '../../../model/page';
+import { Page } from 'src/app/shared/model/page';
 import { PageableEvent } from '../common/pageable-event';
 
 const DEFAULT_PAGE_SIZE_OPTIONS = [20, 35, 50];
 
 @Component({
   selector: 'app-paginator',
-  templateUrl: './paginator.component.html',
-  styleUrls: ['./paginator.component.css']
+  templateUrl: './paginator.component.html'
 })
 export class PaginatorComponent {
 
