@@ -30,7 +30,10 @@ import { BooleanAttribute } from 'src/app/catalog/model/attributes';
       <ng-template #attributeIsBeingEdited>
         <div class="col-6">
           <label [for]="'name' + attribute.id" class="font-weight-bold">{{'common.attributeName' | translate}}</label>
-          <input [id]="'name' + attribute.id" class="form-control form-control-sm" type="text" [(ngModel)]="attribute.name"/>
+          <input [id]="'name' + attribute.id" class="form-control form-control-sm" type="text"
+            [attr.minlength]="1"
+            [attr.maxlength]="64"
+            [(ngModel)]="attribute.name"/>
         </div>
         <div class="col-6">
           <label [for]="'description' + attribute.id" class="font-weight-bold">
@@ -45,7 +48,10 @@ import { BooleanAttribute } from 'src/app/catalog/model/attributes';
                   [(ngModel)]="attribute.value">
               </div>
             </div>
-            <input type="text" class="form-control" [(ngModel)]="attribute.description">
+            <input type="text" class="form-control"
+              [attr.minlength]="1"
+              [attr.maxlength]="64"
+              [(ngModel)]="attribute.description">
           </div>
         </div>
       </ng-template>

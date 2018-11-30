@@ -24,11 +24,17 @@ import { StringAttribute } from 'src/app/catalog/model/attributes';
         <div class="row">
           <div class="col-6">
             <label [for]="'name' + attribute.id" class="font-weight-bold">{{'common.attributeName' | translate}}</label>
-            <input [id]="'name' + attribute.id" class="form-control form-control-sm" type="text" [(ngModel)]="attribute.name"/>
+            <input [id]="'name' + attribute.id" class="form-control form-control-sm" type="text"
+              [attr.minlength]="1"
+              [attr.maxlength]="64"
+              [(ngModel)]="attribute.name"/>
           </div>
           <div class="col-6">
             <label [for]="'value' + attribute.id" class="font-weight-bold">{{'common.attributeValue' | translate}}</label>
-            <input [id]="'value' + attribute.id" class="form-control form-control-sm" type="text" [(ngModel)]="attribute.value"/>
+            <input [id]="'value' + attribute.id" class="form-control form-control-sm" type="text"
+              [attr.minlength]="1"
+              [attr.maxlength]="64"
+              [(ngModel)]="attribute.value"/>
           </div>
         </div>
       </ng-template>
