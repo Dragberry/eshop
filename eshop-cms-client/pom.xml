@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
@@ -13,11 +14,11 @@
 		<artifactId>eshop</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
-	
+
 	<properties>
 		<jjwt.version>0.7.0</jjwt.version>
 	</properties>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -29,9 +30,9 @@
 			<version>${jjwt.version}</version>
 		</dependency>
 		<dependency>
-		  	<groupId>org.dragberry.eshop</groupId>
-		  	<artifactId>eshop-core</artifactId>
-		  	<version>${project.version}</version>
+			<groupId>org.dragberry.eshop</groupId>
+			<artifactId>eshop-core</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 
@@ -44,39 +45,22 @@
 		</resources>
 		<plugins>
 			<plugin>
-				<groupId>com.github.eirslett</groupId>
-				<artifactId>frontend-maven-plugin</artifactId>
-				<version>1.6</version>
-
-				<configuration>
-					<nodeVersion>v10.12.0</nodeVersion>
-					<npmVersion>6.4.1</npmVersion>
-					<workingDirectory>src/main/eshop-cms-client</workingDirectory>
-				</configuration>
-
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>install node and npm</id>
-						<goals>
-							<goal>install-node-and-npm</goal>
-						</goals>
-					</execution>
-
-					<execution>
-						<id>npm install</id>
-						<goals>
-							<goal>npm</goal>
-						</goals>
-					</execution>
-
-					<execution>
 						<id>npm run build</id>
+						<phase>generate-sources</phase>
 						<goals>
-							<goal>npm</goal>
+							<goal>exec</goal>
 						</goals>
-
 						<configuration>
-							<arguments>run build</arguments>
+							<workingDirectory>src/main/eshop-cms-client</workingDirectory>
+							<executable>npm</executable>
+							<arguments>
+								<argument>run</argument>
+								<argument>build</argument>
+							</arguments>
 						</configuration>
 					</execution>
 				</executions>
