@@ -49,13 +49,27 @@
 				<artifactId>exec-maven-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>npm run build</id>
+						<id>npm-run-install</id>
 						<phase>generate-sources</phase>
 						<goals>
 							<goal>exec</goal>
 						</goals>
 						<configuration>
-							<workingDirectory>src/main/eshop-cms-client</workingDirectory>
+							<workingDirectory>${project.basedir}/src/main/eshop-cms-client</workingDirectory>
+							<executable>npm</executable>
+							<arguments>
+								<argument>install</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>npm-run-build</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<workingDirectory>${project.basedir}/src/main/eshop-cms-client</workingDirectory>
 							<executable>npm</executable>
 							<arguments>
 								<argument>run</argument>
