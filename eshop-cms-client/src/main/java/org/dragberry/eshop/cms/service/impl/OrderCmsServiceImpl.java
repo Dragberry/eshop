@@ -134,7 +134,7 @@ public class OrderCmsServiceImpl implements OrderCmsService {
 	        	                itemEntity.setVersion(item.getVersion());
 	        	                if (!itemEntity.getProduct().getEntityKey().equals(item.getProduct().getProductId())) {
 	            	                productRepo.findById(item.getProduct().getProductId())
-	                                    .ifPresentOrElse(itemEntity::setProduct,
+	                                    .ifPresentOrElse(p -> itemEntity.setProduct(p),
 	                                        () -> issues.add(Issues.error(ErrorCodes.PRODUCT_INVALID)));
 	        	                }
 	        	                return itemEntity;
@@ -146,7 +146,7 @@ public class OrderCmsServiceImpl implements OrderCmsService {
 	        	                newItemEntity.setQuantity(item.getQuantity());
 	        	                newItemEntity.setTotalAmount(item.getTotalAmount());
 	        	                productRepo.findById(item.getProduct().getProductId())
-	        	                    .ifPresentOrElse(newItemEntity::setProduct,
+	        	                    .ifPresentOrElse(p -> newItemEntity.setProduct(p),
 	        	                            () -> issues.add(Issues.error(ErrorCodes.PRODUCT_INVALID)));
 	        	                return newItemEntity;
 	    	                });
