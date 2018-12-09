@@ -43,4 +43,8 @@ export class ProductService {
   updateProductAttributes(product: ProductArticleDetails): Promise<ProductArticleDetails> {
     return this.httpService.post<ProductArticleDetails>(`${PRODUCTS_URL}/${product.id}/attributes`, product);
   }
+
+  findProductAttribute(name: string): Promise<string[]> {
+    return this.httpService.get<string[]>(`${PRODUCTS_URL}/attributes`, {params: new HttpParams().append('name', name)});
+  }
 }

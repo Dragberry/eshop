@@ -146,24 +146,6 @@ public class ProductCmsServiceImpl implements ProductCmsService {
     	});
     }
     
-    @Override
-    public Optional<ResultTO<ProductArticleDetailsTO>> updateAttributes(Long productArticleId, ProductArticleDetailsTO product) {
-        List<IssueTO> issues = new ArrayList<>();
-        return productArticleRepo.findById(productArticleId).map(entity -> {
-            entity.getAttributes().clear();
-            ProductArticle pa = entity;
-            entity.getAttributes().addAll(product.streamAttributes()
-                    .map(attr -> attr.buildEntity(pa))
-                    .collect(Collectors.toList())
-            );
-            entity = productArticleRepo.save(entity);
-            ProductArticleDetailsTO to = new ProductArticleDetailsTO();
-            to.setId(entity.getEntityKey());
-            mapAttributes(entity, to);
-            return Results.create(to, issues);
-        });
-    }
-
     private void mapAttributes(ProductArticle entity, ProductArticleDetailsTO to) {
         entity.getAttributes().forEach(attr -> {
             AttributeTO<?> attrTO = attr.buildTO();
@@ -193,5 +175,28 @@ public class ProductCmsServiceImpl implements ProductCmsService {
         to.setPath(file.getPath());
         to.setName(file.getName());
         return to;
+    }
+    
+    @Override
+    public Optional<ResultTO<ProductArticleDetailsTO>> updateAttributes(Long productArticleId, ProductArticleDetailsTO product) {
+        List<IssueTO> issues = new ArrayList<>();
+        return productArticleRepo.findById(productArticleId).map(entity -> {
+            entity.getAttributes().clear();
+            ProductArticle pa = entity;
+            entity.getAttributes().addAll(product.streamAttributes()
+                    .map(attr -> attr.buildEntity(pa))
+                    .collect(Collectors.toList())
+            );
+            entity = productArticleRepo.save(entity);
+            ProductArticleDetailsTO to = new ProductArticleDetailsTO();
+            to.setId(entity.getEntityKey());
+            mapAttributes(entity, to);
+            return Results.create(to, issues);
+        });
+    }
+    
+    @Override
+    public List<String> findProductAttributes(String name) {
+    	return productArticleRepo.findAttributeNames(name);
     }
 }

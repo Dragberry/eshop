@@ -41,5 +41,11 @@ public interface ProductArticleRepository extends ProductArticleSearchRepository
      */
     @Query("select entry(l) from ProductArticle pa join pa.labels l where pa.entityKey = :productArticleId")
 	List<Object> findLabels(Long productArticleId);
+    
+    @Query("SELECT DISTINCT pa.name FROM ProductAttribute pa WHERE UPPER(pa.name) LIKE CONCAT('%', :name, '%')")
+	List<String> findAttributeNames(String name);
+    
+    @Query("SELECT DISTINCT pa.group FROM ProductAttribute pa WHERE UPPER(pa.group) LIKE CONCAT('%', :group, '%')")
+	List<String> findAttributeGroup(String group);
 
 }

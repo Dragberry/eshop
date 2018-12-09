@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs';
 import { ATTRIBUTE_COMPONENTS } from './attribute-components';
 import {
   Attribute,
@@ -66,6 +67,8 @@ export class ProductAttributeComponent implements OnInit {
   hoveredAttribudeId: number;
 
   attriubteTypes: AttributeType[] = ATTRIBUTE_TYPES;
+
+  names: Observable<string>;
 
   constructor(private componentFactoryResolver: ComponentFactoryResolver) { }
 

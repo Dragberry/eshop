@@ -23,6 +23,7 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { CollapseModule } from 'ngx-bootstrap/collapse';
 import { NgxMaskModule } from 'ngx-mask';
 import { TimepickerModule } from 'ngx-bootstrap/timepicker';
+import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
 import { NavigationService } from './service/navigation.service';
 import { BreadcrumbComponent } from './main/breadcrumb/breadcrumb.component';
 import { SideMenuComponent } from './main/side-menu/side-menu.component';
@@ -55,7 +56,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     DragulaModule.forRoot(),
     ModalModule.forRoot(),
     NgxMaskModule.forRoot(),
-    TimepickerModule.forRoot()
+    TimepickerModule.forRoot(),
+    TypeaheadModule.forRoot()
   ],
   declarations: [
     DashboardComponent,

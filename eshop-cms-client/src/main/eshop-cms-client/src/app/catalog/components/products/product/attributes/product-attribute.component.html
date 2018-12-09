@@ -15,7 +15,8 @@
             [id]="'group' + attribute.id"
             [attr.minlength]="1"
             [attr.maxlength]="32"
-            [(ngModel)]="editedAttribute.group"/>
+            [(ngModel)]="editedAttribute.group"
+            [typeahead]="groups"/>
         </div>
         <div class="col-6">
           <label [for]="'type' + attribute.id" class="font-weight-bold">

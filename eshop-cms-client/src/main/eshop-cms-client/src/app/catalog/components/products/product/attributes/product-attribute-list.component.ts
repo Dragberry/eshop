@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs';
 import { Component } from '@angular/core';
 import { AbstractProductAttribute } from './abstract-product-attribute';
 import { ListAttribute } from 'src/app/catalog/model/attributes';
@@ -27,7 +28,8 @@ import { ListAttribute } from 'src/app/catalog/model/attributes';
           <input [id]="'name' + attribute.id" class="form-control form-control-sm" type="text"
             [attr.minlength]="1"
             [attr.maxlength]="64"
-            [(ngModel)]="attribute.name"/>
+            [(ngModel)]="attribute.name"
+            [typeahead]="names"/>
         </div>
         <div class="col-6">
           <label [for]="'value' + attribute.id" class="font-weight-bold">
@@ -66,6 +68,7 @@ import { ListAttribute } from 'src/app/catalog/model/attributes';
 export class ProductAttributeListComponent extends AbstractProductAttribute<string[], ListAttribute> {
 
   valueToAdd: string;
+  names: Observable<string[]>;
 
   addAttributeValue(): void {
     if (this.valueToAdd && this.attribute.value.find(val => val === this.valueToAdd) == null) {

@@ -25,4 +25,6 @@ public interface ProductCmsService {
 	Optional<ProductArticleDetailsTO> getProductArticleDetails(Long productArticleId);
 
     Optional<ResultTO<ProductArticleDetailsTO>> updateAttributes(Long productArticleId, ProductArticleDetailsTO product);
+
+	List<String> findProductAttributes(String name);
 }

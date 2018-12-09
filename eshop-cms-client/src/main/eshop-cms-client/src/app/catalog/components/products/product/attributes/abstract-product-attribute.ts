@@ -1,9 +1,16 @@
+import { ProductService } from './../../../../services/product.service';
+import { Observable } from 'rxjs';
 import { Attribute } from 'src/app/catalog/model/attributes';
 
 export abstract class AbstractProductAttribute<V, A extends Attribute<V>> {
 
   isBeingEdited: boolean;
   attribute: A;
+  names: Observable<string[]>;
+
+  constructor(protected productService: ProductService) {
+
+  }
 
   abstract createAttribute(): A;
 

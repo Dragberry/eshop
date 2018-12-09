@@ -1,3 +1,4 @@
+
 package org.dragberry.eshop.cms.controller;
 
 import java.io.IOException;
@@ -94,6 +95,12 @@ public class CatalogController {
             @PathVariable(required = true) Long productArticleId,
             @RequestBody ProductArticleDetailsTO product) {
         return productService.updateAttributes(productArticleId, product).orElseThrow(ResourceNotFoundException::new);
+    }
+    
+    @GetMapping("${cms.context}/catalog/products/attributes")
+    public List<String> findProductAttributes(
+    		@RequestParam(required = true) String name) {
+    	return productService.findProductAttributes(name);
     }
     
 }
