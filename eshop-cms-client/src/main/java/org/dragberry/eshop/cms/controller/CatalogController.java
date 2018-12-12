@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.dragberry.eshop.cms.controller.exception.BadRequestException;
 import org.dragberry.eshop.cms.controller.exception.ResourceNotFoundException;
 import org.dragberry.eshop.cms.model.ProductArticleDetailsTO;
 import org.dragberry.eshop.cms.model.ProductCategoryTO;
@@ -14,6 +15,9 @@ import org.dragberry.eshop.cms.service.ProductCmsService;
 import org.dragberry.eshop.common.PageableList;
 import org.dragberry.eshop.common.ResultTO;
 import org.dragberry.eshop.common.Results;
+import org.dragberry.eshop.dal.entity.ProductAttribute;
+import org.dragberry.eshop.dal.entity.ProductAttributeNumeric;
+import org.dragberry.eshop.dal.entity.ProductAttributeString;
 import org.dragberry.eshop.service.DataImporter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -97,10 +101,34 @@ public class CatalogController {
         return productService.updateAttributes(productArticleId, product).orElseThrow(ResourceNotFoundException::new);
     }
     
-    @GetMapping("${cms.context}/catalog/products/attributes")
-    public List<String> findProductAttributes(
-    		@RequestParam(required = true) String name) {
-    	return productService.findProductAttributes(name);
+    @GetMapping("${cms.context}/catalog/products/attributes/groups")
+    public List<String> findGroupsForAttributes(@RequestParam(required = true) String query) {
+        return productService.findGroupsForAttributes(query);
     }
     
+    @GetMapping("${cms.context}/catalog/products/attributes/names")
+    public List<String> findNamesForAttributes(
+            @RequestParam(required = true) Class<? extends ProductAttribute<?>> type,
+            @RequestParam(required = true) String query) {
+        if (!ProductAttribute.class.isAssignableFrom(type)) {
+            throw new BadRequestException();
+        }
+        return productService.findNamesForAttributes(type, query);
+    }
+    
+    @GetMapping("${cms.context}/catalog/products/attributes/values")
+    public List<String> findValuesForAttributes(
+            @RequestParam(required = true) Class<ProductAttributeString> type,
+            @RequestParam(required = true) String query) {
+        log.info("findValuesForAttributes: " + type + " " + query);
+        return List.of();
+    }
+    
+    @GetMapping("${cms.context}/catalog/products/attributes/units")
+    public List<String> findUnitsForNumericAttributes(
+            @RequestParam(required = true) Class<ProductAttributeNumeric> type,
+            @RequestParam(required = true) String query) {
+        log.info("findUnitsForNumericAttributes: " + type + " " + query);
+        return List.of();
+    }
 }

@@ -40,9 +40,11 @@ import org.dragberry.eshop.dal.entity.ProductAttributeBoolean;
 import org.dragberry.eshop.dal.entity.ProductAttributeList;
 import org.dragberry.eshop.dal.entity.ProductAttributeNumeric;
 import org.dragberry.eshop.dal.entity.ProductAttributeString;
+import org.dragberry.eshop.dal.entity.ProductAttribute_;
 import org.dragberry.eshop.dal.entity.Product_;
 import org.dragberry.eshop.dal.entity.ProductArticle.SaleStatus;
 import org.dragberry.eshop.dal.entity.ProductArticle_;
+import org.dragberry.eshop.dal.entity.ProductAttribute;
 import org.dragberry.eshop.dal.sort.Roots;
 import org.dragberry.eshop.dal.sort.SortConfig;
 import org.dragberry.eshop.dal.sort.SortContext;
@@ -552,5 +554,15 @@ public class ProductArticleSearchRepositoryImpl implements ProductArticleSearchR
             return SortContext.of(cb, roots);
         }
 
+	}
+	
+	public List<String> findNamesForAttributes(Class<? extends ProductAttribute<?>> type, String name) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<String> query = cb.createQuery(String.class);
+		Root<? extends ProductAttribute<?>> root = query.from(type);
+		query.distinct(true)
+			.select(root.get(ProductAttribute_.name))
+			.where(cb.like(root.get(ProductAttribute_.name), "%" + name + "%"));
+		return em.createQuery(query).setMaxResults(10).getResultList();
 	}
 }

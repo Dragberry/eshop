@@ -23,6 +23,7 @@ import org.dragberry.eshop.dal.entity.Category;
 import org.dragberry.eshop.dal.entity.File;
 import org.dragberry.eshop.dal.entity.Product;
 import org.dragberry.eshop.dal.entity.ProductArticle;
+import org.dragberry.eshop.dal.entity.ProductAttribute;
 import org.dragberry.eshop.dal.repo.CategoryRepository;
 import org.dragberry.eshop.dal.repo.ProductArticleRepository;
 import org.dragberry.eshop.dal.repo.ProductRepository;
@@ -196,7 +197,12 @@ public class ProductCmsServiceImpl implements ProductCmsService {
     }
     
     @Override
-    public List<String> findProductAttributes(String name) {
-    	return productArticleRepo.findAttributeNames(name);
+    public List<String> findGroupsForAttributes(String group) {
+    	return productArticleRepo.findGroupsForAttributes(group);
+    }
+    
+    @Override
+    public List<String> findNamesForAttributes(Class<? extends ProductAttribute<?>> type, String name) {
+    	return productArticleRepo.findNamesForAttributes(type, name);
     }
 }
