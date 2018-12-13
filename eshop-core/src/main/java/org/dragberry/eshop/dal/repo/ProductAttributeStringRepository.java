@@ -13,4 +13,12 @@ public interface ProductAttributeStringRepository extends ProductAttributeReposi
 	@Query("select distinct attr.value from ProductAttributeString attr join attr.productArticle pa join pa.categories c where c = :category and attr.name = :attributeName order by attr.value")
 	List<String> findByNameAndCategory(String attributeName, Category category);
 
+	/**
+	 * Find values by the given string
+	 * @param value query
+	 * @return list of values
+	 */
+	@Query("SELECT DISTINCT attr.value FROM ProductAttributeString attr WHERE UPPER(attr.value) LIKE CONCAT('%', :value, '%')")
+    List<String> findValues(String value);
+
 }

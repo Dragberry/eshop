@@ -24,8 +24,16 @@ import org.dragberry.eshop.dal.entity.File;
 import org.dragberry.eshop.dal.entity.Product;
 import org.dragberry.eshop.dal.entity.ProductArticle;
 import org.dragberry.eshop.dal.entity.ProductAttribute;
+import org.dragberry.eshop.dal.entity.ProductAttributeBoolean;
+import org.dragberry.eshop.dal.entity.ProductAttributeList;
+import org.dragberry.eshop.dal.entity.ProductAttributeNumeric;
+import org.dragberry.eshop.dal.entity.ProductAttributeString;
 import org.dragberry.eshop.dal.repo.CategoryRepository;
 import org.dragberry.eshop.dal.repo.ProductArticleRepository;
+import org.dragberry.eshop.dal.repo.ProductAttributeBooleanRepository;
+import org.dragberry.eshop.dal.repo.ProductAttributeListRepository;
+import org.dragberry.eshop.dal.repo.ProductAttributeNumericRepository;
+import org.dragberry.eshop.dal.repo.ProductAttributeStringRepository;
 import org.dragberry.eshop.dal.repo.ProductRepository;
 import org.dragberry.eshop.dal.repo.ProductRepository.ProductOrderItemSpecification;
 import org.dragberry.eshop.model.common.FileTO;
@@ -41,6 +49,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 @Service
 public class ProductCmsServiceImpl implements ProductCmsService {
     
@@ -52,6 +63,18 @@ public class ProductCmsServiceImpl implements ProductCmsService {
     
     @Autowired
     private ProductRepository productRepo;
+    
+    @Autowired
+    private ProductAttributeBooleanRepository paBooleanRepo;
+    
+    @Autowired
+    private ProductAttributeListRepository paListRepo;
+    
+    @Autowired
+    private ProductAttributeNumericRepository paNumericRepo;
+    
+    @Autowired
+    private ProductAttributeStringRepository paStringRepo;
     
     @Value("${url.catalog}")
     private String urlCatalog;
@@ -202,7 +225,41 @@ public class ProductCmsServiceImpl implements ProductCmsService {
     }
     
     @Override
-    public List<String> findNamesForAttributes(Class<? extends ProductAttribute<?>> type, String name) {
-    	return productArticleRepo.findNamesForAttributes(type, name);
+    public List<String> findNamesForAttributes(String type, String name) {
+        return productArticleRepo.findNamesForAttributes(resolveProductAttributeType(type), name);
+    }
+    
+    @Override
+    public List<String> findValuesForAttributes(String type, String query) {
+        Class<? extends ProductAttribute<?>> clazz = resolveProductAttributeType(type);
+        if (ProductAttributeBoolean.class.isAssignableFrom(clazz)) {
+            return paBooleanRepo.findValues(query);
+        } else if (ProductAttributeList.class.isAssignableFrom(clazz)) {
+            return paListRepo.findValues(type);
+        } else if (ProductAttributeNumeric.class.isAssignableFrom(clazz)) {
+            return paNumericRepo.findUnits(query);
+        } else if (ProductAttributeString.class.isAssignableFrom(clazz)) {
+            return paStringRepo.findValues(query);
+        }
+        throw new UnsupportedOperationException("Unknow product attribute type " + type);
+    }
+    
+    /**
+     * Trying to resolve {@link ProductAttribute} subclass from the given string
+     * @param type
+     * @return a subclass of {@link ProductAttribute}
+     * @throws IllegalArgumentException, if the type is invalid
+     */
+    @SuppressWarnings("unchecked")
+    private Class<? extends ProductAttribute<?>> resolveProductAttributeType(String type) {
+        try {
+            Class<?> attrType = Class.forName(type);
+            if (ProductAttribute.class.isAssignableFrom(attrType)) {
+               return (Class<? extends ProductAttribute<?>>) attrType;
+            }
+        } catch (ClassNotFoundException cnfe) {
+            log.warn("Unknown product attribute type: {0}", type);
+        }
+        throw new IllegalArgumentException("Unknow product attribute type " + type);
     }
 }

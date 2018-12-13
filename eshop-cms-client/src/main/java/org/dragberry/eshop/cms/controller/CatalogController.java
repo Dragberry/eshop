@@ -15,9 +15,6 @@ import org.dragberry.eshop.cms.service.ProductCmsService;
 import org.dragberry.eshop.common.PageableList;
 import org.dragberry.eshop.common.ResultTO;
 import org.dragberry.eshop.common.Results;
-import org.dragberry.eshop.dal.entity.ProductAttribute;
-import org.dragberry.eshop.dal.entity.ProductAttributeNumeric;
-import org.dragberry.eshop.dal.entity.ProductAttributeString;
 import org.dragberry.eshop.service.DataImporter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -101,34 +98,52 @@ public class CatalogController {
         return productService.updateAttributes(productArticleId, product).orElseThrow(ResourceNotFoundException::new);
     }
     
+    /**
+     * Search for available groups for product attributes
+     * @param query to search
+     * @return list of available groups
+     */
     @GetMapping("${cms.context}/catalog/products/attributes/groups")
     public List<String> findGroupsForAttributes(@RequestParam(required = true) String query) {
         return productService.findGroupsForAttributes(query);
     }
     
+    /**
+     * Search for available name for the given product attribute type
+     * @param type of attribute
+     * @param query to search
+     * @return list of available names
+     */
     @GetMapping("${cms.context}/catalog/products/attributes/names")
     public List<String> findNamesForAttributes(
-            @RequestParam(required = true) Class<? extends ProductAttribute<?>> type,
+            @RequestParam(required = true) String type,
             @RequestParam(required = true) String query) {
-        if (!ProductAttribute.class.isAssignableFrom(type)) {
+        try {
+            return productService.findNamesForAttributes(type, query);
+        } catch (IllegalArgumentException iae) {
             throw new BadRequestException();
         }
-        return productService.findNamesForAttributes(type, query);
     }
     
+    /**
+     * Search for available attribute values for the given product attribute type.
+     * @param type of attribute
+     * @param query to search
+     * @return
+     * <ul>
+     *  <li>list of values for string and list attributes</li>
+     *  <li>list of units for numeric attributes</li>
+     *  <li>list of descriptions for boolean attributes</li>
+     * </ul>
+     */
     @GetMapping("${cms.context}/catalog/products/attributes/values")
     public List<String> findValuesForAttributes(
-            @RequestParam(required = true) Class<ProductAttributeString> type,
+            @RequestParam(required = true) String type,
             @RequestParam(required = true) String query) {
-        log.info("findValuesForAttributes: " + type + " " + query);
-        return List.of();
-    }
-    
-    @GetMapping("${cms.context}/catalog/products/attributes/units")
-    public List<String> findUnitsForNumericAttributes(
-            @RequestParam(required = true) Class<ProductAttributeNumeric> type,
-            @RequestParam(required = true) String query) {
-        log.info("findUnitsForNumericAttributes: " + type + " " + query);
-        return List.of();
+        try {
+            return productService.findValuesForAttributes(type, query);
+        } catch (IllegalArgumentException iae) {
+            throw new BadRequestException();
+        }
     }
 }

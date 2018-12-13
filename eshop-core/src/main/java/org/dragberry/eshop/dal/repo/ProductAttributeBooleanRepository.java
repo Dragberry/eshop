@@ -16,4 +16,12 @@ public interface ProductAttributeBooleanRepository extends ProductAttributeRepos
 	@Query("select distinct attr.description from ProductAttributeBoolean attr join attr.productArticle pa join pa.categories c where c = :category and attr.description is not null and attr.name = :attributeName order by attr.description")
     List<String> findByNameAndCategory(String attributeName, Category category);
 
+	/**
+     * Find description by the given string
+     * @param decription query
+     * @return list of units
+     */
+    @Query("SELECT DISTINCT attr.description FROM ProductAttributeBoolean attr WHERE UPPER(attr.description) LIKE CONCAT('%', :description, '%')")
+    List<String> findValues(String description);
+
 }

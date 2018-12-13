@@ -19,8 +19,8 @@ public interface ProductArticleSearchRepository {
 
 	/**
 	 * This method is used to quick search attribute's names
-	 * @param type - type of attribute
-	 * @param name - name to search
+	 * @param type of attribute
+	 * @param name query to search
 	 * @return list of attribute's names
 	 */
 	List<String> findNamesForAttributes(Class<? extends ProductAttribute<?>> type, String name);
