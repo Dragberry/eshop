@@ -1,7 +1,9 @@
-import { Observable } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
+import { Observable, Observer } from 'rxjs';
 import { Component } from '@angular/core';
 import { AbstractProductAttribute } from './abstract-product-attribute';
 import { ListAttribute } from 'src/app/catalog/model/attributes';
+import { ProductService } from 'src/app/catalog/services/product.service';
 
 @Component({
   selector: 'app-product-attribute-list',
@@ -29,7 +31,8 @@ import { ListAttribute } from 'src/app/catalog/model/attributes';
             [attr.minlength]="1"
             [attr.maxlength]="64"
             [(ngModel)]="attribute.name"
-            [typeahead]="names"/>
+            [typeahead]="names"
+            autocomplete="off"/>
         </div>
         <div class="col-6">
           <label [for]="'value' + attribute.id" class="font-weight-bold">
@@ -41,7 +44,8 @@ import { ListAttribute } from 'src/app/catalog/model/attributes';
               [attr.minlength]="1"
               [attr.maxlength]="64"
               [(ngModel)]="valueToAdd"
-              (keyup.enter)="addAttributeValue()"/>
+              [typeahead]="values"
+              autocomplete="off"/>
             <div class="input-group-append">
               <button class="btn btn-primary" type="button"
                 (click)="addAttributeValue()">
@@ -67,8 +71,19 @@ import { ListAttribute } from 'src/app/catalog/model/attributes';
 })
 export class ProductAttributeListComponent extends AbstractProductAttribute<string[], ListAttribute> {
 
+
   valueToAdd: string;
-  names: Observable<string[]>;
+
+  values: Observable<string>;
+
+  constructor(protected productService: ProductService) {
+    super(productService);
+    this.values = Observable.create((observer: Observer<string>) => {
+      observer.next(this.valueToAdd);
+    }).pipe(
+      mergeMap((token: string) => this.productService.findValuesForAttributes(token, this.attribute.type))
+    );
+  }
 
   addAttributeValue(): void {
     if (this.valueToAdd && this.attribute.value.find(val => val === this.valueToAdd) == null) {

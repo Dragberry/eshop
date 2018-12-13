@@ -1,3 +1,4 @@
+import { AttributeType } from 'src/app/catalog/model/attributes';
 import { ProductArticleDetails } from 'src/app/catalog/model/product-article-details';
 import { ProductCategory } from './../model/product-category';
 import { HttpParams } from '@angular/common/http';
@@ -9,6 +10,7 @@ import { ProductOption } from '../model/product-option';
 
 const CATALOG_URL = 'catalog';
 const PRODUCTS_URL = `${CATALOG_URL}/products`;
+const PRODUCTS_ATTRIBUTES_URL = `${PRODUCTS_URL}/attributes`;
 const CATEGORIES_URL = `${CATALOG_URL}/categories`;
 
 @Injectable()
@@ -44,7 +46,19 @@ export class ProductService {
     return this.httpService.post<ProductArticleDetails>(`${PRODUCTS_URL}/${product.id}/attributes`, product);
   }
 
-  findProductAttribute(name: string): Promise<string[]> {
-    return this.httpService.get<string[]>(`${PRODUCTS_URL}/attributes`, {params: new HttpParams().append('name', name)});
+  findGroupsForAttributes(group: string): Promise<string[]> {
+    return this.httpService.get<string[]>(`${PRODUCTS_ATTRIBUTES_URL}/groups`, {params: new HttpParams().append('query', group)});
+  }
+
+  findNamesForAttributes(name: string, type: AttributeType): Promise<string[]> {
+    return this.httpService.get<string[]>(`${PRODUCTS_ATTRIBUTES_URL}/names`, {
+      params: new HttpParams().append('query', name).append('type', type)
+    });
+  }
+
+  findValuesForAttributes(value: string, type: AttributeType): Promise<string[]> {
+    return this.httpService.get<string[]>(`${PRODUCTS_ATTRIBUTES_URL}/values`, {
+      params: new HttpParams().append('query', value).append('type', type)
+    });
   }
 }

@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs';
+import { Observable, Observer } from 'rxjs';
 import { ATTRIBUTE_COMPONENTS } from './attribute-components';
 import {
   Attribute,
@@ -21,6 +21,8 @@ import {
 } from '@angular/core';
 import { ProductAttributeDirective } from './product-attribute.directive';
 import { AbstractProductAttribute } from './abstract-product-attribute';
+import { ProductService } from 'src/app/catalog/services/product.service';
+import { mergeMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-product-attribute',
@@ -68,9 +70,17 @@ export class ProductAttributeComponent implements OnInit {
 
   attriubteTypes: AttributeType[] = ATTRIBUTE_TYPES;
 
-  names: Observable<string>;
+  groups: Observable<string>;
 
-  constructor(private componentFactoryResolver: ComponentFactoryResolver) { }
+  constructor(
+    private componentFactoryResolver: ComponentFactoryResolver,
+    private productService: ProductService) {
+      this.groups = Observable.create((observer: Observer<string>) => {
+        observer.next(this.editedAttribute.group);
+      }).pipe(
+        mergeMap((token: string) => this.productService.findGroupsForAttributes(token))
+      );
+  }
 
   ngOnInit(): void {
     if (this.isBeingEdited) {

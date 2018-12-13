@@ -1,15 +1,21 @@
+import { mergeMap } from 'rxjs/operators';
 import { ProductService } from './../../../../services/product.service';
-import { Observable } from 'rxjs';
+import { Observable, Observer } from 'rxjs';
 import { Attribute } from 'src/app/catalog/model/attributes';
 
 export abstract class AbstractProductAttribute<V, A extends Attribute<V>> {
 
   isBeingEdited: boolean;
   attribute: A;
-  names: Observable<string[]>;
+
+  names: Observable<string>;
 
   constructor(protected productService: ProductService) {
-
+    this.names = Observable.create((observer: Observer<string>) => {
+      observer.next(this.attribute.name);
+    }).pipe(
+      mergeMap((token: string) => this.productService.findNamesForAttributes(token, this.attribute.type))
+    );
   }
 
   abstract createAttribute(): A;
