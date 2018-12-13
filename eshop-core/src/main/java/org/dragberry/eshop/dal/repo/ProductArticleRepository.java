@@ -3,6 +3,7 @@ package org.dragberry.eshop.dal.repo;
 import java.util.List;
 import java.util.Optional;
 import org.dragberry.eshop.dal.entity.ProductArticle;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -45,9 +46,10 @@ public interface ProductArticleRepository extends ProductArticleSearchRepository
     /**
      * This query is used to quick search attribute's groups
      * @param group
+     * @param page
      * @return
      */
     @Query("SELECT DISTINCT pa.group FROM ProductAttribute pa WHERE UPPER(pa.group) LIKE CONCAT('%', :group, '%')")
-	List<String> findGroupsForAttributes(String group);
+	List<String> findGroupsForAttributes(String group, Pageable page);
 
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.dragberry.eshop.dal.entity.Category;
 import org.dragberry.eshop.dal.entity.ProductAttributeBoolean;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -19,9 +20,10 @@ public interface ProductAttributeBooleanRepository extends ProductAttributeRepos
 	/**
      * Find description by the given string
      * @param decription query
+     * @param page
      * @return list of units
      */
     @Query("SELECT DISTINCT attr.description FROM ProductAttributeBoolean attr WHERE UPPER(attr.description) LIKE CONCAT('%', :description, '%')")
-    List<String> findValues(String description);
+    List<String> findValues(String description, Pageable page);
 
 }

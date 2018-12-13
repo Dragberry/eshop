@@ -47,6 +47,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.log4j.Log4j2;
@@ -221,7 +222,7 @@ public class ProductCmsServiceImpl implements ProductCmsService {
     
     @Override
     public List<String> findGroupsForAttributes(String group) {
-    	return productArticleRepo.findGroupsForAttributes(group);
+    	return productArticleRepo.findGroupsForAttributes(group, PageRequest.of(0, 10));
     }
     
     @Override
@@ -232,14 +233,15 @@ public class ProductCmsServiceImpl implements ProductCmsService {
     @Override
     public List<String> findValuesForAttributes(String type, String query) {
         Class<? extends ProductAttribute<?>> clazz = resolveProductAttributeType(type);
+        Pageable page = PageRequest.of(0, 10);
         if (ProductAttributeBoolean.class.isAssignableFrom(clazz)) {
-            return paBooleanRepo.findValues(query);
+			return paBooleanRepo.findValues(query, page);
         } else if (ProductAttributeList.class.isAssignableFrom(clazz)) {
-            return paListRepo.findValues(type);
+            return paListRepo.findValues(query, page);
         } else if (ProductAttributeNumeric.class.isAssignableFrom(clazz)) {
-            return paNumericRepo.findUnits(query);
+            return paNumericRepo.findUnits(query, page);
         } else if (ProductAttributeString.class.isAssignableFrom(clazz)) {
-            return paStringRepo.findValues(query);
+            return paStringRepo.findValues(query, page);
         }
         throw new UnsupportedOperationException("Unknow product attribute type " + type);
     }
