@@ -7,6 +7,8 @@ import { ProductListComponent } from './components/products/product-list/product
 import { CatalogComponent } from './components/catalog.component';
 import { ProductsComponent } from './components/products/products.component';
 import { ProductListResolverService } from './components/products/product-list/product-list-resolver.service';
+import { ProductCreateComponent } from './components/products/product/product-create/product-create.component';
+import { ProductCreateResolverService } from './components/products/product/product-create/product-create-resolver.service';
 
 @NgModule({
     imports: [RouterModule.forChild([
@@ -25,6 +27,14 @@ import { ProductListResolverService } from './components/products/product-list/p
                 canActivate: [AuthGuard],
                 resolve: {
                   data: ProductListResolverService
+                }
+              },
+              {
+                path: 'new',
+                component: ProductCreateComponent,
+                canActivate: [AuthGuard],
+                resolve: {
+                  data: ProductCreateResolverService
                 }
               },
               {

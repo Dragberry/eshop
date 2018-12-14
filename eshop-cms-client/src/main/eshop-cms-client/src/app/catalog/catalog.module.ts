@@ -21,6 +21,8 @@ import { ProductAttributeBooleanComponent } from './components/products/product/
 import { ProductAttributeListComponent } from './components/products/product/attributes/product-attribute-list.component';
 import { ProductAttributeNumericComponent } from './components/products/product/attributes/product-attribute-numeric.component';
 import { ProductAttributeStringComponent } from './components/products/product/attributes/product-attribute-string.component';
+import { ProductCreateComponent } from './components/products/product/product-create/product-create.component';
+import { ProductCreateResolverService } from './components/products/product/product-create/product-create-resolver.service';
 
 @NgModule({
   imports: [
@@ -38,6 +40,7 @@ import { ProductAttributeStringComponent } from './components/products/product/a
     ProductAttributeNumericComponent,
     ProductAttributeStringComponent,
     ProductAttributesComponent,
+    ProductCreateComponent,
     ProductCategoryTreeComponent,
     ProductCategoryTreeElementComponent,
     ProductDescriptionComponent,
@@ -48,6 +51,7 @@ import { ProductAttributeStringComponent } from './components/products/product/a
   ],
   providers: [
     ProductService,
+    ProductCreateResolverService,
     ProductDetailsResolverService,
     ProductListResolverService
   ],

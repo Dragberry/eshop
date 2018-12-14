@@ -12,4 +12,8 @@ export class ProductDescriptionComponent {
 
     @Input()
     productArticle: ProductArticleDetails;
+
+    startEditing(): void {
+        
+    }
 }

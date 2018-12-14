@@ -118,6 +118,7 @@
     "products": {
     	"titles": {
         "list": "Список товаров",
+        "new": "Новый товар",
         "details": "Товар #{{id}}: {{title}}"
         },
         "messages": {
